@@ -1,0 +1,28 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path="C:/Users/LENOVO/Desktop/FALL2025/Capstone/evently/Directory.Build.props" />
+  </Folder>
+  <Folder Name="/src/" />
+  <Folder Name="/src/API/">
+    <Project Path="src/API/Pento.API/Pento.API.csproj" Id="4e78de82-975c-48a1-8753-f1a4e880165b" />
+  </Folder>
+  <Folder Name="/src/Common/">
+    <Project Path="src/Common/Pento.Common.Application/Pento.Common.Application.csproj" Id="d49c3665-30f1-47d2-98bf-ad6956c9dee1" />
+    <Project Path="src/Common/Pento.Common.Domain/Pento.Common.Domain.csproj" Id="d0e8b558-1ea8-435c-a0b6-837d53572a88" />
+    <Project Path="src/Common/Pento.Common.Infrastructure/Pento.Common.Infrastructure.csproj" Id="9eb193e6-afad-4738-81ca-9971251775d0" />
+    <Project Path="src/Common/Pento.Common.Presentation/Pento.Common.Presentation.csproj" Id="54fe64f3-5eef-4c9d-bbcf-928cc7aefefb" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Community/" />
+  <Folder Name="/src/Modules/GroceryList/" />
+  <Folder Name="/src/Modules/MealPlan/" />
+  <Folder Name="/src/Modules/Pantry/">
+    <Project Path="src/Modules/Pantry/Pento.Pantry.Application/Pento.Modules.Pantry.Application.csproj" Id="3043f9bf-6537-40fe-bc72-8f4c1240c32a" />
+    <Project Path="src/Modules/Pantry/Pento.Pantry.Domain/Pento.Modules.Pantry.Domain.csproj" Id="ef396be3-dddb-4e8f-b303-a1bb507fd320" />
+    <Project Path="src/Modules/Pantry/Pento.Pantry.Infrastructure/Pento.Modules.Pantry.Infrastructure.csproj" Id="601cb3d3-0cbc-4acc-bd28-7beb66f9f1a1" />
+    <Project Path="src/Modules/Pantry/Pento.Pantry.IntegrationEvents/Pento.Modules.Pantry.IntegrationEvents.csproj" Id="1a62110a-825f-4b6a-a5bb-3b95a7b72db1" />
+    <Project Path="src/Modules/Pantry/Pento.Pantry.Presentation/Pento.Modules.Pantry.Presentation.csproj" Id="28865000-2aa8-49ff-84ab-5296eb42ec27" />
+  </Folder>
+  <Folder Name="/src/Modules/User/" />
+</Solution>

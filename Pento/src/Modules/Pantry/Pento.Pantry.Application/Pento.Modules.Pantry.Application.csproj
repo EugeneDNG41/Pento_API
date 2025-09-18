@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Pento.Common.Application\Pento.Common.Application.csproj" />
+    <ProjectReference Include="..\Pento.Pantry.Domain\Pento.Modules.Pantry.Domain.csproj" />
+    <ProjectReference Include="..\Pento.Pantry.IntegrationEvents\Pento.Modules.Pantry.IntegrationEvents.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Storages\" />
+  </ItemGroup>
+
+</Project>
