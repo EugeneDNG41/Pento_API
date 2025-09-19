@@ -14,9 +14,15 @@
     <Project Path="src/Common/Pento.Common.Presentation/Pento.Common.Presentation.csproj" Id="54fe64f3-5eef-4c9d-bbcf-928cc7aefefb" />
   </Folder>
   <Folder Name="/src/Modules/" />
-  <Folder Name="/src/Modules/Community/" />
-  <Folder Name="/src/Modules/GroceryList/" />
-  <Folder Name="/src/Modules/MealPlan/" />
+  <Folder Name="/src/Modules/Community/">
+    <Project Path="src/Modules/Community/Pento.Modules.Community.Domain/Pento.Modules.Community.Domain.csproj" Id="6dde543b-61b9-427d-8e70-7f80a0dc249a" />
+  </Folder>
+  <Folder Name="/src/Modules/GroceryList/">
+    <Project Path="src/Modules/GroceryList/Pento.Modules.GroceryList.Domain/Pento.Modules.GroceryList.Domain.csproj" Id="e5a810e6-72b3-4b46-963d-3a7e23210efd" />
+  </Folder>
+  <Folder Name="/src/Modules/MealPlan/">
+    <Project Path="src/Modules/MealPlan/Pento.Modules.MealPlan.Domain/Pento.Modules.MealPlan.Domain.csproj" Id="4986ec8b-76be-45f4-800b-a6e06c410b15" />
+  </Folder>
   <Folder Name="/src/Modules/Pantry/">
     <Project Path="src/Modules/Pantry/Pento.Pantry.Application/Pento.Modules.Pantry.Application.csproj" Id="3043f9bf-6537-40fe-bc72-8f4c1240c32a" />
     <Project Path="src/Modules/Pantry/Pento.Pantry.Domain/Pento.Modules.Pantry.Domain.csproj" Id="ef396be3-dddb-4e8f-b303-a1bb507fd320" />
@@ -24,5 +30,7 @@
     <Project Path="src/Modules/Pantry/Pento.Pantry.IntegrationEvents/Pento.Modules.Pantry.IntegrationEvents.csproj" Id="1a62110a-825f-4b6a-a5bb-3b95a7b72db1" />
     <Project Path="src/Modules/Pantry/Pento.Pantry.Presentation/Pento.Modules.Pantry.Presentation.csproj" Id="28865000-2aa8-49ff-84ab-5296eb42ec27" />
   </Folder>
-  <Folder Name="/src/Modules/User/" />
+  <Folder Name="/src/Modules/User/">
+    <Project Path="src/Modules/User/Pento.Modules.User.Domain/Pento.Modules.User.Domain.csproj" Id="9432b3b9-b490-4c9d-ae3f-0fc815b039c2" />
+  </Folder>
 </Solution>
