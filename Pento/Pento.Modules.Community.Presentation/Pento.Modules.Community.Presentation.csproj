@@ -6,4 +6,16 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Pento.Modules.Community.Application\Pento.Modules.Community.Application.csproj" />
+    <ProjectReference Include="..\src\Common\Pento.Common.Presentation\Pento.Common.Presentation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="BlogPosts\" />
+    <Folder Include="Comments\" />
+    <Folder Include="GiveawayPosts\" />
+    <Folder Include="GiveawayClaims\" />
+  </ItemGroup>
+
 </Project>
