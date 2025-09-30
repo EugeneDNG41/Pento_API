@@ -15,7 +15,11 @@
   </Folder>
   <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/Community/">
+    <Project Path="src/Modules/Community/Pento.Modules.Community.Application/Pento.Modules.Community.Application.csproj" Id="767ee3d5-7e01-4e89-9daf-39c260fcc509" />
     <Project Path="src/Modules/Community/Pento.Modules.Community.Domain/Pento.Modules.Community.Domain.csproj" Id="6dde543b-61b9-427d-8e70-7f80a0dc249a" />
+    <Project Path="src/Modules/Community/Pento.Modules.Community.Infrastructure/Pento.Modules.Community.Infrastructure.csproj" Id="3e051c31-c97f-4276-81b5-e0927ebe0f8f" />
+    <Project Path="src/Modules/Community/Pento.Modules.Community.IntegrationEvents/Pento.Modules.Community.IntegrationEvents.csproj" Id="3aec98b8-a575-44a9-8f2a-b503b49e0825" />
+    <Project Path="src/Modules/Community/Pento.Modules.Community.Presentation/Pento.Modules.Community.Presentation.csproj" Id="2f0fb894-1e39-4a43-bc1c-3d77f286287d" />
   </Folder>
   <Folder Name="/src/Modules/GroceryList/">
     <Project Path="src/Modules/GroceryList/Pento.Modules.GroceryList.Domain/Pento.Modules.GroceryList.Domain.csproj" Id="e5a810e6-72b3-4b46-963d-3a7e23210efd" />

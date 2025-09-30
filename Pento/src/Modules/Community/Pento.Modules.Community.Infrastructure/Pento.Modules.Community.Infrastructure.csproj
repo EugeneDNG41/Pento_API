@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Pento.Common.Infrastructure\Pento.Common.Infrastructure.csproj" />
+    <ProjectReference Include="..\Pento.Modules.Community.Application\Pento.Modules.Community.Application.csproj" />
+    <ProjectReference Include="..\Pento.Modules.Community.Domain\Pento.Modules.Community.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

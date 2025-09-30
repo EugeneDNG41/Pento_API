@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="BlogPosts\" />
+    <Folder Include="Comments\" />
+    <Folder Include="GiveawayPosts\" />
+    <Folder Include="GiveawayClaims\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Common\Pento.Common.Presentation\Pento.Common.Presentation.csproj" />
+  </ItemGroup>
+
+</Project>
