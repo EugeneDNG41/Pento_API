@@ -8,12 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Pento.Common.Application\Pento.Common.Application.csproj" />
-    <ProjectReference Include="..\Pento.Pantry.Domain\Pento.Modules.Pantry.Domain.csproj" />
-    <ProjectReference Include="..\Pento.Pantry.IntegrationEvents\Pento.Modules.Pantry.IntegrationEvents.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Storages\" />
+    <ProjectReference Include="..\Pento.Modules.Pantry.Domain\Pento.Modules.Pantry.Domain.csproj" />
   </ItemGroup>
 
 </Project>

@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Modules\Pantry\Pento.Pantry.Infrastructure\Pento.Modules.Pantry.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Community\Pento.Modules.Community.Infrastructure\Pento.Modules.Community.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Pantry\Pento.Modules.Pantry.Infrastructure\Pento.Modules.Pantry.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\User\Pento.Modules.User.Infrastructure\Pento.Modules.User.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

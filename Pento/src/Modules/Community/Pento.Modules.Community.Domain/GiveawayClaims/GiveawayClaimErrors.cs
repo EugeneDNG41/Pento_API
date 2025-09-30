@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Pento.Modules.Community.Domain.GiveawayClaim;
-internal class GiveawayClaimErrors
+internal sealed class GiveawayClaimErrors
 {
 }

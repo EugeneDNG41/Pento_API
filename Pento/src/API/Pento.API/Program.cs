@@ -3,6 +3,7 @@ using Pento.API.Extensions;
 using Pento.API.Middleware;
 using Pento.Common.Application;
 using Pento.Common.Presentation.Endpoints;
+using Pento.Modules.Pantry.Application;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);

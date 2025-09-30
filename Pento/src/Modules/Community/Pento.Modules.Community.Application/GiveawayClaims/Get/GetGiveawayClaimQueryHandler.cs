@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Pento.Modules.Community.Application.GiveawayClaims.Get;
-internal class GetGiveawayClaimQueryHandler
+internal sealed class GetGiveawayClaimQueryHandler
 {
 }

@@ -8,14 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Pento.Common.Infrastructure\Pento.Common.Infrastructure.csproj" />
-    <ProjectReference Include="..\Pento.Pantry.Application\Pento.Modules.Pantry.Application.csproj" />
-    <ProjectReference Include="..\Pento.Pantry.Presentation\Pento.Modules.Pantry.Presentation.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Inbox\" />
-    <Folder Include="Outbox\" />
-    <Folder Include="Storages\" />
+    <ProjectReference Include="..\Pento.Modules.Pantry.Application\Pento.Modules.Pantry.Application.csproj" />
+    <ProjectReference Include="..\Pento.Modules.Pantry.Presentation\Pento.Modules.Pantry.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

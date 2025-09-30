@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pento.Modules.Community.Presentation;
 
-internal class Tags
+internal sealed class Tags
 {
     internal const string BlogPosts = "BlogPosts";
     internal const string Comments = "Comments";

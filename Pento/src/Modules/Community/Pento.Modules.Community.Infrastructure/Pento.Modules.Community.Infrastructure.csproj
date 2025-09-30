@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\Pento.Common.Infrastructure\Pento.Common.Infrastructure.csproj" />
     <ProjectReference Include="..\Pento.Modules.Community.Application\Pento.Modules.Community.Application.csproj" />
-    <ProjectReference Include="..\Pento.Modules.Community.Domain\Pento.Modules.Community.Domain.csproj" />
+    <ProjectReference Include="..\Pento.Modules.Community.Presentation\Pento.Modules.Community.Presentation.csproj" />
   </ItemGroup>
 
 </Project>

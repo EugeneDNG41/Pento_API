@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 using Pento.Modules.Community.Domain.GiveawayClaim;
 
 namespace Pento.Modules.Community.Infrastructure.GiveawayClaims;
-internal class GiveawayClaimRepository(/*CommunityDbContext context*/) : IGiveawayClaimRepository
+internal sealed class GiveawayClaimRepository(/*CommunityDbContext context*/) : IGiveawayClaimRepository
 {
 }

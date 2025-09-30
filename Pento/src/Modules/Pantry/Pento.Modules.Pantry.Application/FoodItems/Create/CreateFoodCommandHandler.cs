@@ -5,7 +5,7 @@ using Pento.Modules.Pantry.Domain.FoodItems;
 
 namespace Pento.Modules.Pantry.Application.FoodItems.Create;
 
-internal sealed class CreateFoodCommandCommandHandler(/*IFoodItemRepository repository, IUnitOfWork unitOfWork*/)
+internal sealed class CreateFoodCommandHandler(/*IFoodItemRepository repository, IUnitOfWork unitOfWork*/)
     : ICommandHandler<CreateFoodItemCommand, Guid>
 {
     public Task<Result<Guid>> Handle(CreateFoodItemCommand request, CancellationToken cancellationToken)

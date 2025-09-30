@@ -7,7 +7,7 @@ using Pento.Common.Application.Messaging;
 using Pento.Common.Domain;
 
 namespace Pento.Modules.Community.Application.GiveawayClaims.Create;
-internal class CreateGiveawayClaimCommandHandler() : ICommandHandler<CreateGiveawayClaimCommand, Guid>
+internal sealed class CreateGiveawayClaimCommandHandler() : ICommandHandler<CreateGiveawayClaimCommand, Guid>
 {
     public Task<Result<Guid>> Handle(CreateGiveawayClaimCommand request, CancellationToken cancellationToken)
     {
