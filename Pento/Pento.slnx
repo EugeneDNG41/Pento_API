@@ -3,41 +3,10 @@
     <File Path=".editorconfig" />
     <File Path="C:/Users/LENOVO/Desktop/FALL2025/Capstone/evently/Directory.Build.props" />
   </Folder>
-  <Folder Name="/src/" />
-  <Folder Name="/src/API/">
-    <Project Path="src/API/Pento.API/Pento.API.csproj" Id="4e78de82-975c-48a1-8753-f1a4e880165b" />
-  </Folder>
-  <Folder Name="/src/Common/">
-    <Project Path="src/Common/Pento.Common.Application/Pento.Common.Application.csproj" Id="d49c3665-30f1-47d2-98bf-ad6956c9dee1" />
-    <Project Path="src/Common/Pento.Common.Domain/Pento.Common.Domain.csproj" Id="d0e8b558-1ea8-435c-a0b6-837d53572a88" />
-    <Project Path="src/Common/Pento.Common.Infrastructure/Pento.Common.Infrastructure.csproj" Id="9eb193e6-afad-4738-81ca-9971251775d0" />
-    <Project Path="src/Common/Pento.Common.Presentation/Pento.Common.Presentation.csproj" Id="54fe64f3-5eef-4c9d-bbcf-928cc7aefefb" />
-  </Folder>
-  <Folder Name="/src/Modules/" />
-  <Folder Name="/src/Modules/Community/">
-    <Project Path="src/Modules/Community/Pento.Modules.Community.Application/Pento.Modules.Community.Application.csproj" Id="767ee3d5-7e01-4e89-9daf-39c260fcc509" />
-    <Project Path="src/Modules/Community/Pento.Modules.Community.Domain/Pento.Modules.Community.Domain.csproj" Id="6dde543b-61b9-427d-8e70-7f80a0dc249a" />
-    <Project Path="src/Modules/Community/Pento.Modules.Community.Infrastructure/Pento.Modules.Community.Infrastructure.csproj" Id="3e051c31-c97f-4276-81b5-e0927ebe0f8f" />
-    <Project Path="src/Modules/Community/Pento.Modules.Community.IntegrationEvents/Pento.Modules.Community.IntegrationEvents.csproj" Id="3aec98b8-a575-44a9-8f2a-b503b49e0825" />
-    <Project Path="src/Modules/Community/Pento.Modules.Community.Presentation/Pento.Modules.Community.Presentation.csproj" Id="2f0fb894-1e39-4a43-bc1c-3d77f286287d" />
-  </Folder>
-  <Folder Name="/src/Modules/GroceryList/">
-    <Project Path="src/Modules/GroceryList/Pento.Modules.GroceryList.Domain/Pento.Modules.GroceryList.Domain.csproj" Id="e5a810e6-72b3-4b46-963d-3a7e23210efd" />
-  </Folder>
-  <Folder Name="/src/Modules/MealPlan/">
-    <Project Path="src/Modules/MealPlan/Pento.Modules.MealPlan.Domain/Pento.Modules.MealPlan.Domain.csproj" Id="4986ec8b-76be-45f4-800b-a6e06c410b15" />
-  </Folder>
-  <Folder Name="/src/Modules/Pantry/">
-    <Project Path="src/Modules/Pantry/Pento.Modules.Pantry.Application/Pento.Modules.Pantry.Application.csproj" Id="62c117a7-66e0-4a5c-af34-8d537b693be5" />
-    <Project Path="src/Modules/Pantry/Pento.Modules.Pantry.Domain/Pento.Modules.Pantry.Domain.csproj" Id="dea7822b-9307-4636-b736-55ba522ecdee" />
-    <Project Path="src/Modules/Pantry/Pento.Modules.Pantry.Infrastructure/Pento.Modules.Pantry.Infrastructure.csproj" Id="0bf896a5-9fb2-405b-8227-2146cd833a61" />
-    <Project Path="src/Modules/Pantry/Pento.Modules.Pantry.Presentation/Pento.Modules.Pantry.Presentation.csproj" Id="a07aea36-e47a-494c-b920-f2927ba87f42" />
-  </Folder>
-  <Folder Name="/src/Modules/User/">
-    <Project Path="src/Modules/User/Pento.Modules.User.Application/Pento.Modules.User.Application.csproj" Id="4f856834-fe38-4724-9c9e-edc331f058a7" />
-    <Project Path="src/Modules/User/Pento.Modules.User.Domain/Pento.Modules.User.Domain.csproj" Id="9432b3b9-b490-4c9d-ae3f-0fc815b039c2" />
-    <Project Path="src/Modules/User/Pento.Modules.User.Infrastructure/Pento.Modules.User.Infrastructure.csproj" Id="ee874a9a-b37e-45ca-87ed-a4e85e3be800" />
-    <Project Path="src/Modules/User/Pento.Modules.User.IntegrationEvents/Pento.Modules.User.IntegrationEvents.csproj" Id="a3b47801-fc0c-44e5-8546-e5c2737ec145" />
-    <Project Path="src/Modules/User/Pento.Modules.User.Presentation/Pento.Modules.User.Presentation.csproj" Id="ab833977-d570-41d1-a6f3-9399db4f0150" />
+  <Folder Name="/src/">
+    <Project Path="src/Pento.API/Pento.API.csproj" Id="ccc6b123-83e0-42e3-8da6-d3f5dbc39997" />
+    <Project Path="src/Pento.Application/Pento.Application.csproj" Id="1bff4fb1-79c2-4458-af0a-b7bd2141f5c7" />
+    <Project Path="src/Pento.Domain/Pento.Domain.csproj" Id="88a2855b-893c-4f3d-9593-247a4deebfaf" />
+    <Project Path="src/Pento.Infrastructure/Pento.Infrastructure.csproj" Id="af4c8064-59ee-4328-85df-c6adfb7fae32" />
   </Folder>
 </Solution>
