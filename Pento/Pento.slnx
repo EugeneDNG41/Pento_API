@@ -31,6 +31,10 @@
     <Project Path="src/Modules/Pantry/Pento.Pantry.Presentation/Pento.Modules.Pantry.Presentation.csproj" Id="28865000-2aa8-49ff-84ab-5296eb42ec27" />
   </Folder>
   <Folder Name="/src/Modules/User/">
+    <Project Path="src/Modules/User/Pento.Modules.User.Application/Pento.Modules.User.Application.csproj" Id="4f856834-fe38-4724-9c9e-edc331f058a7" />
     <Project Path="src/Modules/User/Pento.Modules.User.Domain/Pento.Modules.User.Domain.csproj" Id="9432b3b9-b490-4c9d-ae3f-0fc815b039c2" />
+    <Project Path="src/Modules/User/Pento.Modules.User.Infrastructure/Pento.Modules.User.Infrastructure.csproj" Id="ee874a9a-b37e-45ca-87ed-a4e85e3be800" />
+    <Project Path="src/Modules/User/Pento.Modules.User.IntegrationEvents/Pento.Modules.User.IntegrationEvents.csproj" Id="a3b47801-fc0c-44e5-8546-e5c2737ec145" />
+    <Project Path="src/Modules/User/Pento.Modules.User.Presentation/Pento.Modules.User.Presentation.csproj" Id="ab833977-d570-41d1-a6f3-9399db4f0150" />
   </Folder>
 </Solution>
