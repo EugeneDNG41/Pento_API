@@ -1,0 +1,43 @@
+﻿using System.Net;
+using Microsoft.Extensions.Logging;
+using Pento.Application.Abstractions.Identity;
+using Pento.Domain.Abstractions;
+
+namespace Pento.Infrastructure.Identity;
+
+internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILogger<IdentityProviderService> logger)
+    : IIdentityProviderService
+{
+    private const string PasswordCredentialType = "password";
+
+    public async Task<Result<AuthToken>> GetAuthTokenAsync(string email, string password, CancellationToken cancellationToken = default)
+    {
+        return await keyCloakClient.GetAuthTokenAsync(email, password, cancellationToken);
+    }
+
+    // POST /admin/realms/{realm}/users
+    public async Task<Result<string>> RegisterUserAsync(UserModel user, CancellationToken cancellationToken = default)
+    {
+        var userRepresentation = new UserRepresentation(
+            user.Email,
+            user.Email,
+            user.FirstName,
+            user.LastName,
+            true,
+            true,
+            [new CredentialRepresentation(PasswordCredentialType, user.Password, false)]);
+
+        try
+        {
+            string identityId = await keyCloakClient.RegisterUserAsync(userRepresentation, cancellationToken);
+
+            return identityId;
+        }
+        catch (HttpRequestException exception) when (exception.StatusCode == HttpStatusCode.Conflict)
+        {
+            logger.LogError(exception, "User registration failed");
+
+            return Result.Failure<string>(IdentityProviderErrors.EmailIsNotUnique);
+        }
+    }
+}

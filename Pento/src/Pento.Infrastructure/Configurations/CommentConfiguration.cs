@@ -13,6 +13,6 @@ internal sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
 {
     public void Configure(EntityTypeBuilder<Comment> builder)
     {
-        throw new NotImplementedException();
+        
     }
 }

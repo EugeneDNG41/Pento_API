@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Pento.Application.Abstractions.Exceptions;
 using Pento.Domain.Abstractions;
 using Serilog.Context;
 
@@ -17,33 +18,33 @@ internal sealed class RequestLoggingPipelineBehavior<TRequest, TResponse>(
         RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        string moduleName = GetModuleName(typeof(TRequest).FullName!);
-        string requestName = typeof(TRequest).Name;
+        string requestName = request.GetType().Name;
 
-        Activity.Current?.SetTag("request.module", moduleName);
-        Activity.Current?.SetTag("request.name", requestName);
-
-        using (LogContext.PushProperty("Module", moduleName))
+        try
         {
-            logger.LogInformation("Processing request {RequestName}", requestName);
+            logger.LogInformation("Executing request {RequestName}", requestName);
 
             TResponse result = await next(cancellationToken);
 
             if (result.IsSuccess)
             {
-                logger.LogInformation("Completed request {RequestName}", requestName);
+                logger.LogInformation("Request {RequestName} processed successfully", requestName);
             }
             else
             {
                 using (LogContext.PushProperty("Error", result.Error, true))
                 {
-                    logger.LogError("Completed request {RequestName} with error", requestName);
+                    logger.LogError("Request {RequestName} processed with error", requestName);
                 }
             }
 
             return result;
         }
-    }
-    private static string GetModuleName(string requestName) => requestName.Split('.')[2];
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Request {RequestName} processing failed", requestName);
 
+            throw new PentoException(typeof(TRequest).Name, innerException: ex);
+        }
+    }
 }

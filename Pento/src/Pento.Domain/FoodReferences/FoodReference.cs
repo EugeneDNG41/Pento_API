@@ -9,4 +9,6 @@ namespace Pento.Domain.FoodReferences;
 
 public sealed class FoodReference : Entity
 {
+    public string Name { get; private set; }
+    public FoodGroup FoodGroup { get; private set; }
 }

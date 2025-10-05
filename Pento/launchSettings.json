@@ -1,0 +1,17 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "composeLaunchAction": "LaunchBrowser",
+      "composeLaunchServiceName": "pento.api",
+      "serviceActions": {
+        "pento.api": "StartDebugging",
+        "pento.database": "StartWithoutDebugging",
+        "pento.identity": "StartWithoutDebugging",
+        "pento.redis": "StartWithoutDebugging",
+        "pento.seq": "StartWithoutDebugging"
+      }
+    }
+  }
+}

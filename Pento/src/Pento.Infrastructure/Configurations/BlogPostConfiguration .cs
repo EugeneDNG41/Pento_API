@@ -12,6 +12,6 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
 {
     public void Configure(EntityTypeBuilder<BlogPost> builder)
     {
-        throw new NotImplementedException();
+
     }
 }

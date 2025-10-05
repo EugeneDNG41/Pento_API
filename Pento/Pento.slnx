@@ -9,4 +9,7 @@
     <Project Path="src/Pento.Domain/Pento.Domain.csproj" Id="88a2855b-893c-4f3d-9593-247a4deebfaf" />
     <Project Path="src/Pento.Infrastructure/Pento.Infrastructure.csproj" Id="af4c8064-59ee-4328-85df-c6adfb7fae32" />
   </Folder>
+  <Project Path="docker-compose.dcproj">
+    <Build />
+  </Project>
 </Solution>

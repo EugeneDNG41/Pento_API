@@ -8,8 +8,8 @@ using Pento.Domain.StorageItems;
 using Pento.Infrastructure;
 using Pento.Infrastructure.Repositories;
 
-namespace Pento.Modules.Pantry.Infrastructure.FoodItems;
+namespace Pento.Infrastructure.Repositories;
 
-internal sealed class StorageItemRepository(ApplicationDbContext context) : Repository<GiveawayClaim>(context), IStorageItemRepository
+internal sealed class StorageItemRepository(ApplicationDbContext context) : Repository<StorageItem>(context), IStorageItemRepository
 {
 }

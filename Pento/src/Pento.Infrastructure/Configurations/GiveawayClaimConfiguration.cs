@@ -13,6 +13,6 @@ internal sealed class GiveawayClaimConfiguration : IEntityTypeConfiguration<Give
 {
     public void Configure(EntityTypeBuilder<GiveawayClaim> builder)
     {
-        throw new NotImplementedException();
+        
     }
 }

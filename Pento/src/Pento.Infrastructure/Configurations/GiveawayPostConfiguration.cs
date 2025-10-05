@@ -13,6 +13,6 @@ internal sealed class GiveawayPostConfiguration : IEntityTypeConfiguration<Givea
 {
     public void Configure(EntityTypeBuilder<GiveawayPost> builder)
     {
-        throw new NotImplementedException();
+        
     }
 }

@@ -1,0 +1,54 @@
+services:
+  pento.api:
+    image: ${DOCKER_REGISTRY-}pentoapi
+    container_name: Pento.Api
+    build:
+      context: .
+      dockerfile: src/Pento.API/Dockerfile
+    ports:
+      - 5000:8080
+      - 5001:8081
+
+  pento.database:
+    image: postgres:17
+    container_name: Pento.Database
+    environment:
+      - POSTGRES_DB=pento
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+    volumes:
+      - ./.containers/db:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+
+  pento.identity:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: Pento.Identity
+    command: start-dev #--import-realm
+    environment:
+      - KC_HEALTH_ENABLED=true
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./.containers/identity:/opt/keycloak/data
+      - ./.files:/opt/keycloak/data/import
+    ports:
+      - 18080:8080
+
+  pento.seq:
+    image: datalust/seq:latest
+    container_name: Pento.Seq
+    environment:
+      - ACCEPT_EULA=Y
+    ports:
+      - 5341:5341
+      - 8081:80
+
+  pento.redis:
+    image: redis:latest
+    container_name: Pento.Redis
+    restart: always
+    ports:
+      - 6379:6379

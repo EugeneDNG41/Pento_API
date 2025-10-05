@@ -18,6 +18,7 @@ public static class DependencyInjection
     {
         services.AddMediatR(cfg =>
         {
+            cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
             cfg.AddOpenBehavior(typeof(ExceptionHandlingPipelineBehavior<,>));
             cfg.AddOpenBehavior(typeof(RequestLoggingPipelineBehavior<,>));
             cfg.AddOpenBehavior(typeof(ValidationPipelineBehavior<,>));
