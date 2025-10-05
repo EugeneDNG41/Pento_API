@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.BlogPosts.Events;
 using Pento.Domain.Shared;
 using Pento.Domain.Users;
 
@@ -18,8 +19,7 @@ public sealed class BlogPost : Entity
            Content content,
            BlogPostType postType,
            DateTime createdOnUtc,
-           bool isActive = true,
-           bool isModerated = false)
+           bool isActive = true)
            : base(id)
     {
         UserId = userId;
@@ -27,7 +27,6 @@ public sealed class BlogPost : Entity
         Content = content;
         PostType = postType;
         IsActive = isActive;
-        IsModerated = isModerated;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
     }
@@ -44,12 +43,28 @@ public sealed class BlogPost : Entity
 
     public bool IsActive { get; private set; }
 
-    public bool IsModerated { get; private set; }
-
-    public DateTime? ModeratedOnUtc { get; private set; }
 
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public static BlogPost Create(
+     Guid userId,
+     string title,
+     Content content,
+     BlogPostType postType,
+     DateTime utcNow)
+    {
+        var blogPost = new BlogPost(
+            Guid.NewGuid(),
+            userId,
+            title,
+            content,
+            postType,
+            utcNow,
+            true   
+        );
 
+        blogPost.Raise(new BlogPostCreatedDomainEvent(blogPost.Id, blogPost.UserId));
+        return blogPost;
+    }
 }
