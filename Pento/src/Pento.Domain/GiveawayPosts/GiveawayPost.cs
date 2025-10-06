@@ -11,7 +11,7 @@ public sealed class GiveawayPost : Entity
     public GiveawayPost(
       Guid id,
       Guid userId,
-      Guid? pantryItemId,
+      Guid storageItemId,
       string titleDescription,
       string contactInfo,
       GiveawayStatus status,
@@ -24,7 +24,7 @@ public sealed class GiveawayPost : Entity
       : base(id)
     {
         UserId = userId;
-        PantryItemId = pantryItemId;
+        StorageItemId = storageItemId;
         TitleDescription = titleDescription;
         ContactInfo = contactInfo;
         Status = status;
@@ -41,7 +41,7 @@ public sealed class GiveawayPost : Entity
 
     public Guid UserId { get; private set; }
 
-    public Guid? PantryItemId { get; private set; }
+    public Guid StorageItemId { get; private set; }
 
     public string TitleDescription { get; private set; } = string.Empty;
 

@@ -10,11 +10,6 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
 {
     private const string PasswordCredentialType = "password";
 
-    public async Task<Result<AuthToken>> GetAuthTokenAsync(string email, string password, CancellationToken cancellationToken = default)
-    {
-        return await keyCloakClient.GetAuthTokenAsync(email, password, cancellationToken);
-    }
-
     // POST /admin/realms/{realm}/users
     public async Task<Result<string>> RegisterUserAsync(UserModel user, CancellationToken cancellationToken = default)
     {

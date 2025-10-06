@@ -8,9 +8,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Domain.StorageItems;
 
-namespace Pento.Modules.Pantry.Infrastructure.FoodItems;
+namespace Pento.Infrastructure.Configurations;
 
-internal sealed class FoodItemConfiguration : IEntityTypeConfiguration<StorageItem>
+internal sealed class StorageItemConfiguration : IEntityTypeConfiguration<StorageItem>
 {
     public void Configure(EntityTypeBuilder<StorageItem> builder)
     {

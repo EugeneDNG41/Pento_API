@@ -16,50 +16,6 @@ public partial class CreateDatabase : Migration
     protected override void Up(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.CreateTable(
-            name: "blog_post",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_blog_post", x => x.id);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "comment",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_comment", x => x.id);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "giveaway_claim",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_giveaway_claim", x => x.id);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "giveaway_post",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_giveaway_post", x => x.id);
-            });
-
-        migrationBuilder.CreateTable(
             name: "outbox_messages",
             columns: table => new
             {
@@ -152,6 +108,65 @@ public partial class CreateDatabase : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "blog_posts",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                title = table.Column<string>(type: "text", nullable: false),
+                content = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
+                post_type = table.Column<int>(type: "integer", nullable: false),
+                is_active = table.Column<bool>(type: "boolean", nullable: false),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_blog_posts", x => x.id);
+                table.ForeignKey(
+                    name: "fk_blog_posts_user_user_id",
+                    column: x => x.user_id,
+                    principalTable: "users",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "giveaway_posts",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                storage_item_id = table.Column<Guid>(type: "uuid", nullable: false),
+                title_description = table.Column<string>(type: "text", nullable: false),
+                contact_info = table.Column<string>(type: "text", nullable: false),
+                status = table.Column<int>(type: "integer", nullable: false),
+                pickup_start_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                pickup_end_date = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                pickup_option = table.Column<int>(type: "integer", nullable: false),
+                address = table.Column<string>(type: "text", nullable: false),
+                quantity = table.Column<decimal>(type: "numeric", nullable: false),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_giveaway_posts", x => x.id);
+                table.ForeignKey(
+                    name: "fk_giveaway_posts_storage_item_storage_item_id",
+                    column: x => x.storage_item_id,
+                    principalTable: "storage_item",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "fk_giveaway_posts_user_user_id",
+                    column: x => x.user_id,
+                    principalTable: "users",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
             name: "user_roles",
             columns: table => new
             {
@@ -170,6 +185,65 @@ public partial class CreateDatabase : Migration
                 table.ForeignKey(
                     name: "fk_user_roles_user_user_id",
                     column: x => x.user_id,
+                    principalTable: "users",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "comments",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                blog_post_id = table.Column<Guid>(type: "uuid", nullable: false),
+                user_id = table.Column<Guid>(type: "uuid", nullable: false),
+                content = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
+                is_active = table.Column<bool>(type: "boolean", nullable: false),
+                is_moderated = table.Column<bool>(type: "boolean", nullable: false),
+                moderated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_comments", x => x.id);
+                table.ForeignKey(
+                    name: "fk_comments_blog_posts_blog_post_id",
+                    column: x => x.blog_post_id,
+                    principalTable: "blog_posts",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "fk_comments_user_user_id",
+                    column: x => x.user_id,
+                    principalTable: "users",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "giveaway_claims",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                giveaway_post_id = table.Column<Guid>(type: "uuid", nullable: false),
+                claimant_id = table.Column<Guid>(type: "uuid", nullable: false),
+                status = table.Column<int>(type: "integer", nullable: false),
+                message = table.Column<string>(type: "text", nullable: true),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_giveaway_claims", x => x.id);
+                table.ForeignKey(
+                    name: "fk_giveaway_claims_giveaway_post_giveaway_post_id",
+                    column: x => x.giveaway_post_id,
+                    principalTable: "giveaway_posts",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "fk_giveaway_claims_user_claimant_id",
+                    column: x => x.claimant_id,
                     principalTable: "users",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Cascade);
@@ -303,6 +377,41 @@ public partial class CreateDatabase : Migration
             });
 
         migrationBuilder.CreateIndex(
+            name: "ix_blog_posts_user_id",
+            table: "blog_posts",
+            column: "user_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_comments_blog_post_id",
+            table: "comments",
+            column: "blog_post_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_comments_user_id",
+            table: "comments",
+            column: "user_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_giveaway_claims_claimant_id",
+            table: "giveaway_claims",
+            column: "claimant_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_giveaway_claims_giveaway_post_id",
+            table: "giveaway_claims",
+            column: "giveaway_post_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_giveaway_posts_storage_item_id",
+            table: "giveaway_posts",
+            column: "storage_item_id");
+
+        migrationBuilder.CreateIndex(
+            name: "ix_giveaway_posts_user_id",
+            table: "giveaway_posts",
+            column: "user_id");
+
+        migrationBuilder.CreateIndex(
             name: "ix_role_permissions_role_name",
             table: "role_permissions",
             column: "role_name");
@@ -329,16 +438,10 @@ public partial class CreateDatabase : Migration
     protected override void Down(MigrationBuilder migrationBuilder)
     {
         migrationBuilder.DropTable(
-            name: "blog_post");
+            name: "comments");
 
         migrationBuilder.DropTable(
-            name: "comment");
-
-        migrationBuilder.DropTable(
-            name: "giveaway_claim");
-
-        migrationBuilder.DropTable(
-            name: "giveaway_post");
+            name: "giveaway_claims");
 
         migrationBuilder.DropTable(
             name: "outbox_messages");
@@ -347,16 +450,22 @@ public partial class CreateDatabase : Migration
             name: "role_permissions");
 
         migrationBuilder.DropTable(
-            name: "storage_item");
+            name: "user_roles");
 
         migrationBuilder.DropTable(
-            name: "user_roles");
+            name: "blog_posts");
+
+        migrationBuilder.DropTable(
+            name: "giveaway_posts");
 
         migrationBuilder.DropTable(
             name: "permissions");
 
         migrationBuilder.DropTable(
             name: "roles");
+
+        migrationBuilder.DropTable(
+            name: "storage_item");
 
         migrationBuilder.DropTable(
             name: "users");

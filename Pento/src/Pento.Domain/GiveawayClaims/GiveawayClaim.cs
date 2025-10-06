@@ -11,15 +11,15 @@ public sealed class GiveawayClaim : Entity
 {
     public  GiveawayClaim(
        Guid id,
-       Guid giveawayId,
-       Guid claimerUserId,
+       Guid giveawayPostId,
+       Guid claimantId,
        ClaimStatus status,
        string? message,
        DateTime createdOnUtc)
        : base(id)
     {
-        GiveawayId = giveawayId;
-        ClaimerUserId = claimerUserId;
+        GiveawayPostId = giveawayPostId;
+        ClaimantId = claimantId;
         Status = status;
         Message = message;
         CreatedOnUtc = createdOnUtc;
@@ -27,9 +27,9 @@ public sealed class GiveawayClaim : Entity
 
     private GiveawayClaim() { }
 
-    public Guid GiveawayId { get; private set; }
+    public Guid GiveawayPostId { get; private set; }
 
-    public Guid ClaimerUserId { get; private set; }
+    public Guid ClaimantId { get; private set; }
 
     public ClaimStatus Status { get; private set; }
 

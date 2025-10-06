@@ -103,6 +103,12 @@ public static class DependencyInjection
                 httpClient.BaseAddress = new Uri(keycloakOptions.AdminUrl);
             })
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
+        services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
+        {
+            KeyCloakOptions keycloakOptions = serviceProvider.GetRequiredService<IOptions<KeyCloakOptions>>().Value;
+
+            httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
+        });
 
         services.AddTransient<IIdentityProviderService, IdentityProviderService>();
     }

@@ -29,10 +29,44 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_blog_post");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("content");
 
-                    b.ToTable("blog_post", (string)null);
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<int>("PostType")
+                        .HasColumnType("integer")
+                        .HasColumnName("post_type");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_blog_posts");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_blog_posts_user_id");
+
+                    b.ToTable("blog_posts", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Comments.Comment", b =>
@@ -42,10 +76,50 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_comment");
+                    b.Property<Guid>("BlogPostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("blog_post_id");
 
-                    b.ToTable("comment", (string)null);
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsModerated")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_moderated");
+
+                    b.Property<DateTime?>("ModeratedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("moderated_on_utc");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_comments");
+
+                    b.HasIndex("BlogPostId")
+                        .HasDatabaseName("ix_comments_blog_post_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_comments_user_id");
+
+                    b.ToTable("comments", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
@@ -55,10 +129,36 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_giveaway_claim");
+                    b.Property<Guid>("ClaimantId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("claimant_id");
 
-                    b.ToTable("giveaway_claim", (string)null);
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<Guid>("GiveawayPostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("giveaway_post_id");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("text")
+                        .HasColumnName("message");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_giveaway_claims");
+
+                    b.HasIndex("ClaimantId")
+                        .HasDatabaseName("ix_giveaway_claims_claimant_id");
+
+                    b.HasIndex("GiveawayPostId")
+                        .HasDatabaseName("ix_giveaway_claims_giveaway_post_id");
+
+                    b.ToTable("giveaway_claims", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.GiveawayPosts.GiveawayPost", b =>
@@ -68,10 +168,67 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_giveaway_post");
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("address");
 
-                    b.ToTable("giveaway_post", (string)null);
+                    b.Property<string>("ContactInfo")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("contact_info");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<DateTime?>("PickupEndDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pickup_end_date");
+
+                    b.Property<int>("PickupOption")
+                        .HasColumnType("integer")
+                        .HasColumnName("pickup_option");
+
+                    b.Property<DateTime?>("PickupStartDate")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pickup_start_date");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StorageItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("storage_item_id");
+
+                    b.Property<string>("TitleDescription")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title_description");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_giveaway_posts");
+
+                    b.HasIndex("StorageItemId")
+                        .HasDatabaseName("ix_giveaway_posts_storage_item_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_giveaway_posts_user_id");
+
+                    b.ToTable("giveaway_posts", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
@@ -747,6 +904,67 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_user_roles_user_id");
 
                     b.ToTable("user_roles", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.BlogPosts.BlogPost", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_blog_posts_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.Comments.Comment", b =>
+                {
+                    b.HasOne("Pento.Domain.BlogPosts.BlogPost", null)
+                        .WithMany()
+                        .HasForeignKey("BlogPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_comments_blog_posts_blog_post_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_comments_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("ClaimantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_giveaway_claims_user_claimant_id");
+
+                    b.HasOne("Pento.Domain.GiveawayPosts.GiveawayPost", null)
+                        .WithMany()
+                        .HasForeignKey("GiveawayPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_giveaway_claims_giveaway_post_giveaway_post_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.GiveawayPosts.GiveawayPost", b =>
+                {
+                    b.HasOne("Pento.Domain.StorageItems.StorageItem", null)
+                        .WithMany()
+                        .HasForeignKey("StorageItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_giveaway_posts_storage_item_storage_item_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_giveaway_posts_user_user_id");
                 });
 
             modelBuilder.Entity("PermissionRole", b =>

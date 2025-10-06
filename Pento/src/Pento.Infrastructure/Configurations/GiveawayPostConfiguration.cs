@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.GiveawayPosts;
+using Pento.Domain.StorageItems;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -13,6 +15,8 @@ internal sealed class GiveawayPostConfiguration : IEntityTypeConfiguration<Givea
 {
     public void Configure(EntityTypeBuilder<GiveawayPost> builder)
     {
-        
+        builder.ToTable("giveaway_posts");
+        builder.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
+        builder.HasOne<StorageItem>().WithMany().HasForeignKey(c => c.StorageItemId);
     }
 }
