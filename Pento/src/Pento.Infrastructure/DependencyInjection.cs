@@ -18,6 +18,7 @@ using Pento.Application.Abstractions.Identity;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.MealPlanItems;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
@@ -75,6 +76,7 @@ public static class DependencyInjection
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
+        services.AddScoped<IMealPlanItemRepository, MealPlanItemRepository>();
 
     }
 
