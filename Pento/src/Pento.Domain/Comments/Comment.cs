@@ -13,7 +13,7 @@ public class Comment:Entity
        Guid id,
        Guid blogPostId,
        Guid userId,
-       Content content,
+       string content,
        DateTime createdOnUtc,
        bool isActive = true,
        bool isModerated = false)
@@ -36,7 +36,7 @@ public class Comment:Entity
 
     public Guid UserId { get; private set; }
 
-    public Content Content { get; private set; } 
+    public string Content { get; private set; } 
 
     public bool IsActive { get; private set; }
 

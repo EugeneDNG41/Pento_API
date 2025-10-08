@@ -18,7 +18,7 @@ internal sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
     {
         builder.ToTable("comments");
         builder.HasKey(x => x.Id);
-        builder.Property(c => c.Content).HasMaxLength(255).HasConversion(content => content.Value, value => Content.Create(value));
+        builder.Property(c => c.Content).HasMaxLength(255);
 
         builder.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
         builder.HasOne<BlogPost>().WithMany().HasForeignKey(c => c.BlogPostId);
