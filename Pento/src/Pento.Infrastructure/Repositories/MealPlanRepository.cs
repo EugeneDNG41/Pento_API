@@ -15,7 +15,7 @@ internal sealed class MealPlanRepository : Repository<MealPlan>, IMealPlanReposi
     }
 
 
-    public async Task<IEnumerable<MealPlan>> GetByHouseholdIdAsync(
+    public async Task<IReadOnlyList<MealPlan>> GetByHouseholdIdAsync(
         Guid householdId,
         CancellationToken cancellationToken = default)
     {

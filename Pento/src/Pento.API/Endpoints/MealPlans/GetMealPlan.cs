@@ -21,5 +21,20 @@ internal sealed class GetMealPlan : IEndpoint
             );
         })
         .WithTags(Tags.MealPlans);
+        app.MapGet("meal-plans/household/{householdId:guid}",
+    async (Guid householdId, ISender sender, CancellationToken cancellationToken) =>
+    {
+        var query = new GetMealPlansByHouseholdIdQuery(householdId);
+
+        Result<IReadOnlyList<MealPlanResponse>> result = await sender.Send(query, cancellationToken);
+
+        return result.Match(
+            mealPlans => Results.Ok(mealPlans),
+            CustomResults.Problem
+        );
+    })
+    .WithTags(Tags.MealPlans);
+
     }
+
 }

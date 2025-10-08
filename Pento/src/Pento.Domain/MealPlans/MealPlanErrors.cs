@@ -13,6 +13,8 @@ public static class MealPlanErrors
             "MealPlans.NotFound",
             $"The meal plan with ID {mealPlanId} was not found."
         );
+    public static Error NotFoundByHousehold(Guid householdId) =>
+        Error.NotFound("MealPlan.NotFoundByHousehold", $"No meal plans found for household '{householdId}'.");
 
     public static readonly Error InvalidName = Error.Problem(
         "MealPlans.InvalidName",
