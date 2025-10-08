@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Infrastructure.Configurations;
@@ -44,5 +45,10 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
         builder.Property(mp => mp.UpdatedOnUtc)
             .HasColumnName("updated_on_utc")
             .IsRequired();
+
+        builder.HasOne<Household>()
+            .WithMany()
+            .HasForeignKey(mp => mp.HouseholdId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.MealPlanItems.Events;
 
 namespace Pento.Domain.MealPlanItems;
 public sealed class MealPlanItem : Entity
@@ -37,8 +38,6 @@ public sealed class MealPlanItem : Entity
 
     public Guid RecipeId { get; private set; }
 
-    public DateOnly MealDate { get; private set; }
-
     public MealType MealType { get; private set; }
 
     public int Servings { get; private set; }
@@ -49,5 +48,43 @@ public sealed class MealPlanItem : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public static MealPlanItem Create(
+     Guid mealPlanId,
+     Guid recipeId,
+     MealType mealType,
+     List<DateTime> schedule,
+     int servings,
+     string? notes,
+     DateTime utcNow)
+    {
+        var item = new MealPlanItem(
+            Guid.NewGuid(),
+            mealPlanId,
+            recipeId,
+            mealType,
+            schedule,
+            servings,
+            notes,
+            utcNow);
 
+        item.Raise(new MealPlanItemCreatedDomainEvent(item.Id));
+
+        return item;
+
+    }
+    public void UpdateDetails(int servings, string? notes, DateTime utcNow)
+    {
+        Servings = servings > 0 ? servings : 1;
+        Notes = notes;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new MealPlanItemUpdatedDomainEvent(Id));
+    }
+    public void UpdateSchedule(List<DateTime> newSchedule, DateTime utcNow)
+    {
+        Schedule = newSchedule ?? new List<DateTime>();
+        UpdatedOnUtc = utcNow;
+
+        Raise(new MealPlanItemScheduleChangedDomainEvent(Id, Schedule));
+    }
 }

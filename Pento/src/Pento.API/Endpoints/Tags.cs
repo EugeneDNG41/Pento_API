@@ -13,7 +13,8 @@ internal sealed class Tags
 
     internal const string FoodReferences = "FoodReferences";
 
-    internal const string MealPlans = "Meal Plans";
+    internal const string MealPlans = "MealPlans";
+    internal const string MealPlanItems = "MealPlanItems";
 
     internal const string Recipes = "Recipes";
 
