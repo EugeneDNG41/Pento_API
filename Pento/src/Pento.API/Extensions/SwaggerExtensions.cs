@@ -57,10 +57,9 @@ internal static class SwaggerExtensions
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1.json", "Pento API v1");
+            options.SwaggerEndpoint("/v1/swagger.json", "Pento API v1");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
-            options.OAuthScopes(cfg["SWAGGERUI_SCOPE"]);
             options.EnablePersistAuthorization();
         });
         app.MapSwagger();

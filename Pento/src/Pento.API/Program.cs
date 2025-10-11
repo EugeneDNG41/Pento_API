@@ -23,6 +23,8 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPresentation()
     .AddEndpoints(Assembly.GetExecutingAssembly());
+builder.AddAuthenticationAndAuthorization();
+
 builder.Services.AddHttpLogging(options =>
 {
     options.LoggingFields = HttpLoggingFields.RequestMethod |

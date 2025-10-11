@@ -1,9 +1,11 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -52,8 +54,6 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
-        AddAuthenticationAndAuthorization(services, configuration);
-
         AddBackgroundJobs(services, configuration);
 
         return services;
@@ -85,7 +85,6 @@ public static class DependencyInjection
         services.AddScoped<IGiveawayPostRepository, GiveawayPostRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IRecipeRepository, RecipeRepository>();
-
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
@@ -101,47 +100,51 @@ public static class DependencyInjection
         }
         services.AddSingleton<ICacheService, CacheService>();
     }
-    private static void AddAuthenticationAndAuthorization(IServiceCollection services, IConfiguration configuration)
+    public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
-        KeycloakOptions keycloakOptions = configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
+        KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
-        services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
-        services.AddOptions<KeycloakOptions>()
-            .Bind(configuration.GetSection("Keycloak"))
+        builder.Services.Configure<KeycloakOptions>(builder.Configuration.GetSection("Keycloak"));
+        builder.Services.AddOptions<KeycloakOptions>()
+            .Bind(builder.Configuration.GetSection("Keycloak"))
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
-        services.AddTransient<KeyCloakAuthDelegatingHandler>();
-        
-        services
+        builder.Services.AddTransient<KeyCloakAuthDelegatingHandler>();
+
+        builder.Services
             .AddHttpClient<KeyCloakClient>((httpClient) =>
             {
                 httpClient.BaseAddress = new Uri(keycloakOptions.AdminUrl);
             })
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
-        services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
+        builder.Services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
             httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
         });
         
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
         {
-            opt.RequireHttpsMetadata = false;
+            if (builder.Environment.IsDevelopment())
+            {
+                opt.RequireHttpsMetadata = false;
+            }          
             opt.MapInboundClaims = false;
             opt.Audience = keycloakOptions.ClientId;
             opt.Authority = keycloakOptions.Authority;
             opt.MetadataAddress = $"{keycloakOptions.Authority}/.well-known/openid-configuration"
             ;
         });
-        services.AddAuthorizationBuilder();
-        services.AddHttpContextAccessor();
+        builder.Services.AddAuthorizationBuilder();
+        builder.Services.AddHttpContextAccessor();
 
-        services.AddScoped<IUserContext, UserContext>();
+        builder.Services.AddScoped<IUserContext, UserContext>();
 
-        services.AddScoped<IPermissionService, PermissionService>();
+        builder.Services.AddScoped<IPermissionService, PermissionService>();
 
-        services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+        builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+        return builder;
     }
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
     {
