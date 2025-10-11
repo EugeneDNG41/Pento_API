@@ -48,6 +48,7 @@ jobs:
 
       - name: Provision Infrastructure
         run: azd provision --no-prompt
+        working-directory: ./Pento/src/Pento.AppHost
         env:
           AZURE_KEYCLOAK_PASSWORD: ${{ secrets.AZURE_KEYCLOAK_PASSWORD }}
           AZURE_POSTGRES_PASSWORD: ${{ secrets.AZURE_POSTGRES_PASSWORD }}
@@ -56,6 +57,7 @@ jobs:
 
       - name: Deploy Application
         run: azd deploy --no-prompt
+        working-directory: ./Pento/src/Pento.AppHost
         env:
           AZURE_KEYCLOAK_PASSWORD: ${{ secrets.AZURE_KEYCLOAK_PASSWORD }}
           AZURE_POSTGRES_PASSWORD: ${{ secrets.AZURE_POSTGRES_PASSWORD }}
