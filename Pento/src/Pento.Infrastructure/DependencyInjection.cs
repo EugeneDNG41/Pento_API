@@ -1,19 +1,9 @@
-﻿using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Net.NetworkInformation;
-using Dapper;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Dapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -24,9 +14,16 @@ using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.Identity;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
+using Pento.Domain.BlogPosts;
+using Pento.Domain.Comments;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.GiveawayClaims;
+using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlanItems;
 using Pento.Domain.MealPlans;
+using Pento.Domain.RecipeIngredients;
+using Pento.Domain.Recipes;
+using Pento.Domain.StorageItems;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
@@ -57,6 +54,8 @@ public static class DependencyInjection
 
         AddAuthenticationAndAuthorization(services, configuration);
 
+        AddBackgroundJobs(services, configuration);
+
         return services;
     }
 
@@ -78,8 +77,14 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
+        services.AddScoped<IStorageItemRepository, StorageItemRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
         services.AddScoped<IMealPlanItemRepository, MealPlanItemRepository>();
+        services.AddScoped<IBlogPostRepository, BlogPostRepository>();
+        services.AddScoped<IGiveawayClaimRepository, GiveawayClaimRepository>();
+        services.AddScoped<IGiveawayPostRepository, GiveawayPostRepository>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
+        services.AddScoped<IRecipeRepository, RecipeRepository>();
 
     }
 
