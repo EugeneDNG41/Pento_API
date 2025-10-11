@@ -1,14 +1,17 @@
-﻿namespace Pento.Infrastructure.Identity;
+﻿using System.ComponentModel.DataAnnotations;
 
-internal sealed class KeyCloakOptions
+namespace Pento.Infrastructure.Identity;
+
+public sealed class KeycloakOptions
 {
+    [Required]
+    public string Authority { get; set; }
+    [Required]
     public string AdminUrl { get; set; }
-
+    [Required]
     public string TokenUrl { get; set; }
-
-    public string ConfidentialClientId { get; set; }
-
-    public string ConfidentialClientSecret { get; set; }
-
-    public string PublicClientId { get; set; }
+    [Required]
+    public string ClientId { get; set; }
+    [Required]
+    public string ClientSecret { get; set; }
 }

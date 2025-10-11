@@ -18,6 +18,6 @@ public static class ConfigurationExtensions
     public static T GetValueOrThrow<T>(this IConfiguration configuration, string name)
     {
         return configuration.GetValueOrThrow<T?>(name) ??
-               throw new InvalidOperationException($"The connection string {name} was not found");
+               throw new InvalidOperationException($"The value for {name} was not found");
     }
 }

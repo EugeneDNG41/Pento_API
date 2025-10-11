@@ -1,4 +1,5 @@
-﻿using Pento.API.Middleware;
+﻿using Pento.API.Extensions;
+using Pento.API.Middleware;
 
 namespace Pento.API;
 
@@ -8,7 +9,6 @@ internal static class DependencyInjection
     {
         services.AddEndpointsApiExplorer();
         services.AddSwaggerDocumentation();
-        services.AddOpenApi();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 

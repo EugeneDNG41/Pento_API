@@ -1,12 +1,19 @@
-﻿using System.Net.NetworkInformation;
+﻿using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.NetworkInformation;
 using Dapper;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -45,22 +52,18 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
-        AddKeyCloak(services, configuration);
-
-        AddAuthentication(services);
-
-        AddAuthorization(services);
+        AddAuthenticationAndAuthorization(services, configuration);
 
         return services;
     }
 
     private static void AddPersistence(IServiceCollection services, IConfiguration configuration)
     {
-        string connectionString = configuration.GetConnectionStringOrThrow("Database");
-
+        string? connectionString = configuration.GetConnectionStringOrThrow("pento-db");
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
-
+        {
+            options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+        });
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
@@ -75,9 +78,9 @@ public static class DependencyInjection
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
-        string redisConnectionString = configuration.GetConnectionStringOrThrow("Redis");
+        string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
         try
-        {          
+        {
             services.AddStackExchangeRedisCache(options => options.Configuration = redisConnectionString);
         }
         catch
@@ -86,51 +89,47 @@ public static class DependencyInjection
         }
         services.AddSingleton<ICacheService, CacheService>();
     }
-    private static void AddKeyCloak(IServiceCollection services, IConfiguration configuration)
+    private static void AddAuthenticationAndAuthorization(IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IPermissionService, PermissionService>();
+        KeycloakOptions keycloakOptions = configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
-        services.Configure<KeyCloakOptions>(configuration.GetSection("KeyCloak"));
+        services.Configure<KeycloakOptions>(configuration.GetSection("Keycloak"));
+        services.AddOptions<KeycloakOptions>()
+            .Bind(configuration.GetSection("Keycloak"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
         services.AddTransient<KeyCloakAuthDelegatingHandler>();
-
+        
         services
-            .AddHttpClient<KeyCloakClient>((serviceProvider, httpClient) =>
+            .AddHttpClient<KeyCloakClient>((httpClient) =>
             {
-                KeyCloakOptions keycloakOptions = serviceProvider
-                    .GetRequiredService<IOptions<KeyCloakOptions>>().Value;
-
                 httpClient.BaseAddress = new Uri(keycloakOptions.AdminUrl);
             })
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
-        services.AddHttpClient<IJwtService, JwtService>((serviceProvider, httpClient) =>
+        services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
-            KeyCloakOptions keycloakOptions = serviceProvider.GetRequiredService<IOptions<KeyCloakOptions>>().Value;
-
             httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
         });
-
-        services.AddTransient<IIdentityProviderService, IdentityProviderService>();
-    }
-    private static void AddAuthentication(IServiceCollection services)
-    {
-        services.AddAuthorization();
-
-        services.AddAuthentication().AddJwtBearer();
-
+        
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
+        {
+            opt.RequireHttpsMetadata = false;
+            opt.MapInboundClaims = false;
+            opt.Audience = keycloakOptions.ClientId;
+            opt.Authority = keycloakOptions.Authority;
+            opt.MetadataAddress = $"{keycloakOptions.Authority}/.well-known/openid-configuration"
+            ;
+        });
+        services.AddAuthorizationBuilder();
         services.AddHttpContextAccessor();
 
         services.AddScoped<IUserContext, UserContext>();
 
-        services.ConfigureOptions<JwtBearerConfigureOptions>();
-    }
-    private static void AddAuthorization(IServiceCollection services)
-    {
-        services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+        services.AddScoped<IPermissionService, PermissionService>();
 
-        services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
-
-        services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
+        services.AddTransient<IIdentityProviderService, IdentityProviderService>();
     }
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)
     {

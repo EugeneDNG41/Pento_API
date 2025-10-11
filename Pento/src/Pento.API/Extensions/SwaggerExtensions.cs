@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
 
-namespace Pento.API.Middleware;
+namespace Pento.API.Extensions;
 
 internal static class SwaggerExtensions
 {
@@ -48,5 +48,22 @@ internal static class SwaggerExtensions
         });
 
         return services;
+    }
+    internal static WebApplication UseTemplateSwaggerUI(this WebApplication app)
+    {
+        IConfiguration cfg = app.Configuration;
+        string clientId = cfg["SWAGGERUI_CLIENTID"]
+            ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
+        app.UseSwagger();
+        app.UseSwaggerUI(options =>
+        {
+            options.SwaggerEndpoint("/swagger/v1.json", "Pento API v1");
+            options.OAuthClientId(clientId);
+            options.OAuthUsePkce();
+            options.OAuthScopes(cfg["SWAGGERUI_SCOPE"]);
+            options.EnablePersistAuthorization();
+        });
+        app.MapSwagger();
+        return app;
     }
 }

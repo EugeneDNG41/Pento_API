@@ -13,7 +13,7 @@ internal sealed class SignIn : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/signin", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("users/sign-in", async (Request request, ISender sender, CancellationToken cancellationToken) =>
         {
             Result<AuthToken> result = await sender.Send(new SignInUserCommand(
                 request.Email,

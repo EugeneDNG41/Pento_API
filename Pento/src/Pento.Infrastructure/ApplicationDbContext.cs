@@ -13,7 +13,7 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 {
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public ApplicationDbContext(DbContextOptions options, IDateTimeProvider dateTimeProvider) : base(options) // no extra overloads
+    public ApplicationDbContext(DbContextOptions options, IDateTimeProvider dateTimeProvider) : base(options)
     {
         _dateTimeProvider = dateTimeProvider;
     }

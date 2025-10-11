@@ -8,7 +8,7 @@ using Pento.Infrastructure.Identity;
 
 namespace Pento.Infrastructure.Authentication;
 
-internal sealed class JwtService(HttpClient httpClient, IOptions<KeyCloakOptions> options) : IJwtService
+internal sealed class JwtService(HttpClient httpClient, IOptions<KeycloakOptions> options) : IJwtService
 {
     public async Task<Result<AuthToken>> GetAuthTokenAsync(
         string email,
@@ -19,8 +19,8 @@ internal sealed class JwtService(HttpClient httpClient, IOptions<KeyCloakOptions
         {
             var authRequestParameters = new KeyValuePair<string, string>[]
             {
-                new("client_id", options.Value.ConfidentialClientId),
-                new("client_secret", options.Value.ConfidentialClientSecret),
+                new("client_id", options.Value.ClientId),
+                new("client_secret", options.Value.ClientSecret),
                 new("scope", "openid email"),
                 new("grant_type", "password"),
                 new("username", email),

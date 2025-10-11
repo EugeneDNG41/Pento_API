@@ -5,12 +5,16 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>5555a80b-c0fe-48e9-a8aa-9fe0780aaf93</UserSecretsId>
-    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <DockerfileContext>..\..</DockerfileContext>
-    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+
   </PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.5.1" />
+		<PackageReference Include="Aspire.Npgsql" Version="9.5.1" />
+		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.1" />
+		<PackageReference Include="Aspire.Seq" Version="9.5.1" />
+		<PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.5.1" />
+		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.5.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
@@ -26,6 +30,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Pento.Infrastructure\Pento.Infrastructure.csproj" />
+	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
 	</ItemGroup>
 
 </Project>

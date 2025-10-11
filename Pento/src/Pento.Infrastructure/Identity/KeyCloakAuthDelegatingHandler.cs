@@ -1,13 +1,14 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using Pento.Application.Abstractions.Identity;
 
 namespace Pento.Infrastructure.Identity;
 
-internal sealed partial class KeyCloakAuthDelegatingHandler(IOptions<KeyCloakOptions> options) : DelegatingHandler
+internal sealed partial class KeyCloakAuthDelegatingHandler(IOptions<KeycloakOptions> options) : DelegatingHandler
 {
-    private readonly KeyCloakOptions _options = options.Value;
+    private readonly KeycloakOptions _options = options.Value;
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
@@ -28,8 +29,8 @@ internal sealed partial class KeyCloakAuthDelegatingHandler(IOptions<KeyCloakOpt
     {
         var authRequestParameters = new KeyValuePair<string, string>[]
         {
-            new("client_id", _options.ConfidentialClientId),
-            new("client_secret", _options.ConfidentialClientSecret),
+            new("client_id", options.Value.ClientId),
+            new("client_secret", options.Value.ClientSecret),
             new("scope", "openid"),
             new("grant_type", "client_credentials")
         };

@@ -5,11 +5,10 @@
   </Folder>
   <Folder Name="/src/">
     <Project Path="src/Pento.API/Pento.API.csproj" Id="ccc6b123-83e0-42e3-8da6-d3f5dbc39997" />
+    <Project Path="src/Pento.AppHost/Pento.AppHost.csproj" Id="f8fcb1b8-46ac-417f-a98e-163101b7184c" />
     <Project Path="src/Pento.Application/Pento.Application.csproj" Id="1bff4fb1-79c2-4458-af0a-b7bd2141f5c7" />
     <Project Path="src/Pento.Domain/Pento.Domain.csproj" Id="88a2855b-893c-4f3d-9593-247a4deebfaf" />
     <Project Path="src/Pento.Infrastructure/Pento.Infrastructure.csproj" Id="af4c8064-59ee-4328-85df-c6adfb7fae32" />
+    <Project Path="src/Pento.ServiceDefaults/Pento.ServiceDefaults.csproj" />
   </Folder>
-  <Project Path="docker-compose.dcproj">
-    <Build />
-  </Project>
 </Solution>
