@@ -24,6 +24,9 @@ using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.Identity;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodReferences;
+using Pento.Domain.MealPlanItems;
+using Pento.Domain.MealPlans;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
@@ -74,6 +77,10 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
+        services.AddScoped<IMealPlanRepository, MealPlanRepository>();
+        services.AddScoped<IMealPlanItemRepository, MealPlanItemRepository>();
+
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)

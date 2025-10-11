@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Pento.Domain.FoodReferences;
 public enum FoodGroup
 {
-    Meat,
-    Seafood,
-    FruitsVegetables,
-    Dairy,
-    CerealGrainsPasta,
-    LegumesNutsSeeds,
-    FatsOils,
-    Confectionery,
-    Beverages,
-    Condiments,
-    MixedDishes,
+    Meat =1,
+    Seafood=2,
+    FruitsVegetables=3,
+    Dairy=4,
+    CerealGrainsPasta=5,
+    LegumesNutsSeeds=6,
+    FatsOils=7,
+    Confectionery=8,
+    Beverages=9,
+    Condiments=10,
+    MixedDishes=11,
 }

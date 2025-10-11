@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Recipes.Events;
 
 namespace Pento.Domain.Recipes;
 public sealed class Recipe: Entity
@@ -62,4 +63,65 @@ public sealed class Recipe: Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public static Recipe Create(
+    string title,
+    string? description,
+    TimeRequirement recipeTime,
+    string? notes,
+    int? servings,
+    DifficultyLevel? difficultyLevel,
+    Uri? imageUrl,
+    Guid createdBy,
+    bool isPublic,
+    DateTime utcNow)
+    {
+        var recipe = new Recipe(
+            Guid.NewGuid(),
+            title,
+            description,
+            recipeTime,
+            notes,
+            servings,
+            difficultyLevel,
+            imageUrl,
+            createdBy,
+            isPublic,
+            utcNow);
+
+        recipe.Raise(new RecipeCreatedDomainEvent(recipe.Id));
+
+        return recipe;
+    }
+    public void UpdateDetails(
+    string title,
+    string? description,
+    string? notes,
+    int? servings,
+    DifficultyLevel? difficultyLevel,
+    Uri? imageUrl,
+    DateTime utcNow)
+    {
+        Title = title;
+        Description = description;
+        Notes = notes;
+        Servings = servings;
+        DifficultyLevel = difficultyLevel;
+        ImageUrl = imageUrl;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new RecipeUpdatedDomainEvent(Id));
+    }
+
+    public void ChangeVisibility(bool isPublic, DateTime utcNow)
+    {
+        if (IsPublic == isPublic)
+        {
+            return;
+        }
+
+        IsPublic = isPublic;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new RecipeVisibilityChangedDomainEvent(Id, isPublic));
+    }
 }

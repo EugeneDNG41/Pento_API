@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.MealPlans.Events;
 
 namespace Pento.Domain.MealPlans;
 public sealed class MealPlan : Entity
@@ -39,6 +40,33 @@ public sealed class MealPlan : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public static MealPlan Create(
+       Guid householdId,
+       string name,
+       Guid createdBy,
+       DateRange duration,
+       DateTime utcNow)
+    {
+        var mealPlan = new MealPlan(
+            Guid.NewGuid(),
+            householdId,
+            name,
+            createdBy,
+            duration,
+            utcNow);
+
+        mealPlan.Raise(new MealPlanCreatedDomainEvent(mealPlan.Id));
+
+        return mealPlan;
+    }
+    public void Update(string name, DateRange duration, DateTime utcNow)
+    {
+        Name = name;
+        Duration = duration;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new MealPlanUpdatedDomainEvent(Id));
+    }
 }
 
 
