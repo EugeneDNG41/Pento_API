@@ -20,7 +20,7 @@ internal static class SwaggerExtensions
             };
 
             options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, securityScheme);
-
+            options.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
             var securityRequirement = new OpenApiSecurityRequirement
             {
                 {
@@ -58,6 +58,7 @@ internal static class SwaggerExtensions
         app.UseSwaggerUI(options =>
         {
             options.SwaggerEndpoint("/v1/swagger.json", "Pento API v1");
+            options.RoutePrefix = string.Empty;
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
