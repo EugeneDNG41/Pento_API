@@ -59,9 +59,7 @@ internal static class SwaggerExtensions
         app.UseStaticFiles();
         app.UseSwaggerUI(options =>
         {
-            options.RoutePrefix = "swagger";
-            string swaggerJsonBasePath = string.IsNullOrWhiteSpace(options.RoutePrefix) ? "." : "..";           
-            options.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/v1/swagger.json", "PentoApp");
+            options.SwaggerEndpoint("/swagger/v1/swagger.json", "PentoApp");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
