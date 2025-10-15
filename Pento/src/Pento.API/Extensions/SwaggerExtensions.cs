@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
+using Quartz.Impl.AdoJobStore.Common;
 
 namespace Pento.API.Extensions;
 
@@ -56,9 +57,9 @@ internal static class SwaggerExtensions
             ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
         app.UseSwagger();
         app.UseSwaggerUI(options =>
-        {
-            options.SwaggerEndpoint("/v1/swagger.json", "v1");
+        {           
             options.RoutePrefix = string.Empty;
+            options.SwaggerEndpoint("../swagger/v1/swagger.json", "v1");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
