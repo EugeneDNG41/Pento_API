@@ -68,7 +68,7 @@ if (builder.ExecutionContext.IsPublishMode)
             .WithEnvironment("KC_DB_URL", keycloakDbUrl)
             .WithEnvironment("KC_DB_USERNAME", postgresUser)
             .WithEnvironment("KC_DB_PASSWORD", postgresPassword)
-            .WithEndpoint("http", e => e.IsExternal = true);
+            .WithEndpoint("https", e => e.IsExternal = true);
 }
 
 var keycloakAuthority = ReferenceExpression.Create(
