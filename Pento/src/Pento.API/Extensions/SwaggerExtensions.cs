@@ -38,7 +38,7 @@ internal static class SwaggerExtensions
             };
 
             options.AddSecurityRequirement(securityRequirement);
-            options.SwaggerDoc("v1", new OpenApiInfo
+            options.SwaggerDoc("PentoApp", new OpenApiInfo
             {
                 Title = "Pento API",
                 Version = "v1",
@@ -58,9 +58,8 @@ internal static class SwaggerExtensions
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
-            options.RoutePrefix = string.Empty;
             string swaggerJsonBasePath = string.IsNullOrWhiteSpace(options.RoutePrefix) ? "." : "..";           
-            options.SwaggerEndpoint($"{swaggerJsonBasePath}/v1/swagger.json", "v1");
+            options.SwaggerEndpoint($"{swaggerJsonBasePath}/v1/swagger.json", "PentoApp");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();

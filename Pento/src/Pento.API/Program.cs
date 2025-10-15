@@ -7,8 +7,6 @@ using Pento.API.Extensions;
 using Pento.API.Middleware;
 using Pento.Application;
 using Pento.Infrastructure;
-using Pento.Infrastructure.Configurations;
-using Pento.Infrastructure.Identity;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
