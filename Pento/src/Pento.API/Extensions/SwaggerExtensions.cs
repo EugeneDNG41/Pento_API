@@ -51,7 +51,7 @@ internal static class SwaggerExtensions
     }
     internal static WebApplication UseTemplateSwaggerUI(this WebApplication app)
     {
-        IConfiguration cfg = app.Configuration;
+
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
