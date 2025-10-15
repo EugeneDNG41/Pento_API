@@ -50,16 +50,18 @@ internal static class SwaggerExtensions
 
         return services;
     }
-    internal static WebApplication UseTemplateSwaggerUI(this WebApplication app)
+    internal static WebApplication UseSwaggerRoute(this WebApplication app)
     {
         IConfiguration cfg = app.Configuration;
         string clientId = cfg["SWAGGERUI_CLIENTID"]
             ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
         app.UseSwagger();
+        app.UseStaticFiles();
         app.UseSwaggerUI(options =>
         {
+            options.RoutePrefix = "swagger";
             string swaggerJsonBasePath = string.IsNullOrWhiteSpace(options.RoutePrefix) ? "." : "..";           
-            options.SwaggerEndpoint($"{swaggerJsonBasePath}/v1/swagger.json", "PentoApp");
+            options.SwaggerEndpoint($"{swaggerJsonBasePath}/swagger/v1/swagger.json", "PentoApp");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();

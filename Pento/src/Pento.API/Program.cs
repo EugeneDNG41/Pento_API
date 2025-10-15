@@ -36,7 +36,7 @@ WebApplication app = builder.Build();
 app.UseCors();
 app.MapDefaultEndpoints();
 app.UseHttpsRedirection();
-app.UseTemplateSwaggerUI();
+app.UseSwaggerRoute();
 app.ApplyMigrations();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
