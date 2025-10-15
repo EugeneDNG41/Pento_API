@@ -59,7 +59,7 @@ internal static class SwaggerExtensions
         app.UseSwaggerUI(options =>
         {           
             options.RoutePrefix = string.Empty;
-            options.SwaggerEndpoint("../swagger/v1/swagger.json", "v1");
+            options.SwaggerEndpoint("../v1/swagger.json", "v1");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
