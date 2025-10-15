@@ -37,7 +37,7 @@ builder.AddCors();
 WebApplication app = builder.Build();
 app.UseCors();
 app.MapDefaultEndpoints();
-
+app.UseHttpsRedirection();
 app.UseTemplateSwaggerUI();
 app.ApplyMigrations();
 // Configure the HTTP request pipeline.
