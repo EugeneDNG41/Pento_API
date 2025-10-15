@@ -50,7 +50,7 @@ app.UseLogContext();
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
-
+app.UseDeveloperExceptionPage();
 app.UseAuthentication();
 
 app.UseAuthorization();

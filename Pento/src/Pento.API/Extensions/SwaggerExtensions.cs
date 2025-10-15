@@ -59,9 +59,6 @@ internal static class SwaggerExtensions
         {
             options.SwaggerEndpoint("/v1/swagger.json", "Pento API v1");
             options.RoutePrefix = string.Empty;
-            options.OAuthClientId(clientId);
-            options.OAuthUsePkce();
-            options.EnablePersistAuthorization();
         });
         app.MapSwagger();
         return app;
