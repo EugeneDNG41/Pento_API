@@ -121,7 +121,7 @@ public static class DependencyInjection
         {
             httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
         });
-        
+        string httpsAuthority = keycloakOptions.Authority.Replace("http://", "https://");
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
         {
@@ -131,8 +131,8 @@ public static class DependencyInjection
             }          
             opt.MapInboundClaims = false;
             opt.Audience = keycloakOptions.ClientId;
-            opt.Authority = keycloakOptions.Authority;
-            opt.MetadataAddress = $"{keycloakOptions.Authority}/.well-known/openid-configuration"
+            opt.Authority = httpsAuthority;
+            opt.MetadataAddress = $"{httpsAuthority}/.well-known/openid-configuration"
             ;
         });
         builder.Services.AddAuthorizationBuilder();
