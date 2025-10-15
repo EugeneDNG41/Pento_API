@@ -57,9 +57,10 @@ internal static class SwaggerExtensions
             ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
         app.UseSwagger();
         app.UseSwaggerUI(options =>
-        {           
+        {
             options.RoutePrefix = string.Empty;
-            options.SwaggerEndpoint("../v1/swagger.json", "v1");
+            string swaggerJsonBasePath = string.IsNullOrWhiteSpace(options.RoutePrefix) ? "." : "..";           
+            options.SwaggerEndpoint($"{swaggerJsonBasePath}/v1/swagger.json", "v1");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
