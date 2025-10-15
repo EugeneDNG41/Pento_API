@@ -64,7 +64,6 @@ internal static class SwaggerExtensions
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
         });
-        app.MapSwagger();
         return app;
     }
 }
