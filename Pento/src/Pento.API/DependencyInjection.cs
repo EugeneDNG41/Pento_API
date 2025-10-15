@@ -7,8 +7,10 @@ internal static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
+        services.AddMvc();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerDocumentation();
+
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 

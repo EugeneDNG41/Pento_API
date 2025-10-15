@@ -34,23 +34,20 @@ builder.Services.AddHttpLogging(options =>
 builder.AddCors();
 WebApplication app = builder.Build();
 app.UseCors();
+
 app.MapDefaultEndpoints();
-app.UseHttpsRedirection();
+
 app.UseSwaggerRoute();
+
 app.ApplyMigrations();
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.ApplyMigrations();
-}
+
 app.UseLogContext();
 
 app.UseSerilogRequestLogging();
 
 app.UseExceptionHandler();
-app.UseDeveloperExceptionPage();
-app.UseAuthentication();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapEndpoints();

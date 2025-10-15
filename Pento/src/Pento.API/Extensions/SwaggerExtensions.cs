@@ -38,7 +38,7 @@ internal static class SwaggerExtensions
             };
 
             options.AddSecurityRequirement(securityRequirement);
-            options.SwaggerDoc("PentoApp", new OpenApiInfo
+            options.SwaggerDoc("v1", new OpenApiInfo
             {
                 Title = "Pento API",
                 Version = "v1",
@@ -56,10 +56,8 @@ internal static class SwaggerExtensions
         string clientId = cfg["SWAGGERUI_CLIENTID"]
             ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
         app.UseSwagger();
-        app.UseStaticFiles();
         app.UseSwaggerUI(options =>
         {
-            options.SwaggerEndpoint("/swagger/v1/swagger.json", "PentoApp");
             options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
