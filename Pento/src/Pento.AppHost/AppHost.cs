@@ -72,11 +72,11 @@ if (builder.ExecutionContext.IsPublishMode)
 }
 
 var keycloakAuthority = ReferenceExpression.Create(
-    $"{keycloak.GetEndpoint("http").Property(EndpointProperty.Url)}");
+    $"{keycloak.GetEndpoint("https").Property(EndpointProperty.Url)}");
 var keycloakAdminUrl = ReferenceExpression.Create(
-    $"{keycloak.GetEndpoint("http").Property(EndpointProperty.Url)}/admin/realms/pento/");
+    $"{keycloak.GetEndpoint("https").Property(EndpointProperty.Url)}/admin/realms/pento/");
 var keycloakTokenUrl = ReferenceExpression.Create(
-    $"{keycloak.GetEndpoint("http").Property(EndpointProperty.Url)}/realms/pento/protocol/openid-connect/token");
+    $"{keycloak.GetEndpoint("https").Property(EndpointProperty.Url)}/realms/pento/protocol/openid-connect/token");
 
 IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("KeycloakClientId");
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);

@@ -54,7 +54,6 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
-        AddBackgroundJobs(services, configuration);
 
         return services;
     }
