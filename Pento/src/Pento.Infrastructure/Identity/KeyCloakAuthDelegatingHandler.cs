@@ -37,7 +37,7 @@ internal sealed partial class KeyCloakAuthDelegatingHandler(IOptions<KeycloakOpt
 
         using var authRequestContent = new FormUrlEncodedContent(authRequestParameters);
 
-        using var authRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(_options.TokenUrl));
+        using var authRequest = new HttpRequestMessage(HttpMethod.Post, new Uri(_options.TokenUrl.Replace("http://", "https://")));
 
         authRequest.Content = authRequestContent;
 
