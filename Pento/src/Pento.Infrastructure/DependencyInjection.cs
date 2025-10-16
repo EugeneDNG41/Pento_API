@@ -110,18 +110,18 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         builder.Services.AddTransient<KeyCloakAuthDelegatingHandler>();
-
+        string httpsAuthority = keycloakOptions.Authority.Replace("http://", "https://");
         builder.Services
             .AddHttpClient<KeyCloakClient>((httpClient) =>
             {
-                httpClient.BaseAddress = new Uri(keycloakOptions.AdminUrl);
+                httpClient.BaseAddress = new Uri($"{httpsAuthority}/admin/realms/pento/");
             })
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
         builder.Services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
-            httpClient.BaseAddress = new Uri(keycloakOptions.TokenUrl);
+            httpClient.BaseAddress = new Uri($"{httpsAuthority}/realms/pento/protocol/openid-connect/token");
         });
-        string httpsAuthority = keycloakOptions.Authority.Replace("http://", "https://");
+        
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
         {

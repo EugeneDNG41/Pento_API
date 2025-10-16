@@ -81,6 +81,7 @@ var keycloakTokenUrl = ReferenceExpression.Create(
 IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("KeycloakClientId");
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
 
+
 builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
