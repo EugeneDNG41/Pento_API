@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.RecipeDirections.Events;
 
 namespace Pento.Domain.RecipeDirections;
 public sealed class RecipeDirection : Entity
@@ -39,4 +40,19 @@ public sealed class RecipeDirection : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public static RecipeDirection Create(Guid recipeId, int stepNumber, string description, Uri? imageUrl, DateTime utcNow)
+    {
+        var direction = new RecipeDirection(Guid.CreateVersion7(), recipeId, stepNumber, description, imageUrl, utcNow);
+
+        direction.Raise(new RecipeDirectionCreatedDomainEvent(direction.Id, recipeId));
+        return direction;
+    }
+    public void Update(string description, Uri? imageUrl, DateTime utcNow)
+    {
+        Description = description;
+        ImageUrl = imageUrl;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new RecipeDirectionUpdatedDomainEvent(Id));
+    }
 }
