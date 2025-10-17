@@ -17,6 +17,7 @@ internal sealed class Tags
     internal const string MealPlanItems = "MealPlanItems";
 
     internal const string Recipes = "Recipes";
+    internal const string RecipeIngredients = "RecipeIngredients";
 
     internal const string Storages = "Storages";
     internal const string Compartments = "Compartments";
