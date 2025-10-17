@@ -13,7 +13,3 @@ public sealed class RecipeDirectionCreatedDomainEvent(Guid recipeDirectionId, Gu
     public Guid RecipeId { get; init; } = recipeId;
 }
 
-public sealed class RecipeDirectionUpdatedDomainEvent(Guid recipeDirectionId) : DomainEvent
-{
-    public Guid RecipeDirectionId { get; init; } = recipeDirectionId;
-}

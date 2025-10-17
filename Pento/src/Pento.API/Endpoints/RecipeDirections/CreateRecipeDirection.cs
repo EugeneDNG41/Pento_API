@@ -27,7 +27,7 @@ internal sealed class CreateRecipeDirection : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization(Permission.ModifyRecipe.Code)
+        .RequireAuthorization(Permission.ManageRecipes.Code)
         .WithTags(Tags.RecipeDirections);
     }
 
@@ -36,6 +36,6 @@ internal sealed class CreateRecipeDirection : IEndpoint
         public Guid RecipeId { get; init; }
         public int StepNumber { get; init; }
         public string Description { get; init; } = string.Empty;
-        public string? ImageUrl { get; init; }
+        public Uri? ImageUrl { get; init; }
     }
 }

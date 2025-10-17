@@ -10,5 +10,5 @@ public sealed record CreateRecipeDirectionCommand(
     Guid RecipeId,
     int StepNumber,
     string Description,
-    string? ImageUrl
+    Uri? ImageUrl
 ) : ICommand<Guid>;
