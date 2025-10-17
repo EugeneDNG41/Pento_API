@@ -35,6 +35,8 @@ internal sealed class RecipeIngredientConfiguration : IEntityTypeConfiguration<R
         builder.HasOne<Domain.FoodReferences.FoodReference>()
                .WithMany()
                .HasForeignKey(ri => ri.FoodRefId);
-
+        builder.HasOne<Domain.Units.Unit>()
+            .WithMany()
+            .HasForeignKey(ri => ri.UnitId);
     }
 }
