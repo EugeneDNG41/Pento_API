@@ -23,9 +23,12 @@ using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlanItems;
 using Pento.Domain.MealPlans;
+using Pento.Domain.PossibleUnits;
+using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
 using Pento.Domain.StorageItems;
+using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
@@ -84,6 +87,10 @@ public static class DependencyInjection
         services.AddScoped<IGiveawayPostRepository, GiveawayPostRepository>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         services.AddScoped<IRecipeRepository, RecipeRepository>();
+        services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
+        services.AddScoped<IRecipeDirectionRepository,RecipeDirectionRepository>();
+        services.AddScoped<IUnitRepository, UnitRepository>();
+        services.AddScoped<IPossibleUnitRepository, PossibleUnitRepository>();
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
