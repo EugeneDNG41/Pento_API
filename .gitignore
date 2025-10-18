@@ -8,7 +8,9 @@ firebase-adminsdk.json
 # Ignore all folders named exampleFolder and their contents anywhere
 bin/
 obj/
+VolumeMount.AppHost-postgres-data/
 .containers/
+.azure/
 
 # User-specific files
 *.rsuser

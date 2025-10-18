@@ -103,23 +103,32 @@ public static class DependencyInjection
     {
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
-        builder.Services.Configure<KeycloakOptions>(builder.Configuration.GetSection("Keycloak"));
         builder.Services.AddOptions<KeycloakOptions>()
             .Bind(builder.Configuration.GetSection("Keycloak"))
+            .PostConfigure(options =>
+            {
+                if (builder.Environment.IsDevelopment())
+                {
+                    return;
+                }
+                options.Authority = options.Authority.Replace("http://", "https://");
+                options.TokenUrl = options.TokenUrl.Replace("http://", "https://");
+                options.AdminUrl = options.AdminUrl.Replace("http://", "https://");
+            })
             .ValidateDataAnnotations()
             .ValidateOnStart();
 
         builder.Services.AddTransient<KeyCloakAuthDelegatingHandler>();
-        string httpsAuthority = keycloakOptions.Authority.Replace("http://", "https://");
+        string keycloakAuthority = builder.Environment.IsDevelopment() ? keycloakOptions.Authority : keycloakOptions.Authority.Replace("http://", "https://");
         builder.Services
             .AddHttpClient<KeyCloakClient>((httpClient) =>
             {
-                httpClient.BaseAddress = new Uri($"{httpsAuthority}/admin/realms/pento/");
+                httpClient.BaseAddress = new Uri($"{keycloakAuthority}/admin/realms/pento/");
             })
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
         builder.Services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
-            httpClient.BaseAddress = new Uri($"{httpsAuthority}/realms/pento/protocol/openid-connect/token");
+            httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/token");
         });
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -131,8 +140,8 @@ public static class DependencyInjection
             }          
             opt.MapInboundClaims = false;
             opt.Audience = keycloakOptions.ClientId;
-            opt.Authority = httpsAuthority;
-            opt.MetadataAddress = $"{httpsAuthority}/.well-known/openid-configuration"
+            opt.Authority = keycloakAuthority;
+            opt.MetadataAddress = $"{keycloakAuthority}/.well-known/openid-configuration"
             ;
         });
         builder.Services.AddAuthorizationBuilder();

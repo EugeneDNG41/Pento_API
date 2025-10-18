@@ -14,11 +14,11 @@ IResourceBuilder<RedisResource> cache = builder.AddRedis("redis");
 IResourceBuilder<AzureStorageResource> storage = builder.AddAzureStorage("storage");
 IResourceBuilder<AzureBlobStorageResource> blobs = storage.AddBlobs("blobs");
 
-
 IResourceBuilder<AzurePostgresFlexibleServerResource> postgres = builder
     .AddAzurePostgresFlexibleServer("postgres")
     .RunAsContainer(postgres =>
     {
+        postgres.WithBindMount("VolumeMount.AppHost-postgres-data", "/var/lib/postgresql/data");
         postgres.WithPgAdmin(pgAdmin =>
         {
             pgAdmin.WithHostPort(5050);
