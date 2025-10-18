@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.RecipeIngredients.Events;
 
 namespace Pento.Domain.RecipeIngredients;
 public sealed class RecipeIngredient : Entity
@@ -43,5 +44,49 @@ public sealed class RecipeIngredient : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+
+    public static RecipeIngredient Create(
+          Guid recipeId,
+          Guid foodRefId,
+          decimal quantity,
+          Guid unitId,
+          string? notes,
+          DateTime utcNow)
+    {
+        var ingredient = new RecipeIngredient(
+            Guid.NewGuid(),
+            recipeId,
+            foodRefId,
+            quantity,
+            unitId,
+            notes,
+            utcNow);
+
+        ingredient.Raise(new RecipeIngredientCreatedDomainEvent(ingredient.Id, recipeId));
+
+        return ingredient;
+    }
+
+    public void UpdateDetails(
+        decimal? quantity,
+        Guid? unitId,
+        string? notes,
+        DateTime utcNow)
+    {
+        if (quantity.HasValue && quantity.Value > 0)
+        {
+            Quantity = quantity.Value;
+        }
+
+        if (unitId.HasValue)
+        {
+            UnitId = unitId.Value;
+        }
+
+        Notes = notes;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new RecipeIngredientUpdatedDomainEvent(Id));
+    }
 
 }
