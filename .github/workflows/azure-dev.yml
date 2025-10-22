@@ -54,6 +54,7 @@ jobs:
           AZURE_POSTGRES_PASSWORD: ${{ secrets.AZURE_POSTGRES_PASSWORD }}
           AZURE_REDIS_PASSWORD: ${{ secrets.AZURE_REDIS_PASSWORD }}
           AZURE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.AZURE_KEYCLOAK_CLIENT_SECRET }}
+          AZURE_GEMINI_API_KEY: ${{ secrets.AZURE_GEMINI_API_KEY }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
@@ -63,4 +64,5 @@ jobs:
           AZURE_POSTGRES_PASSWORD: ${{ secrets.AZURE_POSTGRES_PASSWORD }}
           AZURE_REDIS_PASSWORD: ${{ secrets.AZURE_REDIS_PASSWORD }}
           AZURE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.AZURE_KEYCLOAK_CLIENT_SECRET }}
+          AZURE_GEMINI_API_KEY: ${{ secrets.AZURE_GEMINI_API_KEY }}
         
