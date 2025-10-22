@@ -18,7 +18,7 @@ internal sealed class GetRecipeDirection : IEndpoint
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .RequireAuthorization(Permission.ViewRecipes.Code)
+        .RequireAuthorization()
         .WithTags(Tags.RecipeDirections);
     }
 }

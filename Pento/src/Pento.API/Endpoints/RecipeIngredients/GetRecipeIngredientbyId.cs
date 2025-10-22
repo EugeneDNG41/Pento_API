@@ -21,7 +21,7 @@ internal sealed class GetRecipeIngredientbyId : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization(Permission.ViewRecipes.Code)
+        .RequireAuthorization()
         .WithTags(Tags.RecipeIngredients);
     }
 }

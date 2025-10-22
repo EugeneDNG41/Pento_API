@@ -34,10 +34,9 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 
         claimsIdentity.AddClaim(new Claim(CustomClaims.Sub, result.Value.UserId.ToString()));
         claimsIdentity.AddClaim(new Claim(CustomClaims.Household, result.Value.HouseholdId.ToString()));
-
-        foreach (string permission in result.Value.Permissions)
+        foreach (string roles in result.Value.Roles)
         {
-            claimsIdentity.AddClaim(new Claim(CustomClaims.Permission, permission));
+            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roles));
         }
 
         principal.AddIdentity(claimsIdentity);

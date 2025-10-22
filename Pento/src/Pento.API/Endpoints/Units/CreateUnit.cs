@@ -26,7 +26,7 @@ internal sealed class CreateUnit : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization(Permission.ManageStorage.Code)
+        .RequireAuthorization()
         .WithTags(Tags.Units);
     }
 

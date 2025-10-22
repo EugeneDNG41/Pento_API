@@ -27,7 +27,7 @@ internal sealed class CreateRecipeDirection : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization(Permission.ManageRecipes.Code)
+        .RequireAuthorization()
         .WithTags(Tags.RecipeDirections);
     }
 

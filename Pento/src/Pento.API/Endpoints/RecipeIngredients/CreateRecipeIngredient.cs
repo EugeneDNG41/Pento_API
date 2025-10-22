@@ -28,7 +28,7 @@ internal sealed class CreateRecipeIngredient : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization(Permission.ManageRecipes.Code)
+        .RequireAuthorization()
         .WithTags(Tags.RecipeIngredients);
     }
 

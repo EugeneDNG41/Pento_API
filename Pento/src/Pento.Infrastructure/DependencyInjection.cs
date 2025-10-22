@@ -163,7 +163,6 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<IUserContext, UserContext>();
 
-        builder.Services.AddScoped<IPermissionService, PermissionService>();
 
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
         return builder;

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.StorageItems;
 using Pento.Domain.Units;
 
 namespace Pento.Infrastructure.Configurations;
@@ -32,5 +33,10 @@ internal sealed class UnitConfiguration : IEntityTypeConfiguration<Unit>
 
         builder.Property(u => u.UpdatedOnUtc)
             .HasColumnName("updated_at");
+
+        builder.HasMany<StorageItem>()
+            .WithOne()
+            .HasForeignKey(u => u.UnitId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

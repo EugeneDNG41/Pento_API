@@ -122,6 +122,37 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("comments", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.Compartments.Compartment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<Guid>("StorageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("storage_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_compartments");
+
+                    b.HasIndex("StorageId")
+                        .HasDatabaseName("ix_compartments_storage_id");
+
+                    b.ToTable("compartments", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.FoodReferences.FoodReference", b =>
                 {
                     b.Property<Guid>("Id")
@@ -640,10 +671,103 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_storage_item");
+                    b.Property<Guid>("CompartmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("compartment_id");
 
-                    b.ToTable("storage_item", (string)null);
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<string>("CustomName")
+                        .HasColumnType("text")
+                        .HasColumnName("custom_name");
+
+                    b.Property<DateTime>("ExpirationDateUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiration_date_utc");
+
+                    b.Property<Guid>("FoodRefId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_ref_id");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("quantity");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("StorageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("storage_id");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_storage_items");
+
+                    b.HasIndex("CompartmentId")
+                        .HasDatabaseName("ix_storage_items_compartment_id");
+
+                    b.HasIndex("FoodRefId")
+                        .HasDatabaseName("ix_storage_items_food_ref_id");
+
+                    b.HasIndex("StorageId")
+                        .HasDatabaseName("ix_storage_items_storage_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_storage_items_unit_id");
+
+                    b.ToTable("storage_items", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Storages.Storage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_storages");
+
+                    b.ToTable("storages", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Units.Unit", b =>
@@ -681,125 +805,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasName("pk_units");
 
                     b.ToTable("units", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.Users.Permission", b =>
-                {
-                    b.Property<string>("Code")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("code");
-
-                    b.HasKey("Code")
-                        .HasName("pk_permissions");
-
-                    b.ToTable("permissions", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Code = "users:read"
-                        },
-                        new
-                        {
-                            Code = "users:update"
-                        },
-                        new
-                        {
-                            Code = "household:view"
-                        },
-                        new
-                        {
-                            Code = "household:update"
-                        },
-                        new
-                        {
-                            Code = "household:transferOwner"
-                        },
-                        new
-                        {
-                            Code = "members:read"
-                        },
-                        new
-                        {
-                            Code = "members:invite"
-                        },
-                        new
-                        {
-                            Code = "members:update"
-                        },
-                        new
-                        {
-                            Code = "members:remove"
-                        },
-                        new
-                        {
-                            Code = "storage:read"
-                        },
-                        new
-                        {
-                            Code = "storage:manage"
-                        },
-                        new
-                        {
-                            Code = "pantry:read"
-                        },
-                        new
-                        {
-                            Code = "pantry:create"
-                        },
-                        new
-                        {
-                            Code = "pantry:update"
-                        },
-                        new
-                        {
-                            Code = "pantry:consume"
-                        },
-                        new
-                        {
-                            Code = "pantry:discard"
-                        },
-                        new
-                        {
-                            Code = "grocery:read"
-                        },
-                        new
-                        {
-                            Code = "grocery:manage"
-                        },
-                        new
-                        {
-                            Code = "mealplan:read"
-                        },
-                        new
-                        {
-                            Code = "mealplan:manage"
-                        },
-                        new
-                        {
-                            Code = "recipes:read"
-                        },
-                        new
-                        {
-                            Code = "recipes:manage"
-                        },
-                        new
-                        {
-                            Code = "giveaways:read"
-                        },
-                        new
-                        {
-                            Code = "giveaways:manage"
-                        },
-                        new
-                        {
-                            Code = "permissions:manage"
-                        },
-                        new
-                        {
-                            Code = "permissions:overrides"
-                        });
                 });
 
             modelBuilder.Entity("Pento.Domain.Users.Role", b =>
@@ -940,392 +945,6 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("outbox_messages", (string)null);
                 });
 
-            modelBuilder.Entity("PermissionRole", b =>
-                {
-                    b.Property<string>("PermissionCode")
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("permission_code");
-
-                    b.Property<string>("RoleName")
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("role_name");
-
-                    b.HasKey("PermissionCode", "RoleName")
-                        .HasName("pk_role_permissions");
-
-                    b.HasIndex("RoleName")
-                        .HasDatabaseName("ix_role_permissions_role_name");
-
-                    b.ToTable("role_permissions", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionCode = "users:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "users:update",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:view",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:update",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:transferOwner",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:invite",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:update",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:remove",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:create",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:update",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:consume",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:discard",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:read",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "permissions:manage",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "permissions:overrides",
-                            RoleName = "Administrator"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:view",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:update",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:transferOwner",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:read",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:invite",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:update",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:remove",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "permissions:manage",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "permissions:overrides",
-                            RoleName = "Household Admin"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:view",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:update",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:manage",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:create",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:update",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:consume",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:discard",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:manage",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:manage",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:manage",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:read",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:manage",
-                            RoleName = "Power Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:read",
-                            RoleName = "Grocery Runner"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:manage",
-                            RoleName = "Grocery Runner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:manage",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:manage",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:read",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:manage",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:read",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:create",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:update",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:consume",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:discard",
-                            RoleName = "Storage Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:view",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "members:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "storage:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "pantry:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "grocery:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplan:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:read",
-                            RoleName = "Basic Member"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:read",
-                            RoleName = "Basic Member"
-                        });
-                });
-
             modelBuilder.Entity("RoleUser", b =>
                 {
                     b.Property<string>("RolesName")
@@ -1370,6 +989,16 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_comments_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.Compartments.Compartment", b =>
+                {
+                    b.HasOne("Pento.Domain.Storages.Storage", null)
+                        .WithMany()
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_compartments_storage_storage_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
@@ -1512,21 +1141,35 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PermissionRole", b =>
+            modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
                 {
-                    b.HasOne("Pento.Domain.Users.Permission", null)
+                    b.HasOne("Pento.Domain.Compartments.Compartment", null)
                         .WithMany()
-                        .HasForeignKey("PermissionCode")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("CompartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_role_permissions_permissions_permission_code");
+                        .HasConstraintName("fk_storage_items_compartments_compartment_id");
 
-                    b.HasOne("Pento.Domain.Users.Role", null)
+                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
                         .WithMany()
-                        .HasForeignKey("RoleName")
+                        .HasForeignKey("FoodRefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_storage_items_food_references_food_ref_id");
+
+                    b.HasOne("Pento.Domain.Storages.Storage", null)
+                        .WithMany()
+                        .HasForeignKey("StorageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_storage_items_storages_storage_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_role_permissions_roles_role_name");
+                        .HasConstraintName("fk_storage_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("RoleUser", b =>

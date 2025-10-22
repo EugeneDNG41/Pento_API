@@ -30,7 +30,7 @@ public static class ClaimsPrincipalExtensions
 
     public static HashSet<string> GetPermissions(this ClaimsPrincipal? principal)
     {
-        IEnumerable<Claim> permissionClaims = principal?.FindAll(CustomClaims.Permission) ??
+        IEnumerable<Claim> permissionClaims = principal?.FindAll(ClaimTypes.Role) ??
                                               throw new PentoException("Permissions are unavailable");
 
         return permissionClaims.Select(c => c.Value).ToHashSet();
