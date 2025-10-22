@@ -8,17 +8,18 @@ using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Get;
-internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    : IQueryHandler<GetFoodReferenceQuery, FoodReferenceResponse>
+internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+    : IQueryHandler<GetAllFoodReferencesQuery, IReadOnlyList<FoodReferenceResponse>>
 {
-    public async Task<Result<FoodReferenceResponse>> Handle(GetFoodReferenceQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<FoodReferenceResponse>>> Handle(
+        GetAllFoodReferencesQuery request,
+        CancellationToken cancellationToken)
     {
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
 
-        const string sql = """
+        string sql = """
             SELECT
                 id AS Id,
                 name AS Name,
@@ -34,18 +35,20 @@ internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConn
                 created_on_utc AS CreatedAt,
                 updated_on_utc AS UpdatedAt
             FROM food_references
-            WHERE id = @FoodReferenceId
             """;
-        FoodReferenceResponse? foodReference = await connection.QueryFirstOrDefaultAsync<FoodReferenceResponse>(
-            sql, new { request.FoodReferenceId });
 
-        if (foodReference is null)
+        if (request.FoodGroup.HasValue)
         {
-            return (Result<FoodReferenceResponse>)Result<FoodReferenceResponse>.Failure(
-                FoodReferenceErrors.NotFound(request.FoodReferenceId));
+            sql += " WHERE food_group = @FoodGroup";
         }
 
-        return Result.Success(foodReference);
+        sql += " ORDER BY name;";
+
+        IEnumerable<FoodReferenceResponse> foodReferences = await connection.QueryAsync<FoodReferenceResponse>(
+            sql,
+            new { FoodGroup = request.FoodGroup?.ToString() } 
+        );
+
+        return Result.Success<IReadOnlyList<FoodReferenceResponse>>(foodReferences.ToList());
     }
 }
-

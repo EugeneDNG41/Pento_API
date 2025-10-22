@@ -14,6 +14,8 @@ using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.Identity;
+using Pento.Application.FoodReferences.Enrich;
+using Pento.Application.FoodReferences.GenerateImage;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -30,6 +32,7 @@ using Pento.Domain.Recipes;
 using Pento.Domain.StorageItems;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
+using Pento.Infrastructure.AI;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Caching;
@@ -76,6 +79,7 @@ public static class DependencyInjection
 
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
+        SqlMapper.AddTypeHandler(new UriTypeHandler());
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
@@ -91,6 +95,9 @@ public static class DependencyInjection
         services.AddScoped<IRecipeDirectionRepository,RecipeDirectionRepository>();
         services.AddScoped<IUnitRepository, UnitRepository>();
         services.AddScoped<IPossibleUnitRepository, PossibleUnitRepository>();
+        services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
+        services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
+
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)

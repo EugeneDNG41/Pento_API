@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Exceptions;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodReferences;
 using Pento.Infrastructure.Outbox;
 
 namespace Pento.Infrastructure;
@@ -49,6 +50,8 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
         base.OnModelCreating(modelBuilder);
     }
+    public DbSet<FoodReference> FoodReferences { get; set; } = null!;
+
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

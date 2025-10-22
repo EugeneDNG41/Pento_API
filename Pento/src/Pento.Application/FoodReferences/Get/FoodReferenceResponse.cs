@@ -9,11 +9,14 @@ public sealed record FoodReferenceResponse(
     Guid Id,
     string Name,
     string FoodGroup,
-    string? Barcode,
+    string DataType,                    
+    string? Notes,                      
+    int TypicalShelfLifeDays_Pantry,
+    int TypicalShelfLifeDays_Fridge,
+    int TypicalShelfLifeDays_Freezer,
+    Uri? ImageUrl,
     string? Brand,
-    int TypicalShelfLifeDays,
-    string? OpenFoodFactsId,
-    string? UsdaId,
+    string? Barcode,
     DateTime CreatedAt,
     DateTime UpdatedAt
 );

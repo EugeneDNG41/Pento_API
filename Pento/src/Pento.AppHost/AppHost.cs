@@ -80,15 +80,17 @@ var keycloakTokenUrl = ReferenceExpression.Create(
 
 IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("KeycloakClientId");
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
+IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiApiKey", secret: true);
 
 
 builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
     .WithEnvironment("Keycloak__AdminUrl", keycloakAdminUrl)
-    .WithEnvironment("Keycloak__TokenUrl", keycloakTokenUrl)
+    .WithEnvironment("Keycloak__TokenUrl", keycloakTokenUrl) 
     .WithEnvironment("Keycloak__ClientId", keycloakClientId)
     .WithEnvironment("Keycloak__ClientSecret", keycloakClientSecret)
+    .WithEnvironment("Gemini__ApiKey", geminiApiKey)
     .WithEnvironment("SWAGGERUI_CLIENTID", builder.Configuration["SwaggerUI:ClientId"])
     .WithReference(pentoDb)
     .WaitFor(pentoDb)

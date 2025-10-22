@@ -12,30 +12,33 @@ internal sealed class CreateFoodReferenceCommandValidator : AbstractValidator<Cr
     {
         RuleFor(c => c.Name)
             .NotEmpty()
-            .MaximumLength(200);
+            .MaximumLength(255);
+        RuleFor(c => c.DataType)
+             .IsInEnum();
 
         RuleFor(c => c.FoodGroup)
-            .NotEmpty()
-            .WithMessage("Food group is required.");
-
-        RuleFor(c => c.Barcode)
-            .MaximumLength(50)
-            .When(c => !string.IsNullOrWhiteSpace(c.Barcode));
-
-        RuleFor(c => c.Brand)
-            .MaximumLength(100)
-            .When(c => !string.IsNullOrWhiteSpace(c.Brand));
-
-        RuleFor(c => c.TypicalShelfLifeDays)
-            .GreaterThanOrEqualTo(0)
-            .WithMessage("Shelf life days must be non-negative.");
-
-        RuleFor(c => c.OpenFoodFactsId)
-            .MaximumLength(100)
-            .When(c => !string.IsNullOrWhiteSpace(c.OpenFoodFactsId));
+            .IsInEnum();
 
         RuleFor(c => c.UsdaId)
+            .NotEmpty()
+            .MaximumLength(100);
+
+        RuleFor(c => c.Brand)
+            .MaximumLength(200)
+            .When(c => !string.IsNullOrWhiteSpace(c.Brand));
+
+        RuleFor(c => c.Barcode)
             .MaximumLength(100)
-            .When(c => !string.IsNullOrWhiteSpace(c.UsdaId));
+            .When(c => !string.IsNullOrWhiteSpace(c.Barcode));
+
+        RuleFor(c => c.TypicalShelfLifeDays_Pantry)
+            .GreaterThanOrEqualTo(0);
+        RuleFor(c => c.TypicalShelfLifeDays_Fridge)
+           .GreaterThanOrEqualTo(0);
+        RuleFor(c => c.TypicalShelfLifeDays_Freezer)
+           .GreaterThanOrEqualTo(0);
+
     }
+
+
 }

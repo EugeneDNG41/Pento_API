@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,83 +14,120 @@ public sealed class FoodReference : Entity
     private FoodReference() { }
 
     public FoodReference(
-        Guid id,
+      Guid id,
         string name,
         FoodGroup foodGroup,
-        string? barcode,
+        FoodDataType dataType,
+        string? notes,
+        int? foodCategoryId,
         string? brand,
-        int typicalShelfLifeDays,
-        string? openFoodFactsId,
-        string? usdaId,
+        string? barcode,
+        string usdaId,
+        DateTime publishedOnUtc,
+        int? typicalShelfLifeDaysPantry,
+        int? typicalShelfLifeDaysFridge,
+        int? typicalShelfLifeDaysFreezer,
+        Uri? imageUrl,
         DateTime createdOnUtc)
         : base(id)
     {
         Name = name;
         FoodGroup = foodGroup;
-        Barcode = barcode;
+        DataType = dataType;
+        Notes = notes;
+        FoodCategoryId = foodCategoryId;
         Brand = brand;
-        TypicalShelfLifeDays = typicalShelfLifeDays;
-        OpenFoodFactsId = openFoodFactsId;
+        Barcode = barcode;
         UsdaId = usdaId;
+        PublishedOnUtc = publishedOnUtc;
+        TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
+        TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
+        TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
+        ImageUrl = imageUrl;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
     }
     public string Name { get; private set; }
     public FoodGroup FoodGroup { get; private set; }
-    public string? Barcode { get; private set; }
+    public FoodDataType DataType { get; private set; } // "foundation_food"
+    public string? Notes { get; private set; }
+    public int? FoodCategoryId { get; private set; }
     public string? Brand { get; private set; }
-    public int TypicalShelfLifeDays { get; private set; }
-    public string? OpenFoodFactsId { get; private set; }
-    public string? UsdaId { get; private set; }
+    public string? Barcode { get; private set; }
+    public string UsdaId { get; private set; }
+    public DateTime PublishedOnUtc { get; private set; }
+    public int TypicalShelfLifeDays_Pantry { get; private set; }
+    public int TypicalShelfLifeDays_Fridge { get; private set; }
+    public int TypicalShelfLifeDays_Freezer { get; private set; }
+
+    public Uri? ImageUrl { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime UpdatedOnUtc { get; private set; }
     public static FoodReference Create(
-           string name,
-           FoodGroup foodGroup,
-           string? barcode,
-           string? brand,
-           int typicalShelfLifeDays,
-           string? openFoodFactsId,
-           string? usdaId,
-           DateTime utcNow)
+        string name,
+        FoodGroup foodGroup,
+        FoodDataType dataType,
+        string? notes,
+        int? foodCategoryId,
+        string? brand,
+        string? barcode,
+        string usdaId,
+        DateTime publishedOnUtc,
+        int? typicalShelfLifeDaysPantry,
+        int? typicalShelfLifeDaysFridge,
+        int? typicalShelfLifeDaysFreezer,
+        Uri? imageUrl,
+        DateTime utcNow)
     {
-        var id = Guid.CreateVersion7();
+        var entity = new FoodReference(
+            Guid.CreateVersion7(),
+            name,
+            foodGroup,
+            dataType,
+            notes,
+            foodCategoryId,
+            brand,
+            barcode,
+            usdaId,
+            publishedOnUtc,
+            typicalShelfLifeDaysPantry,
+            typicalShelfLifeDaysFridge,
+            typicalShelfLifeDaysFreezer, imageUrl,
+            utcNow
+        );
 
-        var foodRef = new FoodReference
-        {
-            Id = id,
-            Name = name,
-            FoodGroup = foodGroup,
-            Barcode = barcode,
-            Brand = brand,
-            TypicalShelfLifeDays = typicalShelfLifeDays,
-            OpenFoodFactsId = openFoodFactsId,
-            UsdaId = usdaId,
-            CreatedOnUtc = utcNow,
-            UpdatedOnUtc = utcNow
-        };
-
-        foodRef.Raise(new FoodReferenceCreatedDomainEvent(foodRef.Id));
-
-        return foodRef;
+        entity.Raise(new FoodReferenceCreatedDomainEvent(entity.Id));
+        return entity;
     }
     public void Update(
         string name,
         FoodGroup foodGroup,
-        string? barcode,
+        FoodDataType dataType,
+        string? notes,
+        int? foodCategoryId,
         string? brand,
-        int typicalShelfLifeDays,
-        string? openFoodFactsId,
-        string? usdaId,
+        string? barcode,
+        string usdaId,
+        DateTime publishedOnUtc,
+        int? typicalShelfLifeDaysPantry,
+        int? typicalShelfLifeDaysFridge,
+        int? typicalShelfLifeDaysFreezer,
+        Uri? imageUrl,
         DateTime utcNow)
     {
         Name = name;
         FoodGroup = foodGroup;
-        Barcode = barcode;
+        DataType = dataType;
+        Notes = notes;
+        FoodCategoryId = foodCategoryId;
         Brand = brand;
-        TypicalShelfLifeDays = typicalShelfLifeDays;
-        OpenFoodFactsId = openFoodFactsId;
+        Barcode = barcode;
         UsdaId = usdaId;
+        PublishedOnUtc = publishedOnUtc;
+        TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
+        TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
+        TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
+        ImageUrl = imageUrl;
         UpdatedOnUtc = utcNow;
 
         Raise(new FoodReferenceUpdatedDomainEvent(Id));

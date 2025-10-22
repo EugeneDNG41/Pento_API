@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251021025041_SyncFoodReferenceChanges")]
+    partial class SyncFoodReferenceChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -170,32 +173,15 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("name");
 
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("notes");
-
                     b.Property<DateTime>("PublishedOnUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("published_on_utc");
 
-                    b.Property<int>("TypicalShelfLifeDays_Freezer")
+                    b.Property<int>("TypicalShelfLifeDays")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0)
-                        .HasColumnName("typical_shelf_life_days_freezer");
-
-                    b.Property<int>("TypicalShelfLifeDays_Fridge")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("typical_shelf_life_days_fridge");
-
-                    b.Property<int>("TypicalShelfLifeDays_Pantry")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
-                        .HasDefaultValue(0)
-                        .HasColumnName("typical_shelf_life_days_pantry");
+                        .HasColumnName("typical_shelf_life_days");
 
                     b.Property<DateTime>("UpdatedOnUtc")
                         .HasColumnType("timestamp with time zone")
