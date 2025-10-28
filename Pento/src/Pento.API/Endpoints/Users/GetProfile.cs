@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
-using MediatR;
 using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
@@ -12,9 +12,9 @@ internal sealed class GetProfile : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("users/profile", async (ClaimsPrincipal claims, ISender sender, CancellationToken cancellationToken) =>
+        app.MapGet("users/profile", async (ClaimsPrincipal claims, IQueryHandler<GetUserQuery, UserResponse> handler, CancellationToken cancellationToken) =>
         {
-            Result<UserResponse> result = await sender.Send(new GetUserQuery(claims.GetUserId()), cancellationToken);
+            Result<UserResponse> result = await handler.Handle(new GetUserQuery(claims.GetUserId()), cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

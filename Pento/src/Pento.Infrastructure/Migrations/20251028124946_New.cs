@@ -40,6 +40,22 @@ public partial class New : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "grocery_list",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                household_id = table.Column<Guid>(type: "uuid", nullable: false),
+                name = table.Column<string>(type: "text", nullable: false),
+                created_by = table.Column<Guid>(type: "uuid", nullable: false),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_grocery_list", x => x.id);
+            });
+
+        migrationBuilder.CreateTable(
             name: "household",
             columns: table => new
             {
@@ -172,7 +188,7 @@ public partial class New : Migration
             columns: table => new
             {
                 id = table.Column<Guid>(type: "uuid", nullable: false),
-                household_id = table.Column<Guid>(type: "uuid", nullable: false),
+                household_id = table.Column<Guid>(type: "uuid", nullable: true),
                 avatar_url = table.Column<string>(type: "text", nullable: true),
                 email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
                 first_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -351,16 +367,13 @@ public partial class New : Migration
             {
                 id = table.Column<Guid>(type: "uuid", nullable: false),
                 food_ref_id = table.Column<Guid>(type: "uuid", nullable: false),
-                storage_id = table.Column<Guid>(type: "uuid", nullable: false),
                 compartment_id = table.Column<Guid>(type: "uuid", nullable: false),
                 custom_name = table.Column<string>(type: "text", nullable: true),
                 quantity = table.Column<decimal>(type: "numeric(10,2)", nullable: false),
                 unit_id = table.Column<Guid>(type: "uuid", nullable: false),
-                status = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                 expiration_date_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                 notes = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
-                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                source_item_id = table.Column<Guid>(type: "uuid", nullable: true)
             },
             constraints: table =>
             {
@@ -375,12 +388,6 @@ public partial class New : Migration
                     name: "fk_storage_items_food_references_food_ref_id",
                     column: x => x.food_ref_id,
                     principalTable: "food_references",
-                    principalColumn: "id",
-                    onDelete: ReferentialAction.Restrict);
-                table.ForeignKey(
-                    name: "fk_storage_items_storages_storage_id",
-                    column: x => x.storage_id,
-                    principalTable: "storages",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Restrict);
                 table.ForeignKey(
@@ -586,11 +593,6 @@ public partial class New : Migration
             column: "food_ref_id");
 
         migrationBuilder.CreateIndex(
-            name: "ix_storage_items_storage_id",
-            table: "storage_items",
-            column: "storage_id");
-
-        migrationBuilder.CreateIndex(
             name: "ix_storage_items_unit_id",
             table: "storage_items",
             column: "unit_id");
@@ -621,6 +623,9 @@ public partial class New : Migration
 
         migrationBuilder.DropTable(
             name: "giveaway_claims");
+
+        migrationBuilder.DropTable(
+            name: "grocery_list");
 
         migrationBuilder.DropTable(
             name: "meal_plan_items");

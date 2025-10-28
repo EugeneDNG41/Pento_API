@@ -1,7 +1,6 @@
-﻿using System.Security.Claims;
-using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Identity;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.SignIn;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
@@ -13,9 +12,9 @@ internal sealed class SignIn : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/sign-in", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("users/sign-in", async (Request request, ICommandHandler<SignInUserCommand, AuthToken> handler, CancellationToken cancellationToken) =>
         {
-            Result<AuthToken> result = await sender.Send(new SignInUserCommand(
+            Result<AuthToken> result = await handler.Handle(new SignInUserCommand(
                 request.Email,
                 request.Password), cancellationToken);
 

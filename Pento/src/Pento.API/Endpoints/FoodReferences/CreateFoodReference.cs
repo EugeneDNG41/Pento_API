@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -12,7 +12,7 @@ internal sealed class CreateFoodReference : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("food-references", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("food-references", async (Request request, ICommandHandler<CreateFoodReferenceCommand, Guid> handler, CancellationToken cancellationToken) =>
         {
             if (!Enum.TryParse<FoodGroup>(request.FoodGroup, true, out FoodGroup foodGroup))
             {
@@ -40,7 +40,7 @@ internal sealed class CreateFoodReference : IEndpoint
             );
 
 
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
                 id => Results.Created($"/food-references/{id}", id),

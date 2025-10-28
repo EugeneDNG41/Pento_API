@@ -12,7 +12,6 @@ using Serilog;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
-builder.AddSeqEndpoint("seq");
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddHealthChecks();
@@ -21,7 +20,7 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPresentation()
     .AddEndpoints(Assembly.GetExecutingAssembly());
-builder.AddAuthenticationAndAuthorization();
+builder.AddAuthenticationAndAuthorization().AddAspireHostedServices();
 
 builder.Services.AddHttpLogging(options =>
 {

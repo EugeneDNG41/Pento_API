@@ -68,6 +68,7 @@ public static class Extensions
                     )
                     .AddHttpClientInstrumentation()
                     .AddEntityFrameworkCoreInstrumentation()
+                    .AddRedisInstrumentation()
                     .AddNpgsql();
             });
 

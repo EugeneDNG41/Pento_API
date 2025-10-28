@@ -12,11 +12,6 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 {
     public async Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
     {
-        if (principal.HasClaim(c => c.Type == CustomClaims.Sub))
-        {
-            return principal;
-        }
-
         using IServiceScope scope = serviceScopeFactory.CreateScope();
 
         IPermissionService permissionService = scope.ServiceProvider.GetRequiredService<IPermissionService>();
@@ -32,8 +27,12 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 
         var claimsIdentity = new ClaimsIdentity();
 
-        claimsIdentity.AddClaim(new Claim(CustomClaims.Sub, result.Value.UserId.ToString()));
-        claimsIdentity.AddClaim(new Claim(CustomClaims.Household, result.Value.HouseholdId.ToString()));
+        claimsIdentity.AddClaim(new Claim(CustomClaims.User, result.Value.UserId.ToString()));
+        if (result.Value.HouseholdId is not null)
+        {
+            claimsIdentity.AddClaim(new Claim(CustomClaims.Household, result.Value.HouseholdId.ToString()!));
+        }
+        
         foreach (string roles in result.Value.Roles)
         {
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roles));

@@ -18,10 +18,13 @@ internal sealed class GetUserQueryHandler(ISqlConnectionFactory dbConnectionFact
             $"""
              SELECT
                  id AS {nameof(UserResponse.Id)},
+                 household_id AS {nameof(UserResponse.HouseholdId)},
+                 avatar_url AS {nameof(UserResponse.AvatarUrl)},
                  email AS {nameof(UserResponse.Email)},
                  first_name AS {nameof(UserResponse.FirstName)},
-                 last_name AS {nameof(UserResponse.LastName)}
-             FROM users.users
+                 last_name AS {nameof(UserResponse.LastName)},
+                 created_at AS {nameof(UserResponse.CreatedAt)}
+             FROM users
              WHERE id = @UserId
              """;
 

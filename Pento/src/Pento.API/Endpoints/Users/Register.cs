@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Identity;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Register;
 using Pento.Domain.Abstractions;
 
@@ -10,9 +10,9 @@ internal sealed class Register : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/register", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("users/register", async (Request request, ICommandHandler<RegisterUserCommand, AuthToken> handler, CancellationToken cancellationToken) =>
         {
-            Result<Guid> result = await sender.Send(new RegisterUserCommand(
+            Result<AuthToken> result = await handler.Handle(new RegisterUserCommand(
                 request.Email,
                 request.Password,
                 request.FirstName,

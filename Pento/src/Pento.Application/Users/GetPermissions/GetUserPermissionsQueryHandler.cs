@@ -22,30 +22,32 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
              SELECT DISTINCT
                  u.id AS {nameof(UserPermission.UserId)},
                  u.household_id AS {nameof(UserPermission.HouseholdId)},
-                 ur.name AS {nameof(UserPermission.Roles)}
-             FROM users.users u
-             JOIN users.user_roles ur ON ur.user_id = u.id
-             JOIN users.role_permissions rp ON rp.role_name = ur.role_name
+                 string_agg(ur.role_name, ',') AS {nameof(UserPermission.Roles)}
+             FROM users u
+             LEFT JOIN user_roles ur ON ur.user_id = u.id
              WHERE u.identity_id = @IdentityId
+             GROUP BY u.id, u.household_id;
              """;
 
-        List<UserPermission> permissions = (await connection.QueryAsync<UserPermission>(sql, request)).AsList();
+        UserPermission? permission = (await connection.QueryAsync<UserPermission>(sql, request)).SingleOrDefault();
 
-        if (!permissions.Any())
+        if (permission is null)
         {
             return Result.Failure<PermissionsResponse>(UserErrors.NotFound(request.IdentityId));
         }
-
+        HashSet<string> roles = string.IsNullOrEmpty(permission.Roles) ?
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) : 
+            permission.Roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(StringComparer.OrdinalIgnoreCase);
         return new PermissionsResponse(
-            permissions[0].UserId, 
-            permissions[0].HouseholdId, 
-            permissions.Select(p => p.Roles).ToHashSet());
+            permission.UserId, 
+            permission.HouseholdId,
+            roles);
     }
 
     internal sealed class UserPermission
     {
         internal Guid UserId { get; init; }
-        internal Guid HouseholdId { get; init; }
-        internal string Roles { get; init; }
+        internal Guid? HouseholdId { get; init; }
+        internal string? Roles { get; init; }
     }
 }

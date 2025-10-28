@@ -15,7 +15,7 @@ public sealed class User : Entity
     {
     }
 
-    public Guid HouseholdId { get; private set; }
+    public Guid? HouseholdId { get; private set; }
     public Uri? AvatarUrl { get; private set; }
     public string Email { get; private set; }
     public string FirstName { get; private set; }
@@ -28,19 +28,15 @@ public sealed class User : Entity
 
     public static User Create(string email, string firstName, string lastName, string identityId, DateTime createdAt)
     {
-        var Id = Guid.CreateVersion7();
         var user = new User
         {
-            Id = Id,
-            HouseholdId = Id,
+            Id = Guid.CreateVersion7(),
             Email = email,
             FirstName = firstName,
             LastName = lastName,
             IdentityId = identityId,
             CreatedAt = createdAt
         };
-
-        user._roles.Add(Role.BasicMember);
 
         user.Raise(new UserRegisteredDomainEvent(user.Id));
 

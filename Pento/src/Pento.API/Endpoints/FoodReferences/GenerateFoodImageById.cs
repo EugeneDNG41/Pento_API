@@ -1,5 +1,4 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.FoodReferences.GenerateImage;
 
 namespace Pento.API.Endpoints.FoodReferences;

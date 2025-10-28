@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Domain.Compartments;
 using Pento.Domain.StorageItems;
 using Pento.Domain.Storages;
 
 namespace Pento.Infrastructure.Configurations;
 
-internal sealed class StorageConfiguration : IEntityTypeConfiguration<Storage>
+internal sealed class StorageConfiguration() : IEntityTypeConfiguration<Storage>
 {
     public void Configure(EntityTypeBuilder<Storage> builder)
     {
@@ -28,10 +29,6 @@ internal sealed class StorageConfiguration : IEntityTypeConfiguration<Storage>
         builder.HasMany<Compartment>()
                .WithOne()
                .HasForeignKey(c => c.StorageId)
-               .OnDelete(DeleteBehavior.Cascade);
-        builder.HasMany<StorageItem>()
-               .WithOne()
-               .HasForeignKey(s => s.StorageId)
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

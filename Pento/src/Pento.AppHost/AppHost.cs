@@ -6,6 +6,8 @@ using Azure.Provisioning.PostgreSql;
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 IResourceBuilder<SeqResource> seq = builder.AddSeq("seq")
+    .ExcludeFromManifest()
+    .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEnvironment("ACCEPT_EULA", "Y");
 
@@ -44,7 +46,6 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", ad
 
 if (builder.ExecutionContext.IsRunMode)
 {
-    seq.ExcludeFromManifest();
     storage.RunAsEmulator(azurite => azurite.WithDataVolume());
     keycloak.WithDataVolume()
             .WithRealmImport("./realms");

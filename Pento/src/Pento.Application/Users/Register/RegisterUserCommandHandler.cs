@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Clock;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -8,12 +9,13 @@ namespace Pento.Application.Users.Register;
 
 internal sealed class RegisterUserCommandHandler(
     IIdentityProviderService identityProviderService,
+    IJwtService jwtService,
     IDateTimeProvider dateTimeProvider,
     IUserRepository userRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<RegisterUserCommand, Guid>
+    : ICommandHandler<RegisterUserCommand, AuthToken>
 {
-    public async Task<Result<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<AuthToken>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         Result<string> result = await identityProviderService.RegisterUserAsync(
             new UserModel(request.Email, request.Password, request.FirstName, request.LastName),
@@ -21,7 +23,7 @@ internal sealed class RegisterUserCommandHandler(
 
         if (result.IsFailure)
         {
-            return Result.Failure<Guid>(result.Error);
+            return Result.Failure<AuthToken>(result.Error);
         }
 
         var user = User.Create(request.Email, request.FirstName, request.LastName, result.Value, dateTimeProvider.UtcNow);
@@ -29,7 +31,7 @@ internal sealed class RegisterUserCommandHandler(
         userRepository.Insert(user);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return user.Id;
+        Result<AuthToken> tokenResult = await jwtService.GetAuthTokenAsync(user.Email, request.Password, cancellationToken);
+        return tokenResult;
     }
 }

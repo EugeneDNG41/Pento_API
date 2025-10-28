@@ -1,4 +1,8 @@
 ﻿using Dapper;
+using JasperFx;
+using JasperFx.Events;
+using Marten;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -71,6 +76,17 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
         });
+        services.AddMarten(options =>
+        {
+            options.Connection(connectionString);
+            options.AutoCreateSchemaObjects = AutoCreate.All;
+            options.Events.StreamIdentity = StreamIdentity.AsGuid;
+            // Event metadata
+            options.Events.MetadataConfig.CausationIdEnabled = true;
+            options.Events.MetadataConfig.CorrelationIdEnabled = true;
+            options.Events.MetadataConfig.HeadersEnabled = true;
+            options.Events.MetadataConfig.UserNameEnabled = true;
+        });
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
@@ -113,8 +129,15 @@ public static class DependencyInjection
         }
         services.AddSingleton<ICacheService, CacheService>();
     }
+    public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
+    {
+
+
+        return builder;
+    }
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IPermissionService, PermissionService>();
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
         builder.Services.AddOptions<KeycloakOptions>()
@@ -146,24 +169,24 @@ public static class DependencyInjection
         });
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
+            .AddJwtBearer(opt =>
         {
             if (builder.Environment.IsDevelopment())
             {
                 opt.RequireHttpsMetadata = false;
-            }          
+            }
             opt.MapInboundClaims = false;
-            opt.Audience = keycloakOptions.ClientId;
             opt.Authority = keycloakAuthority;
-            opt.MetadataAddress = $"{keycloakAuthority}/.well-known/openid-configuration"
-            ;
+            opt.Audience = keycloakOptions.ClientId;         
+            opt.TokenValidationParameters.ValidIssuer = $"{keycloakAuthority}/realms/pento";
+            opt.MetadataAddress = $"{keycloakAuthority}/realms/pento/.well-known/openid-configuration";      
         });
-        builder.Services.AddAuthorizationBuilder();
+
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IUserContext, UserContext>();
 
-
+        builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
         return builder;
     }

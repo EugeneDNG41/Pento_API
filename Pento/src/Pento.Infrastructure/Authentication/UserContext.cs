@@ -18,12 +18,11 @@ internal sealed class UserContext : IUserContext
             .User
             .GetUserId() ??
         throw new ApplicationException("User context is unavailable");
-    public Guid HouseholdId =>
+    public Guid? HouseholdId =>
         _httpContextAccessor
             .HttpContext?
             .User
-            .GetHouseholdId() ??
-        throw new ApplicationException("User context is unavailable");
+            .GetHouseholdId();
 
     public string IdentityId =>
         _httpContextAccessor

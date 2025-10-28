@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Create;
 using Pento.Domain.Abstractions;
 
@@ -9,7 +9,7 @@ internal sealed class CreateRecipe : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("recipes", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("recipes", async (Request request, ICommandHandler<CreateRecipeCommand, Guid> handler, CancellationToken cancellationToken) =>
         {
             var command = new CreateRecipeCommand(
                 request.Title,
@@ -25,7 +25,7 @@ internal sealed class CreateRecipe : IEndpoint
                 request.IsPublic
             );
 
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
                 id => Results.Created($"/recipes/{id}", id),
