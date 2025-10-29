@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Pento.Application.Storages.Create;
 
-internal class CreateStorageCommand
+internal sealed class CreateStorageCommand
 {
 }
