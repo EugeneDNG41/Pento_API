@@ -167,7 +167,7 @@ public static class DependencyInjection
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
         builder.Services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
-            httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/token");
+            httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/");
         });
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

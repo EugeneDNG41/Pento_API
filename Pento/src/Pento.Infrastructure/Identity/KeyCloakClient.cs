@@ -30,6 +30,14 @@ internal sealed class KeyCloakClient(HttpClient httpClient)
 
         httpResponseMessage.EnsureSuccessStatusCode();
     }
+    internal async Task SignOutAllSessionsAsync(string identityId, CancellationToken cancellationToken = default)
+    {
+        HttpResponseMessage httpResponseMessage = await httpClient.PostAsJsonAsync(
+            $"users/{identityId}/logout",
+            cancellationToken);
+
+        httpResponseMessage.EnsureSuccessStatusCode();
+    }
 
     private static string ExtractIdentityIdFromLocationHeader(
         HttpResponseMessage httpResponseMessage)

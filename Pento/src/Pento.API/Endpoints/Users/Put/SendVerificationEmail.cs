@@ -18,6 +18,6 @@ internal sealed class SendVerificationEmail : IEndpoint
         {
             Result result = await service.SendVerificationEmailAsync(context.IdentityId, cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags("Users");
+        }).WithTags(Tags.Users).RequireAuthorization();
     }
 }

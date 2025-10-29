@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.Authentication;
 
 namespace Pento.Infrastructure.Authentication;

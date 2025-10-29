@@ -9,4 +9,7 @@ public interface IJwtService
         string email,
         string password,
         CancellationToken cancellationToken = default);
+    Task<Result<AuthToken>> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
+    Task<Result<AuthToken>> RevokeRefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
+    Task<Result<AuthToken>> RevokeAccessTokenAsync(string accessToken, CancellationToken cancellationToken = default);
 }

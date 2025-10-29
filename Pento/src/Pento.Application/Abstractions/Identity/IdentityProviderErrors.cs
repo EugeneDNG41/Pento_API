@@ -9,5 +9,5 @@ public static class IdentityProviderErrors
         "The specified email is not unique.");
     public static readonly Error AuthenticationFailed = Error.Failure(
         "Identity.AuthenticationFailed",
-        "Failed to acquire access token do to authentication failure");
+        "Failed to acquire access token");
 }
