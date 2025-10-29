@@ -32,6 +32,15 @@ internal sealed class RegisterUserCommandHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         Result<AuthToken> tokenResult = await jwtService.GetAuthTokenAsync(user.Email, request.Password, cancellationToken);
+        if (tokenResult.IsFailure)
+        {
+            return Result.Failure<AuthToken>(tokenResult.Error);
+        }
+        Result emailSentResult = await identityProviderService.SendVerificationEmailAsync(result.Value, cancellationToken);
+        if (emailSentResult.IsFailure)
+        {
+            return Result.Failure<AuthToken>(UserErrors.VerificationEmailFailed);
+        }
         return tokenResult;
     }
 }
