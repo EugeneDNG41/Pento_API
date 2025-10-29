@@ -21,7 +21,17 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Households\" />
+    <Folder Include="Compartments\Create\" />
+    <Folder Include="Compartments\Delete\" />
+    <Folder Include="Compartments\Get\" />
+    <Folder Include="Compartments\Update\" />
+    <Folder Include="Households\Create\" />
+    <Folder Include="Households\Delete\" />
+    <Folder Include="Households\Get\" />
+    <Folder Include="Households\Update\" />
+    <Folder Include="Storages\Get\" />
+    <Folder Include="Storages\Delete\" />
+    <Folder Include="Storages\Update\" />
   </ItemGroup>
 
 </Project>

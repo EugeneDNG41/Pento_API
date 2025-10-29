@@ -65,7 +65,6 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
-
         return services;
     }
 
@@ -191,6 +190,7 @@ public static class DependencyInjection
 
         builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+
         return builder;
     }
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)

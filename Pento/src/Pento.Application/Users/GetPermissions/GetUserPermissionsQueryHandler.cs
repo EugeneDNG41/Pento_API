@@ -29,7 +29,7 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
              GROUP BY u.id, u.household_id;
              """;
 
-        UserPermission? permission = (await connection.QueryAsync<UserPermission>(sql, request)).SingleOrDefault();
+        UserPermission? permission = await connection.QuerySingleOrDefaultAsync<UserPermission>(sql, request);
 
         if (permission is null)
         {

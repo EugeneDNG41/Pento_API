@@ -28,4 +28,15 @@
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Endpoints\Households\Delete\" />
+	  <Folder Include="Endpoints\Households\Get\" />
+	  <Folder Include="Endpoints\Households\Post\" />
+	  <Folder Include="Endpoints\Households\Put\" />
+	  <Folder Include="Endpoints\Storages\Get\" />
+	  <Folder Include="Endpoints\Storages\Delete\" />
+	  <Folder Include="Endpoints\Storages\Put\" />
+	  <Folder Include="Endpoints\Storages\Post\" />
+	</ItemGroup>
+
 </Project>

@@ -21,4 +21,13 @@ public sealed class Storage : Entity
     public Guid HouseholdId { get; private set; }
     public StorageType Type { get; private set; }
     public string? Notes { get; private set; }
+    public static Storage Create(string name, Guid householdId, StorageType type, string? notes)
+    {
+        return new Storage(
+            Guid.CreateVersion7(),
+            name,
+            householdId,
+            type,
+            notes);
+    }
 }

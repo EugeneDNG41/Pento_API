@@ -11,7 +11,7 @@ internal sealed class SendVerificationEmail : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/send-verification-email", async (
+        app.MapPut("users/send-verification-email", async (
             IUserContext context,
             IIdentityProviderService service,
             CancellationToken cancellationToken) =>
