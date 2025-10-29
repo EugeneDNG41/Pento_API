@@ -4,7 +4,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Register;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Users;
+namespace Pento.API.Endpoints.Users.Post;
 
 internal sealed class Register : IEndpoint
 {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Pento.Domain.StorageItems.Events;
 
-public abstract record StorageItemEvent(Guid Id);
+public abstract record StorageItemEvent();
 public record StorageItemCreated(
     Guid Id, 
     Guid FoodRefId, 
@@ -15,128 +15,53 @@ public record StorageItemCreated(
     decimal Quantity, 
     Guid UnitId, 
     DateTime ExpirationDateUtc,
-    string? Notes) : StorageItemEvent(Id);
+    string? Notes) : StorageItemEvent;
 
 
 // Property Changes
-public record StorageItemRenamed
-{
-    public Guid Id { get; init; }
-    public string? NewCustomName { get; init; }
-}
+public record StorageItemRenamed(string? NewCustomName) : StorageItemEvent;
 
-public record StorageItemNotesChanged
-{
-    public Guid Id { get; init; }
-    public string? Notes { get; init; }
-}
+public record StorageItemNotesChanged(string? Notes) : StorageItemEvent;
 
-public record StorageItemExpirationChanged
-{
-    public Guid Id { get; init; }
-    public DateTime ExpirationDateUtc { get; init; }
-}
+public record StorageItemExpirationChanged(DateTime ExpirationDateUtc) : StorageItemEvent;
 
-public record StorageItemMoved
-{
-    public Guid Id { get; init; }
-    public Guid CompartmentId { get; init; }
-}
+public record StorageItemMoved(Guid CompartmentId) : StorageItemEvent;
 
-public record StorageItemQuantityAdjusted
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-}
-
-public record StorageItemUnitChanged
-{
-    public Guid Id { get; init; }
-    public Guid UnitId { get; init; }
-    public decimal ConvertedQuantity { get; init; }
-}
-
+public record StorageItemQuantityAdjusted(decimal Quantity) : StorageItemEvent;
+public record StorageItemUnitChanged(Guid UnitId, decimal ConvertedQuantity) : StorageItemEvent;
 // Reservations
-public record StorageItemReserved
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-    public Guid ForId { get; init; }
-    public ReservedForType ForType { get; init; }
+public record StorageItemReservedForMealPlan(decimal Quantity, Guid MealPlanId, DateTime? ReservationExpiresOnUtc) : StorageItemEvent;
+public record StorageItemReservedForMealPlanCancelled(decimal Quantity, Guid MealPlanId) : StorageItemEvent;
+public record StorageItemReservedForMealPlanConsumed(decimal Quantity, Guid MealPlanId) : StorageItemEvent;
+public record StorageItemReservedForRecipe(decimal Quantity, Guid RecipeId, DateTime? ReservationExpiresOnUtc) : StorageItemEvent;
+public record StorageItemReservedForRecipeCancelled(decimal Quantity, Guid RecipeId) : StorageItemEvent;
+public record StorageItemReservedForRecipeConsumed(decimal Quantity, Guid RecipeId) : StorageItemEvent;
+public record StorageItemReservedForDonation(decimal Quantity, Guid DonationId, DateTime? ReservationExpiresOnUtc) : StorageItemEvent;
+public record StorageItemReservedForDonationCancelled(decimal Quantity, Guid DonationId): StorageItemEvent;
+public record StorageItemReservedForDonationDonated(decimal Quantity, Guid DonationId, Guid RecipientHouseholdId): StorageItemEvent;
 
-    public DateTime? ReservationExpiresOnUtc { get; init; }
-}
+public record StorageItemConsumed(decimal Quantity): StorageItemEvent;
+public record StorageItemDisposed(decimal Quantity, DisposalReason Reason): StorageItemEvent;
 
-public record StorageItemReservationCancelled
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-    public Guid ForId { get; init; }
-    public ReservedForType ForType { get; init; }
-    public string? Reason { get; init; }
-}
+public record StorageItemSplit(decimal Quantity): StorageItemEvent;
 
-// Status Changes
-public record StorageItemConsumed
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-    public Guid? RecipeId { get; init; }
-    public Guid? MealPlanId { get; init; }
-}
+public record StorageItemCreatedFromSplit(     
+     Guid Id,
+     Guid SourceStorageItemId,
+     Guid FoodRefId,
+     Guid CompartmentId,
+     decimal Quantity,
+     Guid UnitId,
+     DateTime ExpirationDateUtc,
+     string? Notes
+): StorageItemEvent;
 
-public record StorageItemDonated
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-    public Guid DonationId { get; init; }
-    public Guid RecipientHouseholdId { get; init; }
-}
-
-public record StorageItemDisposed
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-    public DisposalReason Reason { get; init; }
-}
-
-
-// Split & Merge Operations
-public record StorageItemSplit
-{
-    public Guid Id { get; init; }
-    public decimal Quantity { get; init; }
-}
-
-public record StorageItemCreatedFromSplit
-{
-    public Guid Id { get; init; }
-    public Guid SourceStorageItemId { get; init; }
-    public Guid FoodRefId { get; init; }
-    public Guid CompartmentId { get; init; }
-    public decimal Quantity { get; init; }
-    public Guid UnitId { get; init; }
-    public DateTime ExpirationDateUtc { get; init; }
-    public string? Notes { get; init; }
-}
-
-public record StorageItemMerged
-{
-    public Guid Id { get; init; }
-    public Guid SourceItemId { get; init; }
-    public decimal Quantity { get; init; }
-}
-public record StorageItemRemovedByMerge
-{
-    public Guid Id { get; init; }
-    public Guid TargetItemId { get; init; }
-    public decimal Quantity { get; init; }
-}
-
+public record StorageItemMerged(Guid SourceItemId, Guid TargetItemId, decimal Quantity): StorageItemEvent;
+public record StorageItemRemovedByMerge(Guid TargetItemId, decimal Quantity): StorageItemEvent;
 public enum DisposalReason
 {
-    Expired,
-    Spoiled,
-    Damaged,
+    Expired, //due to past expiration date
+    Spoiled, // due to spoilage before expiration date
+    Damaged, // due to damage
     Other
 }

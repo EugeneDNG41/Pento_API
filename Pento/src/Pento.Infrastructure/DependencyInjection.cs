@@ -79,7 +79,6 @@ public static class DependencyInjection
         services.AddMarten(options =>
         {
             options.Connection(connectionString);
-            options.AutoCreateSchemaObjects = AutoCreate.All;
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
             // Event metadata
             options.Events.MetadataConfig.CausationIdEnabled = true;
@@ -132,8 +131,11 @@ public static class DependencyInjection
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {
 
+#pragma warning disable S125 // Sections of code should not be commented out
+                            //builder.AddSeqEndpoint("seq");
 
         return builder;
+#pragma warning restore S125 // Sections of code should not be commented out
     }
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
@@ -154,7 +156,8 @@ public static class DependencyInjection
             })
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
+        builder.Services.AddFluentEmail("");
+        builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddTransient<KeyCloakAuthDelegatingHandler>();
         string keycloakAuthority = builder.Environment.IsDevelopment() ? keycloakOptions.Authority : keycloakOptions.Authority.Replace("http://", "https://");
         builder.Services

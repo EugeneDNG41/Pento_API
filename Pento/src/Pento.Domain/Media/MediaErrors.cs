@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Pento.Domain.Images;
 
-public static class ImageErrors
+public static class MediaErrors
 {
 }

@@ -21,7 +21,7 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="StorageItems\Projections\" />
+    <Folder Include="Households\" />
   </ItemGroup>
 
 </Project>

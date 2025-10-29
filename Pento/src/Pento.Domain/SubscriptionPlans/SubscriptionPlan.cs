@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pento.Domain.Plans;
+namespace Pento.Domain.SubscriptionPlans;
 
 public sealed class SubscriptionPlan
 {

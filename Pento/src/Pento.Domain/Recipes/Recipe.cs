@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Images;
 using Pento.Domain.Recipes.Events;
 
 namespace Pento.Domain.Recipes;

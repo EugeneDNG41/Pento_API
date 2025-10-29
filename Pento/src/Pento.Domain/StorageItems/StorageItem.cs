@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Images;
 using Pento.Domain.StorageItems.Events;
+using Pento.Domain.Users;
 
 namespace Pento.Domain.StorageItems;
 public sealed class StorageItem : Entity
@@ -36,6 +38,7 @@ public sealed class StorageItem : Entity
     public Guid UnitId { get; private set; }
     public DateTime ExpirationDateUtc { get; private set; }
     public string? Notes { get; private set; }
+    
     public Guid? SourceItemId { get; private set; } // If created from split
     public void Apply(StorageItemCreated @event) 
     {
@@ -79,12 +82,31 @@ public sealed class StorageItem : Entity
         Quantity = @event.ConvertedQuantity;
     }
 
-    public void Apply(StorageItemReserved @event)
+    public void Apply(StorageItemReservedForRecipe @event)
     {
         Quantity -= @event.Quantity;
     }
-
-    public void Apply(StorageItemReservationCancelled @event)
+    public void Apply(StorageItemReservedForMealPlan @event)
+    {
+        Quantity -= @event.Quantity;
+    }
+    public void Apply(StorageItemReservedForDonation @event)
+    {
+        Quantity -= @event.Quantity;
+    }
+    public void Apply(StorageItemReservedForRecipeCancelled @event)
+    {
+        Quantity += @event.Quantity;
+    }
+    public void Apply(StorageItemReservedForMealPlanCancelled @event)
+    {
+        Quantity += @event.Quantity;
+    }
+    public void Apply(StorageItemReservedForDonationCancelled @event)
+    {
+        Quantity += @event.Quantity;
+    }
+    public void Apply(StorageItemReservedForRecipeConsumed @event)
     {
         Quantity += @event.Quantity;
     }
@@ -93,23 +115,15 @@ public sealed class StorageItem : Entity
     {
         Quantity -= @event.Quantity;
     }
-
-    public void Apply(StorageItemDonated @event)
-    {
-        Quantity -= @event.Quantity;
-    }
-
     public void Apply(StorageItemDisposed @event)
     {
         Quantity -= @event.Quantity;
     }
 
-
     public void Apply(StorageItemSplit @event)
     {
         Quantity -= @event.Quantity;
     }
-
     public void Apply(StorageItemCreatedFromSplit @event)
     {
         SourceItemId = @event.SourceStorageItemId;
@@ -120,7 +134,6 @@ public sealed class StorageItem : Entity
         ExpirationDateUtc = @event.ExpirationDateUtc;
         Notes = @event.Notes;
     }
-
     public void Apply(StorageItemMerged @event)
     {
         Quantity += @event.Quantity;
