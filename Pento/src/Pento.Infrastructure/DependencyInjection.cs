@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -18,9 +19,8 @@ using Pento.Application.Abstractions.Caching;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
+using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
-using Pento.Application.FoodReferences.Enrich;
-using Pento.Application.FoodReferences.GenerateImage;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -44,6 +44,7 @@ using Pento.Infrastructure.Caching;
 using Pento.Infrastructure.Configurations;
 using Pento.Infrastructure.Data;
 using Pento.Infrastructure.Email;
+using Pento.Infrastructure.File;
 using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
@@ -112,6 +113,9 @@ public static class DependencyInjection
         services.AddScoped<IPossibleUnitRepository, PossibleUnitRepository>();
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
+        services.AddScoped<IBlobService, BlobService>();
+        services.AddScoped<IUnsplashImageService, UnsplashImageService>();
+        services.AddScoped<IPixabayImageService,PixabayImageService>();
 
     }
 
@@ -133,7 +137,7 @@ public static class DependencyInjection
 
 #pragma warning disable S125 // Sections of code should not be commented out
                             //builder.AddSeqEndpoint("seq");
-
+        builder.AddAzureBlobServiceClient("blobs");
         return builder;
 #pragma warning restore S125 // Sections of code should not be commented out
     }

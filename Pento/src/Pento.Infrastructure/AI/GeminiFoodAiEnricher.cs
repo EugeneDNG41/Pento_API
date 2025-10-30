@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Pento.Application.Abstractions.File;
 using Pento.Application.FoodReferences.Enrich;
 
 namespace Pento.Infrastructure.AI;
@@ -22,88 +23,69 @@ internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration confi
     {
         string apiKey = config["Gemini:ApiKey"] ?? throw new InvalidOperationException("Gemini:ApiKey missing");
 
-        // STEP 1: Get summary + expiry days
-        string infoUrl = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}";
-        string prompt = $@"
-You are an expert food data enricher. Given the food item details, return ONLY a compact JSON object with:
-- short_name (string, ≤3 words)
-- suggested_expiry_days (int, realistic shelf-life)
-Return strictly JSON, no markdown or explanation.
+        string modelUrl =
+            $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={apiKey}";
 
-Name: {ask.Name}
-Group: {ask.FoodGroup}
-DataType: {ask.DataType}
-";
+        string prompt = $@"
+            You are a professional food storage and safety expert.
+            Given the following food details, respond STRICTLY with a compact JSON object only (no explanations, no markdown)
+            in the following format:
+            {{
+              ""shelf_life_days"": {{
+                ""pantry"": <integer>,
+                ""fridge"": <integer>,
+                ""freezer"": <integer>
+              }}
+            }}
+            Each value should represent a safe and realistic average number of days the food can be stored. 
+            **Crucially, ensure the following hierarchy holds: freezer >= fridge >= pantry.**
+
+            Name: {ask.Name}
+            Group: {ask.FoodGroup}
+            Notes : {ask.Notes}
+            ";
 
         var body = new
         {
             contents = new[]
             {
-                new {
+                new
+                {
                     parts = new[] { new { text = prompt } }
                 }
             }
         };
 
-        using var req = new HttpRequestMessage(HttpMethod.Post, infoUrl)
+        using var req = new HttpRequestMessage(HttpMethod.Post, modelUrl)
         {
             Content = JsonContent.Create(body)
         };
 
         HttpResponseMessage res = await http.SendAsync(req, ct);
         res.EnsureSuccessStatusCode();
+
         GeminiResponse? root = await res.Content.ReadFromJsonAsync<GeminiResponse>(cancellationToken: ct);
         string text = root?.Candidates?.FirstOrDefault()?.Content?.Parts?.FirstOrDefault()?.Text ?? string.Empty;
 
         text = CleanGeminiOutput(text);
-        var dto = new AiDto();
+
+        var dto = new ShelfLifeDto();
         try
         {
-            dto = JsonSerializer.Deserialize<AiDto>(text, JsonOpts) ?? new AiDto();
+            dto = JsonSerializer.Deserialize<ShelfLifeDto>(text, JsonOpts) ?? new ShelfLifeDto();
         }
         catch (JsonException ex)
         {
-            Console.WriteLine($"⚠️ JSON parse failed: {ex.Message}");
+            Console.WriteLine($"JSON parse failed: {ex.Message}");
             Console.WriteLine($"Raw text: {text}");
-            dto.short_name = "ParseError";
+            dto.shelf_life_days = new ShelfLifeDays { pantry = 0, fridge = 0, freezer = 0 };
         }
 
-        // STEP 2: Generate realistic image
-        string imageModelUrl = $"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key={apiKey}";
-        string imagePrompt = $"Generate a realistic food photo of {dto.short_name ?? ask.Name}, studio lighting, clean background.";
-        var imgBody = new
-        {
-            contents = new[]
-            {
-                new { parts = new[] { new { text = imagePrompt } } }
-            }
-        };
-
-        string? generatedImageUrl = null;
-        try
-        {
-            HttpResponseMessage imgRes = await http.PostAsJsonAsync(imageModelUrl, imgBody, ct);
-            imgRes.EnsureSuccessStatusCode();
-            JsonElement imgJson = await imgRes.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: ct);
-
-            // Gemini image API returns base64 sometimes:
-            if (imgJson.TryGetProperty("candidates", out JsonElement candidates) &&
-                candidates[0].GetProperty("content").GetProperty("parts")[0].TryGetProperty("inline_data", out JsonElement inlineData))
-            {
-                // Convert base64 to temporary data URL (or send to blob service later)
-                generatedImageUrl = "data:image/jpeg;base64," + inlineData.GetProperty("data").GetString();
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"⚠️ Image generation failed: {ex.Message}");
-        }
-
-        // STEP 3: Return full enrichment
         return new FoodEnrichmentResult(
-            ShortName: dto.short_name ?? ask.Name,
-            SuggestedExpiryDays: dto.suggested_expiry_days ?? 0,
-            ImageUrl: generatedImageUrl != null ? new Uri(generatedImageUrl) : null
+            Id: Guid.NewGuid(),
+            TypicalShelfLifeDays_Pantry: dto.shelf_life_days?.pantry ?? 0,
+            TypicalShelfLifeDays_Fridge: dto.shelf_life_days?.fridge ?? 0,
+            TypicalShelfLifeDays_Freezer: dto.shelf_life_days?.freezer ?? 0
         );
     }
 
@@ -119,7 +101,9 @@ DataType: {ask.DataType}
                 text = text.Replace("json", "", StringComparison.OrdinalIgnoreCase);
             }
         }
+
         text = text.Trim();
+
         if (!text.StartsWith('{'))
         {
             int braceIndex = text.IndexOf('{');
@@ -128,6 +112,7 @@ DataType: {ask.DataType}
                 text = text.Substring(braceIndex);
             }
         }
+
         if (!text.EndsWith('}'))
         {
             int braceEnd = text.LastIndexOf('}');
@@ -136,13 +121,21 @@ DataType: {ask.DataType}
                 text = text.Substring(0, braceEnd + 1);
             }
         }
+
         return text.Trim();
     }
 
-    private sealed class AiDto
+
+    private sealed class ShelfLifeDto
     {
-        public string? short_name { get; set; }
-        public int? suggested_expiry_days { get; set; } = null!;
+        public ShelfLifeDays? shelf_life_days { get; set; }
+    }
+
+    private sealed class ShelfLifeDays
+    {
+        public int pantry { get; set; }
+        public int fridge { get; set; }
+        public int freezer { get; set; }
     }
 
     private sealed class GeminiResponse

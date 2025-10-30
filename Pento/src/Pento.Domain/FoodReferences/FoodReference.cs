@@ -132,5 +132,22 @@ public sealed class FoodReference : Entity
 
         Raise(new FoodReferenceUpdatedDomainEvent(Id));
     }
+    public void UpdateImageUrl(Uri newUrl, DateTime utcNow)
+    {
+        ImageUrl = newUrl;
+        UpdatedOnUtc = utcNow;
+
+        Raise(new FoodReferenceUpdatedDomainEvent(Id));
+    }
+    public void UpdateShelfLifeDays(int pantryDays, int fridgeDays, int freezerDays, DateTime updatedAtUtc)
+    {
+        TypicalShelfLifeDays_Pantry = pantryDays;
+        TypicalShelfLifeDays_Fridge = fridgeDays;
+        TypicalShelfLifeDays_Freezer = freezerDays;
+        UpdatedOnUtc = updatedAtUtc;
+        Raise(new FoodReferenceUpdatedDomainEvent(Id));
+
+    }
+
 }
 

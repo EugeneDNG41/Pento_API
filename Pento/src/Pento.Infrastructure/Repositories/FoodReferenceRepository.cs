@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Shared;
 
 namespace Pento.Infrastructure.Repositories;
 internal sealed class FoodReferenceRepository : Repository<FoodReference>, IFoodReferenceRepository
@@ -37,5 +38,13 @@ internal sealed class FoodReferenceRepository : Repository<FoodReference>, IFood
         CancellationToken cancellationToken = default)
     {
         await DbContext.Set<FoodReference>().AddAsync(foodReference, cancellationToken);
+    }
+    public async Task<IReadOnlyList<FoodReference>> GetAllWithoutImageAsync(int limit, CancellationToken cancellationToken = default)
+    {
+        return await DbContext.FoodReferences
+           .Where(f => f.ImageUrl == null)
+           .OrderBy(f => f.CreatedOnUtc)
+           .Take(limit)
+           .ToListAsync(cancellationToken);
     }
 }
