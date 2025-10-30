@@ -32,32 +32,20 @@ internal sealed class CreateRecipeCommandHandler(
             return Result.Failure<Guid>(RecipeErrors.InvalidServings);
         }
 
-        DifficultyLevel? difficultyLevel = null;
-        if (!string.IsNullOrWhiteSpace(request.DifficultyLevel))
-        {
-            if (!Enum.TryParse<DifficultyLevel>(request.DifficultyLevel, true, out DifficultyLevel parsedLevel))
-            {
-                return Result.Failure<Guid>(RecipeErrors.InvalidDifficulty);
-            }
-            difficultyLevel = parsedLevel;
-        }
 
-        DateTime utcNow = DateTime.UtcNow;
+        var time = TimeRequirement.Create(request.PrepTimeMinutes, request.CookTimeMinutes);
 
-        var recipeTime = TimeRequirement.Create(request.PrepTimeMinutes, request.CookTimeMinutes);
-
-        var recipe = new Recipe(
-            Guid.NewGuid(),
+        var recipe = Recipe.Create(
             request.Title,
             request.Description,
-            recipeTime,
+            time,
             request.Notes,
             request.Servings,
-            difficultyLevel,
+            request.DifficultyLevel,
             request.ImageUrl,
             request.CreatedBy,
             request.IsPublic,
-            utcNow
+            DateTime.UtcNow
         );
 
         await recipeRepository.AddAsync(recipe, cancellationToken);

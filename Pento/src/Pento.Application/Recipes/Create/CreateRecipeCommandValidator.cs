@@ -28,13 +28,6 @@ public sealed class CreateRecipeCommandValidator : AbstractValidator<CreateRecip
             .GreaterThan(0)
             .WithMessage("Servings must be greater than zero.");
 
-        RuleFor(x => x.DifficultyLevel)
-            .Must(d => string.IsNullOrEmpty(d))
-            .WithMessage("Invalid difficulty level. Allowed values: Easy, Medium, Hard.");
-
-        RuleFor(x => x.CreatedBy)
-            .NotEmpty()
-            .WithMessage("CreatedBy user ID is required.");
 
         RuleFor(x => x.ImageUrl)
             .Must(uri => uri == null || uri.IsAbsoluteUri)

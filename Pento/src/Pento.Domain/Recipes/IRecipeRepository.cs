@@ -14,6 +14,7 @@ public interface IRecipeRepository
     Task<List<Recipe>> GetByCreatorAsync(Guid createdBy, CancellationToken cancellationToken = default);
 
     Task AddAsync(Recipe recipe, CancellationToken cancellationToken = default);
+    Task UpdateAsync(Recipe recipe, CancellationToken cancellationToken = default);
 
     void Remove(Recipe recipe);
 }

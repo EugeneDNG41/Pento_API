@@ -2,8 +2,9 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Create;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Recipes;
 
-namespace Pento.API.Endpoints.Recipes;
+namespace Pento.API.Endpoints.Recipes.Post;
 
 internal sealed class CreateRecipe : IEndpoint
 {
@@ -19,7 +20,6 @@ internal sealed class CreateRecipe : IEndpoint
                 request.Notes,
                 request.Servings,
                 request.DifficultyLevel,
-                request.CaloriesPerServing,
                 request.ImageUrl is not null ? new Uri(request.ImageUrl) : null,
                 request.CreatedBy,
                 request.IsPublic
@@ -43,8 +43,7 @@ internal sealed class CreateRecipe : IEndpoint
         public int CookTimeMinutes { get; init; }
         public string? Notes { get; init; }
         public int? Servings { get; init; }
-        public string? DifficultyLevel { get; init; }
-        public int? CaloriesPerServing { get; init; }
+        public DifficultyLevel? DifficultyLevel { get; init; }
         public string? ImageUrl { get; init; } 
         public Guid? CreatedBy { get; init; }
         public bool IsPublic { get; init; }
