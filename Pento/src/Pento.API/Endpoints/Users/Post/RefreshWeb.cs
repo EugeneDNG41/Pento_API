@@ -8,11 +8,11 @@ using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Post;
 
-internal sealed class Refresh : IEndpoint
+internal sealed class RefreshWeb : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/refresh", async (
+        app.MapPost("users/web-refresh", async (
             HttpContext context,
             ICommandHandler<RefreshTokenCommand, AuthToken> handler,
             CancellationToken cancellationToken) =>
@@ -21,7 +21,19 @@ internal sealed class Refresh : IEndpoint
             Result<AuthToken> result = await handler.Handle(
                 new RefreshTokenCommand(refreshToken),
                 cancellationToken);
-            return result.Match(Results.Ok, CustomResults.Problem);
+            if (result.IsSuccess)
+            {
+                context.Response.Cookies.Append("refreshToken", result.Value.RefreshToken,
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                });
+            }
+            return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
         }).AllowAnonymous().WithTags(Tags.Users).WithSummary("Refresh user authentication token");
     }
 }

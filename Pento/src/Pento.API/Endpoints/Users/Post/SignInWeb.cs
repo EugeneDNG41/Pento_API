@@ -8,11 +8,11 @@ using Pento.Infrastructure.Authentication;
 
 namespace Pento.API.Endpoints.Users.Post;
 
-internal sealed class SignIn : IEndpoint
+internal sealed class SignInWeb : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/sign-in", async (
+        app.MapPost("users/web-sign-in", async (
             HttpContext context,
             Request request, 
             ICommandHandler<SignInUserCommand, AuthToken> handler, 

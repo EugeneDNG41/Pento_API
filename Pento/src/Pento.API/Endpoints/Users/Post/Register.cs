@@ -21,20 +21,8 @@ internal sealed class Register : IEndpoint
                 request.Password,
                 request.FirstName,
                 request.LastName), cancellationToken);
-            if (result.IsSuccess)
-            {
-                context.Response.Cookies.Append("refreshToken", result.Value.RefreshToken,
-                new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
-                    HttpOnly = true,
-                    IsEssential = true,
-                    Secure = true,
-                    SameSite = SameSiteMode.None
-                });
-            }
             
-            return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .AllowAnonymous()
         .WithTags(Tags.Users);
