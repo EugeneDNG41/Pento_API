@@ -33,6 +33,7 @@ internal sealed class CreateFoodReferenceCommandHandler(
             request.TypicalShelfLifeDays_Pantry,
             request.TypicalShelfLifeDays_Fridge,
             request.TypicalShelfLifeDays_Freezer,
+            request.AddedBy,
             request.ImageUrl,
             utcNow
         );

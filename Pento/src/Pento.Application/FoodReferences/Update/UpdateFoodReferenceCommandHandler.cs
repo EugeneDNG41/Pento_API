@@ -44,6 +44,7 @@ internal sealed class UpdateFoodReferenceCommandHandler(
             typicalShelfLifeDaysPantry: request.TypicalShelfLifeDays_Pantry,
             typicalShelfLifeDaysFridge: request.TypicalShelfLifeDays_Fridge,
             typicalShelfLifeDaysFreezer: request.TypicalShelfLifeDays_Freezer,
+            addedBy: null,
             imageUrl: request.ImageUrl,
             utcNow: DateTime.UtcNow
         );

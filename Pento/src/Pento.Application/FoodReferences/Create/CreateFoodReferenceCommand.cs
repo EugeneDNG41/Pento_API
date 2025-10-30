@@ -21,6 +21,7 @@ public sealed record CreateFoodReferenceCommand(
     int? TypicalShelfLifeDays_Pantry,
     int? TypicalShelfLifeDays_Fridge,
     int? TypicalShelfLifeDays_Freezer,
+    Guid? AddedBy,
     Uri? ImageUrl
 ) : ICommand<Guid>;
 

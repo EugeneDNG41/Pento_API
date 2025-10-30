@@ -27,6 +27,7 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
+        Guid? addedBy,
         Uri? imageUrl,
         DateTime createdOnUtc)
         : base(id)
@@ -43,6 +44,7 @@ public sealed class FoodReference : Entity
         TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
         TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
+        AddedBy= addedBy;
         ImageUrl = imageUrl;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
@@ -59,6 +61,7 @@ public sealed class FoodReference : Entity
     public int TypicalShelfLifeDays_Pantry { get; private set; }
     public int TypicalShelfLifeDays_Fridge { get; private set; }
     public int TypicalShelfLifeDays_Freezer { get; private set; }
+    public Guid? AddedBy { get; private set; }
 
     public Uri? ImageUrl { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
@@ -76,6 +79,7 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
+        Guid? addedBy,
         Uri? imageUrl,
         DateTime utcNow)
     {
@@ -92,7 +96,9 @@ public sealed class FoodReference : Entity
             publishedOnUtc,
             typicalShelfLifeDaysPantry,
             typicalShelfLifeDaysFridge,
-            typicalShelfLifeDaysFreezer, imageUrl,
+            typicalShelfLifeDaysFreezer,
+            addedBy,
+            imageUrl,
             utcNow
         );
 
@@ -112,6 +118,7 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
+        Guid? addedBy,
         Uri? imageUrl,
         DateTime utcNow)
     {
@@ -127,6 +134,7 @@ public sealed class FoodReference : Entity
         TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
         TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
+        AddedBy = addedBy;
         ImageUrl = imageUrl;
         UpdatedOnUtc = utcNow;
 

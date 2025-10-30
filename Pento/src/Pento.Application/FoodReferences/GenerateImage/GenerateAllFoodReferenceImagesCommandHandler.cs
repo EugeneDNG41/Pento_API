@@ -62,7 +62,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
                 };
 
                 Result<string> uploadResult =
-                    await blobService.UploadFileAsync(formFile, "images", cancellationToken);
+                    await blobService.UploadImageAsync(formFile, cancellationToken);
                 if (uploadResult.IsFailure)
                 {
                     continue;

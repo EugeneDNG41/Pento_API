@@ -29,6 +29,7 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
                 typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,
                 typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
                 typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer,
+                added_by AS AddedBy,
                 image_url AS ImageUrl,
                 brand AS Brand,
                 barcode AS Barcode,

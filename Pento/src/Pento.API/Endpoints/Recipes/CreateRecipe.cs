@@ -46,7 +46,7 @@ internal sealed class CreateRecipe : IEndpoint
         public string? DifficultyLevel { get; init; }
         public int? CaloriesPerServing { get; init; }
         public string? ImageUrl { get; init; } 
-        public Guid CreatedBy { get; init; }
+        public Guid? CreatedBy { get; init; }
         public bool IsPublic { get; init; }
     }
 }

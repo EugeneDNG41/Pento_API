@@ -62,6 +62,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 typicalShelfLifeDaysPantry: 0,
                 typicalShelfLifeDaysFridge: 0,
                 typicalShelfLifeDaysFreezer: 0,
+                addedBy:null,
                 imageUrl: null,
                 utcNow: DateTime.UtcNow
             );
