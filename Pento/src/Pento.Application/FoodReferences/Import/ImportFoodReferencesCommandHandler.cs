@@ -89,16 +89,17 @@ internal sealed class ImportFoodReferencesCommandHandler(
         return categoryId switch
         {
             1 => FoodGroup.Dairy,
-            5 or 10 or 13 or 17 => FoodGroup.Meat,
-            15 => FoodGroup.Seafood,
-            9 or 11 => FoodGroup.FruitsVegetables,
-            20 => FoodGroup.CerealGrainsPasta,
-            16 => FoodGroup.LegumesNutsSeeds,
+            2 or 6 => FoodGroup.Condiments,
+            3 => FoodGroup.MixedDishes,
             4 => FoodGroup.FatsOils,
-            19 => FoodGroup.Confectionery,
+            5 or 7 or 10 or 13 or 17 => FoodGroup.Meat,
+            8 or 18 or 20 => FoodGroup.CerealGrainsPasta,
+            9 or 11 => FoodGroup.FruitsVegetables,
+            12 or 16 => FoodGroup.LegumesNutsSeeds,
             14 or 28 => FoodGroup.Beverages,
-            6 => FoodGroup.Condiments,
-            21 or 22 or 23 => FoodGroup.MixedDishes,
+            15 => FoodGroup.Seafood,
+            19 or 23 => FoodGroup.Confectionery,
+            21 or 22 or 24 or 25 or 26 or 27 => FoodGroup.MixedDishes,
             _ => FoodGroup.MixedDishes
         };
     }

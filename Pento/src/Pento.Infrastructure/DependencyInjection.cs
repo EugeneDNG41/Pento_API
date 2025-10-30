@@ -13,9 +13,8 @@ using Pento.Application.Abstractions.Caching;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
+using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
-using Pento.Application.FoodReferences.Enrich;
-using Pento.Application.FoodReferences.GenerateImage;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -39,6 +38,7 @@ using Pento.Infrastructure.Caching;
 using Pento.Infrastructure.Configurations;
 using Pento.Infrastructure.Data;
 using Pento.Infrastructure.Email;
+using Pento.Infrastructure.File;
 using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
@@ -97,6 +97,9 @@ public static class DependencyInjection
         services.AddScoped<IPossibleUnitRepository, PossibleUnitRepository>();
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
+        services.AddScoped<IBlobService, BlobService>();
+        services.AddScoped<IUnsplashImageService, UnsplashImageService>();
+        services.AddScoped<IPixabayImageService,PixabayImageService>();
 
     }
 
@@ -112,6 +115,12 @@ public static class DependencyInjection
             services.AddDistributedMemoryCache();
         }
         services.AddSingleton<ICacheService, CacheService>();
+    }
+
+    public static WebApplicationBuilder AddBlob(this WebApplicationBuilder builder)
+    {
+        builder.AddAzureBlobServiceClient("blobs");
+        return builder;
     }
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {

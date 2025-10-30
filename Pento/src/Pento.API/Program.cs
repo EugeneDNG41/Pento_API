@@ -22,7 +22,7 @@ builder.Services
     .AddPresentation()
     .AddEndpoints(Assembly.GetExecutingAssembly());
 builder.AddAuthenticationAndAuthorization();
-
+builder.AddBlob();
 builder.Services.AddHttpLogging(options =>
 {
     options.LoggingFields = HttpLoggingFields.RequestMethod |

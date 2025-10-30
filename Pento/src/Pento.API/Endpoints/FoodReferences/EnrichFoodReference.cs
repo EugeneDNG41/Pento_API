@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Pento.API.Extensions;
+using Pento.Application.Abstractions.File;
 using Pento.Application.FoodReferences.Enrich;
 using Pento.Domain.Abstractions;
 
@@ -9,30 +10,28 @@ internal sealed class EnrichFoodReference : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("food-references/enrich", async (
-            EnrichRequest request,
-            IFoodAiEnricher enricher,
-            CancellationToken cancellationToken) =>
-        {
-            FoodEnrichmentResult result = await enricher.EnrichAsync(
-                new FoodEnrichmentAsk(
-                    request.Name,
-                    request.FoodGroup,
-                    request.DataType
-                ),
-                cancellationToken
-            );
+        app.MapPost("food-references/{id:guid}/auto-enrich-shelf-life",
+            async (Guid id, ISender sender, CancellationToken cancellationToken) =>
+            {
+                var cmd = new EnrichFoodReferenceShelfLifeCommand(id);
 
-            return Results.Ok(result);
-        })
-        .WithTags(Tags.FoodReferences);
+                Result<FoodEnrichmentResult> result = await sender.Send(cmd, cancellationToken);
 
-    }
-
-    internal sealed class EnrichRequest
-    {
-        public string Name { get; init; } = string.Empty;
-        public string FoodGroup { get; init; } = string.Empty;
-        public string DataType { get; init; } = "foundation_food";
+                return result.Match(
+                    value => Results.Ok(new
+                    {
+                        FoodReferenceId = id,
+                        Updated = true,
+                        ShelfLife = new
+                        {
+                            Pantry = value.TypicalShelfLifeDays_Pantry,
+                            Fridge = value.TypicalShelfLifeDays_Fridge,
+                            Freezer = value.TypicalShelfLifeDays_Freezer
+                        }
+                    }),
+                    error => CustomResults.Problem(error)
+                );
+            })
+            .WithTags(Tags.FoodReferences);
     }
 }
