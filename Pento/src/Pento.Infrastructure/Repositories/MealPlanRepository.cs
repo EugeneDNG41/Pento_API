@@ -14,17 +14,6 @@ internal sealed class MealPlanRepository : Repository<MealPlan>, IMealPlanReposi
     {
     }
 
-
-    public async Task<IReadOnlyList<MealPlan>> GetByHouseholdIdAsync(
-        Guid householdId,
-        CancellationToken cancellationToken = default)
-    {
-        return await DbContext
-            .Set<MealPlan>()
-            .Where(m => m.HouseholdId == householdId)
-            .ToListAsync(cancellationToken);
-    }
-
     public async Task<MealPlan?> GetByNameAsync(
         Guid householdId,
         string name,

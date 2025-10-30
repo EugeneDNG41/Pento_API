@@ -9,8 +9,6 @@ public interface IMealPlanRepository
 {
     Task<MealPlan?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<MealPlan>> GetByHouseholdIdAsync(Guid householdId, CancellationToken cancellationToken = default);
-
     Task<MealPlan?> GetByNameAsync(Guid householdId, string name, CancellationToken cancellationToken = default);
 
     Task AddAsync(MealPlan mealPlan, CancellationToken cancellationToken = default);

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
+using Pento.Domain.Recipes;
 
 namespace Pento.Infrastructure.Configurations;
 internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
@@ -20,20 +23,35 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
         builder.Property(mp => mp.HouseholdId)
             .IsRequired();
 
-        builder.Property(mp => mp.Name)
+        builder.HasOne<Household>()
+            .WithMany()
+            .HasForeignKey(mp => mp.HouseholdId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Property(mp => mp.RecipeId)
+            .IsRequired();
+                builder.Property(mp => mp.Name)
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.OwnsOne(mp => mp.Duration, duration =>
-        {
-            duration.Property(d => d.Start)
-                .HasColumnName("start_date")
-                .IsRequired();
+        builder.HasOne<Recipe>()
+            .WithMany()
+            .HasForeignKey(mp => mp.RecipeId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-            duration.Property(d => d.End)
-                .HasColumnName("end_date")
-                .IsRequired();
-        });
+        builder.Property(mp => mp.MealType)
+            .IsRequired()
+            .HasConversion<int>(); 
+
+        builder.Property(mp => mp.ScheduledDate)
+            .HasColumnName("scheduled_date")
+            .IsRequired();
+
+        builder.Property(mp => mp.Servings)
+            .IsRequired();
+
+        builder.Property(mp => mp.Notes)
+            .HasMaxLength(500);
 
         builder.Property(mp => mp.CreatedBy)
             .IsRequired();
@@ -45,10 +63,5 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
         builder.Property(mp => mp.UpdatedOnUtc)
             .HasColumnName("updated_on_utc")
             .IsRequired();
-
-        builder.HasOne<Household>()
-            .WithMany()
-            .HasForeignKey(mp => mp.HouseholdId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }

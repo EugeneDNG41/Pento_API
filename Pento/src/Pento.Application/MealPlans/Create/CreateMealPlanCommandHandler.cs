@@ -25,24 +25,18 @@ internal sealed class CreateMealPlanCommandHandler(
             return Result.Failure<Guid>(MealPlanErrors.DuplicateName);
         }
 
-        DateRange dateRange;
-        try
-        {
-            dateRange = DateRange.Create(request.StartDate, request.EndDate);
-        }
-        catch (Exception)
-        {
-            return Result.Failure<Guid>(MealPlanErrors.InvalidDateRange);
-        }
-
-        DateTime utcNow = DateTime.UtcNow;
 
         var mealPlan = MealPlan.Create(
             request.HouseholdId,
+            request.RecipeId,
             request.Name,
+            request.MealType,
+            request.ScheduledDate,
+            request.Servings,
+            request.Notes,
             request.CreatedBy,
-            dateRange,
-            utcNow);
+            DateTime.UtcNow
+        );
 
         await mealPlanRepository.AddAsync(mealPlan, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

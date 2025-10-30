@@ -28,7 +28,6 @@ using Pento.Domain.Comments;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
-using Pento.Domain.MealPlanItems;
 using Pento.Domain.MealPlans;
 using Pento.Domain.PossibleUnits;
 using Pento.Domain.RecipeDirections;
@@ -100,7 +99,6 @@ public static class DependencyInjection
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
         services.AddScoped<IStorageItemRepository, StorageItemRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
-        services.AddScoped<IMealPlanItemRepository, MealPlanItemRepository>();
         services.AddScoped<IBlogPostRepository, BlogPostRepository>();
         services.AddScoped<IGiveawayClaimRepository, GiveawayClaimRepository>();
         services.AddScoped<IGiveawayPostRepository, GiveawayPostRepository>();

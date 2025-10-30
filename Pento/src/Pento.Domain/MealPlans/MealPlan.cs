@@ -9,60 +9,82 @@ using Pento.Domain.MealPlans.Events;
 namespace Pento.Domain.MealPlans;
 public sealed class MealPlan : Entity
 {
+    private MealPlan() { }
+
     public MealPlan(
         Guid id,
         Guid householdId,
+        Guid recipeId,
         string name,
+        MealType mealType,
+        DateOnly scheduledDate,
+        int servings,
+        string? notes,
         Guid createdBy,
-        DateRange duration,
         DateTime createdOnUtc)
         : base(id)
     {
         HouseholdId = householdId;
+        RecipeId = recipeId;
         Name = name;
+        MealType = mealType;
+        ScheduledDate = scheduledDate;
+        Servings = servings > 0 ? servings : 1;
+        Notes = notes;
         CreatedBy = createdBy;
-        Duration = duration;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
     }
 
-    private MealPlan()
-    {
-    }
-
     public Guid HouseholdId { get; private set; }
-
-    public string Name { get; private set; } = string.Empty;
-
-    public DateRange Duration { get; private set; }
+    public Guid RecipeId { get; private set; }
+    public string Name { get; private set; } = null!;
+    public MealType MealType { get; private set; }
+    public DateOnly ScheduledDate { get; private set; }
+    public int Servings { get; private set; }
+    public string? Notes { get; private set; }
     public Guid CreatedBy { get; private set; }
-
     public DateTime CreatedOnUtc { get; private set; }
-
     public DateTime UpdatedOnUtc { get; private set; }
+
     public static MealPlan Create(
-       Guid householdId,
-       string name,
-       Guid createdBy,
-       DateRange duration,
-       DateTime utcNow)
+        Guid householdId,
+        Guid recipeId,
+        string name,
+        MealType mealType,
+        DateOnly scheduledDate,
+        int servings,
+        string? notes,
+        Guid createdBy,
+        DateTime utcNow)
     {
-        var mealPlan = new MealPlan(
-            Guid.NewGuid(),
+        var meal = new MealPlan(
+            Guid.CreateVersion7(),
             householdId,
+            recipeId,
             name,
+            mealType,
+            scheduledDate,
+            servings,
+            notes,
             createdBy,
-            duration,
             utcNow);
 
-        mealPlan.Raise(new MealPlanCreatedDomainEvent(mealPlan.Id));
-
-        return mealPlan;
+        meal.Raise(new MealPlanCreatedDomainEvent(meal.Id));
+        return meal;
     }
-    public void Update(string name, DateRange duration, DateTime utcNow)
+
+    public void Update(
+        MealType mealType,
+        DateOnly scheduledDate,
+        int servings,
+        string? notes,
+        DateTime utcNow)
     {
-        Name = name;
-        Duration = duration;
+        MealType = mealType;
+        ScheduledDate = scheduledDate;
+        Servings = servings > 0 ? servings : 1;
+        Notes = notes;
         UpdatedOnUtc = utcNow;
 
         Raise(new MealPlanUpdatedDomainEvent(Id));
