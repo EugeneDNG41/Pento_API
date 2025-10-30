@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.MealPlanItems.Get;
-public sealed record GetMealPlanItemQuery(Guid MealPlanItemId) : IQuery<MealPlanItemResponse>
-{
-}
+namespace Pento.Application.FoodReferences.Delete;
+public sealed record DeleteFoodReferenceCommand(Guid FoodReferenceId) : ICommand;
+

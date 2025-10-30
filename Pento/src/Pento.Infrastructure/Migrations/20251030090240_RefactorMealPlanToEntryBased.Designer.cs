@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251030090240_RefactorMealPlanToEntryBased")]
+    partial class RefactorMealPlanToEntryBased
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -398,25 +401,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("InviteCode")
-                        .HasMaxLength(15)
-                        .HasColumnType("character varying(15)")
-                        .HasColumnName("invite_code");
-
-                    b.Property<DateTime?>("InviteCodeExpirationUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("invite_code_expiration_utc");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("name");
-
                     b.HasKey("Id")
-                        .HasName("pk_households");
+                        .HasName("pk_household");
 
-                    b.ToTable("households", (string)null);
+                    b.ToTable("household", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>
@@ -908,9 +896,6 @@ namespace Pento.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_users_email");
 
-                    b.HasIndex("HouseholdId")
-                        .HasDatabaseName("ix_users_household_id");
-
                     b.HasIndex("IdentityId")
                         .IsUnique()
                         .HasDatabaseName("ix_users_identity_id");
@@ -1050,7 +1035,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_meal_plans_households_household_id");
+                        .HasConstraintName("fk_meal_plans_household_household_id");
 
                     b.HasOne("Pento.Domain.Recipes.Recipe", null)
                         .WithMany()
@@ -1135,15 +1120,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_storage_items_unit_unit_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Users.User", b =>
-                {
-                    b.HasOne("Pento.Domain.Households.Household", null)
-                        .WithMany()
-                        .HasForeignKey("HouseholdId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_users_households_household_id");
                 });
 
             modelBuilder.Entity("RoleUser", b =>

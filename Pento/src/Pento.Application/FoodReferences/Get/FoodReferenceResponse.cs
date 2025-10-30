@@ -14,6 +14,7 @@ public sealed record FoodReferenceResponse(
     int TypicalShelfLifeDays_Pantry,
     int TypicalShelfLifeDays_Fridge,
     int TypicalShelfLifeDays_Freezer,
+    Guid? AddedBy,
     Uri? ImageUrl,
     string? Brand,
     string? Barcode,

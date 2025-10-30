@@ -20,8 +20,5 @@ public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMea
         RuleFor(x => x.CreatedBy)
             .NotEmpty().WithMessage("CreatedBy is required.");
 
-        RuleFor(x => x.StartDate)
-            .LessThanOrEqualTo(x => x.EndDate)
-            .WithMessage("Start date must not be after end date.");
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Recipes;
 
-namespace Pento.Application.Recipes.Create;
-public sealed record CreateRecipeCommand(
+namespace Pento.Application.Recipes.Update;
+public sealed record UpdateRecipeCommand(
+    Guid Id,
     string Title,
     string? Description,
     int PrepTimeMinutes,
@@ -18,4 +19,4 @@ public sealed record CreateRecipeCommand(
     Uri? ImageUrl,
     Guid? CreatedBy,
     bool IsPublic
-) : ICommand<Guid>;
+) : ICommand;

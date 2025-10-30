@@ -36,6 +36,7 @@ internal sealed class CreateFoodReference : IEndpoint
                 request.TypicalShelfLifeDays_Pantry,
                 request.TypicalShelfLifeDays_Fridge,
                 request.TypicalShelfLifeDays_Freezer,
+                request.AddedBy,
                 request.ImageUrl
             );
 
@@ -64,6 +65,7 @@ internal sealed class CreateFoodReference : IEndpoint
         public int? TypicalShelfLifeDays_Pantry { get; init; } = 0;
         public int? TypicalShelfLifeDays_Fridge { get; init; } = 0;
         public int? TypicalShelfLifeDays_Freezer { get; init; } = 0;
+        public Guid? AddedBy { get; init; }
         public Uri? ImageUrl { get; init; }
     }
 }

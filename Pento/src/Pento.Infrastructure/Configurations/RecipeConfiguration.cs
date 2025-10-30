@@ -30,13 +30,11 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 
         builder.Property(r => r.CaloriesPerServing);
 
-        builder.Property(r => r.CreatedBy)
-            .IsRequired();
+        builder.Property(r => r.CreatedBy);
 
         builder.Property(r => r.IsPublic)
             .IsRequired();
 
-        // ---- Value Object: TimeRequirement ----
         builder.OwnsOne(r => r.RecipeTime, time =>
         {
             time.Property(t => t.PrepTimeMinutes)
@@ -50,12 +48,10 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             time.Ignore(t => t.TotalMinutes);
         });
 
-        // ---- Enum: DifficultyLevel ----
         builder.Property(r => r.DifficultyLevel)
             .HasConversion<string>()
             .HasMaxLength(50);
 
-        // ---- Uri: ImageUrl ----
         builder.Property(r => r.ImageUrl)
             .HasConversion(
                 uri => uri != null ? uri.ToString() : null,

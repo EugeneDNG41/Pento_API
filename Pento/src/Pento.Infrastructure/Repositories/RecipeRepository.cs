@@ -36,6 +36,11 @@ internal sealed class RecipeRepository : Repository<Recipe>, IRecipeRepository
     {
         await DbContext.Set<Recipe>().AddAsync(recipe, cancellationToken);
     }
+    public async Task UpdateAsync(Recipe recipe, CancellationToken cancellationToken = default)
+    {
+        DbContext.Set<Recipe>().Update(recipe);
+        await Task.CompletedTask;
+    }
 
     public void Remove(Recipe recipe)
     {

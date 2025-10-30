@@ -33,6 +33,7 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.TypicalShelfLifeDays_Freezer)
             .HasColumnName("typical_shelf_life_days_freezer")
             .HasDefaultValue(0);
+        builder.Property(fr => fr.AddedBy).HasColumnName("added_by");
         builder.Property(fr => fr.UsdaId).HasColumnName("usda_id");
         builder.Property(fr => fr.CreatedOnUtc).HasColumnName("created_on_utc");
         builder.Property(fr => fr.UpdatedOnUtc).HasColumnName("updated_on_utc");
@@ -79,7 +80,7 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
 
         builder.Property(fr => fr.CreatedOnUtc)
             .IsRequired();
-
+        builder.Property(fr => fr.AddedBy);
         builder.Property(fr => fr.UpdatedOnUtc)
             .IsRequired();
 

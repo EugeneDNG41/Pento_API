@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.FoodReferences;
 
-namespace Pento.Application.FoodReferences.Create;
-public sealed record CreateFoodReferenceCommand(
+namespace Pento.Application.FoodReferences.Update;
+public sealed record UpdateFoodReferenceCommand(
+    Guid Id,
     string Name,
-    FoodGroup FoodGroup,
-    FoodDataType DataType,
+    string FoodGroup,
+    string DataType,
     string? Notes,
     int? FoodCategoryId,
     string? Brand,
@@ -21,7 +20,5 @@ public sealed record CreateFoodReferenceCommand(
     int? TypicalShelfLifeDays_Pantry,
     int? TypicalShelfLifeDays_Fridge,
     int? TypicalShelfLifeDays_Freezer,
-    Guid? AddedBy,
     Uri? ImageUrl
 ) : ICommand<Guid>;
-

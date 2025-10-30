@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pento.Domain.MealPlanItems;
+namespace Pento.Domain.MealPlans;
 public enum MealType
 {
     Breakfast = 1,
