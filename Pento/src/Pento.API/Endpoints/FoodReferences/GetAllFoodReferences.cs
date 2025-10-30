@@ -1,7 +1,7 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -14,13 +14,13 @@ internal sealed class GetAllFoodReferences : IEndpoint
     {
         app.MapGet("food-references", async (
             [AsParameters] QueryParams queryParams,
-            ISender sender,
+            IQueryHandler<GetAllFoodReferencesQuery, IReadOnlyList<FoodReferenceResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetAllFoodReferencesQuery(queryParams.FoodGroup);
 
             Result<IReadOnlyList<FoodReferenceResponse>> result =
-                await sender.Send(query, cancellationToken);
+                await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

@@ -7,7 +7,11 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.StorageItems.Create;
 
-public sealed record CreateStorageItemCommand( //to be filled
-    ) : ICommand<Guid>
-{
-}
+public sealed record CreateStorageItemCommand(
+    Guid FoodRefId, 
+    Guid CompartmentId, 
+    string? CustomName, 
+    decimal Quantity, 
+    Guid UnitId, 
+    DateTime ExpirationDateUtc, 
+    string? Notes) : ICommand<Guid>;

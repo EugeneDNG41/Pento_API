@@ -1,4 +1,8 @@
 ﻿using Dapper;
+using JasperFx;
+using JasperFx.Events;
+using Marten;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -6,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -60,7 +65,6 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
-
         return services;
     }
 
@@ -70,6 +74,16 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
         {
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
+        });
+        services.AddMarten(options =>
+        {
+            options.Connection(connectionString);
+            options.Events.StreamIdentity = StreamIdentity.AsGuid;
+            // Event metadata
+            options.Events.MetadataConfig.CausationIdEnabled = true;
+            options.Events.MetadataConfig.CorrelationIdEnabled = true;
+            options.Events.MetadataConfig.HeadersEnabled = true;
+            options.Events.MetadataConfig.UserNameEnabled = true;
         });
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
@@ -116,14 +130,18 @@ public static class DependencyInjection
         }
         services.AddSingleton<ICacheService, CacheService>();
     }
-
-    public static WebApplicationBuilder AddBlob(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {
-        builder.AddAzureBlobServiceClient("blobs");
+
+#pragma warning disable S125 // Sections of code should not be commented out
+                            //builder.AddSeqEndpoint("seq");
+
         return builder;
+#pragma warning restore S125 // Sections of code should not be commented out
     }
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
+        builder.Services.AddScoped<IPermissionService, PermissionService>();
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
         builder.Services.AddOptions<KeycloakOptions>()
@@ -140,7 +158,8 @@ public static class DependencyInjection
             })
             .ValidateDataAnnotations()
             .ValidateOnStart();
-
+        builder.Services.AddFluentEmail("");
+        builder.Services.AddScoped<IEmailService, EmailService>();
         builder.Services.AddTransient<KeyCloakAuthDelegatingHandler>();
         string keycloakAuthority = builder.Environment.IsDevelopment() ? keycloakOptions.Authority : keycloakOptions.Authority.Replace("http://", "https://");
         builder.Services
@@ -151,29 +170,30 @@ public static class DependencyInjection
             .AddHttpMessageHandler<KeyCloakAuthDelegatingHandler>();
         builder.Services.AddHttpClient<IJwtService, JwtService>((httpClient) =>
         {
-            httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/token");
+            httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/");
         });
         
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddKeycloakJwtBearer("keycloak", realm: "pento", opt =>
+            .AddJwtBearer(opt =>
         {
             if (builder.Environment.IsDevelopment())
             {
                 opt.RequireHttpsMetadata = false;
-            }          
+            }
             opt.MapInboundClaims = false;
-            opt.Audience = keycloakOptions.ClientId;
             opt.Authority = keycloakAuthority;
-            opt.MetadataAddress = $"{keycloakAuthority}/.well-known/openid-configuration"
-            ;
+            opt.Audience = keycloakOptions.ClientId;         
+            opt.TokenValidationParameters.ValidIssuer = $"{keycloakAuthority}/realms/pento";
+            opt.MetadataAddress = $"{keycloakAuthority}/realms/pento/.well-known/openid-configuration";      
         });
-        builder.Services.AddAuthorizationBuilder();
+
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<IUserContext, UserContext>();
 
-
+        builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
+
         return builder;
     }
     private static void AddBackgroundJobs(IServiceCollection services, IConfiguration configuration)

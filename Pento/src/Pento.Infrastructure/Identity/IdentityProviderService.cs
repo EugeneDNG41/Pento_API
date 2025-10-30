@@ -11,6 +11,11 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
     private const string PasswordCredentialType = "password";
 
     // POST /admin/realms/{realm}/users
+    public async Task<Result> SendVerificationEmailAsync(string identityId, CancellationToken cancellationToken = default)
+    {
+        await keyCloakClient.SendVerificationEmailAsync(identityId, cancellationToken);
+        return Result.Success();
+    }
     public async Task<Result<string>> RegisterUserAsync(UserModel user, CancellationToken cancellationToken = default)
     {
         var userRepresentation = new UserRepresentation(
@@ -18,7 +23,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
             user.Email,
             user.FirstName,
             user.LastName,
-            true,
+            false,
             true,
             [new CredentialRepresentation(PasswordCredentialType, user.Password, false)]);
 

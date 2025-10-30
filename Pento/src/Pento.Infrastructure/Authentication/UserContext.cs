@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.Authentication;
 
 namespace Pento.Infrastructure.Authentication;
@@ -18,12 +19,11 @@ internal sealed class UserContext : IUserContext
             .User
             .GetUserId() ??
         throw new ApplicationException("User context is unavailable");
-    public Guid HouseholdId =>
+    public Guid? HouseholdId =>
         _httpContextAccessor
             .HttpContext?
             .User
-            .GetHouseholdId() ??
-        throw new ApplicationException("User context is unavailable");
+            .GetHouseholdId();
 
     public string IdentityId =>
         _httpContextAccessor

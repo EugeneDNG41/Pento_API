@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Import;
 using Pento.Domain.Abstractions;
 
@@ -11,11 +11,11 @@ internal sealed class ImportFoodReferences : IEndpoint
     {
         app.MapPost("food-references/import", async (
             IFormFile file,
-            ISender sender,
+            ICommandHandler<ImportFoodReferencesCommand, int> handler,
             CancellationToken cancellationToken) =>
         {
             var command = new ImportFoodReferencesCommand(file);
-            Result<int> result = await sender.Send(command, cancellationToken);
+            Result<int> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
                 count => Results.Ok(new

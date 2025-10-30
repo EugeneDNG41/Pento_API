@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Units.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
@@ -11,7 +11,7 @@ internal sealed class CreateUnit : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("units", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("units", async (Request request, ICommandHandler<CreateUnitCommand, Guid> handler, CancellationToken cancellationToken) =>
         {
             var command = new CreateUnitCommand(
                 request.Name,
@@ -19,7 +19,7 @@ internal sealed class CreateUnit : IEndpoint
                 request.ToBaseFactor
             );
 
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
                 id => Results.Created($"/units/{id}", new { Id = id }),

@@ -1,11 +1,17 @@
-﻿using Pento.Application.Abstractions.Email;
+﻿using FluentEmail.Core;
+using Pento.Application.Abstractions.Caching;
+using Pento.Application.Abstractions.Email;
 
 namespace Pento.Infrastructure.Email;
 
-internal sealed class EmailService : IEmailService
+internal sealed class EmailService(IFluentEmail fluentEmail) : IEmailService
 {
-    public Task SendAsync(string recipient, string subject, string body)
+    public async Task SendAsync(string recipient, string subject, string body)
     {
-        throw new NotImplementedException();
+        await fluentEmail
+            .To(recipient)
+            .Subject(subject)
+            .Body(body, isHtml: true)
+            .SendAsync();
     }
 }

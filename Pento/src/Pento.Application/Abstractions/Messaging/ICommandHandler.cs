@@ -1,10 +1,15 @@
-﻿using MediatR;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Abstractions.Messaging;
 
-public interface ICommandHandler<in TCommand> : IRequestHandler<TCommand, Result>
-    where TCommand : ICommand;
+public interface ICommandHandler<in TCommand>
+    where TCommand : ICommand
+{
+    Task<Result> Handle(TCommand command, CancellationToken cancellationToken);
+}
 
-public interface ICommandHandler<in TCommand, TResponse> : IRequestHandler<TCommand, Result<TResponse>>
-    where TCommand : ICommand<TResponse>;
+public interface ICommandHandler<in TCommand, TResponse>
+    where TCommand : ICommand<TResponse>
+{
+    Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken);
+}

@@ -1,6 +1,4 @@
-﻿using MediatR;
-using Pento.API.Extensions;
-using Pento.Application.Abstractions.File;
+﻿using Pento.API.Extensions;
 using Pento.Application.FoodReferences.Enrich;
 using Pento.Domain.Abstractions;
 

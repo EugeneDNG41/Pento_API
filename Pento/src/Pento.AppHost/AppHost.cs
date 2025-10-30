@@ -6,6 +6,8 @@ using Azure.Provisioning.PostgreSql;
 IDistributedApplicationBuilder builder = DistributedApplication.CreateBuilder(args);
 
 IResourceBuilder<SeqResource> seq = builder.AddSeq("seq")
+    .ExcludeFromManifest()
+    .WithDataVolume()
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEnvironment("ACCEPT_EULA", "Y");
 
@@ -44,7 +46,6 @@ IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", ad
 
 if (builder.ExecutionContext.IsRunMode)
 {
-    seq.ExcludeFromManifest();
     storage.RunAsEmulator(azurite => azurite.WithDataVolume());
     keycloak.WithDataVolume()
             .WithRealmImport("./realms");
@@ -82,7 +83,7 @@ IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("Key
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
 IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiApiKey", secret: true);
 
-builder.AddProject<Projects.Pento_API>("pento-api")
+IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
     .WithEnvironment("Keycloak__AdminUrl", keycloakAdminUrl)
@@ -98,10 +99,11 @@ builder.AddProject<Projects.Pento_API>("pento-api")
     .WithReference(cache)
     .WaitFor(cache)
     .WithReference(blobs)
-    .WithReference(seq)
-    .WaitFor(seq)
     .WithHttpHealthCheck("/health/ready");
-
+if (builder.ExecutionContext.IsRunMode)
+{
+    project.WithReference(seq).WaitFor(seq);
+}
 builder.AddAzureContainerAppEnvironment("cae");
 
 await builder.Build().RunAsync();

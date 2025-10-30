@@ -9,14 +9,9 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Aspire.Azure.Security.KeyVault" Version="9.5.1" />
-		<PackageReference Include="Aspire.Npgsql" Version="9.5.1" />
-		<PackageReference Include="Aspire.Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.5.1" />
-		<PackageReference Include="Aspire.Seq" Version="9.5.1" />
-		<PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="9.5.1" />
-		<PackageReference Include="Aspire.StackExchange.Redis.OutputCaching" Version="9.5.1" />
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.9" />
+		<PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="4.14.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.9">
 			<PrivateAssets>all</PrivateAssets>
@@ -31,6 +26,17 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Pento.Infrastructure\Pento.Infrastructure.csproj" />
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Endpoints\Households\Delete\" />
+	  <Folder Include="Endpoints\Households\Get\" />
+	  <Folder Include="Endpoints\Households\Post\" />
+	  <Folder Include="Endpoints\Households\Put\" />
+	  <Folder Include="Endpoints\Storages\Get\" />
+	  <Folder Include="Endpoints\Storages\Delete\" />
+	  <Folder Include="Endpoints\Storages\Put\" />
+	  <Folder Include="Endpoints\Storages\Post\" />
 	</ItemGroup>
 
 </Project>

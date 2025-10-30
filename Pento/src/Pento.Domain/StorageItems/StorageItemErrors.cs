@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Pento.Domain.Abstractions;
+using Pento.Domain.StorageItems.Events;
 
 namespace Pento.Domain.StorageItems;
 
 public static class StorageItemErrors
 {
+    public static Error NotFound(Guid id) =>
+        Error.NotFound("StorageItems.NotFound", $"The storage item with the identifier {id} not found");
 }

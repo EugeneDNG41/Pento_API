@@ -19,4 +19,8 @@ public sealed class Compartment : Entity
     public string Name { get; private set; }
     public Guid StorageId { get; private set; }
     public string? Notes { get; private set; }
+    public static Compartment Create(Guid storageId, string name, string? notes)
+    {
+        return new Compartment(Guid.CreateVersion7(), name, storageId, notes);
+    }
 }

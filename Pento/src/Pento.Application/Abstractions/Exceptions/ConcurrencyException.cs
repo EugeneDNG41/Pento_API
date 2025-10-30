@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Exceptions;
+﻿namespace Pento.Application.Abstractions.Exceptions;
 
 public sealed class ConcurrencyException : Exception
 {

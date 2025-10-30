@@ -18,4 +18,10 @@ public static class UserErrors
     public static readonly Error InvalidCredentials = Error.Problem(
         "User.InvalidCredentials",
         "The provided credentials were invalid");
+    public static readonly Error InvalidToken = Error.Problem(
+        "User.InvalidToken",
+        "The provided token is invalid");
+    public static readonly Error VerificationEmailFailed = Error.Failure(
+        "User.VerificationEmailFailed",
+        "Failed to send verification email");
 }

@@ -1,9 +1,7 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Get;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Users;
-using Pento.Infrastructure.Authentication;
 
 namespace Pento.API.Endpoints.FoodReferences;
 
@@ -11,11 +9,11 @@ internal sealed class GetFoodReference : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("food-references/{id:guid}", async (Guid id, ISender sender, CancellationToken cancellationToken) =>
+        app.MapGet("food-references/{id:guid}", async (Guid id, IQueryHandler<GetFoodReferenceQuery, FoodReferenceResponse> handler, CancellationToken cancellationToken) =>
         {
             var query = new GetFoodReferenceQuery(id);
 
-            Result<FoodReferenceResponse> result = await sender.Send(query, cancellationToken);
+            Result<FoodReferenceResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

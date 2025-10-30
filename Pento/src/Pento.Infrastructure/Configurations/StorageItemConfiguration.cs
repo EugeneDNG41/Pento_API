@@ -26,9 +26,6 @@ internal sealed class StorageItemConfiguration : IEntityTypeConfiguration<Storag
                .HasColumnType("decimal(10,2)")
                .IsRequired();
 
-        builder.Property(x => x.StorageId)
-               .IsRequired();
-
         builder.Property(x => x.CompartmentId)
                .IsRequired();
 
@@ -39,14 +36,9 @@ internal sealed class StorageItemConfiguration : IEntityTypeConfiguration<Storag
                .IsRequired();
 
         builder.HasOne<Compartment>().WithMany().HasForeignKey(x => x.CompartmentId).OnDelete(DeleteBehavior.Restrict);
-        builder.HasOne<Storage>().WithMany().HasForeignKey(x => x.StorageId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<FoodReference>().WithMany().HasForeignKey(x => x.FoodRefId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<Unit>().WithMany().HasForeignKey(x => x.UnitId).OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(x => x.Status)
-             .HasConversion<string>()
-             .HasMaxLength(50)
-             .IsRequired();
         builder.Property(x => x.Notes)
            .HasMaxLength(500);
 

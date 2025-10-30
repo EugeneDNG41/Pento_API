@@ -1,12 +1,14 @@
 ﻿using System.Data;
-using Pento.Application.Abstractions.Clock;
-using Pento.Application.Abstractions.Data;
-using Pento.Domain.Abstractions;
+using System.Reflection.Metadata;
 using Dapper;
-using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Pento.Application.Abstractions.Clock;
+using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Messaging;
+using Pento.Domain.Abstractions;
 using Quartz;
 
 namespace Pento.Infrastructure.Outbox;
@@ -20,20 +22,20 @@ internal sealed class ProcessOutboxMessagesJob : IJob
     };
 
     private readonly ISqlConnectionFactory _sqlConnectionFactory;
-    private readonly IPublisher _publisher;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly OutboxOptions _outboxOptions;
     private readonly ILogger<ProcessOutboxMessagesJob> _logger;
 
     public ProcessOutboxMessagesJob(
         ISqlConnectionFactory sqlConnectionFactory,
-        IPublisher publisher,
+        IServiceScopeFactory serviceScopeFactory,
         IDateTimeProvider dateTimeProvider,
         IOptions<OutboxOptions> outboxOptions,
         ILogger<ProcessOutboxMessagesJob> logger)
     {
         _sqlConnectionFactory = sqlConnectionFactory;
-        _publisher = publisher;
+        _serviceScopeFactory = serviceScopeFactory;
         _dateTimeProvider = dateTimeProvider;
         _logger = logger;
         _outboxOptions = outboxOptions.Value;
@@ -57,8 +59,17 @@ internal sealed class ProcessOutboxMessagesJob : IJob
                 IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
                     outboxMessage.Content,
                     JsonSerializerSettings)!;
+                using IServiceScope scope = _serviceScopeFactory.CreateScope();
 
-                await _publisher.Publish(domainEvent, context.CancellationToken);
+                IEnumerable<IDomainEventHandler> handlers = DomainEventHandlersFactory.GetHandlers(
+                    domainEvent.GetType(),
+                    scope.ServiceProvider,
+                    typeof(AssemblyReference).Assembly);
+
+                foreach (IDomainEventHandler domainEventHandler in handlers)
+                {
+                    await domainEventHandler.Handle(domainEvent, context.CancellationToken);
+                }
             }
             catch (Exception caughtException)
             {

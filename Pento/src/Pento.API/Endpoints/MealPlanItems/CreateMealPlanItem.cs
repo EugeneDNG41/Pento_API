@@ -1,5 +1,5 @@
-﻿using MediatR;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlanItems.Create;
 using Pento.Domain.Abstractions;
 
@@ -9,7 +9,7 @@ internal sealed class CreateMealPlanItem : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("meal-plan-items", async (Request request, ISender sender, CancellationToken cancellationToken) =>
+        app.MapPost("meal-plan-items", async (Request request, ICommandHandler<CreateMealPlanItemCommand, Guid> handler, CancellationToken cancellationToken) =>
         {
             var command = new CreateMealPlanItemCommand(
                 request.MealPlanId,
@@ -20,7 +20,7 @@ internal sealed class CreateMealPlanItem : IEndpoint
                 request.Notes
             );
 
-            Result<Guid> result = await sender.Send(command, cancellationToken);
+            Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
                 id => Results.Created($"/meal-plan-items/{id}", id),
