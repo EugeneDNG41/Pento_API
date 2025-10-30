@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
@@ -21,5 +22,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Email).IsUnique();
 
         builder.HasIndex(u => u.IdentityId).IsUnique();
+
+        builder.HasOne<Household>().WithMany().HasForeignKey(u => u.HouseholdId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
     }
 }

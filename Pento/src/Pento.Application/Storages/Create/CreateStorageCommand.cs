@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Messaging;
+using Pento.Domain.Storages;
 
 namespace Pento.Application.Storages.Create;
 
-internal sealed class CreateStorageCommand
-{
-}
+public sealed record CreateStorageCommand(Guid HouseholdId, string Name, StorageType type, string? notes) : ICommand<Guid>;

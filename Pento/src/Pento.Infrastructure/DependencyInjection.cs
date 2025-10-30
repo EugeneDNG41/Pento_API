@@ -94,6 +94,7 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
+        services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();

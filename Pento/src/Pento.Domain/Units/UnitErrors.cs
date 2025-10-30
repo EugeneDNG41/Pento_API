@@ -9,7 +9,7 @@ namespace Pento.Domain.Units;
 public static class UnitErrors
 {
     public static Error NotFound(Guid unitId) =>
-        Error.NotFound("Units.NotFound", $"The unit with ID {unitId} was not found.");
+        Error.NotFound("Units.IdentityNotFound", $"The unit with ID {unitId} was not found.");
 
     public static readonly Error InvalidName = Error.Problem(
         "Units.InvalidName",

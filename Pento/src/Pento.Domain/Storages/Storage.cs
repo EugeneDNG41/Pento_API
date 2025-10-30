@@ -30,4 +30,10 @@ public sealed class Storage : Entity
             type,
             notes);
     }
+    public void Update(string name, StorageType type, string? notes)
+    {
+        Name = name;
+        Type = type;
+        Notes = notes;
+    }
 }

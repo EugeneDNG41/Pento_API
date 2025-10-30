@@ -12,13 +12,25 @@ internal sealed class SignIn : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/sign-in", async (Request request, ICommandHandler<SignInUserCommand, AuthToken> handler, CancellationToken cancellationToken) =>
+        app.MapPost("users/sign-in", async (
+            HttpContext context,
+            Request request, 
+            ICommandHandler<SignInUserCommand, AuthToken> handler, 
+            CancellationToken cancellationToken) =>
         {
             Result<AuthToken> result = await handler.Handle(new SignInUserCommand(
                 request.Email,
                 request.Password), cancellationToken);
-
-            return result.Match(Results.Ok, CustomResults.Problem);
+            context.Response.Cookies.Append("refreshToken", result.Value.RefreshToken,
+                new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    HttpOnly = true,
+                    IsEssential = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.None
+                });
+            return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
         })
         .AllowAnonymous()
         .WithTags(Tags.Users);

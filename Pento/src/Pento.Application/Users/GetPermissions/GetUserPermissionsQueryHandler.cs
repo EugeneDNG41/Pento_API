@@ -33,7 +33,7 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
 
         if (permission is null)
         {
-            return Result.Failure<PermissionsResponse>(UserErrors.NotFound(request.IdentityId));
+            return Result.Failure<PermissionsResponse>(UserErrors.IdentityNotFound(request.IdentityId));
         }
         HashSet<string> roles = string.IsNullOrEmpty(permission.Roles) ?
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) : 

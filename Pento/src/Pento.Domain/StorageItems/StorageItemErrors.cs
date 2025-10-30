@@ -6,5 +6,5 @@ namespace Pento.Domain.StorageItems;
 public static class StorageItemErrors
 {
     public static Error NotFound(Guid id) =>
-        Error.NotFound("StorageItems.NotFound", $"The storage item with the identifier {id} not found");
+        Error.NotFound("StorageItems.IdentityNotFound", $"The storage item with the identifier {id} not found");
 }

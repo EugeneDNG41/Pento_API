@@ -52,13 +52,9 @@ internal static class SwaggerExtensions
     }
     internal static WebApplication UseSwaggerRoute(this WebApplication app)
     {
-        IConfiguration cfg = app.Configuration;
-        string clientId = cfg["SWAGGERUI_CLIENTID"]
-            ?? throw new InvalidOperationException("SWAGGERUI_CLIENTID is not configured");
         app.UseSwagger();
         app.UseSwaggerUI(options =>
         {
-            options.OAuthClientId(clientId);
             options.OAuthUsePkce();
             options.EnablePersistAuthorization();
         });

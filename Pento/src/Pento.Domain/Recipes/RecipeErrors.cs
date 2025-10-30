@@ -9,7 +9,7 @@ namespace Pento.Domain.Recipes;
 public static class RecipeErrors
 {
     public static readonly Error NotFound = Error.NotFound(
-       code: "Recipe.NotFound",
+       code: "Recipe.IdentityNotFound",
        description: "The specified recipe was not found."
    );
 

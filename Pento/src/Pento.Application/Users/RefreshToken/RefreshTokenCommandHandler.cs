@@ -13,6 +13,10 @@ internal sealed class RefreshTokenCommandHandler(IJwtService jwtService) : IComm
         RefreshTokenCommand command, 
         CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(command.RefreshToken))
+        {
+            return Result.Failure<AuthToken>(UserErrors.InvalidToken);
+        }
         Result<AuthToken> result = await jwtService.RefreshTokenAsync(command.RefreshToken, cancellationToken);
         if (result.IsFailure)
         {

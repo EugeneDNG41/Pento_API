@@ -8,4 +8,7 @@ namespace Pento.Domain.Households;
 
 public interface IHouseholdRepository
 {
+    Task<Household?> GetHouseholdByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<Household?> GetHouseholdByInviteCodeAsync(string inviteCode, CancellationToken cancellationToken = default);
+    Task AddAsync(Household household, CancellationToken cancellationToken = default);
 }

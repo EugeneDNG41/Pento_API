@@ -9,11 +9,10 @@ namespace Pento.Domain.Users;
 
 public static class UserErrors
 {
-    public static Error NotFound(Guid userId) =>
-        Error.NotFound("Users.NotFound", $"The user with the identifier {userId} not found");
-
-    public static Error NotFound(string identityId) =>
-        Error.NotFound("Users.NotFound", $"The user with the IDP identifier {identityId} not found");
+    public static readonly Error NotFound =
+        Error.NotFound("Users.NotFound", $"User not found");
+    public static Error IdentityNotFound(string identityId) =>
+        Error.NotFound("Users.IdentityNotFound", $"The user with the IDP identifier {identityId} not found");
 
     public static readonly Error InvalidCredentials = Error.Problem(
         "User.InvalidCredentials",
@@ -24,4 +23,10 @@ public static class UserErrors
     public static readonly Error VerificationEmailFailed = Error.Failure(
         "User.VerificationEmailFailed",
         "Failed to send verification email");
+    public static readonly Error UserAlreadyInHousehold = Error.Conflict(
+        "User.UserAlreadyInHousehold",
+        "The user is already a member of a household");
+    public static readonly Error UserNotInHousehold = Error.Problem(
+        "User.UserNotInHousehold",
+        "The user is not a member of the household");
 }

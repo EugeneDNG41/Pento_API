@@ -22,8 +22,12 @@ internal abstract class Repository<T>
             .FirstOrDefaultAsync(entity => entity.Id == id, cancellationToken);
     }
 
-    public virtual void Add(T entity)
+    public async virtual Task InsertAsync(T entity, CancellationToken cancellation = default)
     {
-        DbContext.Add(entity);
+        await DbContext.AddAsync(entity, cancellation);
+    }
+    public virtual void Update(T entity)
+    {
+        DbContext.Update(entity);
     }
 }

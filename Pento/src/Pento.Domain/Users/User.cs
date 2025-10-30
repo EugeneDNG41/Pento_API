@@ -52,4 +52,23 @@ public sealed class User : Entity
         FirstName = firstName;
         LastName = lastName;
     }
+    public void SetHouseholdId(Guid? householdId)
+    {
+        HouseholdId = householdId;
+    }
+    public void LeaveHousehold(Guid householdId)
+    {
+        HouseholdId = null;
+        Raise(new UserLeftHouseholdDomainEvent(householdId));
+    }
+
+    public void SetAvatarUrl(Uri? avatarUrl)
+    {
+        AvatarUrl = avatarUrl;
+    }
+    public void SetRoles(IEnumerable<Role> roles)
+    {
+        _roles.Clear();
+        _roles.AddRange(roles);
+    }
 }

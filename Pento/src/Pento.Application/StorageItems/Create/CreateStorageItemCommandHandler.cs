@@ -19,7 +19,7 @@ internal sealed class CreateStorageItemCommandHandler(IStorageItemRepository rep
             command.CustomName,
             command.Quantity,
             command.UnitId,
-            command.ExpirationDateUtc,
+            command.ExpirationDate.ToUniversalTime(),
             command.Notes);
         await repository.StartStreamAsync(e, cancellationToken);
         return e.Id;
