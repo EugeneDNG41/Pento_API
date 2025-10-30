@@ -8,4 +8,4 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Users.RefreshToken;
 
-public sealed record RefreshTokenCommand(string RefreshToken) : ICommand<AuthToken>;
+public sealed record RefreshTokenCommand(string? RefreshToken) : ICommand<AuthToken>;

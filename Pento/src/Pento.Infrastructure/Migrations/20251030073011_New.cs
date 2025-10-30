@@ -56,14 +56,17 @@ public partial class New : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "household",
+            name: "households",
             columns: table => new
             {
-                id = table.Column<Guid>(type: "uuid", nullable: false)
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                invite_code = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: true),
+                invite_code_expiration_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
             },
             constraints: table =>
             {
-                table.PrimaryKey("pk_household", x => x.id);
+                table.PrimaryKey("pk_households", x => x.id);
             });
 
         migrationBuilder.CreateTable(
@@ -184,25 +187,6 @@ public partial class New : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "users",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false),
-                household_id = table.Column<Guid>(type: "uuid", nullable: true),
-                avatar_url = table.Column<string>(type: "text", nullable: true),
-                email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                first_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                last_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                identity_id = table.Column<string>(type: "text", nullable: false),
-                created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_users", x => x.id);
-            });
-
-        migrationBuilder.CreateTable(
             name: "meal_plans",
             columns: table => new
             {
@@ -219,11 +203,36 @@ public partial class New : Migration
             {
                 table.PrimaryKey("pk_meal_plans", x => x.id);
                 table.ForeignKey(
-                    name: "fk_meal_plans_household_household_id",
+                    name: "fk_meal_plans_households_household_id",
                     column: x => x.household_id,
-                    principalTable: "household",
+                    principalTable: "households",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Restrict);
+            });
+
+        migrationBuilder.CreateTable(
+            name: "users",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                household_id = table.Column<Guid>(type: "uuid", nullable: true),
+                avatar_url = table.Column<string>(type: "text", nullable: true),
+                email = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                first_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                last_name = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                identity_id = table.Column<string>(type: "text", nullable: false),
+                created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_users", x => x.id);
+                table.ForeignKey(
+                    name: "fk_users_households_household_id",
+                    column: x => x.household_id,
+                    principalTable: "households",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.SetNull);
             });
 
         migrationBuilder.CreateTable(
@@ -283,6 +292,37 @@ public partial class New : Migration
             });
 
         migrationBuilder.CreateTable(
+            name: "meal_plan_items",
+            columns: table => new
+            {
+                id = table.Column<Guid>(type: "uuid", nullable: false),
+                meal_plan_id = table.Column<Guid>(type: "uuid", nullable: false),
+                recipe_id = table.Column<Guid>(type: "uuid", nullable: false),
+                meal_type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                servings = table.Column<int>(type: "integer", nullable: false),
+                notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
+                schedule = table.Column<string>(type: "TEXT", nullable: false),
+                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+            },
+            constraints: table =>
+            {
+                table.PrimaryKey("pk_meal_plan_items", x => x.id);
+                table.ForeignKey(
+                    name: "fk_meal_plan_items_meal_plans_meal_plan_id",
+                    column: x => x.meal_plan_id,
+                    principalTable: "meal_plans",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Cascade);
+                table.ForeignKey(
+                    name: "fk_meal_plan_items_recipe_recipe_id",
+                    column: x => x.recipe_id,
+                    principalTable: "recipes",
+                    principalColumn: "id",
+                    onDelete: ReferentialAction.Restrict);
+            });
+
+        migrationBuilder.CreateTable(
             name: "blog_posts",
             columns: table => new
             {
@@ -328,37 +368,6 @@ public partial class New : Migration
                     principalTable: "users",
                     principalColumn: "id",
                     onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "meal_plan_items",
-            columns: table => new
-            {
-                id = table.Column<Guid>(type: "uuid", nullable: false),
-                meal_plan_id = table.Column<Guid>(type: "uuid", nullable: false),
-                recipe_id = table.Column<Guid>(type: "uuid", nullable: false),
-                meal_type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                servings = table.Column<int>(type: "integer", nullable: false),
-                notes = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: true),
-                schedule = table.Column<string>(type: "TEXT", nullable: false),
-                created_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                updated_on_utc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("pk_meal_plan_items", x => x.id);
-                table.ForeignKey(
-                    name: "fk_meal_plan_items_meal_plans_meal_plan_id",
-                    column: x => x.meal_plan_id,
-                    principalTable: "meal_plans",
-                    principalColumn: "id",
-                    onDelete: ReferentialAction.Cascade);
-                table.ForeignKey(
-                    name: "fk_meal_plan_items_recipe_recipe_id",
-                    column: x => x.recipe_id,
-                    principalTable: "recipes",
-                    principalColumn: "id",
-                    onDelete: ReferentialAction.Restrict);
             });
 
         migrationBuilder.CreateTable(
@@ -609,6 +618,11 @@ public partial class New : Migration
             unique: true);
 
         migrationBuilder.CreateIndex(
+            name: "ix_users_household_id",
+            table: "users",
+            column: "household_id");
+
+        migrationBuilder.CreateIndex(
             name: "ix_users_identity_id",
             table: "users",
             column: "identity_id",
@@ -667,9 +681,6 @@ public partial class New : Migration
             name: "users");
 
         migrationBuilder.DropTable(
-            name: "household");
-
-        migrationBuilder.DropTable(
             name: "compartments");
 
         migrationBuilder.DropTable(
@@ -677,6 +688,9 @@ public partial class New : Migration
 
         migrationBuilder.DropTable(
             name: "units");
+
+        migrationBuilder.DropTable(
+            name: "households");
 
         migrationBuilder.DropTable(
             name: "storages");

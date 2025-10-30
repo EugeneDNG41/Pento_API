@@ -10,7 +10,7 @@ public static class RecipeIngredientErrors
 {
     public static Error NotFound(Guid recipeIngredientId) =>
         Error.NotFound(
-            "RecipeIngredients.NotFound",
+            "RecipeIngredients.IdentityNotFound",
             $"The recipe ingredient with ID '{recipeIngredientId}' was not found."
         );
 

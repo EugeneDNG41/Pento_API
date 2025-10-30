@@ -13,18 +13,15 @@ internal sealed class Refresh : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("users/refresh", async (
-            Request request,
+            HttpContext context,
             ICommandHandler<RefreshTokenCommand, AuthToken> handler,
             CancellationToken cancellationToken) =>
         {
+            context.Request.Cookies.TryGetValue("refreshToken", out string? refreshToken);
             Result<AuthToken> result = await handler.Handle(
-                new RefreshTokenCommand(request.RefreshToken),
+                new RefreshTokenCommand(refreshToken),
                 cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).AllowAnonymous().WithTags(Tags.Users).WithSummary("Refresh user authentication token");
-    }
-    internal sealed class Request
-    {
-        public string RefreshToken { get; init; }
     }
 }

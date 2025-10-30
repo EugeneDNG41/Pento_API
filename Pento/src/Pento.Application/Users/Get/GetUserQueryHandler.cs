@@ -32,7 +32,7 @@ internal sealed class GetUserQueryHandler(ISqlConnectionFactory dbConnectionFact
 
         if (user is null)
         {
-            return Result.Failure<UserResponse>(UserErrors.NotFound(request.UserId));
+            return Result.Failure<UserResponse>(UserErrors.NotFound);
         }
 
         return user;

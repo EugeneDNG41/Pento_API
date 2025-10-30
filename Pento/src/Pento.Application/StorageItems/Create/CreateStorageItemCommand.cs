@@ -13,5 +13,5 @@ public sealed record CreateStorageItemCommand(
     string? CustomName, 
     decimal Quantity, 
     Guid UnitId, 
-    DateTime ExpirationDateUtc, 
+    DateTime ExpirationDate, 
     string? Notes) : ICommand<Guid>;

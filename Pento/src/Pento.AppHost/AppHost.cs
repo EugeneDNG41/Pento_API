@@ -91,7 +91,6 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Keycloak__ClientId", keycloakClientId)
     .WithEnvironment("Keycloak__ClientSecret", keycloakClientSecret)
     .WithEnvironment("Gemini__ApiKey", geminiApiKey)
-    .WithEnvironment("SWAGGERUI_CLIENTID", builder.Configuration["SwaggerUI:ClientId"])
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)

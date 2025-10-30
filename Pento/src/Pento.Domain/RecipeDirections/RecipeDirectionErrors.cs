@@ -10,7 +10,7 @@ namespace Pento.Domain.RecipeDirections;
 public static class RecipeDirectionErrors
 {
     public static Error NotFound(Guid id) =>
-        Error.NotFound("RecipeDirections.NotFound", $"The recipe direction with ID {id} was not found.");
+        Error.NotFound("RecipeDirections.IdentityNotFound", $"The recipe direction with ID {id} was not found.");
 
     public static readonly Error InvalidStepNumber = Error.Problem(
         "RecipeDirections.InvalidStepNumber",

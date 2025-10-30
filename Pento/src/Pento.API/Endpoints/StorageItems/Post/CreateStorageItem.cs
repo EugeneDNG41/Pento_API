@@ -20,7 +20,7 @@ internal sealed class CreateStorageItem : IEndpoint
                 request.CustomName,
                 request.Quantity,
                 request.UnitId,
-                request.ExpirationDate.ToUniversalTime(),
+                request.ExpirationDate,
                 request.Notes);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);

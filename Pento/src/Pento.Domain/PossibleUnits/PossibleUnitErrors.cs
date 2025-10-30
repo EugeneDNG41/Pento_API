@@ -11,7 +11,7 @@ public static class PossibleUnitErrors
 {
     public static Error NotFound(Guid possibleUnitId) =>
         Error.NotFound(
-            "PossibleUnits.NotFound",
+            "PossibleUnits.IdentityNotFound",
             $"The possible unit with ID {possibleUnitId} was not found."
         );
 

@@ -11,7 +11,7 @@ public static class FoodReferenceErrors
 {
     public static Error NotFound(Guid foodReferenceId) =>
         Error.NotFound(
-            "FoodReferences.NotFound",
+            "FoodReferences.IdentityNotFound",
             $"The food reference with ID {foodReferenceId} was not found."
         );
 

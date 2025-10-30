@@ -10,7 +10,7 @@ public static class MealPlanItemErrors
 {
     public static Error NotFound(Guid mealPlanItemId) =>
     Error.NotFound(
-        "MealPlanItems.NotFound",
+        "MealPlanItems.IdentityNotFound",
         $"The meal plan item with ID '{mealPlanItemId}' was not found."
     );
 

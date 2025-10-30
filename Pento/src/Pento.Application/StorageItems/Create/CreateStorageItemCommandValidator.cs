@@ -15,6 +15,6 @@ internal sealed class CreateStorageItemCommandValidator : AbstractValidator<Crea
         RuleFor(x => x.CompartmentId).NotEmpty();
         RuleFor(x => x.Quantity).GreaterThan(0);
         RuleFor(x => x.UnitId).NotEmpty();
-        RuleFor(x => x.ExpirationDateUtc).GreaterThan(DateTime.UtcNow);
+        RuleFor(x => x.ExpirationDate.ToUniversalTime()).GreaterThan(DateTime.UtcNow);
     }
 }
