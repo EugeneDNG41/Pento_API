@@ -7,6 +7,5 @@ internal sealed class SignInUserCommandValidator : AbstractValidator<SignInUserC
     public SignInUserCommandValidator()
     {
         RuleFor(c => c.Email).EmailAddress();
-        RuleFor(c => c.Password).MinimumLength(6);
     }
 }

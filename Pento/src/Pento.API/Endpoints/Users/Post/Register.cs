@@ -21,7 +21,9 @@ internal sealed class Register : IEndpoint
                 request.Password,
                 request.FirstName,
                 request.LastName), cancellationToken);
-            context.Response.Cookies.Append("refreshToken", result.Value.RefreshToken,
+            if (result.IsSuccess)
+            {
+                context.Response.Cookies.Append("refreshToken", result.Value.RefreshToken,
                 new CookieOptions
                 {
                     Expires = DateTimeOffset.UtcNow.AddDays(7),
@@ -30,6 +32,8 @@ internal sealed class Register : IEndpoint
                     Secure = true,
                     SameSite = SameSiteMode.None
                 });
+            }
+            
             return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
         })
         .AllowAnonymous()

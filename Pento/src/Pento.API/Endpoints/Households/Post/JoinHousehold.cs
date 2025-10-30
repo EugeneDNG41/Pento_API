@@ -12,7 +12,7 @@ internal sealed class JoinHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/households/join", async (
+        app.MapPost("households/join", async (
             IUserContext userContext,
             Request request,
             ICommandHandler<JoinHouseholdCommand> handler,

@@ -1,4 +1,5 @@
-﻿using Pento.API.Extensions;
+﻿using Microsoft.AspNetCore.Authorization;
+using Pento.API.Extensions;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Households.Create;
@@ -14,7 +15,7 @@ internal sealed class GenerateInviteCode : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/households/{householdId:Guid}/invites", async (
+        app.MapPost("households/{householdId:guid}/invites", async (
             Guid householdId,
             IUserContext userContext,
             Request request,
@@ -27,7 +28,7 @@ internal sealed class GenerateInviteCode : IEndpoint
                 : await handler.Handle(
                 new GenerateInviteCodeCommand(householdId, expiresAtUtc), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(Role.HouseholdAdmin.Name, Role.PowerMember.Name);
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
     }
     internal sealed class Request
     {

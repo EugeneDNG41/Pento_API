@@ -1,26 +1,27 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Pento.Application.Abstractions.Data;
 using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Repositories;
 
-internal sealed class UserRepository : Repository<User>, IUserRepository
+internal sealed class UserRepository(ApplicationDbContext dbContext) : IUserRepository
 {
-    public UserRepository(ApplicationDbContext dbContext)
-        : base(dbContext)
-    {
-    }
-    public async Task<User?> GetAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await DbContext.Set<User>().SingleOrDefaultAsync(u => u.Id == id, cancellationToken);
-    }
-
     public void Insert(User user)
     {
         foreach (Role role in user.Roles)
         {
-            DbContext.Attach(role);
+            dbContext.Attach(role);
         }
 
-        DbContext.Add(user);
+        dbContext.Add(user);
+    }
+    public void Update(User user)
+    {
+        foreach (Role role in user.Roles)
+        {
+            dbContext.Attach(role);
+        }
+
+        dbContext.Update(user);
     }
 }

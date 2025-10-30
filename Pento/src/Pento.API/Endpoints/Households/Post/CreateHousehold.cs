@@ -1,4 +1,5 @@
 ﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Households.Create;
 using Pento.Domain.Abstractions;
@@ -9,13 +10,14 @@ internal sealed class CreateHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("/households", async (
+        app.MapPost("households", async(
+            IUserContext userContext,
             Request request, 
             ICommandHandler<CreateHouseholdCommand, Guid> handler, 
             CancellationToken cancellationToken) =>
         {
             Result<Guid> result = await handler.Handle(
-                new CreateHouseholdCommand(request.Name), cancellationToken);
+                new CreateHouseholdCommand(request.Name, userContext.UserId), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization();
     }

@@ -18,32 +18,28 @@ internal static class LoggingDecorator
         public async Task<Result<TResponse>> Handle(TCommand command, CancellationToken cancellationToken)
         {
             string commandName = typeof(TCommand).Name;
-            try
+
+            logger.LogInformation("Processing command {Command}", commandName);
+
+            Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
+
+            if (result.IsSuccess)
             {
-                logger.LogInformation("Processing command {Command}", commandName);
-
-                Result<TResponse> result = await innerHandler.Handle(command, cancellationToken);
-
-                if (result.IsSuccess)
-                {
-                    logger.LogInformation("Completed command {Command}", commandName);
-                }
-                else
-                {
-                    using (LogContext.PushProperty("Error", result.Error, true))
-                    {
-                        logger.LogError("Command {CommandName} processed with error", commandName);
-                    }
-                }
-
-                return result;
+                logger.LogInformation("Completed command {Command}", commandName);
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError(ex, "Command {CommandName} processing failed", commandName);
-
-                throw new PentoException(typeof(TCommand).Name, innerException: ex);
+                var data = new Dictionary<string, object>
+                {
+                    ["Error"] = result.Error
+                };
+                using (logger.BeginScope(data))
+                {
+                    logger.LogError("Completed command {Command} with error", commandName);
+                }
             }
+
+            return result;
         }
     }
 
@@ -56,32 +52,28 @@ internal static class LoggingDecorator
         public async Task<Result> Handle(TCommand command, CancellationToken cancellationToken)
         {
             string commandName = typeof(TCommand).Name;
-            try
+
+            logger.LogInformation("Processing command {Command}", commandName);
+
+            Result result = await innerHandler.Handle(command, cancellationToken);
+
+            if (result.IsSuccess)
             {
-                logger.LogInformation("Processing command {Command}", commandName);
-
-                Result result = await innerHandler.Handle(command, cancellationToken);
-
-                if (result.IsSuccess)
-                {
-                    logger.LogInformation("Completed command {Command}", commandName);
-                }
-                else
-                {
-                    using (LogContext.PushProperty("Error", result.Error, true))
-                    {
-                        logger.LogError("Command {CommandName} processed with error", commandName);
-                    }
-                }
-
-                return result;
+                logger.LogInformation("Completed command {Command}", commandName);
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError(ex, "Command {CommandName} processing failed", commandName);
-
-                throw new PentoException(typeof(TCommand).Name, innerException: ex);
+                var data = new Dictionary<string, object>
+                {
+                    ["Error"] = result.Error
+                };
+                using (logger.BeginScope(data))
+                {
+                    logger.LogError("Completed command {Command} with error", commandName);
+                }
             }
+
+            return result;
         }
     }
 
@@ -94,33 +86,28 @@ internal static class LoggingDecorator
         public async Task<Result<TResponse>> Handle(TQuery query, CancellationToken cancellationToken)
         {
             string queryName = typeof(TQuery).Name;
-            try
+
+            logger.LogInformation("Processing query {Query}", queryName);
+
+            Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
+
+            if (result.IsSuccess)
             {
-                logger.LogInformation("Processing query {Query}", queryName);
-
-                Result<TResponse> result = await innerHandler.Handle(query, cancellationToken);
-
-                if (result.IsSuccess)
-                {
-                    logger.LogInformation("Completed query {Query}", queryName);
-                }
-                else
-                {
-                    using (LogContext.PushProperty("Error", result.Error, true))
-                    {
-                        logger.LogError("Query {QueryName} processed with error", queryName);
-                    }
-                }
-
-                return result;
+                logger.LogInformation("Completed query {Query}", queryName);
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogError(ex, "Query {QueryName} processing failed", queryName);
-
-                throw new PentoException(typeof(TQuery).Name, innerException: ex);
+                var data = new Dictionary<string, object>
+                {
+                    ["Error"] = result.Error
+                };
+                using (logger.BeginScope(data))
+                {
+                    logger.LogError("Completed query {Query} with error", queryName);
+                }
             }
+
+            return result;
         }
-        
     }
 }

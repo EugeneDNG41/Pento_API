@@ -15,7 +15,7 @@ internal sealed class UpdateHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("/households/{householdId:Guid}", async (
+        app.MapPut("households/{householdId:guid}", async (
             Guid householdId,
             IUserContext userContext,
             Request request,
@@ -27,7 +27,7 @@ internal sealed class UpdateHousehold : IEndpoint
                 : await handler.Handle(
                 new UpdateHouseholdCommand(householdId, request.Name), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(Role.HouseholdAdmin.Name, Role.PowerMember.Name);
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
     }
     internal sealed class Request
     {

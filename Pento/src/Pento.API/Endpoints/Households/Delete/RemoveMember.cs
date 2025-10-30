@@ -13,7 +13,7 @@ internal sealed class RemoveMember : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/households/{householdId:Guid}/members/{userId:guid}", async (
+        app.MapDelete("households/{householdId:guid}/members/{userId:guid}", async (
             Guid householdId,
             Guid userId,
             IUserContext userContext,
@@ -25,6 +25,6 @@ internal sealed class RemoveMember : IEndpoint
                 : await handler.Handle(
                 new RemoveHouseholdMemberCommand(householdId, userId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(Role.HouseholdAdmin.Name, Role.PowerMember.Name);
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
     }
 }

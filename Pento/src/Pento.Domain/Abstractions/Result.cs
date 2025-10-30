@@ -53,21 +53,6 @@ public class Result<TValue> : Result
     public static implicit operator Result<TValue>(TValue? value) =>
         value is not null ? Success(value) : Failure<TValue>(Error.NullValue);
 
-    public static implicit operator TValue(Result<TValue> result) => result.Value;
-
-    public static implicit operator Task<TValue>(Result<TValue> result) =>
-        Task.FromResult(result.Value);
-
-
-    public async Task<TValue> ToValueAsync()
-    {
-        return await Task.FromResult(Value);
-    }
-
-    public Task<Result<TValue>> ToTaskAsync()
-    {
-        return Task.FromResult(this);
-    }
     public static Result<TValue> ValidationFailure(Error error) =>
         new(default, false, error);
 }

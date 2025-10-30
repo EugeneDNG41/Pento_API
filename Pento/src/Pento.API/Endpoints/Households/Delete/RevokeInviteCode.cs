@@ -13,7 +13,7 @@ internal sealed class RevokeInviteCode : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/households/{householdId:Guid}/invites", async (
+        app.MapDelete("households/{householdId:guid}/invites", async (
             Guid householdId,
             IUserContext userContext,
             ICommandHandler<RevokeInviteCodeCommand> handler,
@@ -24,6 +24,6 @@ internal sealed class RevokeInviteCode : IEndpoint
                 : await handler.Handle(
                 new RevokeInviteCodeCommand(householdId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(Role.HouseholdAdmin.Name, Role.PowerMember.Name);
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
     }
 }

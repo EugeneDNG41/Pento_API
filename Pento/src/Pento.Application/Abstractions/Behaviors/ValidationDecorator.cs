@@ -25,26 +25,7 @@ internal static class ValidationDecorator
                 return await innerHandler.Handle(command, cancellationToken);
             }
 
-            if (typeof(TResponse).IsGenericType &&
-            typeof(TResponse).GetGenericTypeDefinition() == typeof(Result<>))
-            {
-                Type resultType = typeof(TResponse).GetGenericArguments()[0];
-
-                MethodInfo? failureMethod = typeof(Result<>)
-                    .MakeGenericType(resultType)
-                    .GetMethod(nameof(Result<object>.ValidationFailure));
-
-                if (failureMethod is not null)
-                {
-                    return (TResponse)failureMethod.Invoke(null, [CreateValidationError(validationFailures)]);
-                }
-            }
-            else if (typeof(TResponse) == typeof(Result))
-            {
-                return (TResponse)(object)Result.Failure(CreateValidationError(validationFailures));
-            }
-
-            throw new ValidationException(validationFailures);
+            return Result.Failure<TResponse>(CreateValidationError(validationFailures));
         }
     }
 
@@ -62,6 +43,7 @@ internal static class ValidationDecorator
             {
                 return await innerHandler.Handle(command, cancellationToken);
             }
+
             return Result.Failure(CreateValidationError(validationFailures));
         }
     }

@@ -12,7 +12,7 @@ internal sealed class LeaveHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("/households/{householdId:Guid}/leave", async (
+        app.MapDelete("households/{householdId:guid}/leave", async (
             Guid householdId,
             IUserContext userContext,
             ICommandHandler<LeaveHouseholdCommand> handler,
