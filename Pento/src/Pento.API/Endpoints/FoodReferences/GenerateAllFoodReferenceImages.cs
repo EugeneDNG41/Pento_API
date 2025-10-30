@@ -1,6 +1,6 @@
-﻿using MediatR;
-using Pento.API.Endpoints;
+﻿using Pento.API.Endpoints;
 using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.GenerateImage;
 using Pento.Domain.Abstractions;
 
@@ -11,17 +11,17 @@ internal sealed class GenerateAllFoodReferenceImages : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("food-references/generate-all-images",
-            async (int limit, ISender sender, CancellationToken ct) =>
+            async (
+                int limit,
+                ICommandHandler<GenerateAllFoodReferenceImagesCommand, int> handler,
+                CancellationToken ct) =>
             {
-                Result<int> result = await sender.Send(new GenerateAllFoodReferenceImagesCommand(limit), ct);
+                Result<int> result = await handler.Handle(
+                    new GenerateAllFoodReferenceImagesCommand(limit),
+                    ct);
 
-                return result.Match(
-                    count => Results.Ok(new
-                    {
-                        Message = $" Generated {count} images (requested {limit}, max 50 per call).",
-                        GeneratedCount = count
-                    }),
-                    error => CustomResults.Problem(error)
+                return result.Match(Results.Ok,
+                    CustomResults.Problem
                 );
             })
             .DisableAntiforgery()

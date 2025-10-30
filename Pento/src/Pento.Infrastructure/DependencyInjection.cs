@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -135,7 +136,7 @@ public static class DependencyInjection
 
 #pragma warning disable S125 // Sections of code should not be commented out
                             //builder.AddSeqEndpoint("seq");
-
+        builder.AddAzureBlobServiceClient("blobs");
         return builder;
 #pragma warning restore S125 // Sections of code should not be commented out
     }

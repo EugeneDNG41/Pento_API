@@ -1,4 +1,5 @@
 ﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Enrich;
 using Pento.Domain.Abstractions;
 
@@ -9,13 +10,16 @@ internal sealed class EnrichFoodReference : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("food-references/{id:guid}/auto-enrich-shelf-life",
-            async (Guid id, ISender sender, CancellationToken cancellationToken) =>
-            {
+      async (
+                Guid id,
+                ICommandHandler<EnrichFoodReferenceShelfLifeCommand, FoodEnrichmentResult> handler,
+                CancellationToken cancellationToken) =>
+      {
                 var cmd = new EnrichFoodReferenceShelfLifeCommand(id);
 
-                Result<FoodEnrichmentResult> result = await sender.Send(cmd, cancellationToken);
+                Result<FoodEnrichmentResult> result = await handler.Handle(cmd, cancellationToken);
 
-                return result.Match(
+          return result.Match(
                     value => Results.Ok(new
                     {
                         FoodReferenceId = id,

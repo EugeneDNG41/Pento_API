@@ -20,7 +20,6 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPresentation()
     .AddEndpoints(Assembly.GetExecutingAssembly());
-builder.AddBlob();
 builder.AddAuthenticationAndAuthorization().AddAspireHostedServices();
 
 builder.Services.AddHttpLogging(options =>
