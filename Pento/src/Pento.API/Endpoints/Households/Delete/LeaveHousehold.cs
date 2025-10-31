@@ -12,16 +12,13 @@ internal sealed class LeaveHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("households/{householdId:guid}/leave", async (
-            Guid householdId,
+        app.MapDelete("households/leave", async (
             IUserContext userContext,
             ICommandHandler<LeaveHouseholdCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            Result result = userContext.HouseholdId != householdId
-                ? Result.Failure(HouseholdErrors.NotFound)
-                : await handler.Handle(
-                new LeaveHouseholdCommand(userContext.UserId, householdId), cancellationToken);
+            Result result = await handler.Handle(
+                new LeaveHouseholdCommand(userContext.UserId, userContext.HouseholdId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization();
     }

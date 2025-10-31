@@ -9,6 +9,10 @@ internal sealed class LeaveHouseholdCommandHandler(IGenericRepository<User> user
 {
     public async Task<Result> Handle(LeaveHouseholdCommand command, CancellationToken cancellationToken)
     {
+        if (command.HouseholdId is null)
+        {
+            return Result.Failure(UserErrors.NotInAnyHouseHold);
+        }
         User? user = await userRepository.GetByIdAsync(command.UserId, cancellationToken);
         if (user is null)
         {
@@ -16,9 +20,9 @@ internal sealed class LeaveHouseholdCommandHandler(IGenericRepository<User> user
         }
         if (user.HouseholdId != command.HouseholdId)
         {
-            return Result.Failure(UserErrors.UserNotInHousehold);
+            return Result.Failure(UserErrors.UserNotInYourHousehold);
         }
-        user.LeaveHousehold(command.HouseholdId);
+        user.LeaveHousehold(command.HouseholdId.Value);
         userRepository.Update(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

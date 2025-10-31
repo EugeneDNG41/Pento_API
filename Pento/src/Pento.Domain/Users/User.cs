@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Roles;
 
 namespace Pento.Domain.Users;
 
@@ -66,9 +67,17 @@ public sealed class User : Entity
     {
         AvatarUrl = avatarUrl;
     }
-    public void SetRoles(IEnumerable<Role> roles)
+    public void SetRoles(IEnumerable<Role> setRoles)
     {
-        _roles.Clear();
-        _roles.AddRange(roles);
+        var toAdd = setRoles.Where(sr => !_roles.Any(r => r.Name == sr.Name)).ToList();
+        var toRemove = _roles.Where(r => !setRoles.Any(sr => sr.Name == r.Name)).ToList();
+        foreach (Role? role in toAdd)
+        {
+            _roles.Add(role);
+        }
+        foreach (Role? role in toRemove)
+        {
+            _roles.Remove(role);
+        }
     }
 }

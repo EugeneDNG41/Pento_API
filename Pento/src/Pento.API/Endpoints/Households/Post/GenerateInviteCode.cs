@@ -7,7 +7,7 @@ using Pento.Application.Households.GenerateInvite;
 using Pento.Application.Households.Update;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
+using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Households.Post;
 
@@ -15,20 +15,16 @@ internal sealed class GenerateInviteCode : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("households/{householdId:guid}/invites", async (
-            Guid householdId,
+        app.MapPost("households/invites", async (
             IUserContext userContext,
             Request request,
             ICommandHandler<GenerateInviteCodeCommand, string> handler,
             CancellationToken cancellationToken) =>
         {
-            DateTime? expiresAtUtc = request.CodeExpirationDate?.ToUniversalTime();
-            Result<string> result = userContext.HouseholdId != householdId
-                ? Result.Failure<string>(HouseholdErrors.NotFound)
-                : await handler.Handle(
-                new GenerateInviteCodeCommand(householdId, expiresAtUtc), cancellationToken);
+            Result<string> result = await handler.Handle(
+                new GenerateInviteCodeCommand(userContext.HouseholdId, request.CodeExpirationDate), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }
     internal sealed class Request
     {

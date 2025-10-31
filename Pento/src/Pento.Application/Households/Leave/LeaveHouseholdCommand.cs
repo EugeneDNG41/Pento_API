@@ -8,4 +8,4 @@ using Pento.Domain.Households;
 
 namespace Pento.Application.Households.Leave;
 
-public sealed record LeaveHouseholdCommand(Guid UserId, Guid HouseholdId) : ICommand;
+public sealed record LeaveHouseholdCommand(Guid UserId, Guid? HouseholdId) : ICommand;

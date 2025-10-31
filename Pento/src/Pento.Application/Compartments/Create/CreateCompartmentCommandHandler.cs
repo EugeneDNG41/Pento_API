@@ -1,0 +1,32 @@
+﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Messaging;
+using Pento.Domain.Abstractions;
+using Pento.Domain.Compartments;
+using Pento.Domain.Storages;
+
+namespace Pento.Application.Compartments.Create;
+
+internal sealed class CreateCompartmentCommandHandler(
+    IGenericRepository<Compartment> compartmentRepository,
+    IGenericRepository<Storage> storageRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<CreateCompartmentCommand, Guid>
+{
+    public async Task<Result<Guid>> Handle(CreateCompartmentCommand command, CancellationToken cancellationToken)
+    {
+        Storage? storage = await storageRepository.GetByIdAsync(command.StorageId, cancellationToken);
+        if (storage is null)
+        {
+            return Result.Failure<Guid>(StorageErrors.NotFound);
+        }
+        var compartment = Compartment.Create(
+            command.Name,
+            command.StorageId,
+            command.HouseholdId,
+            command.Notes
+        );
+        compartmentRepository.Add(compartment);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return compartment.Id;
+
+    }
+}

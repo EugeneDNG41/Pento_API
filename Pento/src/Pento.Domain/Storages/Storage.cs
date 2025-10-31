@@ -32,6 +32,10 @@ public sealed class Storage : Entity
     }
     public void Update(string name, StorageType type, string? notes)
     {
+        if (Type != type)
+        {
+            Raise(new StorageTypeChangedDomainEvent(Id, type));
+        }
         Name = name;
         Type = type;
         Notes = notes;

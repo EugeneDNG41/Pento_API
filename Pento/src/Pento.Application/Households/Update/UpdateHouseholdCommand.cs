@@ -7,4 +7,4 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Households.Update;
 
-public sealed record UpdateHouseholdCommand(Guid HouseholdId, string Name) : ICommand;
+public sealed record UpdateHouseholdCommand(Guid? HouseholdId, string Name) : ICommand;

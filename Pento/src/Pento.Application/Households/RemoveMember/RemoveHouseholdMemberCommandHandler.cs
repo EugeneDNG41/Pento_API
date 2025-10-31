@@ -9,10 +9,14 @@ internal sealed class RemoveHouseholdMemberCommandHandler(IGenericRepository<Use
 {
     public async Task<Result> Handle(RemoveHouseholdMemberCommand command, CancellationToken cancellationToken)
     {
+        if (command.HouseholdId is null)
+        {
+            return Result.Failure(UserErrors.NotInAnyHouseHold);
+        }
         User? user = await userRepository.GetByIdAsync(command.UserId, cancellationToken);
         if (user is null || user.HouseholdId != command.HouseholdId)
         {
-            return Result.Failure(UserErrors.UserNotInHousehold);
+            return Result.Failure(UserErrors.UserNotInYourHousehold);
         }
         user.SetHouseholdId(null);
         userRepository.Update(user);

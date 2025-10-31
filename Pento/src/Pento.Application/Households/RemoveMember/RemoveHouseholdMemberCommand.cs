@@ -7,4 +7,4 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Households.RemoveMember;
 
-public sealed record RemoveHouseholdMemberCommand(Guid HouseholdId, Guid UserId) : ICommand;
+public sealed record RemoveHouseholdMemberCommand(Guid? HouseholdId, Guid UserId) : ICommand;

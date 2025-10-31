@@ -12,6 +12,7 @@ public static class HouseholdErrors
     public static readonly Error NotFound = Error.NotFound(
         "Household.IdentityNotFound",
         "Household not found.");
+
     public static readonly Error InviteCodeNotFound = Error.NotFound(
         "Household.InviteCodeNotFound",
         "The household with this invite code was not found.");

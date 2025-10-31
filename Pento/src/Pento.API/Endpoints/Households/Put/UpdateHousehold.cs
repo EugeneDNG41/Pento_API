@@ -7,7 +7,7 @@ using Pento.Application.Households.GenerateInvite;
 using Pento.Application.Households.Update;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
+using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Households.Put;
 
@@ -15,19 +15,16 @@ internal sealed class UpdateHousehold : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("households/{householdId:guid}", async (
-            Guid householdId,
+        app.MapPut("households", async (
             IUserContext userContext,
             Request request,
             ICommandHandler<UpdateHouseholdCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            Result result = userContext.HouseholdId != householdId
-                ? Result.Failure(HouseholdErrors.NotFound)
-                : await handler.Handle(
-                new UpdateHouseholdCommand(householdId, request.Name), cancellationToken);
+            Result result = await handler.Handle(
+                new UpdateHouseholdCommand(userContext.HouseholdId, request.Name), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }
     internal sealed class Request
     {

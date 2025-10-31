@@ -5,7 +5,7 @@ using Pento.Application.Households.RemoveMember;
 using Pento.Application.Households.RevokeInvite;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
+using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Households.Delete;
 
@@ -13,17 +13,14 @@ internal sealed class RevokeInviteCode : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("households/{householdId:guid}/invites", async (
-            Guid householdId,
+        app.MapDelete("households/invites", async (
             IUserContext userContext,
             ICommandHandler<RevokeInviteCodeCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            Result result = userContext.HouseholdId != householdId
-                ? Result.Failure(HouseholdErrors.NotFound)
-                : await handler.Handle(
-                new RevokeInviteCodeCommand(householdId), cancellationToken);
+            Result result = await handler.Handle(
+                new RevokeInviteCodeCommand(userContext.HouseholdId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdAdmin.Name, Role.PowerMember.Name));
+        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }
 }

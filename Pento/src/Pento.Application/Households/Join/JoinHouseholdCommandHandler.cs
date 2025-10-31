@@ -1,12 +1,18 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Authorization;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
+using Pento.Domain.Roles;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Households.Join;
 
-internal sealed class JoinHouseholdCommandHandler(IGenericRepository<Household> householdRepository, IGenericRepository<User> userRepository, IUnitOfWork unitOfWork) : ICommandHandler<JoinHouseholdCommand>
+internal sealed class JoinHouseholdCommandHandler(
+    IGenericRepository<Household> householdRepository, 
+    IGenericRepository<User> userRepository,
+    IRoleService roleService,
+    IUnitOfWork unitOfWork) : ICommandHandler<JoinHouseholdCommand>
 {
     public async Task<Result> Handle(JoinHouseholdCommand command, CancellationToken cancellationToken)
     {
@@ -33,7 +39,9 @@ internal sealed class JoinHouseholdCommandHandler(IGenericRepository<Household> 
             return Result.Failure(HouseholdErrors.InviteCodeExpired);
         }
         user.SetHouseholdId(household.Id);
+
         userRepository.Update(user);
+        user.SetRoles([Role.ErrandRunner]);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

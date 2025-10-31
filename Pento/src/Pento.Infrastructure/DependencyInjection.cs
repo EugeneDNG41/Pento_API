@@ -33,7 +33,7 @@ using Pento.Domain.PossibleUnits;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
-using Pento.Domain.StorageItems;
+using Pento.Domain.FoodItems;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.AI;
@@ -98,7 +98,7 @@ public static class DependencyInjection
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
-        services.AddScoped<IStorageItemRepository, StorageItemRepository>();
+        services.AddScoped<IFoodItemRepository, FoodItemRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
         services.AddScoped<IBlogPostRepository, BlogPostRepository>();
         services.AddScoped<IGiveawayClaimRepository, GiveawayClaimRepository>();
@@ -142,6 +142,7 @@ public static class DependencyInjection
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IPermissionService, PermissionService>();
+        builder.Services.AddScoped<IRoleService, RoleService>();
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
         builder.Services.AddOptions<KeycloakOptions>()

@@ -24,7 +24,7 @@ internal sealed class Tags
 
     internal const string Storages = "Storages";
     internal const string Compartments = "Compartments";
-    internal const string StorageItems = "StorageItems";
+    internal const string FoodItems = "FoodItems";
 
     internal const string BlogPosts = "BlogPosts";
     internal const string Comments = "Comments";

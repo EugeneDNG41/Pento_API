@@ -24,14 +24,11 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Compartments\Create\" />
     <Folder Include="Compartments\Delete\" />
-    <Folder Include="Compartments\Get\" />
-    <Folder Include="Compartments\Update\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
     <Folder Include="Storages\Delete\" />
-    <Folder Include="Storages\Update\" />
+    <Folder Include="Storages\GetAll\" />
   </ItemGroup>
 
 </Project>

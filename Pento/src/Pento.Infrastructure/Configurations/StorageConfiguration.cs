@@ -7,7 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Domain.Compartments;
-using Pento.Domain.StorageItems;
+using Pento.Domain.Households;
+using Pento.Domain.FoodItems;
 using Pento.Domain.Storages;
 
 namespace Pento.Infrastructure.Configurations;
@@ -29,6 +30,10 @@ internal sealed class StorageConfiguration() : IEntityTypeConfiguration<Storage>
         builder.HasMany<Compartment>()
                .WithOne()
                .HasForeignKey(c => c.StorageId)
+               .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Household>()
+               .WithMany()
+               .HasForeignKey(s => s.HouseholdId)
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

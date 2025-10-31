@@ -12,4 +12,7 @@ public static class StorageErrors
     public static Error NotFound => Error.NotFound(
         "Storage.NotFound",
         "Storage not found.");
+    public static Error ForbiddenAccess => Error.Forbidden(
+        "Storage.ForbiddenAccess",
+        "You do not have permission to access this storage.");
 }

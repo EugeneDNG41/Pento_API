@@ -327,7 +327,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.Property<Guid>("StorageItemId")
+                    b.Property<Guid>("FoodItemId")
                         .HasColumnType("uuid")
                         .HasColumnName("storage_item_id");
 
@@ -347,7 +347,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_giveaway_posts");
 
-                    b.HasIndex("StorageItemId")
+                    b.HasIndex("FoodItemId")
                         .HasDatabaseName("ix_giveaway_posts_storage_item_id");
 
                     b.HasIndex("UserId")
@@ -716,7 +716,7 @@ namespace Pento.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
+            modelBuilder.Entity("Pento.Domain.FoodItems.StorageItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -1058,9 +1058,9 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.GiveawayPosts.GiveawayPost", b =>
                 {
-                    b.HasOne("Pento.Domain.StorageItems.StorageItem", null)
+                    b.HasOne("Pento.Domain.FoodItems.StorageItem", null)
                         .WithMany()
-                        .HasForeignKey("StorageItemId")
+                        .HasForeignKey("FoodItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_giveaway_posts_storage_item_storage_item_id");
@@ -1179,7 +1179,7 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
+            modelBuilder.Entity("Pento.Domain.FoodItems.StorageItem", b =>
                 {
                     b.HasOne("Pento.Domain.Compartments.Compartment", null)
                         .WithMany()

@@ -43,6 +43,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<int>("PostType")
                         .HasColumnType("integer")
                         .HasColumnName("post_type");
@@ -94,6 +102,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<bool>("IsModerated")
                         .HasColumnType("boolean")
                         .HasColumnName("is_moderated");
@@ -129,6 +145,18 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -147,10 +175,83 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_compartments");
 
+                    b.HasIndex("HouseholdId")
+                        .HasDatabaseName("ix_compartments_household_id");
+
                     b.HasIndex("StorageId")
                         .HasDatabaseName("ix_compartments_storage_id");
 
                     b.ToTable("compartments", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CompartmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("compartment_id");
+
+                    b.Property<string>("CustomName")
+                        .HasColumnType("text")
+                        .HasColumnName("custom_name");
+
+                    b.Property<DateTime>("ExpirationDateUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expiration_date_utc");
+
+                    b.Property<Guid>("FoodRefId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_ref_id");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid?>("SourceItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_item_id");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_food_items");
+
+                    b.HasIndex("CompartmentId")
+                        .HasDatabaseName("ix_food_items_compartment_id");
+
+                    b.HasIndex("FoodRefId")
+                        .HasDatabaseName("ix_food_items_food_ref_id");
+
+                    b.HasIndex("HouseholdId")
+                        .HasDatabaseName("ix_food_items_household_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_food_items_unit_id");
+
+                    b.ToTable("food_items", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.FoodReferences.FoodReference", b =>
@@ -198,6 +299,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -267,6 +376,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("giveaway_post_id");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Message")
                         .HasColumnType("text")
                         .HasColumnName("message");
@@ -308,6 +425,18 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on_utc");
 
+                    b.Property<Guid>("FoodItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_item_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<DateTime?>("PickupEndDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("pickup_end_date");
@@ -328,10 +457,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.Property<Guid>("StorageItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("storage_item_id");
-
                     b.Property<string>("TitleDescription")
                         .IsRequired()
                         .HasColumnType("text")
@@ -348,8 +473,8 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_giveaway_posts");
 
-                    b.HasIndex("StorageItemId")
-                        .HasDatabaseName("ix_giveaway_posts_storage_item_id");
+                    b.HasIndex("FoodItemId")
+                        .HasDatabaseName("ix_giveaway_posts_food_item_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_giveaway_posts_user_id");
@@ -375,6 +500,14 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -407,6 +540,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("invite_code_expiration_utc");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -437,6 +578,14 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<int>("MealType")
                         .HasColumnType("integer")
@@ -496,9 +645,17 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
                     b.Property<bool>("IsDefault")
                         .HasColumnType("boolean")
                         .HasColumnName("is_default");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<Guid>("UnitId")
                         .HasColumnType("uuid")
@@ -539,6 +696,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("image_url");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid")
                         .HasColumnName("recipe_id");
@@ -571,6 +736,14 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("FoodRefId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Notes")
                         .HasMaxLength(255)
@@ -646,6 +819,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<bool>("IsPublic")
                         .HasColumnType("boolean")
                         .HasColumnName("is_public");
@@ -686,59 +867,60 @@ namespace Pento.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
+            modelBuilder.Entity("Pento.Domain.Roles.Role", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                    b.Property<string>("Name")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("name");
 
-                    b.Property<Guid>("CompartmentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("compartment_id");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("type");
 
-                    b.Property<string>("CustomName")
-                        .HasColumnType("text")
-                        .HasColumnName("custom_name");
+                    b.HasKey("Name")
+                        .HasName("pk_roles");
 
-                    b.Property<DateTime>("ExpirationDateUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expiration_date_utc");
+                    b.ToTable("roles", (string)null);
 
-                    b.Property<Guid>("FoodRefId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("food_ref_id");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("notes");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("decimal(10,2)")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid?>("SourceItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("source_item_id");
-
-                    b.Property<Guid>("UnitId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unit_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_storage_items");
-
-                    b.HasIndex("CompartmentId")
-                        .HasDatabaseName("ix_storage_items_compartment_id");
-
-                    b.HasIndex("FoodRefId")
-                        .HasDatabaseName("ix_storage_items_food_ref_id");
-
-                    b.HasIndex("UnitId")
-                        .HasDatabaseName("ix_storage_items_unit_id");
-
-                    b.ToTable("storage_items", (string)null);
+                    b.HasData(
+                        new
+                        {
+                            Name = "Administrator",
+                            Type = "System"
+                        },
+                        new
+                        {
+                            Name = "Household Head",
+                            Type = "Household"
+                        },
+                        new
+                        {
+                            Name = "Power Member",
+                            Type = "Household"
+                        },
+                        new
+                        {
+                            Name = "Grocery Shopper",
+                            Type = "Household"
+                        },
+                        new
+                        {
+                            Name = "Meal Planner",
+                            Type = "Household"
+                        },
+                        new
+                        {
+                            Name = "Pantry Manager",
+                            Type = "Household"
+                        },
+                        new
+                        {
+                            Name = "Errand Runner",
+                            Type = "Household"
+                        });
                 });
 
             modelBuilder.Entity("Pento.Domain.Storages.Storage", b =>
@@ -751,6 +933,14 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -772,6 +962,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_storages");
 
+                    b.HasIndex("HouseholdId")
+                        .HasDatabaseName("ix_storages_household_id");
+
                     b.ToTable("storages", (string)null);
                 });
 
@@ -792,6 +985,14 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -810,49 +1011,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasName("pk_units");
 
                     b.ToTable("units", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.Users.Role", b =>
-                {
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Name")
-                        .HasName("pk_roles");
-
-                    b.ToTable("roles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Name = "Administrator"
-                        },
-                        new
-                        {
-                            Name = "Household Admin"
-                        },
-                        new
-                        {
-                            Name = "Power Member"
-                        },
-                        new
-                        {
-                            Name = "Grocery Runner"
-                        },
-                        new
-                        {
-                            Name = "Meal Planner"
-                        },
-                        new
-                        {
-                            Name = "Storage Manager"
-                        },
-                        new
-                        {
-                            Name = "Basic Member"
-                        });
                 });
 
             modelBuilder.Entity("Pento.Domain.Users.User", b =>
@@ -890,6 +1048,14 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("identity_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -1001,12 +1167,50 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Compartments.Compartment", b =>
                 {
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_compartments_household_household_id");
+
                     b.HasOne("Pento.Domain.Storages.Storage", null)
                         .WithMany()
                         .HasForeignKey("StorageId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_compartments_storage_storage_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
+                {
+                    b.HasOne("Pento.Domain.Compartments.Compartment", null)
+                        .WithMany()
+                        .HasForeignKey("CompartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_compartments_compartment_id");
+
+                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
+                        .WithMany()
+                        .HasForeignKey("FoodRefId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_food_references_food_ref_id");
+
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_household_household_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
@@ -1028,12 +1232,12 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.GiveawayPosts.GiveawayPost", b =>
                 {
-                    b.HasOne("Pento.Domain.StorageItems.StorageItem", null)
+                    b.HasOne("Pento.Domain.FoodItems.FoodItem", null)
                         .WithMany()
-                        .HasForeignKey("StorageItemId")
+                        .HasForeignKey("FoodItemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_giveaway_posts_storage_item_storage_item_id");
+                        .HasConstraintName("fk_giveaway_posts_food_items_food_item_id");
 
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
@@ -1113,28 +1317,14 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Pento.Domain.StorageItems.StorageItem", b =>
+            modelBuilder.Entity("Pento.Domain.Storages.Storage", b =>
                 {
-                    b.HasOne("Pento.Domain.Compartments.Compartment", null)
+                    b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
-                        .HasForeignKey("CompartmentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_storage_items_compartments_compartment_id");
-
-                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
-                        .WithMany()
-                        .HasForeignKey("FoodRefId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_storage_items_food_references_food_ref_id");
-
-                    b.HasOne("Pento.Domain.Units.Unit", null)
-                        .WithMany()
-                        .HasForeignKey("UnitId")
+                        .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_storage_items_unit_unit_id");
+                        .HasConstraintName("fk_storages_households_household_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Users.User", b =>
@@ -1148,7 +1338,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("RoleUser", b =>
                 {
-                    b.HasOne("Pento.Domain.Users.Role", null)
+                    b.HasOne("Pento.Domain.Roles.Role", null)
                         .WithMany()
                         .HasForeignKey("RolesName")
                         .OnDelete(DeleteBehavior.Cascade)

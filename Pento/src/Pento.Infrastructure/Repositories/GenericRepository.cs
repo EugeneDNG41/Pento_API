@@ -55,14 +55,32 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         _context.Add(entity);
     }
 
+    public virtual void AddRange(IEnumerable<T> entities)
+    {
+        _context.AddRange(entities);
+    }
     public virtual void Update(T entity)
     {
     EntityEntry<T> tracker = _context.Attach(entity);
         tracker.State = EntityState.Modified;
     }
+
+    public virtual void UpdateRange(IEnumerable<T> entities)
+    {
+        foreach (T entity in entities)
+        {
+            EntityEntry<T> tracker = _context.Attach(entity);
+            tracker.State = EntityState.Modified;
+        }
+    }
     public virtual void Remove(T entity)
     {
         _context.Remove(entity);
+    }
+
+    public virtual void RemoveRange(IEnumerable<T> entities)
+    {
+        _context.RemoveRange(entities);
     }
 
     public async Task<IEnumerable<T>> FindIncludeAsync(Expression<Func<T, bool>> predicate, Expression<Func<T, object>> include, CancellationToken cancellationToken = default)

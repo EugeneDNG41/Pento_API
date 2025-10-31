@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.StorageItems;
+using Pento.Domain.FoodItems;
 
 namespace Pento.Infrastructure.Configurations;
 internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<FoodReference>
@@ -84,7 +84,7 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.UpdatedOnUtc)
             .IsRequired();
 
-        builder.HasMany<StorageItem>()
+        builder.HasMany<FoodItem>()
                .WithOne()
                .HasForeignKey(si => si.FoodRefId)
                .OnDelete(DeleteBehavior.Cascade);

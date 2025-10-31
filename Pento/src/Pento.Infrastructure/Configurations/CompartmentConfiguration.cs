@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Compartments;
+using Pento.Domain.Households;
 using Pento.Domain.Storages;
 
 namespace Pento.Infrastructure.Configurations;
@@ -24,7 +25,11 @@ internal sealed class CompartmentConfiguration : IEntityTypeConfiguration<Compar
         builder.HasOne<Storage>()
                .WithMany()
                .HasForeignKey(c => c.StorageId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Household>()
+               .WithMany()
+               .HasForeignKey(s => s.HouseholdId)
+               .OnDelete(DeleteBehavior.Cascade);
         builder.Property(c => c.Notes)
                .HasMaxLength(500);
     }

@@ -29,7 +29,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Endpoints\Households\Get\" />
 	  <Folder Include="Endpoints\Storages\Get\" />
 	  <Folder Include="Endpoints\Storages\Delete\" />
 	  <Folder Include="Endpoints\Storages\Put\" />

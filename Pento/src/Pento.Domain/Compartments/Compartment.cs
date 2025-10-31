@@ -9,18 +9,25 @@ namespace Pento.Domain.Compartments;
 
 public sealed class Compartment : Entity
 {
-    public Compartment(Guid id, string name, Guid storageId, string? notes) : base(id)
+    public Compartment(Guid id, string name, Guid storageId, Guid householdId, string? notes) : base(id)
     {
         Name = name;
         StorageId = storageId;
+        HouseholdId = householdId;
         Notes = notes;
     }
     private Compartment() { }
     public string Name { get; private set; }
     public Guid StorageId { get; private set; }
+    public Guid HouseholdId { get; private set; }
     public string? Notes { get; private set; }
-    public static Compartment Create(Guid storageId, string name, string? notes)
+    public static Compartment Create(string name, Guid storageId, Guid householdId, string? notes)
     {
-        return new Compartment(Guid.CreateVersion7(), name, storageId, notes);
+        return new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
+    }
+    public void Update(string name, string? notes)
+    {
+        Name = name;
+        Notes = notes;
     }
 }

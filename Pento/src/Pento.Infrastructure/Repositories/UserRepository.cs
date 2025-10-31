@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pento.Application.Abstractions.Data;
+using Pento.Domain.Roles;
 using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Repositories;

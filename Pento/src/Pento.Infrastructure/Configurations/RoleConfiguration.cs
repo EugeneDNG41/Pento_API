@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Roles;
 using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
@@ -13,6 +14,7 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.HasKey(r => r.Name);
 
         builder.Property(r => r.Name).HasMaxLength(50);
+        builder.Property(r => r.Type).HasConversion<string>().HasMaxLength(50);
 
         builder
             .HasMany<User>()
@@ -25,11 +27,11 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
 
         builder.HasData(
             Role.Administrator,
-            Role.HouseholdAdmin,
+            Role.HouseholdHead,
             Role.PowerMember,
-            Role.GroceryRunner,
+            Role.GroceryShopper,
             Role.MealPlanner,
-            Role.StorageManager,
-            Role.BasicMember);
+            Role.PantryManager,
+            Role.ErrandRunner);
     }
 }
