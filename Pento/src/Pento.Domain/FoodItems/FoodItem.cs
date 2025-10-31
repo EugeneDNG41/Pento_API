@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Images;
+using Pento.Domain.RecipeMedia;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Users;
 

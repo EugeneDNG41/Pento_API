@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Pento.Domain.Images;
+namespace Pento.Domain.RecipeMedia;
 
-public static class MediaErrors
+public static class RecipeMediaErrors
 {
 }

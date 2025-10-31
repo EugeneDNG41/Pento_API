@@ -23,6 +23,10 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.HasIndex(u => u.IdentityId).IsUnique();
 
-        builder.HasOne<Household>().WithMany().HasForeignKey(u => u.HouseholdId).IsRequired(false).OnDelete(DeleteBehavior.SetNull);
+        builder.HasOne<Household>()
+            .WithMany()
+            .HasForeignKey(u => u.HouseholdId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

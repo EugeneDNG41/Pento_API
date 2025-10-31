@@ -11,7 +11,6 @@ namespace Pento.Application.Households.Join;
 internal sealed class JoinHouseholdCommandHandler(
     IGenericRepository<Household> householdRepository, 
     IGenericRepository<User> userRepository,
-    IRoleService roleService,
     IUnitOfWork unitOfWork) : ICommandHandler<JoinHouseholdCommand>
 {
     public async Task<Result> Handle(JoinHouseholdCommand command, CancellationToken cancellationToken)

@@ -10,7 +10,7 @@ namespace Pento.Domain.Users;
 
 public sealed class User : Entity
 {
-    private readonly List<Role> _roles = [];
+    
 
     private User()
     {
@@ -26,6 +26,8 @@ public sealed class User : Entity
     public DateTime? UpdatedAt { get; private set; }
 
     public IReadOnlyCollection<Role> Roles => _roles.ToList();
+
+    private readonly List<Role> _roles = [];
 
     public static User Create(string email, string firstName, string lastName, string identityId, DateTime createdAt)
     {

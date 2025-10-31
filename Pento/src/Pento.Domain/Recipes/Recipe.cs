@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Images;
+using Pento.Domain.RecipeMedia;
 using Pento.Domain.Recipes.Events;
+using Pento.Domain.Roles;
 
 namespace Pento.Domain.Recipes;
 public sealed class Recipe: Entity
@@ -64,6 +65,8 @@ public sealed class Recipe: Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
+    public ICollection<RecipeMedia.RecipeMedia> Media { get; private set; }
+
     public static Recipe Create(
     string title,
     string? description,

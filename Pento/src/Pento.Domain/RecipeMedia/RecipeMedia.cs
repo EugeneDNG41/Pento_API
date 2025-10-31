@@ -6,21 +6,22 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Domain.Images;
+namespace Pento.Domain.RecipeMedia;
 
-public sealed class Media : Entity
+public sealed class RecipeMedia : Entity
 {
-    public Media(Uri url, string mimeType, string? caption)
+    public RecipeMedia(Uri url, Guid recipeId, string mimeType)
     {
         Url = url;
+        RecipeId = recipeId;
         MimeType = mimeType;
-        Caption = caption;
     }
 
-    private Media()
+    private RecipeMedia()
     {
     }
     public Uri Url { get; private set; }
+    public Guid RecipeId { get; private set; }
     public string MimeType { get; private set; }
-    public string? Caption { get; private set; }
+    
 }
