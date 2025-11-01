@@ -26,7 +26,8 @@ internal sealed class CreateFoodItemCommandHandler(IFoodItemRepository repositor
             command.Quantity,
             command.UnitId,
             command.ExpirationDate.ToUniversalTime(),
-            command.Notes);
+            command.Notes,
+            null);
         await repository.StartStreamAsync(e, cancellationToken);
         return e.Id;
     }

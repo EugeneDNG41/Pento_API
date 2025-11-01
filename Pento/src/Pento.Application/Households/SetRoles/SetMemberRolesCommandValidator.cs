@@ -7,7 +7,6 @@ internal sealed class SetMemberRolesCommandValidator : AbstractValidator<SetMemb
     
     public SetMemberRolesCommandValidator()
     {
-        RuleFor(x => x.HouseholdId).NotEmpty();
         RuleFor(x => x.MemberId).NotEmpty();
         RuleFor(x => x.Roles)
             .NotNull()

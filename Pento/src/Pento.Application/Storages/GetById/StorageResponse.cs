@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Storages.Get;
+﻿namespace Pento.Application.Storages.GetById;
 
 public sealed record StorageResponse(
     Guid Id,

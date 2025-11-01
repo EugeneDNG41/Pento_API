@@ -20,7 +20,8 @@ public sealed class FoodItem : Entity
         decimal quantity, 
         Guid unitId, 
         DateTime expirationDateUtc, 
-        string? notes) : base(id)
+        string? notes,
+        Guid? sourceItemId) : base(id)
     {
         FoodRefId = foodRefId;
         CompartmentId = compartmentId;
@@ -28,9 +29,9 @@ public sealed class FoodItem : Entity
         CustomName = customName;
         Quantity = quantity;
         UnitId = unitId;
-
         ExpirationDateUtc = expirationDateUtc;
         Notes = notes;
+        SourceItemId = sourceItemId;
     }
     private FoodItem() { }
     public Guid FoodRefId { get; private set; }
@@ -50,7 +51,8 @@ public sealed class FoodItem : Entity
         decimal quantity,
         Guid unitId,
         DateTime expirationDateUtc,
-        string? notes)
+        string? notes,
+        Guid? sourceItemId)
     {
         var foodItem = new FoodItem();
         foodItem.Apply(new FoodItemAdded(
@@ -62,7 +64,8 @@ public sealed class FoodItem : Entity
             quantity,
             unitId,
             expirationDateUtc,
-            notes));
+            notes,
+            sourceItemId));
         return foodItem;
     }
     public void Apply(FoodItemAdded @event) 
@@ -77,5 +80,29 @@ public sealed class FoodItem : Entity
         Notes = @event.Notes;
     }
 
-    
+    public void Rename(string? newName)
+    {
+        CustomName = newName;
+    }
+    public void AdjustQuantity(decimal newQuantity)
+    {
+        Quantity = newQuantity;
+    }
+    public void ChangeExpirationDate(DateTime newExpirationDateUtc)
+    {
+        ExpirationDateUtc = newExpirationDateUtc;
+    }
+    public void UpdateNotes(string? newNotes)
+    {
+        Notes = newNotes;
+    }
+    public void ChangeMeasurementUnit(Guid newUnitId, decimal newQuantity)
+    {
+        UnitId = newUnitId;
+        Quantity = newQuantity;
+    }
+    public void Move(Guid newCompartmentId)
+    {
+        CompartmentId = newCompartmentId;
+    }
 }

@@ -21,7 +21,9 @@ public sealed class Household : Entity
     }
     public static Household Create(string name)
     {
-        return new Household(name);
+        var household = new Household(name);
+        household.GenerateInviteCode();
+        return household;
     }
     public void SetInviteCodeExpiration(DateTime? expirationUtc)
     {

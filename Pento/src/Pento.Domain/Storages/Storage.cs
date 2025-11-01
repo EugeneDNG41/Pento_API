@@ -30,14 +30,9 @@ public sealed class Storage : Entity
             type,
             notes);
     }
-    public void Update(string name, StorageType type, string? notes)
+    public void Update(string name, string? notes)
     {
-        if (Type != type)
-        {
-            Raise(new StorageTypeChangedDomainEvent(Id, type));
-        }
         Name = name;
-        Type = type;
         Notes = notes;
     }
 }

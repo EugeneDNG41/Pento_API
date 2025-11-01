@@ -59,11 +59,6 @@ public sealed class User : Entity
     {
         HouseholdId = householdId;
     }
-    public void LeaveHousehold(Guid householdId)
-    {
-        HouseholdId = null;
-        Raise(new UserLeftHouseholdDomainEvent(householdId));
-    }
 
     public void SetAvatarUrl(Uri? avatarUrl)
     {

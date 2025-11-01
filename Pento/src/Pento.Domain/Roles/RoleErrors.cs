@@ -11,4 +11,5 @@ public static class RoleErrors
 {
     public static readonly Error NotFound = Error.NotFound("Role.NotFound", "Role not found.");
     public static readonly Error MustHaveOne = Error.Problem("Role.MustHaveOne", "At least one role must be assigned.");
+    public static readonly Error NotFoundToAssign = Error.Failure("Role.NotFoundToAssign", "Required role not found to assign.");
 }

@@ -24,7 +24,7 @@ internal sealed class UpdateStorageCommandHandler(
         {
             return Result.Failure(StorageErrors.ForbiddenAccess);
         }
-        storage.Update(command.Name, command.Type, command.Notes);
+        storage.Update(command.Name, command.Notes);
         repository.Update(storage);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

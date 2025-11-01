@@ -15,4 +15,7 @@ public static class StorageErrors
     public static Error ForbiddenAccess => Error.Forbidden(
         "Storage.ForbiddenAccess",
         "You do not have permission to access this storage.");
+    public static Error NotEmpty => Error.Conflict(
+        "Storage.NotEmpty",
+        "Storage is not empty.");
 }

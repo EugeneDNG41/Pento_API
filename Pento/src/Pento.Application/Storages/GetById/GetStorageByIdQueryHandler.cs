@@ -7,7 +7,7 @@ using Pento.Application.Storages.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Storages;
 
-namespace Pento.Application.Storages.Get;
+namespace Pento.Application.Storages.GetById;
 
 internal sealed class GetStorageByIdQueryHandler(
     IUserContext userContext,

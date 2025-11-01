@@ -27,7 +27,6 @@
     <Folder Include="Compartments\GetAll\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
-    <Folder Include="Storages\Delete\" />
   </ItemGroup>
 
 </Project>

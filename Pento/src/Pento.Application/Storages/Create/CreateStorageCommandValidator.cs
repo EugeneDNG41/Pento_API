@@ -6,8 +6,6 @@ internal sealed class CreateStorageCommandValidator : AbstractValidator<CreateSt
 {
     public CreateStorageCommandValidator()
     {
-        RuleFor(c => c.HouseholdId)
-            .NotEmpty();
         RuleFor(c => c.Name)
             .NotEmpty()
             .MaximumLength(200);

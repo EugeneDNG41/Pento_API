@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Storages.Get;
+using Pento.Application.Storages.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 

@@ -24,7 +24,7 @@ internal sealed class RevokeInviteCodeCommandHandler(
         {
             return Result.Failure(HouseholdErrors.NotFound);
         }
-        household.RevokeInviteCode(null, null);
+        household.RevokeInviteCode();
         repository.Update(household);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

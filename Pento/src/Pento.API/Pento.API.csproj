@@ -29,10 +29,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Endpoints\Storages\Get\" />
-	  <Folder Include="Endpoints\Storages\Delete\" />
-	  <Folder Include="Endpoints\Storages\Put\" />
-	  <Folder Include="Endpoints\Storages\Post\" />
+	  <Folder Include="Endpoints\Compartments\Delete\" />
+	  <Folder Include="Endpoints\Compartments\Get\" />
+	  <Folder Include="Endpoints\Compartments\Post\" />
+	  <Folder Include="Endpoints\Compartments\Put\" />
 	</ItemGroup>
 
 </Project>

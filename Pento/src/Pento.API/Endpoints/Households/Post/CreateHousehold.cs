@@ -17,7 +17,7 @@ internal sealed class CreateHousehold : IEndpoint
         {
             Result<string> result = await handler.Handle(
                 new CreateHouseholdCommand(request.Name), cancellationToken);
-            return result.Match(Results.Ok, CustomResults.Problem);
+            return result.Match(code => Results.CreatedAtRoute(RouteNames.GetCurrentHousehold, null, new {InviteCode = code}), CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization();
     }
     internal sealed class Request

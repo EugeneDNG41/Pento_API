@@ -87,4 +87,14 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return await Table.Where(predicate).Include(include).ToListAsync(cancellationToken);
     }
+
+    public async Task<bool> AnyAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    {
+        if (predicate == null)
+        {
+            return await Table.AnyAsync(cancellationToken);
+        }
+
+        return await Table.AnyAsync(predicate, cancellationToken);
+    }
 }
