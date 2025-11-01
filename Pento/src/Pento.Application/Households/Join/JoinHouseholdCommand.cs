@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Households.Join;
-public sealed record JoinHouseholdCommand(Guid? UserId, string InviteCode) : ICommand;
+public sealed record JoinHouseholdCommand(string InviteCode) : ICommand;

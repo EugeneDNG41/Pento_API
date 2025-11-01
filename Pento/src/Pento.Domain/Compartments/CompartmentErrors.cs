@@ -12,4 +12,7 @@ public static class CompartmentErrors
     public static readonly Error NotFound = Error.NotFound(
         "Compartment.NotFound",
         "Compartment not found.");
+    public static readonly Error ForbiddenAccess = Error.Forbidden(
+        "Compartment.ForbiddenAccess",
+        "You do not have permission to access this compartment.");
 }

@@ -15,12 +15,11 @@ internal sealed class RemoveMember : IEndpoint
     {
         app.MapDelete("households/members/{userId:guid}", async (
             Guid userId,
-            IUserContext userContext,
             ICommandHandler<RemoveHouseholdMemberCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(
-                new RemoveHouseholdMemberCommand(userContext.HouseholdId, userId), cancellationToken);
+                new RemoveHouseholdMemberCommand(userId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }

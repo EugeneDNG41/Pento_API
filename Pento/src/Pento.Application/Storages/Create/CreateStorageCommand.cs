@@ -8,4 +8,4 @@ using Pento.Domain.Storages;
 
 namespace Pento.Application.Storages.Create;
 
-public sealed record CreateStorageCommand(Guid? HouseholdId, string Name, StorageType type, string? notes) : ICommand<Guid>;
+public sealed record CreateStorageCommand(string Name, StorageType Type, string? Notes) : ICommand<Guid>;

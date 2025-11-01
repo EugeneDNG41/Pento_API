@@ -17,7 +17,7 @@ internal sealed class CreateFoodItemCommandHandler(IFoodItemRepository repositor
         {
             return Result.Failure<Guid>(UserErrors.NotInAnyHouseHold);
         }
-        var e = new FoodItemCreated(
+        var e = new FoodItemAdded(
             Guid.CreateVersion7(),
             command.FoodRefId,
             command.CompartmentId,

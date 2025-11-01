@@ -11,13 +11,12 @@ internal sealed class CreateHousehold : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("households", async(
-            IUserContext userContext,
             Request request, 
-            ICommandHandler<CreateHouseholdCommand, Guid> handler, 
+            ICommandHandler<CreateHouseholdCommand, string> handler, 
             CancellationToken cancellationToken) =>
         {
-            Result<Guid> result = await handler.Handle(
-                new CreateHouseholdCommand(request.Name, userContext.UserId), cancellationToken);
+            Result<string> result = await handler.Handle(
+                new CreateHouseholdCommand(request.Name), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization();
     }

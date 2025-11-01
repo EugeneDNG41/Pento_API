@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
@@ -7,13 +8,15 @@ using Pento.Domain.Users;
 namespace Pento.Application.Households.SetRoles;
 
 internal sealed class SetMemberRolesCommandHandler(
+    IUserContext userContext,
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<SetMemberRolesCommand>
 {
     public async Task<Result> Handle(SetMemberRolesCommand command, CancellationToken cancellationToken)
     {
-        if (command.HouseholdId is null)
+        Guid? currentHouseholdId = userContext.HouseholdId;
+        if (currentHouseholdId is null)
         {
             return Result.Failure(UserErrors.NotInAnyHouseHold);
         }
@@ -22,7 +25,7 @@ internal sealed class SetMemberRolesCommandHandler(
         {
             return Result.Failure(UserErrors.NotFound);
         }
-        if (user.HouseholdId != command.HouseholdId)
+        if (user.HouseholdId != currentHouseholdId.Value)
         {
             return Result.Failure(UserErrors.UserNotInYourHousehold);
         }

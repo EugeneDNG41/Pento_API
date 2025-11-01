@@ -16,13 +16,12 @@ internal sealed class UpdateHousehold : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("households", async (
-            IUserContext userContext,
             Request request,
             ICommandHandler<UpdateHouseholdCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(
-                new UpdateHouseholdCommand(userContext.HouseholdId, request.Name), cancellationToken);
+                new UpdateHouseholdCommand(request.Name), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }

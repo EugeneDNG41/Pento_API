@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authorization;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -9,17 +10,14 @@ using Pento.Domain.Users;
 namespace Pento.Application.Households.Join;
 
 internal sealed class JoinHouseholdCommandHandler(
+    IUserContext userContext,
     IGenericRepository<Household> householdRepository, 
     IGenericRepository<User> userRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<JoinHouseholdCommand>
 {
     public async Task<Result> Handle(JoinHouseholdCommand command, CancellationToken cancellationToken)
     {
-        if (command.UserId is null)
-        {
-            return Result.Failure(UserErrors.NotFound);
-        }
-        User? user = await userRepository.GetByIdAsync(command.UserId.Value, cancellationToken);
+        User? user = await userRepository.GetByIdAsync(userContext.UserId, cancellationToken);
         if (user is null)
         {
             return Result.Failure(UserErrors.NotFound);

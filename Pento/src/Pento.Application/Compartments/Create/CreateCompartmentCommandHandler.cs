@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
@@ -7,12 +8,18 @@ using Pento.Domain.Storages;
 namespace Pento.Application.Compartments.Create;
 
 internal sealed class CreateCompartmentCommandHandler(
+    IUserContext userContext,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Storage> storageRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<CreateCompartmentCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateCompartmentCommand command, CancellationToken cancellationToken)
     {
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId is null)
+        {
+            return Result.Failure<Guid>(StorageErrors.ForbiddenAccess);
+        }
         Storage? storage = await storageRepository.GetByIdAsync(command.StorageId, cancellationToken);
         if (storage is null)
         {
@@ -21,7 +28,7 @@ internal sealed class CreateCompartmentCommandHandler(
         var compartment = Compartment.Create(
             command.Name,
             command.StorageId,
-            command.HouseholdId,
+            householdId.Value,
             command.Notes
         );
         compartmentRepository.Add(compartment);

@@ -9,4 +9,4 @@ using Pento.Domain.Storages;
 
 namespace Pento.Application.Storages.Update;
 
-public sealed record UpdateStorageCommand(Guid StorageId, Guid? HouseholdId, string Name, StorageType Type, string? Notes) : ICommand;
+public sealed record UpdateStorageCommand(Guid StorageId, string Name, StorageType Type, string? Notes) : ICommand;

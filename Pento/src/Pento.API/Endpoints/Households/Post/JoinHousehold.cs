@@ -13,13 +13,12 @@ internal sealed class JoinHousehold : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("households/join", async (
-            IUserContext userContext,
             Request request,
             ICommandHandler<JoinHouseholdCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(
-                new JoinHouseholdCommand(userContext.UserId, request.InviteCode), cancellationToken);
+                new JoinHouseholdCommand(request.InviteCode), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization();
     }

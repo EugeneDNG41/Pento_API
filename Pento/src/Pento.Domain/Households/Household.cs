@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
@@ -22,13 +23,25 @@ public sealed class Household : Entity
     {
         return new Household(name);
     }
-    public void SetInviteCode(string? inviteCode, DateTime? expirationUtc)
+    public void SetInviteCodeExpiration(DateTime? expirationUtc)
     {
-        InviteCode = inviteCode;
         InviteCodeExpirationUtc = expirationUtc;
     }
     public void Update(string name)
     {
         Name = name;
+    }
+    public void GenerateInviteCode()
+    {
+        string inviteCode = Convert.ToBase64String(RandomNumberGenerator.GetBytes(8))
+                            .Replace("+", "-")
+                            .Replace("/", "_")
+                            .TrimEnd('=');
+        InviteCode = inviteCode;
+    }
+    public void RevokeInviteCode()
+    {
+        InviteCode = null;
+        InviteCodeExpirationUtc = null;
     }
 }

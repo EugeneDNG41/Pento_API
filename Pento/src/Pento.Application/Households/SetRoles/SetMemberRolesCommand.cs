@@ -7,4 +7,4 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Households.SetRoles;
 
-public sealed record SetMemberRolesCommand(Guid? HouseholdId, Guid MemberId, IEnumerable<string> Roles) : ICommand;
+public sealed record SetMemberRolesCommand(Guid MemberId, IEnumerable<string> Roles) : ICommand;

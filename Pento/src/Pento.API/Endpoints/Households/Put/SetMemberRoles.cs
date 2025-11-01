@@ -17,12 +17,11 @@ internal sealed class SetMemberRoles : IEndpoint
     {
         app.MapPut("households/members/{memberId:guid}/roles", async (
             Guid memberId,
-            IUserContext userContext,
             Request request,
             ICommandHandler<SetMemberRolesCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            SetMemberRolesCommand command = new(userContext.HouseholdId, memberId, request.Roles);
+            SetMemberRolesCommand command = new(memberId, request.Roles);
             Result result = await handler.Handle(command, cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name));

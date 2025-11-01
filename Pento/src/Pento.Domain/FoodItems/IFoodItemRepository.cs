@@ -10,5 +10,5 @@ namespace Pento.Domain.FoodItems;
 public interface IFoodItemRepository
 {
     Task<FoodItem?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task StartStreamAsync(FoodItemCreated e, CancellationToken cancellationToken = default);
+    Task StartStreamAsync(FoodItemAdded e, CancellationToken cancellationToken = default);
 }

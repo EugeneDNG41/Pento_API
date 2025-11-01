@@ -22,7 +22,7 @@ internal sealed class FoodItemRepository(IDocumentStore store, IUserContext user
         await using IDocumentSession session = store.LightweightSession();
         return await session.Events.AggregateStreamAsync<FoodItem>(id, token: cancellationToken);
     }
-    public async Task StartStreamAsync(FoodItemCreated e, CancellationToken cancellationToken = default)
+    public async Task StartStreamAsync(FoodItemAdded e, CancellationToken cancellationToken = default)
     {
         await using IDocumentSession session = store.LightweightSession();
         Guid userId = userContext.UserId;

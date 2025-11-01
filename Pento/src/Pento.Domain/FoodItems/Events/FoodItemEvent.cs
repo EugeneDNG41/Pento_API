@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Pento.Domain.FoodItems.Events;
 
 public abstract record FoodItemEvent();
-public record FoodItemCreated(
+public record FoodItemAdded(
     Guid Id, 
     Guid FoodRefId, 
     Guid CompartmentId,

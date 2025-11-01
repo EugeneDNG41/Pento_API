@@ -8,4 +8,4 @@ using Pento.Domain.Units;
 
 namespace Pento.Application.Compartments.Create;
 
-public sealed record CreateCompartmentCommand(Guid StorageId, Guid HouseholdId, string Name, string? Notes) : ICommand<Guid>;
+public sealed record CreateCompartmentCommand(Guid StorageId, string Name, string? Notes) : ICommand<Guid>;

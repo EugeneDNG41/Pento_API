@@ -14,12 +14,11 @@ internal sealed class RevokeInviteCode : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapDelete("households/invites", async (
-            IUserContext userContext,
             ICommandHandler<RevokeInviteCodeCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(
-                new RevokeInviteCodeCommand(userContext.HouseholdId), cancellationToken);
+                new RevokeInviteCodeCommand(), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
     }

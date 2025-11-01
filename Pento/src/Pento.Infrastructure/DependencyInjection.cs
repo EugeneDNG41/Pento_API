@@ -48,6 +48,8 @@ using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Quartz;
+using Pento.Application.FoodItems.Projections;
+using JasperFx.Events.Projections;
 
 namespace Pento.Infrastructure;
 
@@ -79,10 +81,8 @@ public static class DependencyInjection
         {
             options.Connection(connectionString);
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
+            options.Projections.Add<FoodItemProjection>(ProjectionLifecycle.Inline);
             // Event metadata
-            options.Events.MetadataConfig.CausationIdEnabled = true;
-            options.Events.MetadataConfig.CorrelationIdEnabled = true;
-            options.Events.MetadataConfig.HeadersEnabled = true;
             options.Events.MetadataConfig.UserNameEnabled = true;
         });
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());

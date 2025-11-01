@@ -11,7 +11,7 @@ internal sealed class CreateStorageCommandValidator : AbstractValidator<CreateSt
         RuleFor(c => c.Name)
             .NotEmpty()
             .MaximumLength(200);
-        RuleFor(c => c.notes)
+        RuleFor(c => c.Notes)
             .MaximumLength(1000);
     }
 }
