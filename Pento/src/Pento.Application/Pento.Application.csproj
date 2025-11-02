@@ -23,8 +23,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Compartments\Delete\" />
-    <Folder Include="Compartments\GetAll\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
   </ItemGroup>

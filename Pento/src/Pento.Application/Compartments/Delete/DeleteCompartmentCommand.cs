@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Marten;
 using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.Households.GetCurrent;
+namespace Pento.Application.Compartments.Delete;
 
-public sealed record GetCurrentHouseholdQuery() : IQuery<HouseholdResponse>;
-
+public sealed record DeleteCompartmentCommand(Guid CompartmentId) : ICommand;

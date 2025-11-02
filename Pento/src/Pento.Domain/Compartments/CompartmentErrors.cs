@@ -15,4 +15,7 @@ public static class CompartmentErrors
     public static readonly Error ForbiddenAccess = Error.Forbidden(
         "Compartment.ForbiddenAccess",
         "You do not have permission to access this compartment.");
+    public static readonly Error NotEmpty = Error.Conflict(
+        "Compartment.NotEmpty",
+        "Compartment is not empty.");
 }

@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Users;
 
@@ -18,7 +19,7 @@ internal sealed class SetMemberRolesCommandHandler(
         Guid? currentHouseholdId = userContext.HouseholdId;
         if (currentHouseholdId is null)
         {
-            return Result.Failure(UserErrors.NotInAnyHouseHold);
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
         User? user = (await userRepository.FindIncludeAsync(u => u.Id == command.MemberId, u => u.Roles, cancellationToken)).SingleOrDefault();
         if (user is null)
@@ -27,9 +28,9 @@ internal sealed class SetMemberRolesCommandHandler(
         }
         if (user.HouseholdId != currentHouseholdId.Value)
         {
-            return Result.Failure(UserErrors.UserNotInYourHousehold);
+            return Result.Failure(HouseholdErrors.UserNotInYourHousehold);
         }
-        List<Role> roles = new();
+        List<Role> roles = [];
         foreach (string roleName in command.Roles)
         {
             Role? role = (await roleRepository.FindAsync(r => r.Name == roleName && r.Type == RoleType.Household, cancellationToken))

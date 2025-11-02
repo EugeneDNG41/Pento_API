@@ -17,7 +17,7 @@ internal sealed class UpdateHouseholdCommandHandler(
         Guid? currentHouseholdId = userContext.HouseholdId;
         if (currentHouseholdId is null)
         {
-            return Result.Failure(UserErrors.NotInAnyHouseHold);
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
         Household? household = await repository.GetByIdAsync(currentHouseholdId.Value, cancellationToken);
         if (household is null)

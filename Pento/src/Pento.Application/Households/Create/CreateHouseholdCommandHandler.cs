@@ -6,6 +6,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
+using Pento.Domain.Storages;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Households.Create;
@@ -15,6 +16,7 @@ internal sealed class CreateHouseholdCommandHandler(
     IGenericRepository<Household> householdRepository, 
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
+    IGenericRepository<Storage> storageRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<CreateHouseholdCommand, string>
 {
     public async Task<Result<string>> Handle(CreateHouseholdCommand command, CancellationToken cancellationToken)
@@ -44,8 +46,16 @@ internal sealed class CreateHouseholdCommandHandler(
         //new household
         var household = Household.Create(command.Name);
         householdRepository.Add(household);
+
         currentUser.SetHouseholdId(household.Id);       
         currentUser.SetRoles([householdHeadRole]);
+        userRepository.Update(currentUser);
+
+        var pantry = Storage.Create("Pantry", household.Id, StorageType.Pantry, null);
+        var fridge = Storage.Create("Fridge", household.Id, StorageType.Fridge, null);
+        var freezer = Storage.Create("Freezer", household.Id, StorageType.Freezer, null);
+        storageRepository.AddRange([pantry, fridge, freezer]);
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;
     }

@@ -5,11 +5,12 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Storages.GetById;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Storages.GetAll;
 
-internal sealed class GetStoragesAsyncQueryHandler(
+internal sealed class GetCompartmentsQueryHandler(
     IUserContext userContext,
     ISqlConnectionFactory sqlConnectionFactory) 
     : IQueryHandler<GetStoragesQuery, IReadOnlyList<StorageResponse>>
@@ -21,7 +22,7 @@ internal sealed class GetStoragesAsyncQueryHandler(
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<IReadOnlyList<StorageResponse>>(UserErrors.NotInAnyHouseHold);
+            return Result.Failure<IReadOnlyList<StorageResponse>>(HouseholdErrors.NotInAnyHouseHold);
         }
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
         const string sql =

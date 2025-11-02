@@ -19,7 +19,7 @@ internal sealed class GenerateInviteCodeCommandHandler(
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<string>(UserErrors.NotInAnyHouseHold);
+            return Result.Failure<string>(HouseholdErrors.NotInAnyHouseHold);
         }
         Household? household = await repository.GetByIdAsync(householdId.Value, cancellationToken);
         if (household is null)

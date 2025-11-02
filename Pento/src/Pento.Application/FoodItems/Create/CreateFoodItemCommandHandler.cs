@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Create;
@@ -15,7 +16,7 @@ internal sealed class CreateFoodItemCommandHandler(IFoodItemRepository repositor
     {
         if (command.HouseholdId is null)
         {
-            return Result.Failure<Guid>(UserErrors.NotInAnyHouseHold);
+            return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
         var e = new FoodItemAdded(
             Guid.CreateVersion7(),

@@ -20,7 +20,7 @@ internal sealed class CreateStorageCommandHandler(
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<Guid>(UserErrors.NotInAnyHouseHold);
+            return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
         Household? household = await householdReposiry.GetByIdAsync(householdId.Value, cancellationToken);
         if (household is null)

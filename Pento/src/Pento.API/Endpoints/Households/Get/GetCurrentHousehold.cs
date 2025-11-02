@@ -11,10 +11,10 @@ internal sealed class GetCurrentHousehold : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("households/current", async (
-            IQueryHandler<GetCurrentHouseholdQuery, HouseholdDetailResponse> handler,
+            IQueryHandler<GetCurrentHouseholdQuery, HouseholdResponse> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<HouseholdDetailResponse> result = await handler.Handle(
+            Result<HouseholdResponse> result = await handler.Handle(
                 new GetCurrentHouseholdQuery(), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })

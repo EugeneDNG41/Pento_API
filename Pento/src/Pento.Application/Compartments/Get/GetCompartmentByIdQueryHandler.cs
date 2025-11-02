@@ -1,23 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Storages.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 
 namespace Pento.Application.Compartments.Get;
 
-public sealed record GetCompartmentById(Guid CompartmentId) : IQuery<CompartmentResponse>;
-
-internal sealed class GetCompartmentByIdQueryHandler(ISqlConnectionFactory connectionFactory) : IQueryHandler<GetCompartmentById, CompartmentResponse>
+internal sealed class GetCompartmentByIdQueryHandler(ISqlConnectionFactory connectionFactory) : IQueryHandler<GetCompartmentByIdQuery, CompartmentResponse>
 {
-    public async Task<Result<CompartmentResponse>> Handle(GetCompartmentById request, CancellationToken cancellationToken)
+    public async Task<Result<CompartmentResponse>> Handle(GetCompartmentByIdQuery request, CancellationToken cancellationToken)
     {
         await using DbConnection connection = await connectionFactory.OpenConnectionAsync();
         const string sql =
@@ -40,5 +32,3 @@ internal sealed class GetCompartmentByIdQueryHandler(ISqlConnectionFactory conne
         return compartment;
     }
 }
-
-public sealed record CompartmentResponse(Guid Id, Guid StorageId, Guid HouseholdId, string Name, string? Notes);

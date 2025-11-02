@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Households.Leave;
@@ -17,7 +18,7 @@ internal sealed class LeaveHouseholdCommandHandler(
         Guid? currentHouseholdId = userContext.HouseholdId;
         if (currentHouseholdId is null)
         {
-            return Result.Failure(UserErrors.NotInAnyHouseHold);
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
         User? user = await userRepository.GetByIdAsync(currentUserId, cancellationToken);
         if (user is null)
@@ -26,7 +27,7 @@ internal sealed class LeaveHouseholdCommandHandler(
         }
         if (user.HouseholdId != currentHouseholdId)
         {
-            return Result.Failure(UserErrors.NotInThisHouseHold);
+            return Result.Failure(HouseholdErrors.NotInThisHouseHold);
         }
         user.SetHouseholdId(null);
         userRepository.Update(user);

@@ -18,7 +18,7 @@ internal sealed class JoinHouseholdCommandHandler(
 {
     public async Task<Result> Handle(JoinHouseholdCommand command, CancellationToken cancellationToken)
     {
-        User? currentUser = await userRepository.GetByIdAsync(userContext.UserId, cancellationToken);
+        User? currentUser = (await userRepository.FindIncludeAsync(u => u.Id == userContext.UserId, u => u.Roles, cancellationToken)).SingleOrDefault();
         if (currentUser is null)
         {
             return Result.Failure(UserErrors.NotFound);
@@ -33,6 +33,10 @@ internal sealed class JoinHouseholdCommandHandler(
         if (household.InviteCodeExpirationUtc is not null && household.InviteCodeExpirationUtc < DateTime.UtcNow)
         {
             return Result.Failure(HouseholdErrors.InviteCodeExpired);
+        }
+        if (currentUser.HouseholdId == household.Id)
+        {
+            return Result.Failure(HouseholdErrors.AlreadyInThisHousehold);
         }
 
         //assign roles
@@ -58,9 +62,10 @@ internal sealed class JoinHouseholdCommandHandler(
             }
         }
         
-        currentUser.SetHouseholdId(household.Id);
+        currentUser.SetHouseholdId(household.Id);        
+        currentUser.SetRoles([errandRunnerRole]);
+
         userRepository.Update(currentUser);
-        currentUser.SetRoles([Role.ErrandRunner]);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
