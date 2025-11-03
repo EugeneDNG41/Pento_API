@@ -10,17 +10,16 @@ internal sealed class UpdateRecipe : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("recipes/{id:guid}",
-            async (HttpContext context) =>
-            {
-                var id = Guid.Parse((string)context.Request.RouteValues["id"]!);
-                Request? request = await context.Request.ReadFromJsonAsync<Request>();
-                ICommandHandler<UpdateRecipeCommand> handler = context.RequestServices.GetRequiredService<ICommandHandler<UpdateRecipeCommand>>();
-                CancellationToken cancellationToken = context.RequestAborted;
-
-                var command = new UpdateRecipeCommand(
-                    id,
-                    request!.Title,
+        app.MapPut("recipes/{recipeId:guid}", async (
+            Guid recipeId,
+            Request request,
+            ICommandHandler<UpdateRecipeCommand> handler,
+            CancellationToken cancellationToken) =>
+        {
+            Result result = await handler.Handle(
+                new UpdateRecipeCommand(
+                    recipeId,
+                    request.Title,
                     request.Description,
                     request.PrepTimeMinutes,
                     request.CookTimeMinutes,
@@ -29,15 +28,11 @@ internal sealed class UpdateRecipe : IEndpoint
                     request.DifficultyLevel,
                     request.ImageUrl is not null ? new Uri(request.ImageUrl) : null,
                     request.CreatedBy,
-                    request.IsPublic
-                );
+                    request.IsPublic),
+                cancellationToken);
 
-                Result result = await handler.Handle(command, cancellationToken);
-
-                return result.IsSuccess
-                    ? Results.NoContent()
-                    : Results.Problem("Failed to update recipe.");
-            })
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        })
         .WithTags(Tags.Recipes);
     }
 
