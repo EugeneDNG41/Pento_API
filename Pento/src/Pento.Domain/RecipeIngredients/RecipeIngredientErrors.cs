@@ -19,22 +19,6 @@ public static class RecipeIngredientErrors
             "RecipeIngredients.NotFoundByRecipe",
             $"No recipe ingredients were found for recipe '{recipeId}'."
         );
-
-    public static readonly Error InvalidQuantity = Error.Problem(
-        "RecipeIngredients.InvalidQuantity",
-        "The quantity must be greater than zero."
-    );
-
-    public static readonly Error InvalidFoodRef = Error.Problem(
-        "RecipeIngredients.InvalidFoodRef",
-        "The specified food reference is not valid."
-    );
-
-    public static readonly Error InvalidUnit = Error.Problem(
-        "RecipeIngredients.InvalidUnit",
-        "The specified unit is not valid."
-    );
-
     public static readonly Error Conflict = Error.Conflict(
         "RecipeIngredients.Conflict",
         "A recipe ingredient with the same food reference and unit already exists for this recipe."

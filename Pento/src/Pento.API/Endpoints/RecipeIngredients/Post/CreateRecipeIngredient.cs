@@ -5,7 +5,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 
-namespace Pento.API.Endpoints.RecipeIngredients;
+namespace Pento.API.Endpoints.RecipeIngredients.Post;
 
 internal sealed class CreateRecipeIngredient : IEndpoint
 {
@@ -28,7 +28,6 @@ internal sealed class CreateRecipeIngredient : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization()
         .WithTags(Tags.RecipeIngredients);
     }
 
