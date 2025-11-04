@@ -47,10 +47,9 @@ public sealed class RecipeDirection : Entity
         direction.Raise(new RecipeDirectionCreatedDomainEvent(direction.Id, recipeId));
         return direction;
     }
-    public void Update(string description, Uri? imageUrl, DateTime utcNow)
+    public void Update(string description, DateTime utcNow)
     {
         Description = description;
-        ImageUrl = imageUrl;
         UpdatedOnUtc = utcNow;
 
         Raise(new RecipeDirectionUpdatedDomainEvent(Id));

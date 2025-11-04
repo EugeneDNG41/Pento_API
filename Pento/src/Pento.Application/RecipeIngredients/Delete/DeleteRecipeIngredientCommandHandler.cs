@@ -16,8 +16,8 @@ internal sealed class DeleteRecipeIngredientCommandHandler(
         {
             return Result.Failure(RecipeIngredientErrors.NotFound(command.RecipeIngredientId));
         }
-  
-        recipeIngredient.Delete();
+        
+        recipeIngredientRepository.Remove(recipeIngredient);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

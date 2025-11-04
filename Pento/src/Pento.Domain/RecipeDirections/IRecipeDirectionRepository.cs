@@ -12,4 +12,5 @@ public interface IRecipeDirectionRepository
     Task AddAsync(RecipeDirection direction, CancellationToken cancellationToken = default);
     Task UpdateAsync(RecipeDirection direction, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<RecipeDirection?> GetByStep(int step, CancellationToken cancellationToken = default);
 }
