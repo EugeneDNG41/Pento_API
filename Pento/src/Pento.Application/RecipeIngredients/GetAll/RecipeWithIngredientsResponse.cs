@@ -10,7 +10,7 @@ public sealed class RecipeWithIngredientsResponse
     public Guid RecipeId { get; init; }
     public string RecipeTitle { get; init; } = string.Empty;
     public string? Description { get; init; }
-    public List<RecipeIngredientItemResponse> Ingredients { get; init; } = new();
+    public List<RecipeIngredientItemResponse> Ingredients { get; init; } = [];
 }
 
 public sealed class RecipeIngredientItemResponse
