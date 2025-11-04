@@ -10,6 +10,5 @@ public sealed record UnitResponse(
     string Name,
     string Abbreviation,
     decimal ToBaseFactor,
-    DateTime CreatedOnUtc,
-    DateTime UpdatedOnUtc
+    string Type
 );

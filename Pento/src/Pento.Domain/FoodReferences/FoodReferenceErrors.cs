@@ -9,11 +9,9 @@ namespace Pento.Domain.FoodReferences;
 
 public static class FoodReferenceErrors
 {
-    public static Error NotFound(Guid foodReferenceId) =>
-        Error.NotFound(
-            "FoodReferences.IdentityNotFound",
-            $"The food reference with ID {foodReferenceId} was not found."
-        );
+
+    public static readonly Error NotFound =
+        Error.NotFound("FoodReferences.NotFound", "Food reference not found");
 
     public static readonly Error InvalidGroup = Error.Problem(
         "FoodReferences.InvalidGroup",

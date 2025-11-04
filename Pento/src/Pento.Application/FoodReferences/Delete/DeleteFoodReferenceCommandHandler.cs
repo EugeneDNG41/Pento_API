@@ -19,7 +19,7 @@ internal sealed class DeleteFoodReferenceCommandHandler(
         FoodReference? foodRef = await foodReferenceRepository.GetByIdAsync(request.FoodReferenceId, cancellationToken);
         if (foodRef is null)
         {
-            return Result.Failure(FoodReferenceErrors.NotFound(request.FoodReferenceId));
+            return Result.Failure(FoodReferenceErrors.NotFound);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

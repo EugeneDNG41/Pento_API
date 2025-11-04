@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Units;
@@ -30,18 +31,11 @@ internal sealed class CreateUnitCommandHandler(
             }
         }
 
-        if (request.ToBaseFactor <= 0)
-        {
-            return Result.Failure<Guid>(UnitErrors.InvalidFactor);
-        }
-
-        DateTime utcNow = DateTime.UtcNow;
-
         var unit = Unit.Create(
             request.Name,
             request.Abbreviation,
             request.ToBaseFactor,
-            utcNow
+            request.Type
         );
 
         await unitRepository.AddAsync(unit, cancellationToken);

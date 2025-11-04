@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using JasperFx;
+using Microsoft.Extensions.Logging;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using ConcurrencyException = JasperFx.ConcurrencyException;
 
 namespace Pento.Application.Abstractions.Behaviors;
 
@@ -18,6 +20,12 @@ internal sealed class ExceptionHandlingDecorator
             try
             {
                 return await innerHandler.Handle(command, cancellationToken);
+            }
+            catch (ConcurrencyException)
+            {
+                return Result.Failure<TResponse>(Error.Conflict(
+                    "Version Mismatch",
+                    "The entity has been modified by another process"));
             }
             catch (Exception ex)
             {
@@ -39,6 +47,12 @@ internal sealed class ExceptionHandlingDecorator
             {
                 return await innerHandler.Handle(command, cancellationToken);
             }
+            catch (ConcurrencyException)
+            {
+                return Result.Failure(Error.Conflict(
+                    "Version Mismatch",
+                    "The entity has been modified by another process"));
+            }
             catch (Exception ex)
             {
                 logger.LogError(ex, "Unhandled exception for {CommandName}", typeof(TCommand).Name);
@@ -57,6 +71,12 @@ internal sealed class ExceptionHandlingDecorator
             try
             {
                 return await innerHandler.Handle(query, cancellationToken);
+            }
+            catch (ConcurrencyException)
+            {
+                return Result.Failure<TResponse>(Error.Conflict(
+                    "Version Mismatch",
+                    "The entity has been modified by another process"));
             }
             catch (Exception ex)
             {

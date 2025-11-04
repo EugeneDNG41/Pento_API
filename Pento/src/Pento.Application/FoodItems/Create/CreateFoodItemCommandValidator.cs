@@ -11,10 +11,12 @@ internal sealed class CreateFoodItemCommandValidator : AbstractValidator<CreateF
 {
     public CreateFoodItemCommandValidator()
     {
-        RuleFor(x => x.FoodRefId).NotEmpty();
-        RuleFor(x => x.CompartmentId).NotEmpty();
-        RuleFor(x => x.Quantity).GreaterThan(0);
-        RuleFor(x => x.UnitId).NotEmpty();
-        RuleFor(x => x.ExpirationDate.ToUniversalTime()).GreaterThan(DateTime.UtcNow);
+        RuleFor(x => x.FoodReferenceId).NotEmpty().WithMessage("Food reference Id must not be empty.");
+        RuleFor(x => x.CompartmentId).NotEmpty().WithMessage("Compartment Id must not be empty.");
+        RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+        RuleFor(x => x.ExpirationDate!.Value.ToUniversalTime())
+                .GreaterThan(DateTime.UtcNow)
+                .When(x => x.ExpirationDate.HasValue)
+                .WithMessage("ExpirationDate must be in the future.");
     }
 }

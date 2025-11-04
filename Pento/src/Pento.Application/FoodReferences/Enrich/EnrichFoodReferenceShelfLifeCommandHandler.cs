@@ -22,7 +22,7 @@ internal sealed class EnrichFoodReferenceShelfLifeCommandHandler(
         FoodReference? foodRef = await foodReferenceRepository.GetByIdAsync(request.FoodReferenceId, cancellationToken);
         if (foodRef is null)
         {
-            return Result.Failure<FoodEnrichmentResult>(FoodReferenceErrors.NotFound(request.FoodReferenceId));
+            return Result.Failure<FoodEnrichmentResult>(FoodReferenceErrors.NotFound);
         }
 
         FoodEnrichmentResult enrichment = await foodAiEnricher.EnrichAsync(

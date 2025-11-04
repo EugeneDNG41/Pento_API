@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Units.Create;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 
@@ -16,7 +17,8 @@ internal sealed class CreateUnit : IEndpoint
             var command = new CreateUnitCommand(
                 request.Name,
                 request.Abbreviation,
-                request.ToBaseFactor
+                request.ToBaseFactor,
+                request.Type
             );
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
@@ -35,5 +37,6 @@ internal sealed class CreateUnit : IEndpoint
         public string Name { get; init; } = string.Empty;
         public string Abbreviation { get; init; } = string.Empty;
         public decimal ToBaseFactor { get; init; }
+        public UnitType Type { get; init; }
     }
 }

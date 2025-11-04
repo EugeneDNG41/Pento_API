@@ -23,6 +23,7 @@
   </ItemGroup>
 	
   <ItemGroup>
+    <Folder Include="FoodItems\UpdateImage\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
   </ItemGroup>

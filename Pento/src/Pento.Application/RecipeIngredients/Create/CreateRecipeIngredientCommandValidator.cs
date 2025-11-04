@@ -15,7 +15,7 @@ public sealed class CreateRecipeIngredientCommandValidator
             .NotEmpty().WithMessage("RecipeId is required.");
 
         RuleFor(x => x.FoodRefId)
-            .NotEmpty().WithMessage("FoodRefId is required.");
+            .NotEmpty().WithMessage("FoodReferenceId is required.");
 
         RuleFor(x => x.UnitId)
             .NotEmpty().WithMessage("UnitId is required.");

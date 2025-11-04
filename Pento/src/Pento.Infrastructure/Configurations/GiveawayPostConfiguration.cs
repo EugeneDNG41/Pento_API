@@ -17,6 +17,5 @@ internal sealed class GiveawayPostConfiguration : IEntityTypeConfiguration<Givea
     {
         builder.ToTable("giveaway_posts");
         builder.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
-        builder.HasOne<FoodItem>().WithMany().HasForeignKey(c => c.FoodItemId);
     }
 }

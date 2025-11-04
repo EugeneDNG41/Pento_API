@@ -20,23 +20,13 @@ internal sealed class UnitConfiguration : IEntityTypeConfiguration<Unit>
         builder.Property(u => u.Name)
             .HasMaxLength(50)
             .IsRequired();
-
+        builder.Property(u => u.Type)
+               .HasConversion<string>()
+               .HasMaxLength(50);
         builder.Property(u => u.Abbreviation)
             .HasMaxLength(20);
 
         builder.Property(u => u.ToBaseFactor)
             .HasColumnType("decimal(10,2)");
-
-        builder.Property(u => u.CreatedOnUtc)
-            .HasColumnName("created_at")
-            .IsRequired();
-
-        builder.Property(u => u.UpdatedOnUtc)
-            .HasColumnName("updated_at");
-
-        builder.HasMany<FoodItem>()
-            .WithOne()
-            .HasForeignKey(u => u.UnitId)
-            .OnDelete(DeleteBehavior.Cascade);
     }
 }

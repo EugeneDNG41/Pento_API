@@ -25,7 +25,7 @@ internal sealed class GenerateFoodReferenceImageCommandHandler(
         FoodReference? foodRef = await foodReferenceRepository.GetByIdAsync(request.FoodReferenceId, cancellationToken);
         if (foodRef is null)
         {
-            return Result.Failure<string>(FoodReferenceErrors.NotFound(request.FoodReferenceId));
+            return Result.Failure<string>(FoodReferenceErrors.NotFound);
         }
 
         string query = $"{foodRef.Name} {foodRef.Notes}".Trim();

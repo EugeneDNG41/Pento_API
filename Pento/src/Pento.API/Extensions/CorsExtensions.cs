@@ -8,6 +8,10 @@ internal static class CorsExtensions
     {
         builder.Services.AddCors(options =>
         {
+            options.AddPolicy("AllowAll", policy =>
+                    policy.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader());
             options.AddDefaultPolicy(
                 policy =>
                 {

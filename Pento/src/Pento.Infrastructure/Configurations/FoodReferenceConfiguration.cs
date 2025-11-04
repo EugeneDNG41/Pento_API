@@ -83,10 +83,5 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.AddedBy);
         builder.Property(fr => fr.UpdatedOnUtc)
             .IsRequired();
-
-        builder.HasMany<FoodItem>()
-               .WithOne()
-               .HasForeignKey(si => si.FoodRefId)
-               .OnDelete(DeleteBehavior.Cascade);
     }
 }

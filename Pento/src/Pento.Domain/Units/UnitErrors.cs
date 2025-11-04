@@ -8,8 +8,8 @@ using Pento.Domain.Abstractions;
 namespace Pento.Domain.Units;
 public static class UnitErrors
 {
-    public static Error NotFound(Guid unitId) =>
-        Error.NotFound("Units.IdentityNotFound", $"The unit with ID {unitId} was not found.");
+    public static readonly Error NotFound =
+        Error.NotFound("Units.NotFound", $"Measurement unit not found.");
 
     public static readonly Error InvalidName = Error.Problem(
         "Units.InvalidName",
@@ -24,5 +24,10 @@ public static class UnitErrors
     public static readonly Error Conflict = Error.Conflict(
         "Units.Conflict",
         "A unit with the same name or abbreviation already exists."
+    );
+
+    public static readonly Error InvalidConversion = Error.Problem(
+        "Units.InvalidConversion",
+        "Cannot convert between units of different types."
     );
 }

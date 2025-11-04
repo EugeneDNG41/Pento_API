@@ -43,7 +43,7 @@ internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConn
         if (foodReference is null)
         {
             return Result.Failure<FoodReferenceResponse>(
-                FoodReferenceErrors.NotFound(request.FoodReferenceId));
+                FoodReferenceErrors.NotFound);
         }
 
         return Result.Success(foodReference);

@@ -12,7 +12,6 @@ internal sealed class CreateFoodItem : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("food-items", async (
-            IUserContext userContext,
             Request request, 
             ICommandHandler<CreateFoodItemCommand, Guid> handler, 
             CancellationToken cancellationToken) =>
@@ -21,8 +20,7 @@ internal sealed class CreateFoodItem : IEndpoint
             var command = new CreateFoodItemCommand(
                 request.FoodRefId,
                 request.CompartmentId,
-                userContext.HouseholdId,
-                request.CustomName,
+                request.Name,
                 request.Quantity,
                 request.UnitId,
                 request.ExpirationDate,
@@ -32,7 +30,7 @@ internal sealed class CreateFoodItem : IEndpoint
 
             return result.Match(
                 guid => Results.CreatedAtRoute(
-                    routeName: "GetFoodItemById",
+                    routeName: RouteNames.GetFoodItemById,
                     routeValues: new { id = guid },      
                     value: new { id = guid }),
                 CustomResults.Problem
@@ -45,10 +43,10 @@ internal sealed class CreateFoodItem : IEndpoint
     {
         public Guid FoodRefId { get; init; }
         public Guid CompartmentId { get; init; }
-        public string? CustomName { get; init; }
+        public string? Name { get; init; }
         public decimal Quantity { get; init; }
-        public Guid UnitId { get; init; }
-        public DateTime ExpirationDate{ get; init; }
+        public Guid? UnitId { get; init; }
+        public DateTime? ExpirationDate{ get; init; }
         public string? Notes { get; init; }
     }
 }

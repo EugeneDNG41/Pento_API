@@ -11,7 +11,7 @@ public static class PossibleUnitErrors
 {
     public static Error NotFound(Guid possibleUnitId) =>
         Error.NotFound(
-            "PossibleUnits.IdentityNotFound",
+            "PossibleUnits.NotFound",
             $"The possible unit with ID {possibleUnitId} was not found."
         );
 
@@ -30,5 +30,9 @@ public static class PossibleUnitErrors
     public static readonly Error Conflict = Error.Conflict(
         "PossibleUnits.Conflict",
         "A possible unit with the same FoodReference and Unit already exists."
+    );
+    public static readonly Error NoDefaultUnit = Error.Failure(
+        "PossibleUnits.NoDefaultUnit",
+        "No default possible unit is defined for the specified food reference."
     );
 }

@@ -8,11 +8,10 @@ using Pento.Application.Abstractions.Messaging;
 namespace Pento.Application.FoodItems.Create;
 
 public sealed record CreateFoodItemCommand(
-    Guid FoodRefId, 
+    Guid FoodReferenceId, 
     Guid CompartmentId,
-    Guid? HouseholdId,
-    string? CustomName, 
+    string? Name, 
     decimal Quantity, 
-    Guid UnitId, 
-    DateTime ExpirationDate, 
+    Guid? UnitId, 
+    DateTime? ExpirationDate, 
     string? Notes) : ICommand<Guid>;

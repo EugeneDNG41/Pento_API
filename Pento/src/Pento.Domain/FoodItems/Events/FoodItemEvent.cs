@@ -11,21 +11,25 @@ public record FoodItemAdded(
     Guid Id, 
     Guid FoodRefId, 
     Guid CompartmentId,
+    string CompartmentName,
     Guid HouseholdId,
-    string? CustomName, 
-    decimal Quantity, 
+    string Name,
+    Uri? ImageUrl,
+    decimal Quantity,
+    string UnitAbbreviation,
     Guid UnitId, 
     DateTime ExpirationDateUtc,
     string? Notes,
     Guid? SourceItemId) : FoodItemEvent;
 
 // Property Changes
-public record FoodItemRenamed(string? NewCustomName) : FoodItemEvent;
-public record FoodItemNotesChanged(string? Notes) : FoodItemEvent;
-public record FoodItemExpirationChanged(DateTime ExpirationDateUtc) : FoodItemEvent;
-public record FoodItemMoved(Guid CompartmentId) : FoodItemEvent;
+public record FoodItemRenamed(string NewName) : FoodItemEvent;
+public record FoodItemImageUpdated(Uri? ImageUrl) : FoodItemEvent;
+public record FoodItemNotesUpdated(string? Notes) : FoodItemEvent;
+public record FoodItemExpirationDateUpdated(DateTime ExpirationDateUtc) : FoodItemEvent;
+public record FoodItemCompartmentMoved(Guid CompartmentId, string CompartmentName) : FoodItemEvent;
 public record FoodItemQuantityAdjusted(decimal Quantity) : FoodItemEvent;
-public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity) : FoodItemEvent;
+public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity, string UnitAbbreviation) : FoodItemEvent;
 // Reservations
 public record FoodItemReservedForMealPlan(decimal Quantity, Guid MealPlanId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;
 public record FoodItemReservedForMealPlanCancelled(decimal Quantity, Guid MealPlanId) : FoodItemEvent;
@@ -37,11 +41,11 @@ public record FoodItemReservedForDonation(decimal Quantity, Guid DonationId, Dat
 public record FoodItemReservedForDonationCancelled(decimal Quantity, Guid DonationId): FoodItemEvent;
 public record FoodItemReservedForDonationDonated(decimal ReservedQuantity, decimal DonatedQuantity, Guid DonationId, Guid RecipientHouseholdId): FoodItemEvent;
 public record FoodItemConsumed(decimal Quantity): FoodItemEvent;
-public record FoodItemDisposed(decimal Quantity, DisposalReason Reason): FoodItemEvent;
+public record FoodItemDiscarded(decimal Quantity, DiscardReason Reason): FoodItemEvent;
 public record FoodItemSplit(decimal Quantity): FoodItemEvent;
-public record FoodItemMerged(Guid SourceItemId, Guid TargetItemId, decimal Quantity): FoodItemEvent;
+public record FoodItemMerged(Guid SourceItemId, decimal Quantity): FoodItemEvent;
 public record FoodItemRemovedByMerge(Guid TargetItemId, decimal Quantity): FoodItemEvent;
-public enum DisposalReason
+public enum DiscardReason
 {
     Expired, //due to past expiration date
     Spoiled, // due to spoilage before expiration date

@@ -1,10 +1,16 @@
-﻿using Dapper;
+﻿using System.Text.Json.Serialization;
+using Dapper;
+using ImTools;
 using JasperFx;
 using JasperFx.Events;
+using JasperFx.Events.Daemon;
+using JasperFx.Events.Projections;
 using Marten;
+using Marten.Events.Projections;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
@@ -17,14 +23,17 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Caching;
 using Pento.Application.Abstractions.Clock;
+using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
+using Pento.Application.FoodItems.Projections;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
 using Pento.Domain.Comments;
+using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
@@ -33,7 +42,6 @@ using Pento.Domain.PossibleUnits;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
-using Pento.Domain.FoodItems;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.AI;
@@ -41,6 +49,7 @@ using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Caching;
 using Pento.Infrastructure.Configurations;
+using Pento.Infrastructure.Converter;
 using Pento.Infrastructure.Data;
 using Pento.Infrastructure.Email;
 using Pento.Infrastructure.File;
@@ -48,8 +57,7 @@ using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Quartz;
-using Pento.Application.FoodItems.Projections;
-using JasperFx.Events.Projections;
+using Weasel.Core;
 
 namespace Pento.Infrastructure;
 
@@ -62,7 +70,9 @@ public static class DependencyInjection
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
 
         services.AddTransient<IEmailService, EmailService>();
-        
+        services.Configure<JsonOptions>(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()))
+                .Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(o =>
+                o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         AddPersistence(services, configuration);
 
         AddCaching(services, configuration);
@@ -81,10 +91,24 @@ public static class DependencyInjection
         {
             options.Connection(connectionString);
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
-            options.Projections.Add<FoodItemProjection>(ProjectionLifecycle.Inline);
+            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
+            options.AutoCreateSchemaObjects = AutoCreate.All;
+            options.Projections.Errors.SkipApplyErrors = false;
+            options.Projections.Errors.SkipSerializationErrors = false;
+            options.Projections.Errors.SkipUnknownEvents = false;
+
+
+            options.Projections.LiveStreamAggregation<FoodItem>();
+            options.Projections.Add<FoodItemDetailProjection>(ProjectionLifecycle.Inline);
+
+            options.Projections.UseIdentityMapForAggregates = true;
             // Event metadata
             options.Events.MetadataConfig.UserNameEnabled = true;
-        });
+        })
+        .ApplyAllDatabaseChangesOnStartup()
+        .UseLightweightSessions()
+        .AddAsyncDaemon(DaemonMode.HotCold);
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
@@ -95,6 +119,8 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+        services.AddTransient<IUnitConverter, UnitConverter>();
+
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
@@ -132,7 +158,7 @@ public static class DependencyInjection
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {
-
+        
 #pragma warning disable S125 // Sections of code should not be commented out
                             //builder.AddSeqEndpoint("seq");
         builder.AddAzureBlobServiceClient("blobs");

@@ -18,7 +18,7 @@ internal sealed class UpdateFoodReferenceCommandHandler(
         FoodReference? foodRef = await foodReferenceRepository.GetByIdAsync(request.Id, cancellationToken);
         if (foodRef is null)
         {
-            return Result.Failure<Guid>(FoodReferenceErrors.NotFound(request.Id));
+            return Result.Failure<Guid>(FoodReferenceErrors.NotFound);
         }
 
         if (!Enum.TryParse<FoodGroup>(request.FoodGroup, true, out FoodGroup foodGroup))

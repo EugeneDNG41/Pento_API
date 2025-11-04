@@ -480,7 +480,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on_utc");
 
-                    b.Property<Guid>("FoodRefId")
+                    b.Property<Guid>("FoodReferenceId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
 
@@ -499,7 +499,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_possible_units");
 
-                    b.HasIndex("FoodRefId", "UnitId")
+                    b.HasIndex("FoodReferenceId", "UnitId")
                         .IsUnique()
                         .HasDatabaseName("ix_possible_units_food_ref_id_unit_id");
 
@@ -556,7 +556,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on_utc");
 
-                    b.Property<Guid>("FoodRefId")
+                    b.Property<Guid>("FoodReferenceId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
 
@@ -584,7 +584,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_recipe_ingredients");
 
-                    b.HasIndex("FoodRefId")
+                    b.HasIndex("FoodReferenceId")
                         .HasDatabaseName("ix_recipe_ingredients_food_ref_id");
 
                     b.HasIndex("RecipeId")
@@ -685,7 +685,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("compartment_id");
 
-                    b.Property<string>("CustomName")
+                    b.Property<string>("Name")
                         .HasColumnType("text")
                         .HasColumnName("custom_name");
 
@@ -693,7 +693,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expiration_date_utc");
 
-                    b.Property<Guid>("FoodRefId")
+                    b.Property<Guid>("FoodReferenceId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
 
@@ -720,7 +720,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasIndex("CompartmentId")
                         .HasDatabaseName("ix_storage_items_compartment_id");
 
-                    b.HasIndex("FoodRefId")
+                    b.HasIndex("FoodReferenceId")
                         .HasDatabaseName("ix_storage_items_food_ref_id");
 
                     b.HasIndex("UnitId")
@@ -1049,7 +1049,7 @@ namespace Pento.Infrastructure.Migrations
                 {
                     b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
                         .WithMany()
-                        .HasForeignKey("FoodRefId")
+                        .HasForeignKey("FoodReferenceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_recipe_ingredients_food_references_food_ref_id");
@@ -1109,7 +1109,7 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
                         .WithMany()
-                        .HasForeignKey("FoodRefId")
+                        .HasForeignKey("FoodReferenceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_storage_items_food_references_food_ref_id");

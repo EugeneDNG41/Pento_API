@@ -23,7 +23,7 @@ internal sealed class UploadFoodImage : IEndpoint
                 return result.Match(
                     url => Results.Ok(new
                     {
-                        Message = " Image uploaded successfully.",
+                        Message = " ImageUrl uploaded successfully.",
                         ImageUrl = url
                     }),
                     error => CustomResults.Problem(error)

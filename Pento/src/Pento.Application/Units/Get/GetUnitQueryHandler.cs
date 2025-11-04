@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -25,8 +20,7 @@ internal sealed class GetUnitQueryHandler(ISqlConnectionFactory sqlConnectionFac
                 name AS Name,
                 abbreviation AS Abbreviation,
                 to_base_factor AS ToBaseFactor,
-                created_on_utc AS CreatedOnUtc,
-                updated_on_utc AS UpdatedOnUtc
+                type AS Type
             FROM units
             WHERE id = @UnitId
             """;
@@ -35,7 +29,7 @@ internal sealed class GetUnitQueryHandler(ISqlConnectionFactory sqlConnectionFac
 
         if (unit is null)
         {
-            return Result.Failure<UnitResponse>(UnitErrors.NotFound(request.UnitId));
+            return Result.Failure<UnitResponse>(UnitErrors.NotFound);
         }
 
         return unit;
