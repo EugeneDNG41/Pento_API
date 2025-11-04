@@ -43,7 +43,7 @@ internal sealed class GetRecipeDirectionQueryHandler(
         if (direction is null)
         {
             return Result.Failure<RecipeDirectionResponse>(
-                RecipeDirectionErrors.NotFound(request.RecipeDirectionId)
+                RecipeDirectionErrors.NotFound
             );
         }
 

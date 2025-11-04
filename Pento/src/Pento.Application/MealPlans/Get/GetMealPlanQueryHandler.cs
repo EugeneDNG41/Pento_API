@@ -40,7 +40,7 @@ internal sealed class GetMealPlanQueryHandler(ISqlConnectionFactory sqlConnectio
 
         if (mealPlan is null)
         {
-            return Result.Failure<MealPlanResponse>(MealPlanErrors.NotFound(request.Id));
+            return Result.Failure<MealPlanResponse>(MealPlanErrors.NotFound);
         }
 
         return mealPlan;

@@ -15,7 +15,7 @@ internal sealed class UpdateRecipeDirectionCommandHandler(
         RecipeDirection? direction = await recipeDirectionRepository.GetByIdAsync(command.Id, cancellationToken);
         if (direction is null)
         {
-            return Result.Failure(RecipeDirectionErrors.NotFound(command.Id));
+            return Result.Failure(RecipeDirectionErrors.NotFound);
         }
 
         direction.Update(command.Description,DateTime.UtcNow);

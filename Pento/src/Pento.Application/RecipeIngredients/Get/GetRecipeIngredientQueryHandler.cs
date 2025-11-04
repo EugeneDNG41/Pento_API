@@ -23,7 +23,7 @@ internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlC
         RecipeIngredient? recipeIngredient = await RecipeIngredientRepository.GetByIdAsync(request.RecipeIngredientId, cancellationToken);
         if (recipeIngredient == null)
         {
-            return Result.Failure<RecipeIngredientResponse>(RecipeIngredientErrors.NotFound(request.RecipeIngredientId));
+            return Result.Failure<RecipeIngredientResponse>(RecipeIngredientErrors.NotFound);
         }
         const string sql =
             $"""
@@ -48,7 +48,7 @@ internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlC
 
         if (ingredient is null)
         {
-            return Result.Failure<RecipeIngredientResponse>(RecipeIngredientErrors.NotFound(request.RecipeIngredientId));
+            return Result.Failure<RecipeIngredientResponse>(RecipeIngredientErrors.NotFound);
         }
 
         return ingredient;

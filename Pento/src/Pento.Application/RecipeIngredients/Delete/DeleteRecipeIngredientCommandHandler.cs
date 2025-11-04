@@ -14,7 +14,7 @@ internal sealed class DeleteRecipeIngredientCommandHandler(
         RecipeIngredient? recipeIngredient = await recipeIngredientRepository.GetByIdAsync(command.RecipeIngredientId, cancellationToken);
         if (recipeIngredient is null)
         {
-            return Result.Failure(RecipeIngredientErrors.NotFound(command.RecipeIngredientId));
+            return Result.Failure(RecipeIngredientErrors.NotFound);
         }
         
         recipeIngredientRepository.Remove(recipeIngredient);
