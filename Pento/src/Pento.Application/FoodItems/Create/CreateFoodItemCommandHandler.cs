@@ -44,7 +44,7 @@ internal sealed class CreateFoodItemCommandHandler(
         Unit validUnit;
         if (command.UnitId is null)
         {
-            //PossibleUnit? defaultPossibleUnit = (await possibleUnitRepository.FindAsync(pu => pu.FoodRefId == foodReference.Id && pu.IsDefault, cancellationToken)).SingleOrDefault();
+            //PossibleUnit? defaultPossibleUnit = (await possibleUnitRepository.FindAsync(pu => pu.FoodReferenceId == foodReference.Id && pu.IsDefault, cancellationToken)).SingleOrDefault();
             //if (defaultPossibleUnit is null)
             //{
             //    return Result.Failure<Guid>(PossibleUnitErrors.NoDefaultUnit);
@@ -60,7 +60,7 @@ internal sealed class CreateFoodItemCommandHandler(
             {
                 return Result.Failure<Guid>(UnitErrors.NotFound);
             }
-            else if (await possibleUnitRepository.AnyAsync(pu => pu.UnitId == command.UnitId && pu.FoodRefId == foodReference.Id, cancellationToken))
+            else if (await possibleUnitRepository.AnyAsync(pu => pu.UnitId == command.UnitId && pu.FoodReferenceId == foodReference.Id, cancellationToken))
             {
                 validUnit = commandUnit;
             }
@@ -114,7 +114,7 @@ internal sealed class CreateFoodItemCommandHandler(
                 null);
         //var e = new FoodItemAdded(
         //        Guid.CreateVersion7(),
-        //        command.FoodRefId,
+        //        command.FoodReferenceId,
         //        command.CompartmentId,
         //        "default-compartment",
         //        householdId.Value,

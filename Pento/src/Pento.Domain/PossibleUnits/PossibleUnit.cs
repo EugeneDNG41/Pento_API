@@ -13,13 +13,13 @@ public sealed class PossibleUnit : Entity
     public PossibleUnit(
         Guid id,
         Guid unitId,
-        Guid foodRefId,
+        Guid foodReferenceId,
         bool isDefault,
         DateTime createdOnUtc)
         : base(id)
     {
         UnitId = unitId;
-        FoodRefId = foodRefId;
+        FoodReferenceId = foodReferenceId;
         IsDefault = isDefault;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
@@ -29,7 +29,7 @@ public sealed class PossibleUnit : Entity
 
     public Guid UnitId { get; private set; }
 
-    public Guid FoodRefId { get; private set; }
+    public Guid FoodReferenceId { get; private set; }
 
     public bool IsDefault { get; private set; }
 
@@ -37,16 +37,16 @@ public sealed class PossibleUnit : Entity
 
     public DateTime UpdatedOnUtc { get; private set; }
 
-    public static PossibleUnit Create(Guid unitId, Guid foodRefId, bool isDefault, DateTime utcNow)
+    public static PossibleUnit Create(Guid unitId, Guid foodReferenceId, bool isDefault, DateTime utcNow)
     {
         var possibleUnit = new PossibleUnit(
             Guid.CreateVersion7(),
             unitId,
-            foodRefId,
+            foodReferenceId,
             isDefault,
             utcNow
         );
-        possibleUnit.Raise(new PossibleUnitCreatedDomainEvent(possibleUnit.Id, foodRefId, unitId));
+        possibleUnit.Raise(new PossibleUnitCreatedDomainEvent(possibleUnit.Id, foodReferenceId, unitId));
 
         return possibleUnit;
     }

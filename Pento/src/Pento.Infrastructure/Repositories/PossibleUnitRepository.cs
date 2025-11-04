@@ -20,7 +20,7 @@ internal sealed class PossibleUnitRepository : Repository<PossibleUnit>, IPossib
     {
         return await DbContext
             .Set<PossibleUnit>()
-            .Where(p => p.FoodRefId == foodRefId)
+            .Where(p => p.FoodReferenceId == foodRefId)
             .ToListAsync(cancellationToken);
     }
 
@@ -30,7 +30,7 @@ internal sealed class PossibleUnitRepository : Repository<PossibleUnit>, IPossib
     {
         return await DbContext
             .Set<PossibleUnit>()
-            .FirstOrDefaultAsync(p => p.FoodRefId == foodRefId && p.IsDefault, cancellationToken);
+            .FirstOrDefaultAsync(p => p.FoodReferenceId == foodRefId && p.IsDefault, cancellationToken);
     }
 
     public async Task AddAsync(PossibleUnit possibleUnit, CancellationToken cancellationToken = default)

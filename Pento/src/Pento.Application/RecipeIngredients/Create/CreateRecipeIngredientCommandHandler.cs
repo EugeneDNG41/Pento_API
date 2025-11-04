@@ -33,12 +33,12 @@ internal sealed class CreateRecipeIngredientCommandHandler(
         FoodReference? foodRef = await foodReferenceRepository.GetByIdAsync(command.FoodRefId, cancellationToken);
         if (foodRef is null)
         {
-            return Result.Failure<Guid>(FoodReferenceErrors.NotFound(command.FoodRefId));
+            return Result.Failure<Guid>(FoodReferenceErrors.NotFound);
         }
         Unit? unit = await unitsRepository.GetByIdAsync(command.UnitId, cancellationToken);
         if(unit is null)
         {
-            return Result.Failure<Guid>(UnitErrors.NotFound(command.UnitId));
+            return Result.Failure<Guid>(UnitErrors.NotFound);
         }
 
 
