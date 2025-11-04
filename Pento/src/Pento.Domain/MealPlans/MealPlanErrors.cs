@@ -8,10 +8,10 @@ using Pento.Domain.Abstractions;
 namespace Pento.Domain.MealPlans;
 public static class MealPlanErrors
 {
-    public static Error NotFound(Guid mealPlanId) =>
+    public static Error NotFound =>
         Error.NotFound(
             "MealPlans.IdentityNotFound",
-            $"The meal plan with ID {mealPlanId} was not found."
+            $"The meal plan with ID was not found."
         );
     public static Error NotFoundByHousehold(Guid householdId) =>
         Error.NotFound("MealPlan.NotFoundByHousehold", $"No meal plans found for household '{householdId}'.");

@@ -8,10 +8,10 @@ using Pento.Domain.Abstractions;
 namespace Pento.Domain.RecipeIngredients;
 public static class RecipeIngredientErrors
 {
-    public static Error NotFound(Guid recipeIngredientId) =>
+    public static Error NotFound =>
         Error.NotFound(
             "RecipeIngredients.IdentityNotFound",
-            $"The recipe ingredient with ID '{recipeIngredientId}' was not found."
+            $"The recipe ingredient was not found."
         );
 
     public static Error NotFoundByRecipe(Guid recipeId) =>
