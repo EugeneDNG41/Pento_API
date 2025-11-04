@@ -11,7 +11,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeIngredients;
 
 namespace Pento.Application.RecipeIngredients.Get;
-internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
+internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlConnectionFactory, IGenericRepository<RecipeIngredient> RecipeIngredientRepository)
     : IQueryHandler<GetRecipeIngredientQuery, RecipeIngredientResponse>
 {
     public async Task<Result<RecipeIngredientResponse>> Handle(
@@ -20,6 +20,11 @@ internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlC
     {
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
 
+        RecipeIngredient? recipeIngredient = await RecipeIngredientRepository.GetByIdAsync(request.RecipeIngredientId, cancellationToken);
+        if (recipeIngredient == null)
+        {
+            return Result.Failure<RecipeIngredientResponse>(RecipeIngredientErrors.NotFound(request.RecipeIngredientId));
+        }
         const string sql =
             $"""
             SELECT

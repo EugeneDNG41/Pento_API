@@ -29,14 +29,14 @@ internal sealed class GenerateFoodReferenceImageCommandHandler(
         }
 
         string query = $"{foodRef.Name} {foodRef.Notes}".Trim();
-        Result<Uri> unsplashResult = await pixabayService.GetImageUrlAsync(query, cancellationToken);
-        if (unsplashResult.IsFailure)
+        Result<Uri> imageResult = await pixabayService.GetImageUrlAsync(query, cancellationToken);
+        if (imageResult.IsFailure)
         {
-            return Result.Failure<string>(unsplashResult.Error);
+            return Result.Failure<string>(imageResult.Error);
         }
 
         using var httpClient = new HttpClient();
-        using Stream imageStream = await httpClient.GetStreamAsync(unsplashResult.Value, cancellationToken);
+        using Stream imageStream = await httpClient.GetStreamAsync(imageResult.Value, cancellationToken);
 
         string fileName = $"{foodRef.Id}_{foodRef.Name}.jpg";
         using var memoryStream = new MemoryStream();
@@ -49,7 +49,7 @@ internal sealed class GenerateFoodReferenceImageCommandHandler(
         };
 
 
-        Result<string> uploadResult = await blobService.UploadImageAsync(formFile, cancellationToken);
+        Result<string> uploadResult = await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
         if (uploadResult.IsFailure)
         {
             return Result.Failure<string>(uploadResult.Error);

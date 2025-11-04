@@ -42,7 +42,7 @@ internal sealed class ManualUploadFoodImageCommandHandler(
                 ContentType = "image/jpeg"
             };
 
-            Result<string> uploadResult = await blobService.UploadImageAsync(formFile, cancellationToken);
+            Result<string> uploadResult = await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
             if (uploadResult.IsFailure)
             {
                 return Result.Failure<string>(uploadResult.Error);

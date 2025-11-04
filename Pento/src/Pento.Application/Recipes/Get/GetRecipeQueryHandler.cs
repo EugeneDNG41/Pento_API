@@ -20,25 +20,25 @@ internal sealed class GetRecipeQueryHandler(ISqlConnectionFactory sqlConnectionF
     {
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
 
-        const string sql = """
+        const string sql =
+           $"""
             SELECT
-                id AS Id,
-                title AS Title,
-                description AS Description,
-                prep_time_minutes AS PrepTimeMinutes,
-                cook_time_minutes AS CookTimeMinutes,
-                notes AS Notes,
-                servings AS Servings,
-                difficulty_level AS DifficultyLevel,
-                calories_per_serving AS CaloriesPerServing,
-                image_url AS ImageUrl,
-                created_by AS CreatedBy,
-                is_public AS IsPublic,
-                created_on_utc AS CreatedOnUtc,
-                updated_on_utc AS UpdatedOnUtc
+                id AS {nameof(RecipeResponse.Id)},
+                title AS {nameof(RecipeResponse.Title)},
+                description AS {nameof(RecipeResponse.Description)},
+                prep_time_minutes AS {nameof(RecipeResponse.PrepTimeMinutes)},
+                cook_time_minutes AS {nameof(RecipeResponse.CookTimeMinutes)},
+                notes AS {nameof(RecipeResponse.Notes)},
+                servings AS {nameof(RecipeResponse.Servings)},
+                difficulty_level AS {nameof(RecipeResponse.DifficultyLevel)},
+                image_url AS {nameof(RecipeResponse.ImageUrl)},
+                created_by AS {nameof(RecipeResponse.CreatedBy)},
+                is_public AS {nameof(RecipeResponse.IsPublic)},
+                created_on_utc AS {nameof(RecipeResponse.CreatedOnUtc)},
+                updated_on_utc AS {nameof(RecipeResponse.UpdatedOnUtc)}
             FROM recipes
             WHERE id = @RecipeId
-            """;
+    """;
 
         RecipeResponse? recipe = await connection.QuerySingleOrDefaultAsync<RecipeResponse>(
             sql,

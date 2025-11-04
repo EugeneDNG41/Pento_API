@@ -13,6 +13,7 @@ namespace Pento.Infrastructure.File;
 public sealed class BlobService : IBlobService
 {
     private readonly BlobServiceClient _blobServiceClient;
+    private const string DefaultContainerName = "pento";
 
     private static readonly Dictionary<string, string[]> AllowedFileTypes = new()
     {
@@ -35,7 +36,7 @@ public sealed class BlobService : IBlobService
         return $"{timestamp}_{Guid.NewGuid():N}_{safeName}{extension}";
     }
 
-    public async Task<Result<string>> UploadFileAsync(IFormFile file, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
+    public async Task<Result<string>> UploadFileAsync(IFormFile file, string domain, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
     {
         if (!AllowedFileTypes.TryGetValue(fileTypeCategory, out string[]? allowedTypes))
         {
@@ -52,10 +53,12 @@ public sealed class BlobService : IBlobService
         try
         {
             string fileName = GenerateFileName(file.FileName);
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(fileTypeCategory);
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(DefaultContainerName);
             await container.CreateIfNotExistsAsync(PublicAccessType.Blob, cancellationToken: cancellationToken);
 
-            BlobClient blob = container.GetBlobClient(fileName);
+            string blobPath = $"{domain}/{fileTypeCategory}/{fileName}";
+            BlobClient blob = container.GetBlobClient(blobPath);
+
             using Stream stream = file.OpenReadStream();
 
             await blob.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType }, cancellationToken: cancellationToken);
@@ -70,19 +73,20 @@ public sealed class BlobService : IBlobService
 
 
 
-    public Task<Result<string>> UploadImageAsync(IFormFile file, CancellationToken cancellationToken = default)
-        => UploadFileAsync(file, "images", cancellationToken);
+    public Task<Result<string>> UploadImageAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
+        => UploadFileAsync(file, domain, "images", cancellationToken);
 
-    public Task<Result<string>> UploadVideoAsync(IFormFile file, CancellationToken cancellationToken = default)
-        => UploadFileAsync(file, "videos", cancellationToken);
+    public Task<Result<string>> UploadVideoAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
+        => UploadFileAsync(file, domain, "videos", cancellationToken);
 
 
-    public async Task<bool> DeleteFileAsync(string fileName, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
+
+    public async Task<bool> DeleteFileAsync(string domain, string filePath, CancellationToken cancellationToken = default)
     {
         try
         {
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(fileTypeCategory);
-            BlobClient blob = container.GetBlobClient(fileName);
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(DefaultContainerName);
+            BlobClient blob = container.GetBlobClient($"{domain}/{filePath}");
             Azure.Response<bool> response = await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
             return response.Value;
         }
@@ -92,10 +96,11 @@ public sealed class BlobService : IBlobService
         }
     }
 
-    public Task<bool> DeleteImageAsync(string fileName, CancellationToken cancellationToken = default)
-        => DeleteFileAsync(fileName, "images", cancellationToken);
+    public Task<bool> DeleteImageAsync(string domain, string fileName, CancellationToken cancellationToken = default)
+        => DeleteFileAsync(domain, $"images/{fileName}", cancellationToken);
 
-    public Task<bool> DeleteVideoAsync(string fileName, CancellationToken cancellationToken = default)
-        => DeleteFileAsync(fileName, "videos", cancellationToken);
+    public Task<bool> DeleteVideoAsync(string domain, string fileName, CancellationToken cancellationToken = default)
+        => DeleteFileAsync(domain, $"videos/{fileName}", cancellationToken);
+
 
 }

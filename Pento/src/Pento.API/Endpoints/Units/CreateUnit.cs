@@ -28,7 +28,6 @@ internal sealed class CreateUnit : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization()
         .WithTags(Tags.Units);
     }
 

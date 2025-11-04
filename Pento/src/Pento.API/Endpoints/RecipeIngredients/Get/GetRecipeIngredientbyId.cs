@@ -4,7 +4,7 @@ using Pento.Application.RecipeIngredients.Get;
 using Pento.Domain.Abstractions;
 using Pento.Infrastructure.Authentication;
 using Pento.Application.Abstractions.Messaging;
-namespace Pento.API.Endpoints.RecipeIngredients;
+namespace Pento.API.Endpoints.RecipeIngredients.Get;
 
 internal sealed class GetRecipeIngredientbyId : IEndpoint
 {
@@ -21,7 +21,6 @@ internal sealed class GetRecipeIngredientbyId : IEndpoint
                 CustomResults.Problem
             );
         })
-        .RequireAuthorization()
         .WithTags(Tags.RecipeIngredients);
     }
 }
