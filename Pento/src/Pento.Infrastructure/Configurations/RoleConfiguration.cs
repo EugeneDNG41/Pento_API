@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Marten.Linq.SoftDeletes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Roles;
 using Pento.Domain.Users;
@@ -25,6 +26,7 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
                 joinBuilder.Property("RolesName").HasColumnName("role_name");
             });
 
+
         builder.HasData(
             Role.Administrator,
             Role.HouseholdHead,
@@ -33,5 +35,6 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
             Role.MealPlanner,
             Role.PantryManager,
             Role.ErrandRunner);
+
     }
 }

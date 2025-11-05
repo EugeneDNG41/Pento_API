@@ -63,5 +63,7 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
         builder.Property(mp => mp.UpdatedOnUtc)
             .HasColumnName("updated_on_utc")
             .IsRequired();
+        builder.HasQueryFilter(c => !c.IsDeleted);
+
     }
 }

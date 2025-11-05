@@ -7,5 +7,10 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Get;
-public sealed record GetAllFoodReferencesQuery(FoodGroup? FoodGroup)
-    : IQuery<IReadOnlyList<FoodReferenceResponse>>;
+
+public sealed record GetAllFoodReferencesQuery(
+    FoodGroup? FoodGroup,
+    string? Search,
+    int Page = 1,
+    int PageSize = 10
+) : IQuery<PagedFoodReferencesResponse>;
