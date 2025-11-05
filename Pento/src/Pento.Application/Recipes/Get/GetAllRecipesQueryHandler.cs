@@ -26,6 +26,7 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
                 description AS Description,
                 prep_time_minutes AS PrepTimeMinutes,
                 cook_time_minutes AS CookTimeMinutes,
+                (prep_time_minutes + cook_time_minutes) AS TotalTimes,
                 notes AS Notes,
                 servings AS Servings,
                 difficulty_level AS DifficultyLevel,

@@ -9,17 +9,21 @@ internal sealed class GetRecipe : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("recipes/{id:guid}", async (Guid id, IQueryHandler<GetRecipeQuery, RecipeResponse> handler, CancellationToken cancellationToken) =>
+        app.MapGet("recipes/{recipeId:guid}", async (
+            Guid recipeId,
+            string? include,
+            IQueryHandler<GetRecipeQuery, RecipeDetailResponse> handler,
+            CancellationToken cancellationToken) =>
         {
-            var query = new GetRecipeQuery(id);
+            var query = new GetRecipeQuery(recipeId, include);
 
-            Result<RecipeResponse> result = await handler.Handle(query, cancellationToken);
+            Result<RecipeDetailResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(
                 recipe => Results.Ok(recipe),
-                CustomResults.Problem
-            );
+                CustomResults.Problem);
         })
-        .WithTags(Tags.Recipes);
+        .WithTags(Tags.Recipes)
+        .WithDescription("Include: 'None ,Ingredients, Directions, All' ");
     }
 }
