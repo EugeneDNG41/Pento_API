@@ -4,7 +4,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
-using static Pento.Application.Users.GetPermissions.GetUserPermissionsQueryHandler;
+using static Pento.Application.Users.GetUserRoles.GetUserRolesQueryHandler;
 
 namespace Pento.Application.Users.Get;
 

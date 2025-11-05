@@ -21,7 +21,7 @@ internal sealed class UpdateStorage : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.Storages)
-        .RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name, Role.PantryManager.Name));
+        .RequireAuthorization();
     }
     internal sealed class Request
     {

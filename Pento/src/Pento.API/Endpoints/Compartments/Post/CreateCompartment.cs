@@ -22,7 +22,7 @@ internal sealed class CreateCompartment : IEndpoint
             .Match(id => Results.CreatedAtRoute(RouteNames.GetCompartmentById, new { compartmentId = id }, id), CustomResults.Problem);
         })
         .WithTags(Tags.Compartments)
-        .RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name, Role.PantryManager.Name));
+        .RequireAuthorization();
     }
     internal sealed class Request
     {

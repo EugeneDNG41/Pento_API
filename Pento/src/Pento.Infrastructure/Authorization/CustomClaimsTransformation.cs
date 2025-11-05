@@ -18,7 +18,7 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 
         string identityId = principal.GetIdentityId();
 
-        Result<PermissionsResponse> result = await permissionService.GetUserPermissionsAsync(identityId);
+        Result<UserPermissionsResponse> result = await permissionService.GetUserPermissionsAsync(identityId);
 
         if (result.IsFailure)
         {
@@ -33,9 +33,9 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
             claimsIdentity.AddClaim(new Claim(CustomClaims.Household, result.Value.HouseholdId.ToString()!));
         }
         
-        foreach (string roles in result.Value.Roles)
+        foreach (string permission in result.Value.Permissions)
         {
-            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, roles));
+            claimsIdentity.AddClaim(new Claim(CustomClaims.Permission, permission));
         }
 
         principal.AddIdentity(claimsIdentity);

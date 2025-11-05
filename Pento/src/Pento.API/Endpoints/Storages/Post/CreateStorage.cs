@@ -22,7 +22,7 @@ internal sealed class CreateStorage : IEndpoint
             .Match(id => Results.CreatedAtRoute(RouteNames.GetStorageById, new { storageId = id }, id), CustomResults.Problem);
         })
         .WithTags(Tags.Storages)
-        .RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name, Role.PantryManager.Name));
+        .RequireAuthorization();
     }
     internal sealed class Request
     {

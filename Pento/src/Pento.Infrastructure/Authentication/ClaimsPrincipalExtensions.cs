@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Security.Claims;
 using Pento.Application.Abstractions.Exceptions;
 
 namespace Pento.Infrastructure.Authentication;
@@ -31,9 +32,16 @@ public static class ClaimsPrincipalExtensions
                throw new PentoException("User identity is unavailable");
     }
 
-    public static HashSet<string> GetPermissions(this ClaimsPrincipal? principal)
+    public static HashSet<string> GetRoles(this ClaimsPrincipal? principal)
     {
         IEnumerable<Claim> permissionClaims = principal?.FindAll(ClaimTypes.Role) ??
+                                              throw new PentoException("Roles are unavailable");
+
+        return permissionClaims.Select(c => c.Value).ToHashSet();
+    }
+    public static HashSet<string> GetPermissions(this ClaimsPrincipal? principal)
+    {
+        IEnumerable<Claim> permissionClaims = principal?.FindAll(CustomClaims.Permission) ??
                                               throw new PentoException("Permissions are unavailable");
 
         return permissionClaims.Select(c => c.Value).ToHashSet();

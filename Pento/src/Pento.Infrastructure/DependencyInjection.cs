@@ -9,6 +9,7 @@ using Marten;
 using Marten.Events.Projections;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
@@ -168,7 +169,6 @@ public static class DependencyInjection
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IPermissionService, PermissionService>();
-        builder.Services.AddScoped<IRoleService, RoleService>();
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
 
         builder.Services.AddOptions<KeycloakOptions>()
@@ -219,6 +219,11 @@ public static class DependencyInjection
         builder.Services.AddScoped<IUserContext, UserContext>();
 
         builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+        builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+
+        builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+        builder.Services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
 
         return builder;

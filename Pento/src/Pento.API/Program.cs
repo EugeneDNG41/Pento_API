@@ -32,21 +32,24 @@ builder.Services.AddHttpLogging(options =>
 });
 builder.AddCors();
 WebApplication app = builder.Build();
+app.ApplyMigrations();
+
+app.UseExceptionHandler();
+
+app.UseRouting();
+
 app.UseCors();
 
 app.MapDefaultEndpoints();
 
 app.UseSwaggerRoute();
 
-app.ApplyMigrations();
-
 app.UseLogContext();
 
 app.UseSerilogRequestLogging();
 
-app.UseExceptionHandler();
-
 app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapEndpoints();
