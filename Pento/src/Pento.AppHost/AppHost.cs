@@ -82,6 +82,7 @@ var keycloakTokenUrl = ReferenceExpression.Create(
 IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("KeycloakClientId");
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
 IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiApiKey", secret: true);
+IResourceBuilder<ParameterResource> pixabayApiKey = builder.AddParameter("PixabayApiKey", secret: true);
 
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
@@ -91,6 +92,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Keycloak__ClientId", keycloakClientId)
     .WithEnvironment("Keycloak__ClientSecret", keycloakClientSecret)
     .WithEnvironment("Gemini__ApiKey", geminiApiKey)
+    .WithEnvironment("Pixabay__ApiKey", pixabayApiKey)
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)
