@@ -9,9 +9,10 @@ public sealed record MealPlanResponse(
     Guid Id,
     Guid HouseholdId,
     string Name,
+    DateOnly ScheduledDate,
+    int Servings,
+    string? Notes,
     Guid CreatedBy,
-    DateOnly StartDate,
-    DateOnly EndDate,
     DateTime CreatedOnUtc,
     DateTime UpdatedOnUtc
 );
