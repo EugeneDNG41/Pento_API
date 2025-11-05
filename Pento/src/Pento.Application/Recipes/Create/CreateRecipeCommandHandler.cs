@@ -17,22 +17,6 @@ internal sealed class CreateRecipeCommandHandler(
         CreateRecipeCommand request,
         CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Title))
-        {
-            return Result.Failure<Guid>(RecipeErrors.InvalidTitle);
-        }
-
-        if (request.PrepTimeMinutes < 0 || request.CookTimeMinutes < 0)
-        {
-            return Result.Failure<Guid>(RecipeErrors.InvalidTime);
-        }
-
-        if (request.Servings is not null && request.Servings <= 0)
-        {
-            return Result.Failure<Guid>(RecipeErrors.InvalidServings);
-        }
-
-
         var time = TimeRequirement.Create(request.PrepTimeMinutes, request.CookTimeMinutes);
 
         var recipe = Recipe.Create(

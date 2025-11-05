@@ -41,7 +41,7 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
 
         builder.Property(mp => mp.MealType)
             .IsRequired()
-            .HasConversion<int>(); 
+            .HasConversion<string>(); 
 
         builder.Property(mp => mp.ScheduledDate)
             .HasColumnName("scheduled_date")

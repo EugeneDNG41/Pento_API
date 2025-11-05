@@ -44,4 +44,7 @@ public static class MealPlanErrors
         "MealPlans.InvalidDateRange",
         "Start date cannot be later than end date."
     );
+    public static readonly Error ForbiddenAccess = Error.Forbidden(
+    "MealPlan.ForbiddenAccess",
+    "You do not have permission to access this MealPlan.");
 }

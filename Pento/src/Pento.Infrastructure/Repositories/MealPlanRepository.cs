@@ -15,14 +15,13 @@ internal sealed class MealPlanRepository : Repository<MealPlan>, IMealPlanReposi
     }
 
     public async Task<MealPlan?> GetByNameAsync(
-        Guid householdId,
         string name,
         CancellationToken cancellationToken = default)
     {
         return await DbContext
             .Set<MealPlan>()
             .FirstOrDefaultAsync(
-                m => m.HouseholdId == householdId && m.Name == name,
+                m =>  m.Name == name,
                 cancellationToken);
     }
 

@@ -5,6 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.Recipes.Get;
-public sealed record GetRecipeQuery(Guid RecipeId, string? Include)
-    : IQuery<RecipeDetailResponse>;
+namespace Pento.Application.MealPlans.Delete;
+
+public sealed record DeleteMealPlanCommand(Guid Id) : ICommand;
