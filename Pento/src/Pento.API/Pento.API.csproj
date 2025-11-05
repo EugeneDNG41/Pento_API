@@ -30,7 +30,8 @@
 
 	<ItemGroup>
 	  <Folder Include="Endpoints\FoodItems\Delete\" />
-	  <Folder Include="Endpoints\FoodItems\Put\" />
+	  <Folder Include="Endpoints\Users\Delete\" />
+	  <Folder Include="Endpoints\Users\Patch\" />
 	</ItemGroup>
 
 </Project>

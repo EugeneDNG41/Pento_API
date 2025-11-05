@@ -13,7 +13,6 @@ namespace Pento.Infrastructure.File;
 public sealed class BlobService : IBlobService
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private const string DefaultContainerName = "pento";
 
     private static readonly Dictionary<string, string[]> AllowedFileTypes = new()
     {
@@ -36,57 +35,56 @@ public sealed class BlobService : IBlobService
         return $"{timestamp}_{Guid.NewGuid():N}_{safeName}{extension}";
     }
 
-    public async Task<Result<string>> UploadFileAsync(IFormFile file, string domain, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
+    public async Task<Result<Uri>> UploadFileAsync(IFormFile file, string domain, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
     {
         if (!AllowedFileTypes.TryGetValue(fileTypeCategory, out string[]? allowedTypes))
         {
-            return Result.Failure<string>(
-                Error.Failure("Blob.InvalidCategory", $"Unknown category '{fileTypeCategory}'."));
+            return Result.Failure<Uri>(
+                Error.Problem("Blob.InvalidCategory", $"Unknown category '{fileTypeCategory}'."));
         }
 
         if (!allowedTypes.Contains(file.ContentType))
         {
-            return Result.Failure<string>(
-                Error.Conflict("Blob.InvalidType", $"File type '{file.ContentType}' is not allowed for category '{fileTypeCategory}'."));
+            return Result.Failure<Uri>(
+                Error.Problem("Blob.InvalidType", $"File type '{file.ContentType}' is not allowed for category '{fileTypeCategory}'."));
         }
 
         try
         {
             string fileName = GenerateFileName(file.FileName);
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(DefaultContainerName);
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain}/{fileTypeCategory}");
             await container.CreateIfNotExistsAsync(PublicAccessType.Blob, cancellationToken: cancellationToken);
 
-            string blobPath = $"{domain}/{fileTypeCategory}/{fileName}";
-            BlobClient blob = container.GetBlobClient(blobPath);
+            BlobClient blob = container.GetBlobClient(fileName);
 
             using Stream stream = file.OpenReadStream();
 
             await blob.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType }, cancellationToken: cancellationToken);
-            return Result.Success(blob.Uri.AbsoluteUri);
+            return Result.Success(blob.Uri);
         }
         catch (Exception ex)
         {
-            return Result.Failure<string>(
-                Error.Problem("Blob.UploadFailed", $"Unexpected error during upload: {ex.Message}"));
+            return Result.Failure<Uri>(
+                Error.Failure("Blob.UploadFailed", $"Unexpected error during upload: {ex.Message}"));
         }
     }
 
 
 
-    public Task<Result<string>> UploadImageAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
+    public Task<Result<Uri>> UploadImageAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
         => UploadFileAsync(file, domain, "images", cancellationToken);
 
-    public Task<Result<string>> UploadVideoAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
+    public Task<Result<Uri>> UploadVideoAsync(IFormFile file, string domain, CancellationToken cancellationToken = default)
         => UploadFileAsync(file, domain, "videos", cancellationToken);
 
 
 
-    public async Task<bool> DeleteFileAsync(string domain, string filePath, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteFileAsync(string domain, string filePath, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
     {
         try
         {
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient(DefaultContainerName);
-            BlobClient blob = container.GetBlobClient($"{domain}/{filePath}");
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain}/{fileTypeCategory}");
+            BlobClient blob = container.GetBlobClient(filePath);
             Azure.Response<bool> response = await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
             return response.Value;
         }
@@ -97,10 +95,10 @@ public sealed class BlobService : IBlobService
     }
 
     public Task<bool> DeleteImageAsync(string domain, string fileName, CancellationToken cancellationToken = default)
-        => DeleteFileAsync(domain, $"images/{fileName}", cancellationToken);
+        => DeleteFileAsync(domain, fileName, "images", cancellationToken);
 
     public Task<bool> DeleteVideoAsync(string domain, string fileName, CancellationToken cancellationToken = default)
-        => DeleteFileAsync(domain, $"videos/{fileName}", cancellationToken);
+        => DeleteFileAsync(domain, fileName, "videos", cancellationToken);
 
 
 }

@@ -19,6 +19,17 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
         builder.Property(p => p.Description).HasMaxLength(500);
         
         builder.HasData(
+            Permission.UserGeneral,
+            Permission.ViewRecipes,
+            Permission.AddRecipes,
+            Permission.UpdateRecipes,
+            Permission.DeleteRecipes,
+            Permission.ViewGiveaways,
+
+            Permission.DeleteGiveaways,
+            Permission.CreateGiveaways,
+            Permission.UpdateGiveaways,
+
             Permission.GetUsers,
             Permission.ManageUsers,
             Permission.DeleteUsers,
@@ -65,7 +76,13 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                 joinBuilder.ToTable("role_permissions");
 
                 joinBuilder.HasData(
-                    // Member permissions
+                    CreateRolePermission(Role.User, Permission.UserGeneral),
+                    CreateRolePermission(Role.User, Permission.ViewRecipes),
+                    CreateRolePermission(Role.User, Permission.AddRecipes),
+                    CreateRolePermission(Role.User, Permission.UpdateRecipes),
+                    CreateRolePermission(Role.User, Permission.DeleteRecipes),
+                    CreateRolePermission(Role.User, Permission.ViewGiveaways),
+                    // Admin permissions
                     CreateRolePermission(Role.Administrator, Permission.GetUsers),
                     CreateRolePermission(Role.Administrator, Permission.ManageUsers),
                     CreateRolePermission(Role.Administrator, Permission.DeleteUsers),
@@ -77,7 +94,7 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                     CreateRolePermission(Role.Administrator, Permission.ManageGiveaways),
                     CreateRolePermission(Role.Administrator, Permission.ManageRecipes),
                     CreateRolePermission(Role.Administrator, Permission.ManageFoodReferences),
-                    // Admin permissions
+                    // Household permissions
                     CreateRolePermission(Role.HouseholdHead, Permission.ViewHousehold),
                     CreateRolePermission(Role.HouseholdHead, Permission.ManageHousehold),
                     CreateRolePermission(Role.HouseholdHead, Permission.ManageMembers),
@@ -102,29 +119,9 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                     CreateRolePermission(Role.HouseholdHead, Permission.AddMealPlans),
                     CreateRolePermission(Role.HouseholdHead, Permission.UpdateMealPlans),
                     CreateRolePermission(Role.HouseholdHead, Permission.DeleteMealPlans),
-
-                    CreateRolePermission(Role.PowerMember, Permission.ViewHousehold),
-                    CreateRolePermission(Role.PowerMember, Permission.ManageHousehold),
-                    CreateRolePermission(Role.PowerMember, Permission.ViewStorages),
-                    CreateRolePermission(Role.PowerMember, Permission.AddStorages),
-                    CreateRolePermission(Role.PowerMember, Permission.UpdateStorages),
-                    CreateRolePermission(Role.PowerMember, Permission.DeleteStorage),
-                    CreateRolePermission(Role.PowerMember, Permission.ViewCompartments),
-                    CreateRolePermission(Role.PowerMember, Permission.AddCompartments),
-                    CreateRolePermission(Role.PowerMember, Permission.UpdateCompartments),
-                    CreateRolePermission(Role.PowerMember, Permission.DeleteCompartments),
-                    CreateRolePermission(Role.PowerMember, Permission.ViewFoodItems),
-                    CreateRolePermission(Role.PowerMember, Permission.AddFoodItems),
-                    CreateRolePermission(Role.PowerMember, Permission.UpdateFoodItems),
-                    CreateRolePermission(Role.PowerMember, Permission.DeleteFoodItems),
-                    CreateRolePermission(Role.PowerMember, Permission.ViewGroceries),
-                    CreateRolePermission(Role.PowerMember, Permission.AddGroceries),
-                    CreateRolePermission(Role.PowerMember, Permission.UpdateGroceries),
-                    CreateRolePermission(Role.PowerMember, Permission.DeleteGroceries),
-                    CreateRolePermission(Role.PowerMember, Permission.ViewMealPlans),
-                    CreateRolePermission(Role.PowerMember, Permission.AddMealPlans),
-                    CreateRolePermission(Role.PowerMember, Permission.UpdateMealPlans),
-                    CreateRolePermission(Role.PowerMember, Permission.DeleteMealPlans),
+                    CreateRolePermission(Role.HouseholdHead, Permission.CreateGiveaways),
+                    CreateRolePermission(Role.HouseholdHead, Permission.UpdateGiveaways),
+                    CreateRolePermission(Role.HouseholdHead, Permission.DeleteGiveaways),
 
                     CreateRolePermission(Role.PantryManager, Permission.ViewHousehold),
                     CreateRolePermission(Role.PantryManager, Permission.ViewStorages),
@@ -141,49 +138,39 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                     CreateRolePermission(Role.PantryManager, Permission.DeleteFoodItems),
                     CreateRolePermission(Role.PantryManager, Permission.ViewGroceries),
                     CreateRolePermission(Role.PantryManager, Permission.AddGroceries),
+                    CreateRolePermission(Role.PantryManager, Permission.UpdateGroceries),
                     CreateRolePermission(Role.PantryManager, Permission.ViewMealPlans),
                     CreateRolePermission(Role.PantryManager, Permission.AddMealPlans),
+                    CreateRolePermission(Role.PantryManager, Permission.UpdateMealPlans),
+                    CreateRolePermission(Role.PantryManager, Permission.CreateGiveaways),
+                    CreateRolePermission(Role.PantryManager, Permission.UpdateGiveaways),
+                    CreateRolePermission(Role.PantryManager, Permission.DeleteGiveaways),
+                  
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewHousehold),
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewStorages),
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewCompartments),
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewFoodItems),
+                    CreateRolePermission(Role.MealPlanner, Permission.AddFoodItems),
+                    CreateRolePermission(Role.MealPlanner, Permission.UpdateFoodItems),
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewGroceries),
+                    CreateRolePermission(Role.MealPlanner, Permission.AddGroceries),
+                    CreateRolePermission(Role.MealPlanner, Permission.UpdateGroceries),
+                    CreateRolePermission(Role.MealPlanner, Permission.ViewMealPlans),
+                    CreateRolePermission(Role.MealPlanner, Permission.AddMealPlans),
+                    CreateRolePermission(Role.MealPlanner, Permission.UpdateMealPlans),
+                    CreateRolePermission(Role.MealPlanner, Permission.DeleteMealPlans),
 
                     CreateRolePermission(Role.GroceryShopper, Permission.ViewHousehold),
                     CreateRolePermission(Role.GroceryShopper, Permission.ViewStorages),
-                    CreateRolePermission(Role.GroceryShopper, Permission.AddStorages),
                     CreateRolePermission(Role.GroceryShopper, Permission.ViewCompartments),
-                    CreateRolePermission(Role.GroceryShopper, Permission.AddCompartments),
                     CreateRolePermission(Role.GroceryShopper, Permission.ViewFoodItems),
                     CreateRolePermission(Role.GroceryShopper, Permission.AddFoodItems),
                     CreateRolePermission(Role.GroceryShopper, Permission.ViewGroceries),
                     CreateRolePermission(Role.GroceryShopper, Permission.AddGroceries),
                     CreateRolePermission(Role.GroceryShopper, Permission.UpdateGroceries),
                     CreateRolePermission(Role.GroceryShopper, Permission.DeleteGroceries),
-                    CreateRolePermission(Role.GroceryShopper, Permission.ViewMealPlans),
-                    CreateRolePermission(Role.GroceryShopper, Permission.AddMealPlans),
+                    CreateRolePermission(Role.GroceryShopper, Permission.ViewMealPlans));
 
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewHousehold),
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewStorages),
-                    CreateRolePermission(Role.MealPlanner, Permission.AddStorages),
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewCompartments),
-                    CreateRolePermission(Role.MealPlanner, Permission.AddCompartments),
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewFoodItems),
-                    CreateRolePermission(Role.MealPlanner, Permission.AddFoodItems),
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewGroceries),
-                    CreateRolePermission(Role.MealPlanner, Permission.AddGroceries),
-                    CreateRolePermission(Role.MealPlanner, Permission.ViewMealPlans),
-                    CreateRolePermission(Role.MealPlanner, Permission.AddMealPlans),
-                    CreateRolePermission(Role.MealPlanner, Permission.UpdateMealPlans),
-                    CreateRolePermission(Role.MealPlanner, Permission.DeleteMealPlans),
-
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewHousehold),
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewStorages),
-                    CreateRolePermission(Role.ErrandRunner, Permission.AddStorages),
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewCompartments),
-                    CreateRolePermission(Role.ErrandRunner, Permission.AddCompartments),
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewFoodItems),
-                    CreateRolePermission(Role.ErrandRunner, Permission.AddFoodItems),
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewGroceries),
-                    CreateRolePermission(Role.ErrandRunner, Permission.AddGroceries),
-                    CreateRolePermission(Role.ErrandRunner, Permission.ViewMealPlans),
-                    CreateRolePermission(Role.ErrandRunner, Permission.AddMealPlans)
-                    );
             });
     }
 

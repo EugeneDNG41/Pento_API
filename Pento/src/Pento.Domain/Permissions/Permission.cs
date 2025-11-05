@@ -8,6 +8,15 @@ namespace Pento.Domain.Permissions;
 
 public sealed class Permission
 {
+    //User general
+    public static readonly Permission UserGeneral = new("user:general", "User General", "Basic user access and functionality.");
+
+    public static readonly Permission ViewRecipes = new("recipes:read", "View Recipes", "View recipes and their details. Read-only.");
+    public static readonly Permission AddRecipes = new("recipes:create", "Add Recipes", "Create new recipes.");
+    public static readonly Permission UpdateRecipes = new("recipes:update", "Update Recipes", "edit your own recipes.");
+    public static readonly Permission DeleteRecipes = new("recipes:delete", "Delete Recipes", "Delete your own recipes.");
+    public static readonly Permission ViewGiveaways = new("giveaways:read", "View Giveaways", "View giveaway posts and details. Read-only.");
+
     // Household general
     public static readonly Permission ViewHousehold = new("household:read", "View Household", "View the current household’s profile, settings, and membership. Read-only.");
     public static readonly Permission ManageHousehold = new("household:update", "Manage Household", "Update household name and invite code.");
@@ -31,6 +40,15 @@ public sealed class Permission
     public static readonly Permission AddFoodItems = new("fooditems:create", "Add Food Items", "Add new items to inventory.");
     public static readonly Permission UpdateFoodItems = new("fooditems:update", "Update Food Items", "Edit item details and adjust quantities (consume/waste/donate).");
     public static readonly Permission DeleteFoodItems = new("fooditems:delete", "Delete Food Items", "Delete/remove items.");
+    public static readonly Permission CreateGiveaways = new("giveaways:create", "Create Giveaways", "Create giveaway posts for surplus food items.");
+    public static readonly Permission UpdateGiveaways = new("giveaways:update", "Update Giveaways", "Edit giveaway posts you created.");
+    public static readonly Permission DeleteGiveaways = new("giveaways:delete", "Delete Giveaways", "Delete giveaway posts you created.");
+
+    // Meal plan
+    public static readonly Permission ViewMealPlans = new("mealplans:read", "View Meal Plans", "View meal plans and scheduled recipes. Read-only.");
+    public static readonly Permission AddMealPlans = new("mealplans:create", "Add Meal Plans", "Create meal plans and add meals/recipes to the schedule.");
+    public static readonly Permission UpdateMealPlans = new("mealplans:update", "Update Meal Plans", "Modify meal plans.");
+    public static readonly Permission DeleteMealPlans = new("mealplans:delete", "Delete Meal Plans", "Delete meal plans.");
 
     // Grocery list
     public static readonly Permission ViewGroceries = new("groceries:read", "View Groceries", "View grocery lists and list items. Read-only.");
@@ -38,11 +56,7 @@ public sealed class Permission
     public static readonly Permission UpdateGroceries = new("groceries:update", "Update Groceries", "Edit grocery lists and list items.");
     public static readonly Permission DeleteGroceries = new("groceries:delete", "Delete Groceries", "Delete grocery lists and/or list items.");
 
-    // Meal plan
-    public static readonly Permission ViewMealPlans = new("mealplans:read", "View Meal Plans", "View meal plans and scheduled recipes. Read-only.");
-    public static readonly Permission AddMealPlans = new("mealplans:create", "Add Meal Plans", "Create meal plans and add meals/recipes to the schedule.");
-    public static readonly Permission UpdateMealPlans = new("mealplans:update", "Update Meal Plans", "Modify meal plans.");
-    public static readonly Permission DeleteMealPlans = new("mealplans:delete", "Delete Meal Plans", "Delete meal plans.");
+    
 
     // Admin (system-wide scope)
     public static readonly Permission GetUsers = new("users:read", "View Users", "View user accounts and basic profile/usage data. Read-only.");

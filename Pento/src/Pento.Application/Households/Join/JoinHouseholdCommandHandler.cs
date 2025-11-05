@@ -41,7 +41,7 @@ internal sealed class JoinHouseholdCommandHandler(
 
         //assign roles
         Role? householdHeadRole = (await roleRepository.FindAsync(r => r.Name == Role.HouseholdHead.Name, cancellationToken)).SingleOrDefault();
-        Role? errandRunnerRole = (await roleRepository.FindAsync(r => r.Name == Role.ErrandRunner.Name, cancellationToken)).SingleOrDefault();
+        Role? errandRunnerRole = (await roleRepository.FindAsync(r => r.Name == Role.PantryManager.Name, cancellationToken)).SingleOrDefault();
         if (householdHeadRole is null || errandRunnerRole is null)
         {
             return Result.Failure(RoleErrors.NotFoundToAssign);

@@ -20,6 +20,6 @@ internal sealed class SignOut : IEndpoint
             string? accessToken = await context.GetTokenAsync("access_token");
             Result result1 = await handler.Handle(new SignOutCommand(accessToken), cancellationToken);
             return result1.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Users).RequireAuthorization();
+        }).WithTags(Tags.Users).RequireAuthorization(Permissions.UserGeneral);
     }
 }

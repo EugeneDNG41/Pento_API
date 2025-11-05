@@ -10,20 +10,20 @@ namespace Pento.Application.Abstractions.File;
     public interface IBlobService
 {
 
-    Task<Result<string>> UploadFileAsync(
+    Task<Result<Uri>> UploadFileAsync(
         IFormFile file,
         string domain,
         string fileTypeCategory = "general",
         CancellationToken cancellationToken = default);
 
 
-    Task<Result<string>> UploadImageAsync(
+    Task<Result<Uri>> UploadImageAsync(
         IFormFile file,
         string domain,
         CancellationToken cancellationToken = default);
 
  
-    Task<Result<string>> UploadVideoAsync(
+    Task<Result<Uri>> UploadVideoAsync(
         IFormFile file,
         string domain,
         CancellationToken cancellationToken = default);
@@ -31,6 +31,7 @@ namespace Pento.Application.Abstractions.File;
     Task<bool> DeleteFileAsync(
         string domain,
         string filePath,
+        string fileTypeCategory = "general",
         CancellationToken cancellationToken = default);
 
 

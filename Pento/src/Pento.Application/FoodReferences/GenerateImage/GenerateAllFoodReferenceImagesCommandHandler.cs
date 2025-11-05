@@ -61,14 +61,14 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
                     ContentType = "image/jpeg"
                 };
 
-                Result<string> uploadResult =
+                Result<Uri> uploadResult =
                     await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
                 if (uploadResult.IsFailure)
                 {
                     continue;
                 }
 
-                foodRef.UpdateImageUrl(new Uri(uploadResult.Value), DateTime.UtcNow);
+                foodRef.UpdateImageUrl(uploadResult.Value, DateTime.UtcNow);
                 successCount++;
             }
             catch

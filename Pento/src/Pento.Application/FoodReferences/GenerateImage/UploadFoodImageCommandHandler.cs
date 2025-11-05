@@ -42,16 +42,16 @@ internal sealed class ManualUploadFoodImageCommandHandler(
                 ContentType = "image/jpeg"
             };
 
-            Result<string> uploadResult = await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
+            Result<Uri> uploadResult = await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
             if (uploadResult.IsFailure)
             {
                 return Result.Failure<string>(uploadResult.Error);
             }
 
-            foodRef.UpdateImageUrl(new Uri(uploadResult.Value), DateTime.UtcNow);
+            foodRef.UpdateImageUrl(uploadResult.Value, DateTime.UtcNow);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
-            return Result.Success(uploadResult.Value);
+            return Result.Success(uploadResult.Value.AbsoluteUri);
         }
         catch (Exception ex)
         {

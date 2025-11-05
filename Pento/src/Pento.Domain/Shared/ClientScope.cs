@@ -11,3 +11,16 @@ public enum ClientScope
     User,
     Household
 }
+public enum Activity
+{
+
+}
+public enum Interval
+{
+    Daily,
+    Weekly,
+    Monthly,
+    Quarterly,
+    Yearly
+
+}

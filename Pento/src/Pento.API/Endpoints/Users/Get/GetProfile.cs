@@ -18,7 +18,7 @@ internal sealed class GetProfile : IEndpoint
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .RequireAuthorization()
+        .RequireAuthorization(Permissions.UserGeneral)
         .WithTags(Tags.Users);
     }
 }

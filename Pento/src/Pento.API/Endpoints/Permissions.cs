@@ -9,6 +9,14 @@ namespace Pento.API.Endpoints;
 internal sealed class Permissions
 {
 
+    //User general
+    internal const string UserGeneral = "user:general";
+    internal const string ViewRecipes = "recipes:read";
+    internal const string AddRecipes = "recipes:create";
+    internal const string UpdateRecipes = "recipes:update";
+    internal const string DeleteRecipes = "recipes:delete";
+    internal const string ViewGiveaways = "giveaways:read";
+
     // Household general
     internal const string ViewHousehold = "household:read";
     internal const string ManageHousehold = "household:update";
@@ -30,6 +38,9 @@ internal sealed class Permissions
     internal const string AddFoodItems = "fooditems:create";
     internal const string UpdateFoodItems = "fooditems:update";
     internal const string DeleteFoodItems = "fooditems:delete";
+    internal const string CreateGiveaways = "giveaways:create";
+    internal const string UpdateGiveaways = "giveaways:update";
+    internal const string DeleteGiveaways = "giveaways:delete";
 
     // Grocery list
     internal const string ViewGroceries = "groceries:read";

@@ -20,6 +20,8 @@ internal sealed class UpdateFoodItemCommandValidator : AbstractValidator<UpdateF
             .GreaterThan(DateTime.UtcNow).WithMessage("Expiration date must be in the future.");
         RuleFor(x => x.Notes)
             .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.");
+        RuleFor(x => x.Version)
+            .GreaterThanOrEqualTo(0).WithMessage("Version must be zero or a positive integer.");
     }
 }
 

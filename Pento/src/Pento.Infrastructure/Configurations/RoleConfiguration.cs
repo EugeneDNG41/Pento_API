@@ -30,11 +30,10 @@ internal sealed class RoleConfiguration : IEntityTypeConfiguration<Role>
         builder.HasData(
             Role.Administrator,
             Role.HouseholdHead,
-            Role.PowerMember,
             Role.GroceryShopper,
             Role.MealPlanner,
             Role.PantryManager,
-            Role.ErrandRunner);
+            Role.User);
 
     }
 }
