@@ -4,7 +4,7 @@ using Pento.Application.RecipeIngredients.Delete;
 using Pento.Application.RecipeIngredients.Update;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
-namespace Pento.API.Endpoints.RecipeIngredients.Put;
+namespace Pento.API.Endpoints.RecipeIngredients.Delete;
 
 internal sealed class DeleteRecipeIngredient : IEndpoint
 {

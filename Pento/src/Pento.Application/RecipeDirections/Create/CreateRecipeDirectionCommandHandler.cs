@@ -3,36 +3,39 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using JasperFx.Events.Daemon;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeDirections;
+using Pento.Domain.Recipes;
 
 namespace Pento.Application.RecipeDirections.Create;
 internal sealed class CreateRecipeDirectionCommandHandler(
     IRecipeDirectionRepository recipeDirectionRepository,
-    IUnitOfWork unitOfWork
+    IGenericRepository<Recipe> recipeRepository, IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateRecipeDirectionCommand, Guid>
 {
-    public async Task<Result<Guid>> Handle(CreateRecipeDirectionCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateRecipeDirectionCommand command, CancellationToken cancellationToken)
     {
-        if (request.StepNumber <= 0)
+        Recipe? recipe = await recipeRepository.GetByIdAsync(command.RecipeId, cancellationToken);
+        if (recipe is null)
         {
-            return Result.Failure<Guid>(RecipeDirectionErrors.InvalidStepNumber);
+            return Result.Failure<Guid>(RecipeErrors.NotFound);
         }
-
-        if (string.IsNullOrWhiteSpace(request.Description))
+        RecipeDirection? existingDirection = await recipeDirectionRepository.GetByStep(command.StepNumber, cancellationToken);
+        if (existingDirection is not null)
         {
-            return Result.Failure<Guid>(RecipeDirectionErrors.InvalidDescription);
+            return Result.Failure<Guid>(RecipeDirectionErrors.DupicateDirectionStep(command.StepNumber));
         }
-
 
         var direction = RecipeDirection.Create(
-      request.RecipeId,
-      request.StepNumber,
-      request.Description,
-      request.ImageUrl,
-      DateTime.UtcNow
-  );
+               command.RecipeId,
+               command.StepNumber,
+               command.Description,
+               command.ImageUrl,
+               DateTime.UtcNow);
+
 
         await recipeDirectionRepository.AddAsync(direction, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

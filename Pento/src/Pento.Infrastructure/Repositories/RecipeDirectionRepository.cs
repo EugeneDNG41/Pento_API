@@ -50,4 +50,10 @@ internal sealed class RecipeDirectionRepository
             DbContext.Set<RecipeDirection>().Remove(entity);
         }
     }
+    public async Task<RecipeDirection?> GetByStep(int step, CancellationToken cancellationToken = default)
+    {
+        return await DbContext
+            .Set<RecipeDirection>()
+            .FirstOrDefaultAsync(x => x.StepNumber == step, cancellationToken);
+    }
 }

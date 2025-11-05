@@ -26,5 +26,7 @@ internal sealed class MediaConfiguration : IEntityTypeConfiguration<RecipeMedia>
                .WithMany(fi => fi.Media)
                .HasForeignKey(m => m.RecipeId)
                .OnDelete(DeleteBehavior.Cascade);
+        builder.HasQueryFilter(c => !c.IsDeleted);
+
     }
 }

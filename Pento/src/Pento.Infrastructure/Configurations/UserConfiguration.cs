@@ -28,5 +28,7 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(u => u.HouseholdId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
+        builder.HasQueryFilter(c => !c.IsDeleted);
+
     }
 }

@@ -24,9 +24,10 @@ internal sealed class GetMealPlanQueryHandler(ISqlConnectionFactory sqlConnectio
                 id AS {nameof(MealPlanResponse.Id)},
                 household_id AS {nameof(MealPlanResponse.HouseholdId)},
                 name AS {nameof(MealPlanResponse.Name)},
+                scheduled_date AS {nameof(MealPlanResponse.ScheduledDate)},
+                servings AS {nameof(MealPlanResponse.Servings)},
+                notes AS {nameof(MealPlanResponse.Notes)},
                 created_by AS {nameof(MealPlanResponse.CreatedBy)},
-                start_date AS {nameof(MealPlanResponse.StartDate)},
-                end_date AS {nameof(MealPlanResponse.EndDate)},
                 created_on_utc AS {nameof(MealPlanResponse.CreatedOnUtc)},
                 updated_on_utc AS {nameof(MealPlanResponse.UpdatedOnUtc)}
             FROM meal_plans
@@ -40,7 +41,7 @@ internal sealed class GetMealPlanQueryHandler(ISqlConnectionFactory sqlConnectio
 
         if (mealPlan is null)
         {
-            return Result.Failure<MealPlanResponse>(MealPlanErrors.NotFound(request.Id));
+            return Result.Failure<MealPlanResponse>(MealPlanErrors.NotFound);
         }
 
         return mealPlan;

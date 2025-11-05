@@ -1,31 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.FoodReferences.Get;
+
 internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    : IQueryHandler<GetAllFoodReferencesQuery, IReadOnlyList<FoodReferenceResponse>>
+    : IQueryHandler<GetAllFoodReferencesQuery, PagedFoodReferencesResponse>
 {
-    public async Task<Result<IReadOnlyList<FoodReferenceResponse>>> Handle(
+    public async Task<Result<PagedFoodReferencesResponse>> Handle(
         GetAllFoodReferencesQuery request,
         CancellationToken cancellationToken)
     {
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
 
-        string sql = """
+        var filters = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (request.FoodGroup.HasValue)
+        {
+            filters.Add("food_group = @FoodGroup");
+            parameters.Add("FoodGroup", request.FoodGroup.ToString());
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            filters.Add("(LOWER(name) LIKE LOWER(@Search) OR LOWER(notes) LIKE LOWER(@Search))");
+            parameters.Add("Search", $"%{request.Search}%");
+        }
+
+        string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
+
+        string sqlCount = $"""
+            SELECT COUNT(*) 
+            FROM food_references
+            {whereClause};
+        """;
+
+        string sqlData = $"""
             SELECT
                 id AS Id,
                 name AS Name,
                 food_group AS FoodGroup,
-                data_type AS DataType,                         
-                notes AS Notes,                                 
+                data_type AS DataType,
+                notes AS Notes,
                 typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,
                 typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
                 typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer,
@@ -36,20 +55,25 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
                 created_on_utc AS CreatedAt,
                 updated_on_utc AS UpdatedAt
             FROM food_references
-            """;
+            {whereClause}
+            ORDER BY name
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+        """;
 
-        if (request.FoodGroup.HasValue)
+        parameters.Add("Offset", (request.Page - 1) * request.PageSize);
+        parameters.Add("PageSize", request.PageSize);
+
+        int totalCount = await connection.ExecuteScalarAsync<int>(sqlCount, parameters);
+        IEnumerable<FoodReferenceResponse> items = await connection.QueryAsync<FoodReferenceResponse>(sqlData, parameters);
+
+        var response = new PagedFoodReferencesResponse
         {
-            sql += " WHERE food_group = @FoodGroup";
-        }
+            Items = items.ToList(),
+            Page = request.Page,
+            PageSize = request.PageSize,
+            TotalCount = totalCount
+        };
 
-        sql += " ORDER BY name;";
-
-        IEnumerable<FoodReferenceResponse> foodReferences = await connection.QueryAsync<FoodReferenceResponse>(
-            sql,
-            new { FoodGroup = request.FoodGroup?.ToString() } 
-        );
-
-        return Result.Success<IReadOnlyList<FoodReferenceResponse>>(foodReferences.ToList());
+        return Result.Success(response);
     }
 }

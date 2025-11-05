@@ -1,0 +1,25 @@
+﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Messaging;
+using Pento.Domain.Abstractions;
+using Pento.Domain.RecipeDirections;
+
+namespace Pento.Application.RecipeDirections.Delete;
+
+internal sealed class DeleteRecipeDirectionCommandHandler(
+    IGenericRepository<RecipeDirection> recipeDirectionRepository,
+    IUnitOfWork unitOfWork
+) : ICommandHandler<DeleteRecipeDirectionCommand>
+{
+    public async Task<Result> Handle(DeleteRecipeDirectionCommand command, CancellationToken cancellationToken)
+    {
+        RecipeDirection? direction = await recipeDirectionRepository.GetByIdAsync(command.RecipeDirectionId, cancellationToken);
+
+        if (direction is null)
+        {
+            return Result.Failure(RecipeDirectionErrors.NotFound);
+        }
+        recipeDirectionRepository.Remove(direction);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+}

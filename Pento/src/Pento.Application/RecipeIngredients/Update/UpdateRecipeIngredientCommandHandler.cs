@@ -21,7 +21,7 @@ internal sealed class UpdateRecipeIngredientCommandHandler(
         RecipeIngredient? recipeIngredient = await recipeIngredientRepository.GetByIdAsync(command.Id, cancellationToken);
         if (recipeIngredient is null)
         {
-            return Result.Failure(RecipeIngredientErrors.NotFound(command.Id));
+            return Result.Failure(RecipeIngredientErrors.NotFound);
         }
         Unit? unit = await UnitRepository.GetByIdAsync(command.UnitId, cancellationToken);
         if (unit is null)

@@ -1,23 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Pento.Application.RecipeDirections.Create;
 
-internal sealed class CreateRecipeDirectionCommandValidator : AbstractValidator<CreateRecipeDirectionCommand>
+public sealed class CreateRecipeDirectionCommandValidator
+    : AbstractValidator<CreateRecipeDirectionCommand>
 {
     public CreateRecipeDirectionCommandValidator()
     {
-        RuleFor(c => c.RecipeId).NotEmpty();
-        RuleFor(c => c.StepNumber).GreaterThan(0);
-        RuleFor(c => c.Description).NotEmpty().MaximumLength(1000);
-        RuleFor(c => c.ImageUrl)
-        .Must(url => url == null || url.IsAbsoluteUri)
-        .WithMessage("ImageUrl must be a valid absolute URL if provided.");
+        RuleFor(x => x.RecipeId)
+            .NotEmpty()
+            .WithMessage("RecipeId is required.");
+
+        RuleFor(x => x.StepNumber)
+            .GreaterThan(0)
+            .WithMessage("StepNumber must be greater than zero.");
+
+        RuleFor(x => x.Description)
+            .NotEmpty()
+            .WithMessage("Description is required.")
+            .MaximumLength(1000)
+            .WithMessage("Description cannot exceed 1000 characters.");
+
+        RuleFor(x => x.ImageUrl)
+            .Must(uri => uri == null || uri.IsAbsoluteUri)
+            .WithMessage("ImageUrl must be a valid absolute URI if provided.");
     }
-
-
 }

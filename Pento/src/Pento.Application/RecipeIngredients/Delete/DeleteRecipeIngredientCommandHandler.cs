@@ -14,10 +14,10 @@ internal sealed class DeleteRecipeIngredientCommandHandler(
         RecipeIngredient? recipeIngredient = await recipeIngredientRepository.GetByIdAsync(command.RecipeIngredientId, cancellationToken);
         if (recipeIngredient is null)
         {
-            return Result.Failure(RecipeIngredientErrors.NotFound(command.RecipeIngredientId));
+            return Result.Failure(RecipeIngredientErrors.NotFound);
         }
-  
-        recipeIngredient.Delete();
+        
+        recipeIngredientRepository.Remove(recipeIngredient);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
