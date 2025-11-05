@@ -1,44 +1,38 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Create;
+using Pento.Application.MealPlans.Update;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 using Pento.Domain.MealPlans;
+using Pento.Domain.Roles;
 
-namespace Pento.API.Endpoints.MealPlans.Post;
+namespace Pento.API.Endpoints.MealPlans.Put;
 
-internal sealed class CreateMealPlan : IEndpoint
+internal sealed class UpdateMealPlan : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("meal-plans", async (
+        app.MapPut("meal-plans/{mealPlanId:guid}", async (
+            Guid mealPlanId,
             Request request,
-            ICommandHandler<CreateMealPlanCommand, Guid> handler,
+            ICommandHandler<UpdateMealPlanCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            var command = new CreateMealPlanCommand(
-                request.RecipeId,
-                request.Name,
+            var command = new UpdateMealPlanCommand(
+                mealPlanId,
                 request.MealType,
                 request.ScheduledDate,
                 request.Servings,
                 request.Notes
             );
 
-            Result<Guid> result = await handler.Handle(command, cancellationToken);
-
-            return result.Match(
-                id => Results.Ok(new { Id = id }),
-                CustomResults.Problem
-            );
+            Result result = await handler.Handle(command, cancellationToken);
+            return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.MealPlans);
     }
 
     internal sealed class Request
     {
-        public Guid RecipeId { get; init; }
-        public string Name { get; init; } = string.Empty;
         public MealType MealType { get; init; }
         public DateOnly ScheduledDate { get; init; }
         public int Servings { get; init; }

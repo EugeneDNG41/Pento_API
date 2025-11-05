@@ -28,9 +28,6 @@
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Endpoints\FoodItems\Delete\" />
-	  <Folder Include="Endpoints\FoodItems\Put\" />
-	</ItemGroup>
+
 
 </Project>

@@ -9,7 +9,6 @@ public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMea
 {
     public CreateMealPlanCommandValidator()
     {
-        RuleFor(x => x.HouseholdId).NotEmpty();
         RuleFor(x => x.RecipeId).NotEmpty();
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Meal plan name is required.")

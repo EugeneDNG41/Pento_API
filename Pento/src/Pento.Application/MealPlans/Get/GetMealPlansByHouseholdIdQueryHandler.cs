@@ -21,8 +21,10 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(ISqlConnectionFactor
             SELECT
                 id AS {nameof(MealPlanResponse.Id)},
                 household_id AS {nameof(MealPlanResponse.HouseholdId)},
+                recipe_id AS {nameof(MealPlanResponse.RecipeId)},
                 name AS {nameof(MealPlanResponse.Name)},
                 scheduled_date AS {nameof(MealPlanResponse.ScheduledDate)},
+                meal_type AS {nameof(MealPlanResponse.MealType)},
                 servings AS {nameof(MealPlanResponse.Servings)},
                 notes AS {nameof(MealPlanResponse.Notes)},
                 created_by AS {nameof(MealPlanResponse.CreatedBy)},
