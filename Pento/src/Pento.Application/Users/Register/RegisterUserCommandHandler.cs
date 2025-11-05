@@ -1,5 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -11,7 +12,7 @@ internal sealed class RegisterUserCommandHandler(
     IIdentityProviderService identityProviderService,
     IJwtService jwtService,
     IDateTimeProvider dateTimeProvider,
-    IUserRepository userRepository,
+    IGenericRepository<User> userRepository,
     IUnitOfWork unitOfWork)
     : ICommandHandler<RegisterUserCommand, AuthToken>
 {
@@ -28,7 +29,7 @@ internal sealed class RegisterUserCommandHandler(
 
         var user = User.Create(request.Email, request.FirstName, request.LastName, result.Value, dateTimeProvider.UtcNow);
 
-        userRepository.Insert(user);
+        userRepository.Add(user);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         Result<AuthToken> tokenResult = await jwtService.GetAuthTokenAsync(user.Email, request.Password, cancellationToken);

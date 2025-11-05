@@ -41,6 +41,8 @@ public sealed class User : Entity
             CreatedAt = createdAt
         };
 
+        user.SetRoles([Role.User]);
+
         user.Raise(new UserRegisteredDomainEvent(user.IdentityId));
 
         return user;
