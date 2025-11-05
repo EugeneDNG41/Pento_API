@@ -23,7 +23,9 @@ internal sealed class GenerateInviteCode : IEndpoint
             Result<string> result = await handler.Handle(
                 new GenerateInviteCodeCommand(request.CodeExpirationDate), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
+        })
+        .WithTags(Tags.Households)
+        .RequireAuthorization();
     }
     internal sealed class Request
     {

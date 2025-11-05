@@ -21,6 +21,6 @@ internal sealed class RemoveMember : IEndpoint
             Result result = await handler.Handle(
                 new RemoveHouseholdMemberCommand(userId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
+        }).WithTags(Tags.Households).RequireAuthorization();
     }
 }

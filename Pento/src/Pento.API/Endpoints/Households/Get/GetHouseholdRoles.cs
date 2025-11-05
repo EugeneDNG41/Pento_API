@@ -21,6 +21,6 @@ internal sealed class GetHouseholdRoles : IEndpoint
                 roles => Results.Ok(roles),
                 CustomResults.Problem
             );
-        }).RequireAuthorization().WithTags(Tags.Households);
+        }).WithTags(Tags.Households);
     }
 }

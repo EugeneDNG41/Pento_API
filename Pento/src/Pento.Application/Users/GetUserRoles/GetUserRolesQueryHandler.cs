@@ -6,13 +6,13 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Users.GetPermissions;
+namespace Pento.Application.Users.GetUserRoles;
 
-internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbConnectionFactory)
-    : IQueryHandler<GetUserPermissionsQuery, PermissionsResponse>
+internal sealed class GetUserRolesQueryHandler(ISqlConnectionFactory dbConnectionFactory)
+    : IQueryHandler<GetUserRolesQuery, UserRolesResponse>
 {
-    public async Task<Result<PermissionsResponse>> Handle(
-        GetUserPermissionsQuery request,
+    public async Task<Result<UserRolesResponse>> Handle(
+        GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
@@ -33,12 +33,12 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
 
         if (permission is null)
         {
-            return Result.Failure<PermissionsResponse>(UserErrors.IdentityNotFound(request.IdentityId));
+            return Result.Failure<UserRolesResponse>(UserErrors.IdentityNotFound(request.IdentityId));
         }
         HashSet<string> roles = string.IsNullOrEmpty(permission.Roles) ?
             new HashSet<string>(StringComparer.OrdinalIgnoreCase) : 
             permission.Roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(StringComparer.OrdinalIgnoreCase);
-        return new PermissionsResponse(
+        return new UserRolesResponse(
             permission.UserId, 
             permission.HouseholdId,
             roles);

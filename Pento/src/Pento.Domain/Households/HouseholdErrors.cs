@@ -37,4 +37,7 @@ public static class HouseholdErrors
     public static readonly Error CannotRemoveSelf = Error.Problem(
         "User.CannotRemoveSelf",
         "You cannot remove yourself from the household");
+    public static readonly Error CannotAssignRolesSelf = Error.Problem(
+        "User.CannotAssignRolesSelf",
+        "You cannot set your own roles");
 }

@@ -30,6 +30,7 @@ internal sealed class UpdateFoodItemExpirationDateCommandHandler(
             return Result.Success();
         }
         await session.Events.AppendOptimistic(command.Id, new FoodItemExpirationDateUpdated(newExpirationDateUtc));
+        session.LastModifiedBy = userContext.UserId.ToString();
         await session.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

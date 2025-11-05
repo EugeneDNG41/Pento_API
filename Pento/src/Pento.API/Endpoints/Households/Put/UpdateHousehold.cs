@@ -23,7 +23,7 @@ internal sealed class UpdateHousehold : IEndpoint
             Result result = await handler.Handle(
                 new UpdateHouseholdCommand(request.Name), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name));
+        }).WithTags(Tags.Households).RequireAuthorization();
     }
     internal sealed class Request
     {

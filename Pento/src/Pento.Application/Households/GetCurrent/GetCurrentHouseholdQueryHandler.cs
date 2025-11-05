@@ -41,8 +41,9 @@ internal sealed class GetCurrentHouseholdQueryHandler(
                 WHERE h.id = @HouseholdId
                 GROUP BY u.id, h.id;
             """;
-        var householdDict = new Dictionary<Guid, HouseholdResponse>();
+        
         CommandDefinition command = new(sql, new { HouseholdId = householdId }, cancellationToken: cancellationToken);
+        var householdDict = new Dictionary<Guid, HouseholdResponse>();
         await connection.QueryAsync<HouseholdResponse, HouseholdMemberResponse, HouseholdResponse>(
             command, (household, member) =>
             {

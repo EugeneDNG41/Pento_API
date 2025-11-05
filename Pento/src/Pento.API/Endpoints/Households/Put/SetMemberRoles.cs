@@ -24,7 +24,7 @@ internal sealed class SetMemberRoles : IEndpoint
             SetMemberRolesCommand command = new(memberId, request.Roles);
             Result result = await handler.Handle(command, cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Households).RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name));
+        }).WithTags(Tags.Households).RequireAuthorization();
     }
     internal sealed class Request
     {

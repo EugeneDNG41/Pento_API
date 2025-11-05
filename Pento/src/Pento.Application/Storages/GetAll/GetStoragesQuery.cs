@@ -7,7 +7,7 @@ using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlans.Get;
 using Pento.Application.Storages.GetById;
-using Pento.Application.Users.GetPermissions;
+using Pento.Application.Users.GetUserRoles;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.Storages.GetAll;

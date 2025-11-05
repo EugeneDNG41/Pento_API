@@ -21,6 +21,6 @@ internal sealed class DeleteStorage : IEndpoint
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.Storages)
-        .RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name, Role.PantryManager.Name));
+        .RequireAuthorization();
     }
 }

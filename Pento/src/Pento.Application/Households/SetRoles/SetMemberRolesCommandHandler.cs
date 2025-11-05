@@ -21,6 +21,10 @@ internal sealed class SetMemberRolesCommandHandler(
         {
             return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
+        if (command.MemberId == userContext.UserId)
+        {
+            return Result.Failure(HouseholdErrors.CannotAssignRolesSelf);
+        }
         User? user = (await userRepository.FindIncludeAsync(u => u.Id == command.MemberId, u => u.Roles, cancellationToken)).SingleOrDefault();
         if (user is null)
         {
