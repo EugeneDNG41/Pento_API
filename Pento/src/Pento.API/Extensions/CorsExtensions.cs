@@ -11,7 +11,7 @@ internal static class CorsExtensions
             options.AddDefaultPolicy(
                 policy =>
                 {
-                    policy.AllowAnyOrigin();
+                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
                     //if (builder.Environment.IsDevelopment())
                     //{
                     //    policy.AllowAnyOrigin();
@@ -23,8 +23,7 @@ internal static class CorsExtensions
                     //    policy.WithOrigins(allowedOrigins);
                     //}
 
-                    policy.WithHeaders(HeaderNames.Authorization, HeaderNames.ContentType)
-                          .AllowAnyMethod();
+                    //policy.WithHeaders(HeaderNames.Authorization, HeaderNames.ContentType).AllowAnyMethod();
                 });
         });
 

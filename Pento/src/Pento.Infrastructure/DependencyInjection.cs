@@ -9,6 +9,7 @@ using Marten;
 using Marten.Events.Projections;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
@@ -218,6 +219,11 @@ public static class DependencyInjection
         builder.Services.AddScoped<IUserContext, UserContext>();
 
         builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+        builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
+
+        builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+
+        builder.Services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
         builder.Services.AddTransient<IIdentityProviderService, IdentityProviderService>();
 
         return builder;

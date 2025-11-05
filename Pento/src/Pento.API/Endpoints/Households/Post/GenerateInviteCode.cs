@@ -25,7 +25,7 @@ internal sealed class GenerateInviteCode : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Households)
-        .RequireAuthorization();
+        .RequireAuthorization(Permissions.ManageHousehold);
     }
     internal sealed class Request
     {
