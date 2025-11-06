@@ -91,20 +91,20 @@ public static class DependencyInjection
         services.AddMarten(options =>
         {
             options.Connection(connectionString);
+            options.Policies.AllDocumentsSoftDeletedWithPartitioning();
+
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
-            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
-            options.AutoCreateSchemaObjects = AutoCreate.All;
-            options.Projections.Errors.SkipApplyErrors = false;
-            options.Projections.Errors.SkipSerializationErrors = false;
-            options.Projections.Errors.SkipUnknownEvents = false;
+            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);      
             options.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
 
             options.Projections.LiveStreamAggregation<FoodItem>();
             options.Projections.Add<FoodItemDetailProjection>(ProjectionLifecycle.Inline);
             options.Projections.Add<FoodItemPreviewProjection>(ProjectionLifecycle.Inline);
+            options.Projections.Errors.SkipApplyErrors = false;
+            options.Projections.Errors.SkipSerializationErrors = false;
+            options.Projections.Errors.SkipUnknownEvents = false;
 
             options.Projections.UseIdentityMapForAggregates = true;
-            // Event metadata
             options.Events.MetadataConfig.UserNameEnabled = true;
         })
         .ApplyAllDatabaseChangesOnStartup()

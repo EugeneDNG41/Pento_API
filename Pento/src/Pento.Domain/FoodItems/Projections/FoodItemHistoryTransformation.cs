@@ -20,7 +20,7 @@ public record FoodItemHistoryEntry
 }
 public class FoodItemHistoryTransformation() : EventProjection
 {
-    public async Task<FoodItemHistoryEntry> Create(IEvent<FoodItemAdded> e)
+    public FoodItemHistoryEntry Create(IEvent<FoodItemAdded> e)
     {
         return new FoodItemHistoryEntry
         {

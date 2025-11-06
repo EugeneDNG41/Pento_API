@@ -25,7 +25,7 @@ internal sealed class ConsumeFoodItem : IEndpoint
         .RequireAuthorization()
         .WithDescription("Consumes a specific quantity of a food item");
     }
-    internal class Request
+    internal sealed class Request
     {
         public decimal Quantity { get; init; }
     }

@@ -47,7 +47,7 @@ internal sealed class GetCompartmentsQueryHandler(
         {
             IPagedList<FoodItemPreview> previews =
                 await querySession.Query<FoodItemPreview>()
-                    .Where(p => p.CompartmentId == c.Id)
+                    .Where(p => p.CompartmentId == c.Id && p.Quantity > 0)
                     .ToPagedListAsync(1, 5, cancellationToken);
 
             result.Add(new CompartmentWithFoodItemPreviewResponse(
