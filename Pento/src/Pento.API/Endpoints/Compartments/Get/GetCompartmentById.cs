@@ -21,7 +21,7 @@ internal sealed class GetCompartmentById : IEndpoint
             .Match(compartment => Results.Ok(compartment), CustomResults.Problem);
         })
         .WithTags(Tags.Compartments)
-        .RequireAuthorization(policy => policy.RequireRole(Role.HouseholdHead.Name, Role.PowerMember.Name, Role.PantryManager.Name, Role.ErrandRunner.Name))
+        .RequireAuthorization()
         .WithName(RouteNames.GetCompartmentById);
     }
 }
