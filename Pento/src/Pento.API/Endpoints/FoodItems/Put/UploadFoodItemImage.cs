@@ -19,6 +19,7 @@ internal sealed class UploadFoodItemImage : IEndpoint
                 Result<Uri> result = await handler.Handle(new UploadFoodItemImageCommand(id, file, version), ct);
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
+            .DisableAntiforgery()
             .RequireAuthorization()
             .WithTags(Tags.FoodItems);
     }

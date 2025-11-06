@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Marten.Events.Projections;
 using Pento.Domain.FoodItems.Events;
 
-namespace Pento.Application.FoodItems.Projections;
+namespace Pento.Domain.FoodItems.Projections;
 
 public class FoodItemSummary
 {

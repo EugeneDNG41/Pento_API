@@ -1,13 +1,11 @@
-﻿using JasperFx.Events;
-using Marten;
+﻿using Marten;
 using Marten.Events;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.FoodItems.Projections;
 using Pento.Domain.Units;
 
 namespace Pento.Application.FoodItems.Split;

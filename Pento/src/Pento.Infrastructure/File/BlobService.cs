@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,7 +30,7 @@ public sealed class BlobService : IBlobService
 
     private static string GenerateFileName(string originalFileName)
     {
-        string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", System.Globalization.CultureInfo.InvariantCulture);
+        string timestamp = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss", CultureInfo.InvariantCulture);
         string extension = Path.GetExtension(originalFileName);
         string safeName = Path.GetFileNameWithoutExtension(originalFileName).Replace(" ", "_");
         return $"{timestamp}_{Guid.NewGuid():N}_{safeName}{extension}";
@@ -52,7 +53,7 @@ public sealed class BlobService : IBlobService
         try
         {
             string fileName = GenerateFileName(file.FileName);
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain}/{fileTypeCategory}");
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain.ToLower(CultureInfo.InvariantCulture)}-{fileTypeCategory}");
             await container.CreateIfNotExistsAsync(PublicAccessType.Blob, cancellationToken: cancellationToken);
 
             BlobClient blob = container.GetBlobClient(fileName);
@@ -83,7 +84,7 @@ public sealed class BlobService : IBlobService
     {
         try
         {
-            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain}/{fileTypeCategory}");
+            BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain.ToLower(CultureInfo.InvariantCulture)}-{fileTypeCategory}");
             BlobClient blob = container.GetBlobClient(filePath);
             Azure.Response<bool> response = await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
             return response.Value;
