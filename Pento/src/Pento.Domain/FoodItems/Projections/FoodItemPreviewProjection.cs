@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using JasperFx.Events;
 using Marten.Events.Aggregation;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Domain.FoodItems.Projections;
 
@@ -14,6 +15,7 @@ public record class FoodItemPreview(
     Guid CompartmentId,
     Guid HouseholdId,
     string Name,
+    FoodGroup FoodGroup,
     Uri? ImageUrl,
     decimal Quantity,
     string UnitAbbreviation,
@@ -30,6 +32,7 @@ public sealed class FoodItemPreviewProjection : SingleStreamProjection<FoodItemP
             e.Data.CompartmentId,
             e.Data.HouseholdId,
             e.Data.Name,
+            e.Data.FoodGroup,
             e.Data.ImageUrl,
             e.Data.Quantity,
             e.Data.UnitAbbreviation,

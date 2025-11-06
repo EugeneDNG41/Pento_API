@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Domain.FoodItems.Events;
 
 public abstract record FoodItemEvent();
 public record FoodItemAdded(
     Guid Id, 
-    Guid FoodRefId, 
+    Guid FoodReferenceId,
+    string FoodReferenceName,
     Guid CompartmentId,
     string CompartmentName,
     Guid HouseholdId,
     string Name,
+    FoodGroup FoodGroup,
     Uri? ImageUrl,
     decimal Quantity,
     string UnitAbbreviation,

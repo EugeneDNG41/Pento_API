@@ -1,15 +1,25 @@
-﻿using System.Data.Common;
+﻿using System.ComponentModel;
+using System.Data.Common;
 using Dapper;
+using Marten;
+using Marten.Internal.Sessions;
+using Marten.Pagination;
+using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Compartments.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems.Projections;
+using Pento.Domain.Units;
 
 namespace Pento.Application.Compartments.Get;
 
-internal sealed class GetCompartmentByIdQueryHandler(ISqlConnectionFactory connectionFactory) : IQueryHandler<GetCompartmentByIdQuery, CompartmentResponse>
+internal sealed class GetCompartmentByIdQueryHandler(
+    ISqlConnectionFactory connectionFactory,
+    IQuerySession session) : IQueryHandler<GetCompartmentByIdQuery, CompartmentWithFoodItemPreviewResponse>
 {
-    public async Task<Result<CompartmentResponse>> Handle(GetCompartmentByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<CompartmentWithFoodItemPreviewResponse>> Handle(GetCompartmentByIdQuery query, CancellationToken cancellationToken)
     {
         await using DbConnection connection = await connectionFactory.OpenConnectionAsync();
         const string sql =
@@ -23,12 +33,21 @@ internal sealed class GetCompartmentByIdQueryHandler(ISqlConnectionFactory conne
             FROM storages
             WHERE id = @StorageId
             """;
-        CommandDefinition command = new(sql, new { StorageId = request.CompartmentId }, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { StorageId = query.CompartmentId }, cancellationToken: cancellationToken);
         CompartmentResponse? compartment = await connection.QuerySingleOrDefaultAsync<CompartmentResponse>(command);
         if (compartment is null)
         {
-            return Result.Failure<CompartmentResponse>(CompartmentErrors.NotFound);
+            return Result.Failure<CompartmentWithFoodItemPreviewResponse>(CompartmentErrors.NotFound);
         }
-        return compartment;
+        IPagedList<FoodItemPreview> previews =
+                await session.Query<FoodItemPreview>()
+                    .Where(p => p.CompartmentId == query.CompartmentId && p.Quantity > 0)
+                    .Where(p => string.IsNullOrEmpty(query.SearchText) || p.WebStyleSearch(query.SearchText))
+                    .ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+
+        var response = new CompartmentWithFoodItemPreviewResponse(
+            compartment.Id, compartment.StorageId, compartment.HouseholdId, compartment.Name, compartment.Notes, previews);
+        
+        return response;
     }
 }

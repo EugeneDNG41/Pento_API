@@ -19,7 +19,7 @@ internal sealed class CreateCompartment : IEndpoint
             Result<Guid> result = await handler.Handle(
                 new CreateCompartmentCommand(storageId, request.Name, request.Notes), cancellationToken);
             return result
-            .Match(id => Results.CreatedAtRoute(RouteNames.GetCompartmentById, new { compartmentId = id }, id), CustomResults.Problem);
+            .Match(id => Results.Ok(new { compartmentId = id }), CustomResults.Problem);
         })
         .WithTags(Tags.Compartments)
         .RequireAuthorization();

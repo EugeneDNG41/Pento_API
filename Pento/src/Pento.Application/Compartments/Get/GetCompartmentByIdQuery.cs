@@ -5,7 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Storages.GetById;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.Compartments.Get;
 
-public sealed record GetCompartmentByIdQuery(Guid CompartmentId) : IQuery<CompartmentResponse>;
+public sealed record GetCompartmentByIdQuery(
+    Guid CompartmentId,
+    string? SearchText,
+    int PageNumber,
+    int PageSize) : IQuery<CompartmentWithFoodItemPreviewResponse>;

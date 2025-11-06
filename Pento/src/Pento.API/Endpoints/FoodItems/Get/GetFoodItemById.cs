@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItems.Get;
+using Pento.Application.FoodItems.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Projections;
 
@@ -12,10 +12,10 @@ internal sealed class GetFoodItemById : IEndpoint
     {
         app.MapGet("food-items/{id:guid}", async (
             Guid id, 
-            IQueryHandler<GetFoodItemQuery, FoodItemDetail> handler, 
+            IQueryHandler<GetFoodItemByIdQuery, FoodItemDetail> handler, 
             CancellationToken cancellationToken) =>
         {
-            var query = new GetFoodItemQuery(id);
+            var query = new GetFoodItemByIdQuery(id);
 
             Result<FoodItemDetail> result = await handler.Handle(query, cancellationToken);
 

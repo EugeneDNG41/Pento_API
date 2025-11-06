@@ -94,10 +94,12 @@ internal sealed class CreateFoodItemCommandHandler(
         var e = new FoodItemAdded(
                 Guid.CreateVersion7(),
                 command.FoodReferenceId,
+                foodReference.Name,
                 command.CompartmentId,
-                compartment.Name,
+                compartment.Name,  
                 householdId.Value,
                 command.Name is null ? foodReference.Name : command.Name,
+                foodReference.FoodGroup,
                 foodReference.ImageUrl,
                 command.Quantity,
                 validUnit.Abbreviation,

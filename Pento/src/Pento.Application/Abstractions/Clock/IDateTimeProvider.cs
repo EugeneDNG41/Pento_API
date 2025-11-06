@@ -9,4 +9,5 @@ namespace Pento.Application.Abstractions.Clock;
 public interface IDateTimeProvider
 {
     DateTime UtcNow { get; }
+    DateTimeOffset UtcNowOffset { get; }
 }

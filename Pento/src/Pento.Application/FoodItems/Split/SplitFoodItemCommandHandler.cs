@@ -36,10 +36,12 @@ internal sealed class SplitFoodItemCommandHandler(
         var added = new FoodItemAdded(
             Guid.CreateVersion7(),
             foodItem.FoodReferenceId,
+            projection.FoodReferenceName,
             foodItem.CompartmentId,
             projection.CompartmentName,
             foodItem.HouseholdId,
             foodItem.Name,
+            projection.FoodGroup,
             foodItem.ImageUrl,
             command.Quantity,
             projection.UnitAbbreviation,

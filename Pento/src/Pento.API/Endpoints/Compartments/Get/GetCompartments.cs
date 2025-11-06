@@ -1,6 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Compartments.Get;
 using Pento.Application.Compartments.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
@@ -13,10 +12,10 @@ internal sealed class GetCompartments : IEndpoint
     {
         app.MapGet("storages/{storageId:guid}/compartments", async (
             Guid storageId,
-            IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentWithFoodItemPreviewResponse>> handler,
+            IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<IReadOnlyList<CompartmentWithFoodItemPreviewResponse>> result = await handler.Handle(
+            Result<IReadOnlyList<CompartmentResponse>> result = await handler.Handle(
                 new GetCompartmentsQuery(storageId), cancellationToken);
             return result
             .Match(compartments => Results.Ok(compartments), CustomResults.Problem);

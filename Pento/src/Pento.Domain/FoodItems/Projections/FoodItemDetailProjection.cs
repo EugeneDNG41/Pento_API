@@ -2,19 +2,18 @@
 using JasperFx.Events;
 using Marten.Events.Aggregation;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Domain.FoodItems.Projections;
 public record class FoodItemDetail(
     Guid Id,
-    Guid FoodRefId,
-    Guid CompartmentId,
+    string FoodReferenceName,
     string CompartmentName,
-    Guid HouseholdId,
     string Name,
+    FoodGroup FoodGroup,
     Uri? ImageUrl,
     decimal Quantity,
     string UnitAbbreviation,
-    Guid UnitId,
     DateTime ExpirationDateUtc,
     string? Notes,
     Guid? SourceItemId,
@@ -33,15 +32,13 @@ public sealed class FoodItemDetailProjection : SingleStreamProjection<FoodItemDe
     }
     public static FoodItemDetail Create(IEvent<FoodItemAdded> e)
         => new(e.Id,
-            e.Data.FoodRefId,
-            e.Data.CompartmentId,
+            e.Data.FoodReferenceName,
             e.Data.CompartmentName,
-            e.Data.HouseholdId,
             e.Data.Name,
+            e.Data.FoodGroup,
             e.Data.ImageUrl,
             e.Data.Quantity,
             e.Data.UnitAbbreviation,
-            e.Data.UnitId,
             e.Data.ExpirationDateUtc,
             e.Data.Notes,
             e.Data.SourceItemId,
@@ -58,11 +55,11 @@ public sealed class FoodItemDetailProjection : SingleStreamProjection<FoodItemDe
     public FoodItemDetail Apply(IEvent<FoodItemExpirationDateUpdated> e, FoodItemDetail item) =>
         item with { ExpirationDateUtc = e.Data.ExpirationDateUtc, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
     public FoodItemDetail Apply(IEvent<FoodItemCompartmentMoved> e, FoodItemDetail item) =>
-        item with { CompartmentId = e.Data.CompartmentId, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
+        item with { CompartmentName = e.Data.CompartmentName, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
     public FoodItemDetail Apply(IEvent<FoodItemQuantityAdjusted> e, FoodItemDetail item) =>
         item with { Quantity = e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
     public FoodItemDetail Apply(IEvent<FoodItemUnitChanged> e, FoodItemDetail item) =>
-        item with { UnitId = e.Data.UnitId, UnitAbbreviation = e.Data.UnitAbbreviation, Quantity = e.Data.ConvertedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
+        item with { UnitAbbreviation = e.Data.UnitAbbreviation, Quantity = e.Data.ConvertedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
     public FoodItemDetail Apply(IEvent<FoodItemReservedForRecipe> e, FoodItemDetail item) =>
         item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
     public FoodItemDetail Apply(IEvent<FoodItemReservedForMealPlan> e, FoodItemDetail item) =>

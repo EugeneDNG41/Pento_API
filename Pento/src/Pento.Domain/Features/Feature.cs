@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Domain.Perks;
+namespace Pento.Domain.Features;
 
-public sealed class Perk : Entity // can be enum
+public sealed class Feature : Entity // can be enum
 {
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public Perk(string name, string description)
+    public FeatureType Type { get; private set; }
+    public Feature(string name, string description)
     {
         Name = name;
         Description = description;
@@ -21,4 +22,9 @@ public sealed class Perk : Entity // can be enum
         Name = name;
         Description = description;
     }
+}
+public enum FeatureType
+{
+    NonConsumable, //change history, detailed filter, data export
+    Consumable, //AI suggestions, number of storages/compartments/saved recipes/meal plans/grocery lists and list items
 }

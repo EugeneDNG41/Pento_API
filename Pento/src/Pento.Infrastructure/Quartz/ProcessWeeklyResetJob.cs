@@ -15,9 +15,14 @@ internal sealed class ProcessLimitResetJob(
 {
     public async Task Execute(IJobExecutionContext context)
     {
-        DateTime now = dateTimeProvider.UtcNow;
-        if (now.DayOfWeek == DayOfWeek.Monday)
+        DateTimeOffset now = dateTimeProvider.UtcNowOffset;
 
+        if (now.Day == 1)
+        {
+
+        }
+
+        if (now.DayOfWeek == DayOfWeek.Monday)
         {
 
         }

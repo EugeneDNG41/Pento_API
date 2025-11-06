@@ -41,4 +41,16 @@ internal sealed class UnitConverter(IGenericRepository<Unit> unitRepository) : I
         decimal convertedQuantity = Convert(quantity, fromUnit, toUnit);
         return convertedQuantity;
     }
+
+    public async Task<bool> CompareGreaterOrEqualAsync(decimal quantity, Guid fromUnitId, decimal compareQuantity, Guid toUnitId, CancellationToken cancellationToken)
+    {
+        Unit? fromUnit = await unitRepository.GetByIdAsync(fromUnitId, cancellationToken);
+        Unit? toUnit = await unitRepository.GetByIdAsync(toUnitId, cancellationToken);
+        if (fromUnit is null || toUnit is null || fromUnit.Type != toUnit.Type)
+        {
+            return false;
+        }
+        decimal convertedQuantity = Convert(quantity, fromUnit, toUnit);
+        return convertedQuantity >= compareQuantity;
+    }
 }

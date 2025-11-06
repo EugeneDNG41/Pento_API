@@ -54,7 +54,7 @@ public sealed class FoodItem
     public static FoodItem Create(IEvent<FoodItemAdded> @event)
         => new(
             @event.Data.Id,
-            @event.Data.FoodRefId,
+            @event.Data.FoodReferenceId,
             @event.Data.CompartmentId,
             @event.Data.HouseholdId,
             @event.Data.Name,

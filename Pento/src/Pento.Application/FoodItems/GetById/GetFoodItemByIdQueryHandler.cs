@@ -7,13 +7,13 @@ using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Projections;
 
 
-namespace Pento.Application.FoodItems.Get;
+namespace Pento.Application.FoodItems.GetById;
 
-internal sealed class GetFoodItemQueryHandler(
+internal sealed class GetFoodItemByIdQueryHandler(
     IQuerySession querySession)
-    : IQueryHandler<GetFoodItemQuery, FoodItemDetail>
+    : IQueryHandler<GetFoodItemByIdQuery, FoodItemDetail>
 {
-    public async Task<Result<FoodItemDetail>> Handle(GetFoodItemQuery request, CancellationToken cancellationToken)
+    public async Task<Result<FoodItemDetail>> Handle(GetFoodItemByIdQuery request, CancellationToken cancellationToken)
     {
 
         FoodItemDetail? foodItem = await querySession.LoadAsync<FoodItemDetail>(request.Id, cancellationToken);
