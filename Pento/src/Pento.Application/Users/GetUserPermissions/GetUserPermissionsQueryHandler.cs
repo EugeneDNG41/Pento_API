@@ -24,8 +24,8 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
                  u.household_id AS {nameof(UserPermission.HouseholdId)},
                  rp.permission_code AS {nameof(UserPermission.Permission)}
              FROM users u
-             JOIN user_roles ur ON ur.user_id = u.id
-             JOIN role_permissions rp ON rp.role_name = ur.role_name
+             LEFT JOIN user_roles ur ON ur.user_id = u.id
+             LEFT JOIN role_permissions rp ON rp.role_name = ur.role_name
              WHERE u.identity_id = @IdentityId
              """;
 
@@ -35,7 +35,6 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
         {
             return Result.Failure<UserPermissionsResponse>(UserErrors.NotFound);
         }
-
         return new UserPermissionsResponse(permissions[0].UserId, permissions[0].HouseholdId, permissions.Select(p => p.Permission).ToHashSet());
     }
 
@@ -43,7 +42,6 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
     {
         internal Guid UserId { get; init; }
         internal Guid? HouseholdId { get; init; }
-
         internal string Permission { get; init; }
     }
 }

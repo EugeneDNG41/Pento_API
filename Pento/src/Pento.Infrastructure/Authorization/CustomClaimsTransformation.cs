@@ -35,7 +35,10 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
         
         foreach (string permission in result.Value.Permissions)
         {
-            claimsIdentity.AddClaim(new Claim(CustomClaims.Permission, permission));
+            if (!string.IsNullOrEmpty(permission))
+            {
+                claimsIdentity.AddClaim(new Claim(CustomClaims.Permission, permission));
+            }
         }
 
         principal.AddIdentity(claimsIdentity);
