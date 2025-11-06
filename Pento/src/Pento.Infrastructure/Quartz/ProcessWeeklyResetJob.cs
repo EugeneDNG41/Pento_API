@@ -4,9 +4,10 @@ using Quartz;
 
 namespace Pento.Infrastructure.Quartz;
 #pragma warning disable CS9113 // Parameter is unread.
+#pragma warning disable CS1998 
 #pragma warning disable S108 // Nested blocks of code should not be left empty
 [DisallowConcurrentExecution]
-internal sealed class ProcessDailyResetJob(
+internal sealed class ProcessLimitResetJob(
     IDateTimeProvider dateTimeProvider,
 
     IDocumentSession session) : IJob
@@ -20,21 +21,6 @@ internal sealed class ProcessDailyResetJob(
         {
 
         }
-
-    }
-}
-[DisallowConcurrentExecution]
-internal sealed class ProcessWeeklyResetJob : IJob
-{
-    public async Task Execute(IJobExecutionContext context)
-    {
-    }
-}
-[DisallowConcurrentExecution]
-internal sealed class ProcessMonthlyResetJob : IJob
-{
-    public async Task Execute(IJobExecutionContext context)
-    {
 
     }
 }
