@@ -20,6 +20,7 @@ internal sealed class UploadFoodItemImage : IEndpoint
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
             .RequireAuthorization()
+            .DisableAntiforgery()
             .WithTags(Tags.FoodItems);
     }
 }

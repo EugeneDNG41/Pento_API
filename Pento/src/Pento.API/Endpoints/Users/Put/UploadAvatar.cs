@@ -16,20 +16,6 @@ internal sealed class UploadAvatar : IEndpoint
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
             .RequireAuthorization()
-            .WithTags(Tags.Users);
-    }
-}
-internal sealed class UploadAvatarAfd : IEndpoint
-{
-    public void MapEndpoint(IEndpointRouteBuilder app)
-    {
-        app.MapPut("users/avatar-with-antiforgery-disabled",
-            async (IFormFile file, ICommandHandler<UploadAvatarCommand, Uri> handler, CancellationToken ct) =>
-            {
-                Result<Uri> result = await handler.Handle(new UploadAvatarCommand(file), ct);
-                return result.Match(Results.Ok, CustomResults.Problem);
-            })
-            .RequireAuthorization()
             .DisableAntiforgery()
             .WithTags(Tags.Users);
     }
