@@ -15,7 +15,7 @@ internal sealed class UploadAvatar : IEndpoint
                 Result<Uri> result = await handler.Handle(new UploadAvatarCommand(file), ct);
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
-            .RequireAuthorization(Permissions.UserGeneral)
+            .RequireAuthorization()
             .WithTags(Tags.Users);
     }
 }
