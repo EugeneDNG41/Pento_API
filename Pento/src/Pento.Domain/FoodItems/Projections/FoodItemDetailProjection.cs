@@ -24,17 +24,7 @@ public record class FoodItemDetail(
     string? LastModifiedBy,
     int Version = 1   
 );
-public record class FoodItemPreview(
-    Guid Id,
-    Guid CompartmentId,
-    Guid HouseholdId,
-    string Name,
-    Uri? ImageUrl,
-    decimal Quantity,
-    string UnitAbbreviation,
-    DateTime ExpirationDateUtc,
-    int Version = 1
-);
+
 
 public sealed class FoodItemDetailProjection : SingleStreamProjection<FoodItemDetail, Guid>
 {
@@ -102,4 +92,3 @@ public sealed class FoodItemDetailProjection : SingleStreamProjection<FoodItemDe
     public FoodItemDetail Apply(IEvent<FoodItemRemovedByMerge> e, FoodItemDetail item) =>
         item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = e.UserName };
 }
-#pragma warning restore S2325 // Methods and properties that don't access instance data should be static

@@ -16,8 +16,7 @@ using Pento.Domain.Units;
 using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Create;
-#pragma warning disable CS9113 // Parameter is unread.
-#pragma warning disable S125
+
 internal sealed class CreateFoodItemCommandHandler(
     IUserContext userContext,
     IDateTimeProvider dateTimeProvider,
@@ -44,12 +43,6 @@ internal sealed class CreateFoodItemCommandHandler(
         Unit validUnit;
         if (command.UnitId is null)
         {
-            //PossibleUnit? defaultPossibleUnit = (await possibleUnitRepository.FindAsync(pu => pu.FoodReferenceId == foodReference.Id && pu.IsDefault, cancellationToken)).SingleOrDefault();
-            //if (defaultPossibleUnit is null)
-            //{
-            //    return Result.Failure<Guid>(PossibleUnitErrors.NoDefaultUnit);
-            //}
-            //Unit defaultUnit = await unitRepository.GetByIdAsync(defaultPossibleUnit.UnitId, cancellationToken);
             Unit defaultUnit = (await unitRepository.FindAsync(u => u.ToBaseFactor == 1, cancellationToken)).First();
             validUnit = defaultUnit;
         }
@@ -112,20 +105,6 @@ internal sealed class CreateFoodItemCommandHandler(
                 validExpirationDate,
                 command.Notes,
                 null);
-        //var e = new FoodItemAdded(
-        //        Guid.CreateVersion7(),
-        //        command.FoodReferenceId,
-        //        command.CompartmentId,
-        //        "default-compartment",
-        //        householdId.Value,
-        //        command.Name!,
-        //        new Uri("https://www.somewebsite.org/books/RestInPractice.pdf"),
-        //        command.Quantity,
-        //        validUnit.Abbreviation,
-        //        validUnit.Id,
-        //        command.ExpirationDate!.Value,
-        //        command.Notes,
-        //        null);
 
         session.Events.StartStream<FoodItem>(e.Id, e);
         session.LastModifiedBy = userContext.UserId.ToString();

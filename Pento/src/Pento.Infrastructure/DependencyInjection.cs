@@ -97,10 +97,11 @@ public static class DependencyInjection
             options.Projections.Errors.SkipApplyErrors = false;
             options.Projections.Errors.SkipSerializationErrors = false;
             options.Projections.Errors.SkipUnknownEvents = false;
-
+            options.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
 
             options.Projections.LiveStreamAggregation<FoodItem>();
             options.Projections.Add<FoodItemDetailProjection>(ProjectionLifecycle.Inline);
+            options.Projections.Add<FoodItemPreviewProjection>(ProjectionLifecycle.Inline);
 
             options.Projections.UseIdentityMapForAggregates = true;
             // Event metadata

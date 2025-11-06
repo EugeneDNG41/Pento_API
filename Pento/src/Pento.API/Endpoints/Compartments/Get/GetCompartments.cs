@@ -13,10 +13,10 @@ internal sealed class GetCompartments : IEndpoint
     {
         app.MapGet("storages/{storageId:guid}/compartments", async (
             Guid storageId,
-            IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentResponse>> handler,
+            IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentWithFoodItemPreviewResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<IReadOnlyList<CompartmentResponse>> result = await handler.Handle(
+            Result<IReadOnlyList<CompartmentWithFoodItemPreviewResponse>> result = await handler.Handle(
                 new GetCompartmentsQuery(storageId), cancellationToken);
             return result
             .Match(compartments => Results.Ok(compartments), CustomResults.Problem);

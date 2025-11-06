@@ -12,7 +12,7 @@ internal static class CustomResults
             throw new InvalidOperationException();
         }
 
-        return Microsoft.AspNetCore.Http.Results.Problem(
+        return Results.Problem(
             title: GetTitle(result.Error),
             detail: GetDetail(result.Error),
             type: GetType(result.Error.Type),

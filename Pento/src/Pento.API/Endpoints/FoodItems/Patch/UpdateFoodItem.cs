@@ -24,7 +24,7 @@ internal sealed class UpdateFoodItem : IEndpoint
                 request.Name,
                 request.Quantity,
                 request.ExpirationDate,
-                request.Note,
+                request.Notes,
                 ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
@@ -39,6 +39,6 @@ internal sealed class UpdateFoodItem : IEndpoint
         public string? Name { get; init; }
         public decimal Quantity { get; init; }
         public DateTime ExpirationDate { get; init; }
-        public string? Note { get; init; }
+        public string? Notes { get; init; }
     }
 }
