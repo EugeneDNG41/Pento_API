@@ -8,10 +8,11 @@ using Pento.Domain.Shared;
 
 namespace Pento.Domain.PointBalances;
 
-public sealed class PointBalance : Entity
+public sealed class PointBalance
 {
-    public ClientScope Scope { get; private set; }
-    public Guid ScopeId { get; private set; }
+    public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
     public Guid PointCategoryId { get; private set; }
     public int Balance { get; private set; }
-}
+    public int Version { get; private set; }
+    }

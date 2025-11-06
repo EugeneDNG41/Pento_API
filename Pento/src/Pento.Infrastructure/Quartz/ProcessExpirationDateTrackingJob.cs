@@ -9,7 +9,7 @@ namespace Pento.Infrastructure.Quartz;
 #pragma warning disable CS1998 
 
 [DisallowConcurrentExecution]
-internal sealed class ProcessExpirationDateTrackingJob : IJob // + reset feature usage and point earned job + subscription notification job
+internal sealed class ProcessExpirationDateTrackingJob : IJob // + subscription notification job
 {
     public async Task Execute(IJobExecutionContext context)
     {

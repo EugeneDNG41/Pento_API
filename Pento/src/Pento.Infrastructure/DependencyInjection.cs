@@ -91,7 +91,6 @@ public static class DependencyInjection
         services.AddMarten(options =>
         {
             options.Connection(connectionString);
-            options.Policies.AllDocumentsSoftDeletedWithPartitioning();
 
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
             options.UseSystemTextJsonForSerialization(EnumStorage.AsString);      
