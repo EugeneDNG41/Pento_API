@@ -26,7 +26,7 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            filters.Add("(LOWER(name) LIKE LOWER(@Search) OR LOWER(notes) LIKE LOWER(@Search))");
+            filters.Add("(LOWER(name) LIKE LOWER(@Search))");
             parameters.Add("Search", $"%{request.Search}%");
         }
 
