@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodItems.Search;
 
@@ -6,8 +7,6 @@ internal sealed class SearchFoodItemQueryValidator : AbstractValidator<SearchFoo
 {
     public SearchFoodItemQueryValidator()
     {
-        RuleFor(x => x.FoodGroups).Must(fg => fg.Distinct().Count() == fg.Count)
-            .WithMessage("Food group filters must be distinct.");
         RuleFor(x => x.FromQuantity).GreaterThanOrEqualTo(0).When(x => x.FromQuantity is not null)
             .WithMessage("From quantity must be greater than or equal to 0.");
         RuleFor(x => x.ToQuantity).GreaterThanOrEqualTo(0).When(x => x.ToQuantity is not null)
