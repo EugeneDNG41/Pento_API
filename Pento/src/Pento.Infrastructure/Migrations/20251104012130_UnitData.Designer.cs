@@ -1199,7 +1199,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Serving",
                             ToBaseFactor = 1m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(363)
                         },
                         new
@@ -1211,7 +1211,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Piece",
                             ToBaseFactor = 1m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(360)
                         },
                         new
@@ -1223,7 +1223,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Each",
                             ToBaseFactor = 1m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(366)
                         },
                         new
@@ -1235,7 +1235,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Pair",
                             ToBaseFactor = 2m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(371)
                         },
                         new
@@ -1247,7 +1247,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Dozen",
                             ToBaseFactor = 12m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(375)
                         },
                         new
@@ -1259,7 +1259,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Gross",
                             ToBaseFactor = 144m,
-                            Type = "Count",
+                            Type = "Usage",
                             UpdatedOnUtc = new DateTime(2025, 11, 4, 1, 21, 27, 918, DateTimeKind.Utc).AddTicks(378)
                         });
                 });

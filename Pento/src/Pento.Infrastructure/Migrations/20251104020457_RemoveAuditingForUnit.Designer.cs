@@ -1162,7 +1162,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Serving",
                             ToBaseFactor = 1m,
-                            Type = "Count"
+                            Type = "Usage"
                         },
                         new
                         {
@@ -1172,7 +1172,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Piece",
                             ToBaseFactor = 1m,
-                            Type = "Count"
+                            Type = "Usage"
                         },
                         new
                         {
@@ -1182,7 +1182,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Each",
                             ToBaseFactor = 1m,
-                            Type = "Count"
+                            Type = "Usage"
                         },
                         new
                         {
@@ -1192,7 +1192,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Pair",
                             ToBaseFactor = 2m,
-                            Type = "Count"
+                            Type = "Usage"
                         },
                         new
                         {
@@ -1202,7 +1202,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Dozen",
                             ToBaseFactor = 12m,
-                            Type = "Count"
+                            Type = "Usage"
                         },
                         new
                         {
@@ -1212,7 +1212,7 @@ namespace Pento.Infrastructure.Migrations
                             IsDeleted = false,
                             Name = "Gross",
                             ToBaseFactor = 144m,
-                            Type = "Count"
+                            Type = "Usage"
                         });
                 });
 

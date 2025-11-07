@@ -30,10 +30,10 @@ internal sealed class GetCompartmentByIdQueryHandler(
                 household_id AS {nameof(CompartmentResponse.HouseholdId)},
                 name AS {nameof(CompartmentResponse.Name)},
                 notes AS {nameof(CompartmentResponse.Notes)}
-            FROM storages
-            WHERE id = @StorageId
+            FROM compartments
+            WHERE id = @CompartmentId
             """;
-        CommandDefinition command = new(sql, new { StorageId = query.CompartmentId }, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { query.CompartmentId }, cancellationToken: cancellationToken);
         CompartmentResponse? compartment = await connection.QuerySingleOrDefaultAsync<CompartmentResponse>(command);
         if (compartment is null)
         {

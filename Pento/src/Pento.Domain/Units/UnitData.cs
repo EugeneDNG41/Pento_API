@@ -95,7 +95,7 @@ public static class UnitData
         toBaseFactor: 15m, //(21 CFR 101.9)
         type: UnitType.Volume);
 
-    //Count-based
+    //Usage-based
     public static readonly Unit Piece = Unit.Create(
         name: "Piece",
         abbreviation: "pc",
