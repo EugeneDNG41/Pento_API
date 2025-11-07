@@ -8,7 +8,8 @@ using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Create;
 public sealed record CreateMealPlanCommand(
-    Guid RecipeId,
+    Guid? RecipeId,
+    Guid? FoodItemId,
     string Name,
     MealType MealType,
     DateOnly ScheduledDate,

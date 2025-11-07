@@ -9,7 +9,7 @@ using Pento.Domain.Recipes;
 namespace Pento.Application.Recipes.Create;
 public sealed record CreateRecipeCommand(
     string Title,
-    string? Description,
+    string Description,
     int PrepTimeMinutes,
     int CookTimeMinutes,
     string? Notes,

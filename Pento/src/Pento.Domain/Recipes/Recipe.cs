@@ -15,7 +15,7 @@ public sealed class Recipe: Entity
     public Recipe(
         Guid id,
         string title,
-        string? description,
+        string description,
         TimeRequirement recipetime,
         string? notes,
         int? servings,
@@ -41,11 +41,11 @@ public sealed class Recipe: Entity
     private Recipe() { }
     public string Title { get; private set; } = string.Empty;
 
-    public string? Description { get; private set; }
+    public string Description { get; private set; }
 
-    public int? PrepTimeMinutes { get; private set; }
+    public int PrepTimeMinutes { get; private set; }
 
-    public int? CookTimeMinutes { get; private set; }
+    public int CookTimeMinutes { get; private set; }
 
     public string? Notes { get; private set; }
 
@@ -69,7 +69,7 @@ public sealed class Recipe: Entity
 
     public static Recipe Create(
     string title,
-    string? description,
+    string description,
     TimeRequirement recipeTime,
     string? notes,
     int? servings,
@@ -98,7 +98,7 @@ public sealed class Recipe: Entity
     }
     public void UpdateDetails(
     string title,
-    string? description,
+    string description,
     string? notes,
     int? servings,
     DifficultyLevel? difficultyLevel,
