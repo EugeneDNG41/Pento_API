@@ -39,12 +39,14 @@ internal sealed class GetCompartmentByIdQueryHandler(
         {
             return Result.Failure<CompartmentWithFoodItemPreviewResponse>(CompartmentErrors.NotFound);
         }
-        IPagedList<FoodItemPreview> previews =
-                await session.Query<FoodItemPreview>()
-                    .Where(p => p.CompartmentId == query.CompartmentId && p.Quantity > 0)
-                    .Where(p => string.IsNullOrEmpty(query.SearchText) || p.WebStyleSearch(query.SearchText))
-                    .ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+        IQueryable<FoodItemPreview> previewsQuery = session.Query<FoodItemPreview>()
+                    .Where(p => p.CompartmentId == query.CompartmentId && p.Quantity > 0);
+        if (!string.IsNullOrEmpty(query.SearchText))
+        {
+            previewsQuery = previewsQuery.Where(p => p.WebStyleSearch(query.SearchText));
+        }
 
+        IPagedList<FoodItemPreview> previews = await previewsQuery.ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         var response = new CompartmentWithFoodItemPreviewResponse(
             compartment.Id, compartment.StorageId, compartment.HouseholdId, compartment.Name, compartment.Notes, previews);
         

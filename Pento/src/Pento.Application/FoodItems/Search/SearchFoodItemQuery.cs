@@ -48,16 +48,20 @@ internal sealed class SearchFoodItemQueryHandler(
             return Result.Failure<IPagedList<FoodItemPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
         IReadOnlyList<Guid> ids = await session.Query<FoodItem>().Where(f => f.HouseholdId == householdId && f.Quantity > 0).Select(f => f.Id).ToListAsync(cancellationToken);
-        IPagedList<FoodItemPreview> previews =
-               await session.Query<FoodItemPreview>()
+        IQueryable<FoodItemPreview> previewsQuery =
+                session.Query<FoodItemPreview>()
                    .Where(p => ids.Contains(p.Id))
                    .Where(p => string.IsNullOrEmpty(query.SearchText) || p.WebStyleSearch(query.SearchText))
                    .Where(p => query.FoodGroups == null || query.FoodGroups.Contains(p.FoodGroup))
                    .Where(p => query.FromQuantity == null || p.Quantity >= query.FromQuantity)
                    .Where(p => query.ToQuantity == null || p.Quantity <= query.ToQuantity)
                    .Where(p => query.ExpirationDateAfter == null || p.ExpirationDateUtc >= query.ExpirationDateAfter.Value.ToUniversalTime())
-                   .Where(p => query.ExpirationDateBefore == null || p.ExpirationDateUtc <= query.ExpirationDateBefore.Value.ToUniversalTime())
-                   .ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+                   .Where(p => query.ExpirationDateBefore == null || p.ExpirationDateUtc <= query.ExpirationDateBefore.Value.ToUniversalTime());
+        if (!string.IsNullOrEmpty(query.SearchText))
+        {
+            previewsQuery = previewsQuery.Where(p => p.WebStyleSearch(query.SearchText));
+        }
+        IPagedList<FoodItemPreview> previews = await previewsQuery.ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         return Result.Success(previews);
     }
 }

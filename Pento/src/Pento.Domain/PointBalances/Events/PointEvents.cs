@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Pento.Domain.PointTasks;
 using Pento.Domain.Shared;
 
 namespace Pento.Domain.PointBalances.Events;

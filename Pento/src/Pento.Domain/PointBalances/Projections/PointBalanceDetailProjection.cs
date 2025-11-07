@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Marten.Events.Aggregation;
 using Pento.Domain.PointBalances.Events;
-using Pento.Domain.PointTasks;
+using Pento.Domain.Shared;
 
 namespace Pento.Domain.PointBalances.Projections;
 
@@ -27,11 +27,11 @@ public sealed record PointsByCategory
 internal sealed class PointBalanceDetailProjection : SingleStreamProjection<PointBalanceDetail, Guid>
 {
     public PointBalanceDetail Create(BalanceCreated e)
-        => new PointBalanceDetail
+        => new()
         {
             Id = e.Id,
             UserId = e.UserId,
-            PointsByCategory = new List<PointsByCategory>()
+            PointsByCategory = []
         };
     public PointBalanceDetail Apply(PointAdded e, PointBalanceDetail balance)
     {
