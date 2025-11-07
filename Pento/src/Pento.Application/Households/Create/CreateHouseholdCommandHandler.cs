@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Storages;
@@ -17,6 +18,7 @@ internal sealed class CreateHouseholdCommandHandler(
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
     IGenericRepository<Storage> storageRepository,
+    IGenericRepository<Compartment> compartmentRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<CreateHouseholdCommand, string>
 {
     public async Task<Result<string>> Handle(CreateHouseholdCommand command, CancellationToken cancellationToken)
@@ -51,10 +53,14 @@ internal sealed class CreateHouseholdCommandHandler(
         currentUser.SetRoles([householdHeadRole]);
         userRepository.Update(currentUser);
 
-        var pantry = Storage.Create("Pantry", household.Id, StorageType.Pantry, null);
-        var fridge = Storage.Create("Fridge", household.Id, StorageType.Fridge, null);
-        var freezer = Storage.Create("Freezer", household.Id, StorageType.Freezer, null);
+        var pantry = Storage.Create("Default Pantry", household.Id, StorageType.Pantry, null);
+        var fridge = Storage.Create("Default Fridge", household.Id, StorageType.Fridge, null);
+        var freezer = Storage.Create("Default Freezer", household.Id, StorageType.Freezer, null);
         storageRepository.AddRange([pantry, fridge, freezer]);
+        var pantryCompartment = Compartment.Create("Default Pantry Compartment", pantry.Id, household.Id, null);
+        var fridgeCompartment = Compartment.Create("Default Fridge Compartment", fridge.Id, household.Id, null);
+        var freezerCompartment = Compartment.Create("Default Freezer Compartment", freezer.Id, household.Id, null);
+        compartmentRepository.AddRange([pantryCompartment, fridgeCompartment, freezerCompartment]);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;
