@@ -51,7 +51,7 @@ internal sealed class CreateFoodItemCommandHandler(
             }
             else
             {
-                return Result.Failure<Guid>(FoodItemErrors.InvalidMeasurementUnit);
+                validUnit = commandUnit;
             }
         }
         Compartment? compartment = await compartmentRepository.GetByIdAsync(command.CompartmentId, cancellationToken);
