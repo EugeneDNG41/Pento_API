@@ -11,7 +11,12 @@ internal static class CorsExtensions
             options.AddDefaultPolicy(
                 policy =>
                 {
-                    policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    policy.WithOrigins(
+                         "http://localhost:3000",   // your dev SPA
+                         "https://localhost:3000",
+                         "http://localhost:5278",
+                         "https://localhost:7130")
+                    .AllowAnyMethod().AllowAnyHeader().AllowCredentials();
                     //if (builder.Environment.IsDevelopment())
                     //{
                     //    policy.AllowAnyOrigin();
