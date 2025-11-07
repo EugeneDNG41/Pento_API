@@ -69,26 +69,21 @@ internal sealed class CreateFoodItemCommandHandler(
         {
             return Result.Failure<Guid>(CompartmentErrors.ForbiddenAccess);
         }
-        DateTime validExpirationDate;
-        if (command.ExpirationDate is null)
+        Storage? storage = await storageRepository.GetByIdAsync(compartment.StorageId, cancellationToken);
+        if (storage is null)
         {
-            Storage? storage = await storageRepository.GetByIdAsync(compartment.StorageId, cancellationToken);
-            if (storage is null)
-            {
-                return Result.Failure<Guid>(StorageErrors.NotFound);
-            }
-            validExpirationDate = dateTimeProvider.UtcNow.AddDays(storage.Type switch
+            return Result.Failure<Guid>(StorageErrors.NotFound);
+        }
+        DateTime validExpirationDate = command.ExpirationDate is null
+            ? dateTimeProvider.UtcNow.AddDays(storage.Type switch
             {
                 StorageType.Pantry => foodReference.TypicalShelfLifeDays_Pantry,
                 StorageType.Fridge => foodReference.TypicalShelfLifeDays_Fridge,
                 StorageType.Freezer => foodReference.TypicalShelfLifeDays_Freezer,
                 _ => 5
-            });
-        }
-        else
-        {
-            validExpirationDate = command.ExpirationDate.Value.ToUniversalTime();
-        }
+            })
+            : command.ExpirationDate.Value.ToUniversalTime();
+
         var e = new FoodItemAdded(
                 Guid.CreateVersion7(),
                 command.FoodReferenceId,

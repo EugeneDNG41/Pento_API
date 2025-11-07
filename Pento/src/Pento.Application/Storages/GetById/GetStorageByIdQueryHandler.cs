@@ -28,7 +28,7 @@ internal sealed class GetStorageByIdQueryHandler(
                 type AS {nameof(StorageResponse.Type)},
                 notes AS {nameof(StorageResponse.Notes)}
             FROM storages
-            WHERE id = @StorageId
+            WHERE id = @StorageId and is_deleted = false
             """;
         CommandDefinition command = new(sql, new { query.StorageId }, cancellationToken: cancellationToken);
         StorageResponse? storage = await connection.QuerySingleOrDefaultAsync<StorageResponse>(command);

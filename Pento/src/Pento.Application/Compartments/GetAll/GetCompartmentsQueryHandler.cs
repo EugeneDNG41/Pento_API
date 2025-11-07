@@ -34,7 +34,7 @@ internal sealed class GetCompartmentsQueryHandler(
                 name AS {nameof(CompartmentResponse.Name)},
                 notes AS {nameof(CompartmentResponse.Notes)}
             FROM compartments
-            WHERE storage_id = @StorageId
+            WHERE storage_id = @StorageId and is_deleted = false
             """;
         CommandDefinition command = new(sql, query, cancellationToken: cancellationToken);
         List<CompartmentResponse> compartments = (await connection.QueryAsync<CompartmentResponse>(command)).AsList();
