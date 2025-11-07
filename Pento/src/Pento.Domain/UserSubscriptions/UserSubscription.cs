@@ -3,12 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Marten.Events.Aggregation;
 using Pento.Domain.Shared;
 
 namespace Pento.Domain.UserSubscriptions;
 
 public sealed class UserSubscription
 {
+    public Guid Id { get; init; }
+    public Guid UserId { get; init; }
+    public Guid SubscriptionId { get; init; }
+    public DateTimeOffset StartDateUtc { get; init; }
+    public DateTimeOffset? EndDateUtc { get; init; }
 }
 public sealed record UserSubscriptionInstance
 {
@@ -16,27 +22,16 @@ public sealed record UserSubscriptionInstance
     public Guid UserId { get; init; }
     public SubscriptionStatus Status { get; init; }
     public DateTimeOffset StartDateUtc { get; init; }
-
-
     public DateTimeOffset? EndDateUtc { get; init; }
-    public List<Consumable> Consumables { get; init; }
-    public List<NonConsumable> NonConsumables { get; init; }
-
-}
-public enum SubscriptionStatus 
-{
-    Active,
-    Paused,
-    Canceled,
-    Expired
+    public Dictionary<Guid, Consumable> Consumables { get; init; }
+    public Dictionary<Guid, NonConsumable> NonConsumables { get; init; }
 }
 public sealed class Consumable
 {
-    public Guid Id { get; init; } // feature id
     public string Name { get; init; }
     public int Usage { get; private set; }
-    public int Quota { get; private set; }
-    public bool Usable => Usage < Quota;
+    public int? Quota { get; private set; }
+    public bool Usable => Quota is null || Usage < Quota;
     public Interval ResetInterval { get; init; }
     public void ResetUsage()
     {
@@ -45,7 +40,11 @@ public sealed class Consumable
 }
 public sealed record NonConsumable
 {
-    public Guid Id { get; init; } // feature id
     public string Name { get; init; }
     public DateTime? ExpirationDateUtc { get; init; }
 }
+internal sealed class UserSubscriptionInstanceProjection : SingleStreamProjection<UserSubscriptionInstance, Guid>
+{
+}
+
+public sealed record ConsumableReset(Guid FeatureId);

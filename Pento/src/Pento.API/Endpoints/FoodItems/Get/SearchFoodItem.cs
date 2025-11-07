@@ -2,9 +2,9 @@
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Compartments.Get;
+using Pento.Application.FoodItems.Projections;
 using Pento.Application.FoodItems.Search;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems.Projections;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.API.Endpoints.FoodItems.Get;
@@ -39,7 +39,7 @@ internal sealed class SearchFoodItem : IEndpoint
     internal sealed class Request
     {
         public string? SearchText { get; init; }
-        public List<FoodGroup> FoodGroups { get; init; } = [];
+        public List<string> FoodGroups { get; init; } = [];
         public decimal? FromQuantity { get; init; }
         public decimal? ToQuantity { get; init; }
         public DateTime? ExpirationDateAfter { get; init; }

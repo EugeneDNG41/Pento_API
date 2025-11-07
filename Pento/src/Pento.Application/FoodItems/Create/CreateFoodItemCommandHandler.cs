@@ -1,5 +1,4 @@
-﻿using JasperFx.Events.Daemon;
-using Marten;
+﻿using Marten;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
@@ -13,7 +12,6 @@ using Pento.Domain.Households;
 using Pento.Domain.PossibleUnits;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
-using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Create;
 
@@ -94,15 +92,11 @@ internal sealed class CreateFoodItemCommandHandler(
         var e = new FoodItemAdded(
                 Guid.CreateVersion7(),
                 command.FoodReferenceId,
-                foodReference.Name,
                 command.CompartmentId,
-                compartment.Name,  
                 householdId.Value,
                 command.Name is null ? foodReference.Name : command.Name,
-                foodReference.FoodGroup,
                 foodReference.ImageUrl,
                 command.Quantity,
-                validUnit.Abbreviation,
                 validUnit.Id,
                 validExpirationDate,
                 command.Notes,

@@ -17,7 +17,6 @@ internal sealed class UpdateFoodItemCommandHandler(
     IUserContext userContext,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
-    IGenericRepository<Unit> unitRepository,
     IUnitConverter converter,
     IDocumentSession session) : ICommandHandler<UpdateFoodItemCommand>
 {
@@ -35,8 +34,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         }
         var foodItemEvents = new List<FoodItemEvent>();
         DateTime expirationDateUtc = command.ExpirationDate.ToUniversalTime();
-
-        
+       
         //Change measurement unit
         if (foodItem.UnitId != command.UnitId)
         {
@@ -45,8 +43,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             {
                 return Result.Failure(convertedResult.Error);
             }
-            Unit unit = await unitRepository.GetByIdAsync(command.UnitId, cancellationToken);
-            foodItemEvents.Add(new FoodItemUnitChanged(command.UnitId, convertedResult.Value, unit!.Abbreviation));
+            foodItemEvents.Add(new FoodItemUnitChanged(command.UnitId, convertedResult.Value));
         }
         //Move compartment
         if (foodItem.CompartmentId != command.CompartmentId)
@@ -60,7 +57,7 @@ internal sealed class UpdateFoodItemCommandHandler(
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
             } else
             {
-                foodItemEvents.Add(new FoodItemCompartmentMoved(command.CompartmentId, newCompartment.Name));
+                foodItemEvents.Add(new FoodItemCompartmentMoved(command.CompartmentId));
             }
         }
         //Rename

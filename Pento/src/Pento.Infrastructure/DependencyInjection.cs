@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Dapper;
-using ImTools;
 using JasperFx;
 using JasperFx.Events;
 using JasperFx.Events.Daemon;
@@ -13,12 +12,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Azure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -29,12 +26,12 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
+using Pento.Application.FoodItems.Projections;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
 using Pento.Domain.Comments;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodItems.Projections;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
@@ -91,14 +88,13 @@ public static class DependencyInjection
         services.AddMarten(options =>
         {
             options.Connection(connectionString);
+     
 
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
-            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);      
-            options.AutoCreateSchemaObjects = AutoCreate.CreateOrUpdate;
+            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
+            options.AutoCreateSchemaObjects = AutoCreate.All;
 
-            options.Projections.LiveStreamAggregation<FoodItem>();
-            options.Projections.Add<FoodItemDetailProjection>(ProjectionLifecycle.Inline);
-            options.Projections.Add<FoodItemPreviewProjection>(ProjectionLifecycle.Inline);
+            options.Projections.Snapshot<FoodItem>(SnapshotLifecycle.Inline);
             options.Projections.Errors.SkipApplyErrors = false;
             options.Projections.Errors.SkipSerializationErrors = false;
             options.Projections.Errors.SkipUnknownEvents = false;
@@ -106,6 +102,8 @@ public static class DependencyInjection
             options.Projections.UseIdentityMapForAggregates = true;
             options.Events.MetadataConfig.UserNameEnabled = true;
         })
+        .AddProjectionWithServices<FoodItemDetailProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)
+        .AddProjectionWithServices<FoodItemPreviewProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)
         .ApplyAllDatabaseChangesOnStartup()
         .UseLightweightSessions()
         .AddAsyncDaemon(DaemonMode.HotCold);

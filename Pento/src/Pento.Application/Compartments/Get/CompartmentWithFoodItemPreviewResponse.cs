@@ -1,5 +1,5 @@
 ﻿using Marten.Pagination;
-using Pento.Domain.FoodItems.Projections;
+using Pento.Application.FoodItems.Projections;
 
 namespace Pento.Application.Compartments.Get;
 

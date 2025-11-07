@@ -2,10 +2,10 @@
 using Marten.Events;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.FoodItems.Projections;
 using Pento.Domain.Units;
 
 namespace Pento.Application.FoodItems.Split;
@@ -17,9 +17,8 @@ internal sealed class SplitFoodItemCommandHandler(
     public async Task<Result<Guid>> Handle(SplitFoodItemCommand command, CancellationToken cancellationToken)
     {
         IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItemDetail? projection = await session.Events.FetchLatest<FoodItemDetail>(command.Id, cancellationToken);
         FoodItem? foodItem = stream.Aggregate;
-        if (foodItem is null || projection is null)
+        if (foodItem is null)
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
@@ -36,15 +35,11 @@ internal sealed class SplitFoodItemCommandHandler(
         var added = new FoodItemAdded(
             Guid.CreateVersion7(),
             foodItem.FoodReferenceId,
-            projection.FoodReferenceName,
             foodItem.CompartmentId,
-            projection.CompartmentName,
             foodItem.HouseholdId,
             foodItem.Name,
-            projection.FoodGroup,
             foodItem.ImageUrl,
             command.Quantity,
-            projection.UnitAbbreviation,
             foodItem.UnitId,
             foodItem.ExpirationDateUtc,
             foodItem.Notes,

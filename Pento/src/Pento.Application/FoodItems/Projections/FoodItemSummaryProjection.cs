@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Marten.Events.Projections;
+﻿using Marten.Events.Projections;
 using Pento.Domain.FoodItems.Events;
 
-namespace Pento.Domain.FoodItems.Projections;
+namespace Pento.Application.FoodItems.Projections;
 
 public class FoodItemSummary
 {

@@ -1,0 +1,21 @@
+﻿using FluentValidation;
+
+namespace Pento.Application.FoodItems.Search;
+
+internal sealed class SearchFoodItemQueryValidator : AbstractValidator<SearchFoodItemQuery>
+{
+    public SearchFoodItemQueryValidator()
+    {
+        RuleFor(x => x.FoodGroups).Must(fg => fg.Distinct().Count() == fg.Count)
+            .WithMessage("Food group filters must be distinct.");
+        RuleFor(x => x.FromQuantity).GreaterThanOrEqualTo(0).When(x => x.FromQuantity is not null)
+            .WithMessage("From quantity must be greater than or equal to 0.");
+        RuleFor(x => x.ToQuantity).GreaterThanOrEqualTo(0).When(x => x.ToQuantity is not null)
+            .WithMessage("To quantity must be greater than or equal to 0.");
+        RuleFor(x => x).Must(x => x.FromQuantity <= x.ToQuantity).When(x => x.FromQuantity is not null && x.ToQuantity is not null)
+            .WithMessage("From quantity must be less than or equal to To quantity.");
+        RuleFor(x => x).Must(x => x.ExpirationDateAfter <= x.ExpirationDateBefore).When(x => x.ExpirationDateAfter is not null && x.ExpirationDateBefore is not null)
+            .WithMessage("Expiration date after must be less than or equal to Expiration date before.");
+
+    }
+}

@@ -8,9 +8,12 @@ using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Compartments.GetAll;
+using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
-using Pento.Domain.FoodItems.Projections;
+using Pento.Domain.FoodItems;
+using Pento.Domain.FoodReferences;
+using Pento.Domain.Households;
 using Pento.Domain.Units;
 
 namespace Pento.Application.Compartments.Get;
@@ -39,14 +42,16 @@ internal sealed class GetCompartmentByIdQueryHandler(
         {
             return Result.Failure<CompartmentWithFoodItemPreviewResponse>(CompartmentErrors.NotFound);
         }
-        IQueryable<FoodItemPreview> previewsQuery = session.Query<FoodItemPreview>()
-                    .Where(p => p.CompartmentId == query.CompartmentId && p.Quantity > 0);
+        IReadOnlyList<Guid> ids = await session.Query<FoodItem>()
+            .Where(f => f.CompartmentId == query.CompartmentId && f.Quantity > 0)
+            .Select(f => f.Id).ToListAsync(cancellationToken);
+        IQueryable<FoodItemPreview> previewsQueryable =session.Query<FoodItemPreview>().Where(p => ids.Contains(p.Id));
         if (!string.IsNullOrEmpty(query.SearchText))
         {
-            previewsQuery = previewsQuery.Where(p => p.WebStyleSearch(query.SearchText));
+            string trimmed = query.SearchText.Trim();
+            previewsQueryable = previewsQueryable.Where(p => p.Name.Contains(trimmed) || p.FoodGroup.Contains(trimmed));
         }
-
-        IPagedList<FoodItemPreview> previews = await previewsQuery.ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
+        IPagedList<FoodItemPreview> previews = await previewsQueryable.ToPagedListAsync(query.PageNumber, query.PageSize, cancellationToken);
         var response = new CompartmentWithFoodItemPreviewResponse(
             compartment.Id, compartment.StorageId, compartment.HouseholdId, compartment.Name, compartment.Notes, previews);
         

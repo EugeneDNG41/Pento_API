@@ -8,7 +8,7 @@ using Marten.Events.Projections;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Units;
 
-namespace Pento.Domain.FoodItems.Projections;
+namespace Pento.Application.FoodItems.Projections;
 
 public record FoodItemHistoryEntry
 {
@@ -27,7 +27,7 @@ public class FoodItemHistoryTransformation() : EventProjection
             FoodItemId = e.Data.Id,
             Timestamp = e.Timestamp.UtcDateTime,
             UserId = e.UserName,
-            Description = $"{e.Data.Quantity} {e.Data.UnitAbbreviation} {e.Data.Name} Added."
+            Description = $"{e.Data.Quantity} {e.Data.UnitId} {e.Data.Name} Added."
         };
     }
 }

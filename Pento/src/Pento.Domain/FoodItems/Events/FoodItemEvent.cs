@@ -11,15 +11,11 @@ public abstract record FoodItemEvent();
 public record FoodItemAdded(
     Guid Id, 
     Guid FoodReferenceId,
-    string FoodReferenceName,
     Guid CompartmentId,
-    string CompartmentName,
     Guid HouseholdId,
     string Name,
-    FoodGroup FoodGroup,
     Uri? ImageUrl,
     decimal Quantity,
-    string UnitAbbreviation,
     Guid UnitId, 
     DateTime ExpirationDateUtc,
     string? Notes,
@@ -30,9 +26,9 @@ public record FoodItemRenamed(string NewName) : FoodItemEvent;
 public record FoodItemImageUpdated(Uri? ImageUrl) : FoodItemEvent;
 public record FoodItemNotesUpdated(string? Notes) : FoodItemEvent;
 public record FoodItemExpirationDateUpdated(DateTime ExpirationDateUtc) : FoodItemEvent;
-public record FoodItemCompartmentMoved(Guid CompartmentId, string CompartmentName) : FoodItemEvent;
+public record FoodItemCompartmentMoved(Guid CompartmentId) : FoodItemEvent;
 public record FoodItemQuantityAdjusted(decimal Quantity) : FoodItemEvent;
-public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity, string UnitAbbreviation) : FoodItemEvent;
+public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity) : FoodItemEvent;
 // Reservations
 public record FoodItemReservedForMealPlan(decimal Quantity, Guid MealPlanId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;
 public record FoodItemReservedForMealPlanCancelled(decimal Quantity, Guid MealPlanId) : FoodItemEvent;

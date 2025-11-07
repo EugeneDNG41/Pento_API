@@ -1,10 +1,9 @@
 ﻿
 using Marten;
 using Pento.Application.Abstractions.Messaging;
-
+using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodItems.Projections;
 
 
 namespace Pento.Application.FoodItems.GetById;

@@ -6,7 +6,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 
-namespace Pento.Application.FoodItems.AdjustQuantity;
+namespace Pento.Application.FoodItems.Discard;
 
 internal sealed class DiscardFoodItemCommandHandler(
     IUserContext userContext,

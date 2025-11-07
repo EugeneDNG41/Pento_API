@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.FoodItems.AdjustQuantity;
+namespace Pento.Application.FoodItems.Discard;
 
 internal sealed class DiscardFoodItemCommandValidator : AbstractValidator<DiscardFoodItemCommand>
 {

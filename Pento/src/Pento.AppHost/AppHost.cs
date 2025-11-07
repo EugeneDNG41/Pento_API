@@ -41,7 +41,7 @@ IResourceBuilder<AzurePostgresFlexibleServerResource> postgres = builder
 IResourceBuilder<AzurePostgresFlexibleServerDatabaseResource> pentoDb = postgres.AddDatabase("pento-db", "pento");
 
 IResourceBuilder<ParameterResource> keycloakPassword = builder.AddParameter("KeycloakPassword", secret: true, value: "admin");
-IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", adminPassword: keycloakPassword)
+IResourceBuilder<KeycloakResource> keycloak = builder.AddKeycloak("keycloak", 8080, adminPassword: keycloakPassword)
                       .WithLifetime(ContainerLifetime.Persistent);
 
 if (builder.ExecutionContext.IsRunMode)
@@ -103,7 +103,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithHttpHealthCheck("/health/ready");
 if (builder.ExecutionContext.IsRunMode)
 {
-    project.WithReference(seq).WaitFor(seq);
+    project.WithReference(seq);
 }
 builder.AddAzureContainerAppEnvironment("cae");
 

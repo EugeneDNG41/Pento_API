@@ -12,7 +12,6 @@ public sealed class PointBalance
 {
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
-    public Guid PointCategoryId { get; private set; }
     public int Balance { get; private set; }
     public int Version { get; private set; }
     }
