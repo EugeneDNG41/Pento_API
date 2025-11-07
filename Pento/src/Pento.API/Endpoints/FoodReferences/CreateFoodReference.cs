@@ -3,6 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 
@@ -22,12 +23,14 @@ internal sealed class CreateFoodReference : IEndpoint
             {
                 return Results.BadRequest($"Invalid data type: {request.DataType}");
             }
-
+            if (!Enum.TryParse<UnitType>(request.UnitType, true, out UnitType unitType))
+            {
+                return Results.BadRequest($"Invalid data type: {request.UnitType}");
+            }
             var command = new CreateFoodReferenceCommand(
                 request.Name,
                 foodGroup,
                 dataType,
-                request.Notes,
                 request.FoodCategoryId,
                 request.Brand,
                 request.Barcode,
@@ -37,7 +40,9 @@ internal sealed class CreateFoodReference : IEndpoint
                 request.TypicalShelfLifeDays_Fridge,
                 request.TypicalShelfLifeDays_Freezer,
                 request.AddedBy,
-                request.ImageUrl
+                request.ImageUrl,
+                unitType
+
             );
 
 
@@ -67,5 +72,6 @@ internal sealed class CreateFoodReference : IEndpoint
         public int? TypicalShelfLifeDays_Freezer { get; init; } = 0;
         public Guid? AddedBy { get; init; }
         public Uri? ImageUrl { get; init; }
-    }
+        public string? UnitType { get; init; }
+        }
 }

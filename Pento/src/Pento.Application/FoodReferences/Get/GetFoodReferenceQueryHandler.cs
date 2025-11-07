@@ -32,6 +32,7 @@ internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConn
                 image_url AS ImageUrl,
                 brand AS Brand,
                 barcode AS Barcode,
+                unit_type AS UnitType,
                 created_on_utc AS CreatedAt,
                 updated_on_utc AS UpdatedAt
             FROM food_references

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DietaryTags;
-using Pento.Domain.Units;
+using Pento.Domain.UserPreferences;
 
 namespace Pento.Infrastructure.Configurations;
 public sealed class UserPreferenceConfiguration : IEntityTypeConfiguration<UserPreference>

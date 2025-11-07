@@ -28,9 +28,8 @@ internal sealed class EnrichFoodReferenceShelfLifeCommandHandler(
         FoodEnrichmentResult enrichment = await foodAiEnricher.EnrichAsync(
             new FoodEnrichmentAsk(
                 foodRef.Name,
-                foodRef.FoodGroup.ToString(),
-                foodRef.Notes ?? string.Empty
-            ),
+                foodRef.FoodGroup.ToString()
+                ),
             cancellationToken
         );
 

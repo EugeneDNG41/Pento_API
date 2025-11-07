@@ -24,7 +24,6 @@ internal sealed class CreateFoodReferenceCommandHandler(
             request.Name,
             request.FoodGroup,
             request.DataType,
-            request.Notes,
             request.FoodCategoryId,
             request.Brand,
             request.Barcode,
@@ -35,6 +34,7 @@ internal sealed class CreateFoodReferenceCommandHandler(
             request.TypicalShelfLifeDays_Freezer,
             request.AddedBy,
             request.ImageUrl,
+            request.UnitType,  
             utcNow
         );
         await foodReferenceRepository.AddAsync(foodReference, cancellationToken);

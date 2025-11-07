@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Domain.Units;
 
 namespace Pento.Application.FoodReferences.Update;
 public sealed record UpdateFoodReferenceCommand(
@@ -11,7 +12,6 @@ public sealed record UpdateFoodReferenceCommand(
     string Name,
     string FoodGroup,
     string DataType,
-    string? Notes,
     int? FoodCategoryId,
     string? Brand,
     string? Barcode,
@@ -20,5 +20,6 @@ public sealed record UpdateFoodReferenceCommand(
     int? TypicalShelfLifeDays_Pantry,
     int? TypicalShelfLifeDays_Fridge,
     int? TypicalShelfLifeDays_Freezer,
-    Uri? ImageUrl
+    Uri? ImageUrl,
+    string UnitType
 ) : ICommand<Guid>;

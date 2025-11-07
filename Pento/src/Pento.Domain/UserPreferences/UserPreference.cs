@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Domain.Units;
+namespace Pento.Domain.UserPreferences;
 public sealed class UserPreference : Entity
 {
     private UserPreference() { }

@@ -13,8 +13,7 @@ public interface IFoodAiEnricher
 
 public sealed record FoodEnrichmentAsk(
     string Name,
-    string FoodGroup,       
-    string Notes
+    string FoodGroup       
 );
 
 

@@ -38,7 +38,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
             try
             {
                 string query =
-                    $"{foodRef.Name} {foodRef.Notes}"
+                    $"{foodRef.Name}"
                     .Trim();
 
                 Result<Uri> imgResult = await pixabayService.GetImageUrlAsync(query, cancellationToken);

@@ -28,7 +28,7 @@ internal sealed class GenerateFoodReferenceImageCommandHandler(
             return Result.Failure<string>(FoodReferenceErrors.NotFound);
         }
 
-        string query = $"{foodRef.Name} {foodRef.Notes}".Trim();
+        string query = $"{foodRef.Name}".Trim();
         Result<Uri> imageResult = await pixabayService.GetImageUrlAsync(query, cancellationToken);
         if (imageResult.IsFailure)
         {

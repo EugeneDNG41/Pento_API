@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Units;
 
 namespace Pento.Application.FoodReferences.Update;
 internal sealed class UpdateFoodReferenceCommandHandler(
@@ -30,12 +31,16 @@ internal sealed class UpdateFoodReferenceCommandHandler(
         {
             return Result.Failure<Guid>(FoodReferenceErrors.InvalidName);
         }
+        if (!Enum.TryParse<UnitType>(request.UnitType, true, out UnitType unitType))
+        {
+            return Result.Failure<Guid>(FoodReferenceErrors.InvalidGroup);
+        }
+
 
         foodRef.Update(
             name: request.Name,
             foodGroup: foodGroup,
             dataType: dataType,
-            notes: request.Notes,
             foodCategoryId: request.FoodCategoryId,
             brand: request.Brand,
             barcode: request.Barcode,
@@ -46,6 +51,7 @@ internal sealed class UpdateFoodReferenceCommandHandler(
             typicalShelfLifeDaysFreezer: request.TypicalShelfLifeDays_Freezer,
             addedBy: null,
             imageUrl: request.ImageUrl,
+            unitType: unitType,
             utcNow: DateTime.UtcNow
         );
 

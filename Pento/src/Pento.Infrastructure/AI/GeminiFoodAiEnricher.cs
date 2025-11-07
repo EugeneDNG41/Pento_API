@@ -42,7 +42,6 @@ internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration confi
 
             Name: {ask.Name}
             Group: {ask.FoodGroup}
-            Notes : {ask.Notes}
             ";
 
         var body = new

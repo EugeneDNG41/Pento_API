@@ -10,7 +10,6 @@ public sealed record FoodReferenceResponse(
     string Name,
     string FoodGroup,
     string DataType,                    
-    string? Notes,                      
     int TypicalShelfLifeDays_Pantry,
     int TypicalShelfLifeDays_Fridge,
     int TypicalShelfLifeDays_Freezer,
@@ -18,6 +17,7 @@ public sealed record FoodReferenceResponse(
     Uri? ImageUrl,
     string? Brand,
     string? Barcode,
+    string UnitType,
     DateTime CreatedAt,
     DateTime UpdatedAt
 );
