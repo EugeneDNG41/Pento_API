@@ -36,7 +36,6 @@ using Pento.Domain.FoodReferences;
 using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlans;
-using Pento.Domain.PossibleUnits;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
@@ -133,7 +132,6 @@ public static class DependencyInjection
         services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
         services.AddScoped<IRecipeDirectionRepository,RecipeDirectionRepository>();
         services.AddScoped<IUnitRepository, UnitRepository>();
-        services.AddScoped<IPossibleUnitRepository, PossibleUnitRepository>();
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
         services.AddScoped<IBlobService, BlobService>();

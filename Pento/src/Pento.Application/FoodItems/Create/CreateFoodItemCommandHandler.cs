@@ -9,7 +9,6 @@ using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
-using Pento.Domain.PossibleUnits;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
 
@@ -20,7 +19,6 @@ internal sealed class CreateFoodItemCommandHandler(
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitRepository,
-    IGenericRepository<PossibleUnit> possibleUnitRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Storage> storageRepository,
     IDocumentSession session)
@@ -50,10 +48,6 @@ internal sealed class CreateFoodItemCommandHandler(
             if (commandUnit is null)
             {
                 return Result.Failure<Guid>(UnitErrors.NotFound);
-            }
-            else if (await possibleUnitRepository.AnyAsync(pu => pu.UnitId == command.UnitId && pu.FoodReferenceId == foodReference.Id, cancellationToken))
-            {
-                validUnit = commandUnit;
             }
             else
             {
