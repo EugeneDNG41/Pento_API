@@ -46,11 +46,6 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
             builder.Property(mp => mp.FoodItemId)
         .HasColumnName("food_item_id")
         .IsRequired(false);
-
-            builder.HasOne<FoodItem>()
-                .WithMany()
-                .HasForeignKey(mp => mp.FoodItemId)
-                .OnDelete(DeleteBehavior.SetNull);
             builder.Property(mp => mp.MealType)
                 .IsRequired()
                 .HasConversion<string>(); 
