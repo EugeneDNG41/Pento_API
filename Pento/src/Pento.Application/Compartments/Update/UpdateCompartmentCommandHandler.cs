@@ -1,14 +1,19 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Marten;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems;
+using Pento.Domain.FoodItems.Events;
 
 namespace Pento.Application.Compartments.Update;
 
 internal sealed class UpdateCompartmentCommandHandler(
     IUserContext userContext,
     IGenericRepository<Compartment> compartmentRepository,
+    IDocumentSession session,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateCompartmentCommand>
 {
     public async Task<Result> Handle(UpdateCompartmentCommand command, CancellationToken cancellationToken)
@@ -23,9 +28,31 @@ internal sealed class UpdateCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.ForbiddenAccess);
         }
-        compartment.Update(command.Name, command.Notes);
-        compartmentRepository.Update(compartment);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && c.Id != compartment.Id && c.HouseholdId == userHouseholdId, cancellationToken))
+        {
+            return Result.Failure(CompartmentErrors.DuplicateName);
+        }
+        if (compartment.Name != command.Name)
+        {
+            compartment.UpdateName(command.Name);
+            IReadOnlyList<Guid> foodItemIds = await session.Query<FoodItemDetail>()
+                .Where(fi => fi.CompartmentName == compartment.Name)
+                .Select(fi => fi.Id).ToListAsync(cancellationToken);
+            foreach (Guid foodItemId in foodItemIds)
+            {
+                session.Events.Append(foodItemId, new FoodItemCompartmentRenamed(command.Name));
+            }
+            await session.SaveChangesAsync(cancellationToken);
+        }
+        if (compartment.Notes != command.Notes)
+        {
+            compartment.UpdateNotes(command.Notes);
+        }
+        if (compartment.Name != command.Name || compartment.Notes != command.Notes)
+        {
+            compartmentRepository.Update(compartment);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }      
         return Result.Success();
     }
 }

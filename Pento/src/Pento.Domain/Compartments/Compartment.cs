@@ -25,9 +25,12 @@ public sealed class Compartment : Entity
     {
         return new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
     }
-    public void Update(string name, string? notes)
+    public void UpdateName(string name)
     {
         Name = name;
+    }
+    public void UpdateNotes(string? notes)
+    {
         Notes = notes;
     }
 }

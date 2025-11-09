@@ -100,9 +100,9 @@ public sealed class FoodItemDetailProjection(
         Storage storage = await storageRepository.GetByIdAsync(e.Data.StorageId);
         return item with { StorageName = storage!.Name, StorageType = storage.Type, CompartmentName = compartment!.Name, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
     }
-    public async Task<FoodItemDetail> Apply(IEvent<FoodItemCompartmentRenamed> e, FoodItemDetail item) =>
+    public FoodItemDetail Apply(IEvent<FoodItemCompartmentRenamed> e, FoodItemDetail item) =>
         item with { CompartmentName = e.Data.CompartmentName};
-    public async Task<FoodItemDetail> Apply(IEvent<FoodItemStorageRenamed> e, FoodItemDetail item) =>
+    public FoodItemDetail Apply(IEvent<FoodItemStorageRenamed> e, FoodItemDetail item) =>
         item with { StorageName = e.Data.StorageName};
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemCompartmentMoved> e, FoodItemDetail item)
     {
