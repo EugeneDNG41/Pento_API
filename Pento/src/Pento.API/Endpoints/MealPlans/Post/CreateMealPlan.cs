@@ -18,6 +18,7 @@ internal sealed class CreateMealPlan : IEndpoint
         {
             var command = new CreateMealPlanCommand(
                 request.RecipeId,
+                request.FoodItemId,
                 request.Name,
                 request.MealType,
                 request.ScheduledDate,
@@ -37,7 +38,8 @@ internal sealed class CreateMealPlan : IEndpoint
 
     internal sealed class Request
     {
-        public Guid RecipeId { get; init; }
+        public Guid? RecipeId { get; init; }
+        public Guid? FoodItemId { get; init; }
         public string Name { get; init; } = string.Empty;
         public MealType MealType { get; init; }
         public DateOnly ScheduledDate { get; init; }

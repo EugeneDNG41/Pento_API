@@ -17,7 +17,7 @@ internal sealed class PixabayImageService(HttpClient httpClient, IConfiguration 
         try
         {
             string? apiKey = config["Pixabay:ApiKey"];
-            string url = $"https://pixabay.com/api/?key={apiKey}&q={Uri.EscapeDataString(query)}&image_type=photo&orientation=horizontal&per_page=3&safesearch=true&order=popular";
+            string url = $"https://pixabay.com/api/?key={apiKey}&q={Uri.EscapeDataString(query)}&safesearch=true&order=popular";
 
             HttpResponseMessage response = await httpClient.GetAsync(url, cancellationToken);
             response.EnsureSuccessStatusCode();

@@ -27,4 +27,5 @@ public static class FoodReferenceErrors
         "FoodReferences.Conflict",
         "A food reference with the same name or code already exists."
     );
+
 }

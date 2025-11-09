@@ -10,7 +10,7 @@ namespace Pento.Application.Recipes.Update;
 public sealed record UpdateRecipeCommand(
     Guid Id,
     string Title,
-    string? Description,
+    string Description,
     int PrepTimeMinutes,
     int CookTimeMinutes,
     string? Notes,

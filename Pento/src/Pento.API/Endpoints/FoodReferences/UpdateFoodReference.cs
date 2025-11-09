@@ -17,7 +17,6 @@ internal sealed class UpdateFoodReference : IEndpoint
                     Name: request.Name,
                     FoodGroup: request.FoodGroup,
                     DataType: request.DataType,
-                    Notes: request.Notes,
                     FoodCategoryId: request.FoodCategoryId,
                     Brand: request.Brand,
                     Barcode: request.Barcode,
@@ -26,7 +25,9 @@ internal sealed class UpdateFoodReference : IEndpoint
                     TypicalShelfLifeDays_Pantry: request.TypicalShelfLifeDays_Pantry,
                     TypicalShelfLifeDays_Fridge: request.TypicalShelfLifeDays_Fridge,
                     TypicalShelfLifeDays_Freezer: request.TypicalShelfLifeDays_Freezer,
-                    ImageUrl: request.ImageUrl
+                    ImageUrl: request.ImageUrl,
+                    UnitType: request.UnitType
+
                 );
 
                 Result<Guid> result = await handler.Handle(command, ct);
@@ -44,7 +45,6 @@ internal sealed class UpdateFoodReference : IEndpoint
         public string Name { get; init; } = string.Empty;
         public string FoodGroup { get; init; } = string.Empty;
         public string DataType { get; init; } = string.Empty;
-        public string? Notes { get; init; }
         public int? FoodCategoryId { get; init; }
         public string? Brand { get; init; }
         public string? Barcode { get; init; }
@@ -54,5 +54,6 @@ internal sealed class UpdateFoodReference : IEndpoint
         public int? TypicalShelfLifeDays_Fridge { get; init; }
         public int? TypicalShelfLifeDays_Freezer { get; init; }
         public Uri? ImageUrl { get; init; }
+        public string UnitType { get; init; } = string.Empty;
     }
 }

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
@@ -34,14 +35,25 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
             .HasMaxLength(200)
             .IsRequired();
 
-        builder.HasOne<Recipe>()
-            .WithMany()
-            .HasForeignKey(mp => mp.RecipeId)
-            .OnDelete(DeleteBehavior.Cascade);
+        builder.Property(mp => mp.RecipeId)
+                .HasColumnName("recipe_id")
+                .IsRequired(false);
 
-        builder.Property(mp => mp.MealType)
-            .IsRequired()
-            .HasConversion<string>(); 
+            builder.HasOne<Recipe>()
+                .WithMany()
+                .HasForeignKey(mp => mp.RecipeId)
+                .OnDelete(DeleteBehavior.SetNull);
+            builder.Property(mp => mp.FoodItemId)
+        .HasColumnName("food_item_id")
+        .IsRequired(false);
+
+            builder.HasOne<FoodItem>()
+                .WithMany()
+                .HasForeignKey(mp => mp.FoodItemId)
+                .OnDelete(DeleteBehavior.SetNull);
+            builder.Property(mp => mp.MealType)
+                .IsRequired()
+                .HasConversion<string>(); 
 
         builder.Property(mp => mp.ScheduledDate)
             .HasColumnName("scheduled_date")

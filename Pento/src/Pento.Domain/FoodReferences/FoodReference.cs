@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences.Events;
+using Pento.Domain.Units;
 
 namespace Pento.Domain.FoodReferences;
 
@@ -18,7 +19,6 @@ public sealed class FoodReference : Entity
         string name,
         FoodGroup foodGroup,
         FoodDataType dataType,
-        string? notes,
         int? foodCategoryId,
         string? brand,
         string? barcode,
@@ -29,13 +29,13 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysFreezer,
         Guid? addedBy,
         Uri? imageUrl,
+        UnitType unitType,
         DateTime createdOnUtc)
         : base(id)
     {
         Name = name;
         FoodGroup = foodGroup;
         DataType = dataType;
-        Notes = notes;
         FoodCategoryId = foodCategoryId;
         Brand = brand;
         Barcode = barcode;
@@ -46,13 +46,13 @@ public sealed class FoodReference : Entity
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
         AddedBy= addedBy;
         ImageUrl = imageUrl;
+        UnitType = unitType;
         CreatedOnUtc = createdOnUtc;
         UpdatedOnUtc = createdOnUtc;
     }
     public string Name { get; private set; }
     public FoodGroup FoodGroup { get; private set; }
     public FoodDataType DataType { get; private set; } // "foundation_food"
-    public string? Notes { get; private set; }
     public int? FoodCategoryId { get; private set; }
     public string? Brand { get; private set; }
     public string? Barcode { get; private set; }
@@ -62,15 +62,14 @@ public sealed class FoodReference : Entity
     public int TypicalShelfLifeDays_Fridge { get; private set; }
     public int TypicalShelfLifeDays_Freezer { get; private set; }
     public Guid? AddedBy { get; private set; }
-
     public Uri? ImageUrl { get; private set; }
+    public UnitType UnitType { get; private set; }
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime UpdatedOnUtc { get; private set; }
     public static FoodReference Create(
         string name,
         FoodGroup foodGroup,
         FoodDataType dataType,
-        string? notes,
         int? foodCategoryId,
         string? brand,
         string? barcode,
@@ -81,6 +80,7 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysFreezer,
         Guid? addedBy,
         Uri? imageUrl,
+        UnitType unitType,
         DateTime utcNow)
     {
         var entity = new FoodReference(
@@ -88,7 +88,6 @@ public sealed class FoodReference : Entity
             name,
             foodGroup,
             dataType,
-            notes,
             foodCategoryId,
             brand,
             barcode,
@@ -99,6 +98,7 @@ public sealed class FoodReference : Entity
             typicalShelfLifeDaysFreezer,
             addedBy,
             imageUrl,
+            unitType,
             utcNow
         );
 
@@ -109,7 +109,6 @@ public sealed class FoodReference : Entity
         string name,
         FoodGroup foodGroup,
         FoodDataType dataType,
-        string? notes,
         int? foodCategoryId,
         string? brand,
         string? barcode,
@@ -120,12 +119,12 @@ public sealed class FoodReference : Entity
         int? typicalShelfLifeDaysFreezer,
         Guid? addedBy,
         Uri? imageUrl,
+        UnitType unitType,
         DateTime utcNow)
     {
         Name = name;
         FoodGroup = foodGroup;
         DataType = dataType;
-        Notes = notes;
         FoodCategoryId = foodCategoryId;
         Brand = brand;
         Barcode = barcode;
@@ -136,6 +135,7 @@ public sealed class FoodReference : Entity
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
         AddedBy = addedBy;
         ImageUrl = imageUrl;
+        UnitType = unitType;
         UpdatedOnUtc = utcNow;
 
         Raise(new FoodReferenceUpdatedDomainEvent(Id));

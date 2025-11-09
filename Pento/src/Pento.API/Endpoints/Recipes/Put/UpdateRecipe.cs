@@ -39,7 +39,7 @@ internal sealed class UpdateRecipe : IEndpoint
     internal sealed class Request
     {
         public string Title { get; init; } = string.Empty;
-        public string? Description { get; init; }
+        public string Description { get; init; }
         public int PrepTimeMinutes { get; init; }
         public int CookTimeMinutes { get; init; }
         public string? Notes { get; init; }

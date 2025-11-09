@@ -5,6 +5,7 @@ using CsvHelper.Configuration;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Units;
 
 namespace Pento.Application.FoodReferences.Import;
 
@@ -41,15 +42,19 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 records.Add(record);
             }
         }
-
+        records = records
+            .DistinctBy(r => r.FdcId)
+            .ToList();
+        records = records
+            .GroupBy(r => r.Description.Trim(), StringComparer.OrdinalIgnoreCase)
+            .Select(g => g.First())
+            .ToList();
         foreach (FoodCsv f in records)
         {
-            string[] nameArray = f.Description.Split(",");
             FoodGroup group = MapFoodGroup(f.FoodCategoryId);
 
             var food = FoodReference.Create(
-                name: nameArray[0],
-                notes: nameArray.Length > 1 ? string.Join(",", nameArray[1..]).Trim() : null,
+                name: f.Description,
                 foodGroup: group,
                 dataType: FoodDataType.USDAFood,
                 foodCategoryId: f.FoodCategoryId,
@@ -64,6 +69,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 typicalShelfLifeDaysFreezer: 0,
                 addedBy:null,
                 imageUrl: null,
+                unitType: UnitData.Gram.Type,
                 utcNow: DateTime.UtcNow
             );
 

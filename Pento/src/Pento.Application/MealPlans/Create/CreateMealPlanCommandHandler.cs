@@ -3,6 +3,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
@@ -12,6 +13,7 @@ namespace Pento.Application.MealPlans.Create;
 internal sealed class CreateMealPlanCommandHandler(
     IMealPlanRepository mealPlanRepository,
     IGenericRepository<Recipe> recipeRepository,
+    IGenericRepository<FoodItem> foodItemRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateMealPlanCommand, Guid>
@@ -24,10 +26,22 @@ internal sealed class CreateMealPlanCommandHandler(
         {
             return Result.Failure<Guid>(MealPlanErrors.ForbiddenAccess);
         }
-        Recipe? recipe = await recipeRepository.GetByIdAsync(command.RecipeId, cancellationToken);
-        if (recipe is null)
+        if (command.RecipeId is not null)
         {
-            return Result.Failure<Guid>(RecipeErrors.NotFound);
+            Recipe? recipe = await recipeRepository.GetByIdAsync(command.RecipeId.Value, cancellationToken);
+            if (recipe is null)
+            {
+                return Result.Failure<Guid>(RecipeErrors.NotFound);
+            }
+        }
+
+        if (command.FoodItemId is not null)
+        {
+            FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.FoodItemId.Value, cancellationToken);
+            if (foodItem is null)
+            {
+                return Result.Failure<Guid>(FoodItemErrors.NotFound);
+            }
         }
         MealPlan? existingPlan = await mealPlanRepository.GetByNameAsync(command.Name, cancellationToken);
         if (existingPlan is not null)
@@ -41,6 +55,7 @@ internal sealed class CreateMealPlanCommandHandler(
         var mealPlan = MealPlan.Create(
             householdId.Value,
             command.RecipeId,
+            command.FoodItemId,
             command.Name,
             command.MealType,
             command.ScheduledDate,
@@ -48,7 +63,7 @@ internal sealed class CreateMealPlanCommandHandler(
             command.Notes,
             userContext.UserId,
             utcNow
-        );
+    );
 
         await mealPlanRepository.AddAsync(mealPlan, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

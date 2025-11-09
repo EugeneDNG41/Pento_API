@@ -9,7 +9,6 @@ public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMea
 {
     public CreateMealPlanCommandValidator()
     {
-        RuleFor(x => x.RecipeId).NotEmpty();
         RuleFor(x => x.Name)
             .NotEmpty().WithMessage("Meal plan name is required.")
             .MaximumLength(100).WithMessage("Meal plan name cannot exceed 100 characters.");
@@ -20,6 +19,9 @@ public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMea
         RuleFor(x => x.MealType)
     .IsInEnum()
     .WithMessage("Meal type must be one of: Breakfast, Lunch, Dinner, or Snack.");
+        RuleFor(x => x)
+    .Must(x => x.RecipeId is not null || x.FoodItemId is not null)
+    .WithMessage("You must specify either a recipe or a food item.");
     }
 }
 

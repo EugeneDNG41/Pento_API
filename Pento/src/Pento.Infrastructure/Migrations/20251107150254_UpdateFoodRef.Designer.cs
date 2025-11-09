@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251107150254_UpdateFoodRef")]
+    partial class UpdateFoodRef
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,64 +251,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_food_dietary_tags_food_reference_id_dietary_tag_id");
 
                     b.ToTable("food_dietary_tags", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("CompartmentId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("compartment_id");
-
-                    b.Property<DateTime>("ExpirationDateUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("expiration_date_utc");
-
-                    b.Property<Guid>("FoodReferenceId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("food_reference_id");
-
-                    b.Property<Guid>("HouseholdId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("household_id");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("text")
-                        .HasColumnName("image_url");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("name");
-
-                    b.Property<string>("Notes")
-                        .HasColumnType("text")
-                        .HasColumnName("notes");
-
-                    b.Property<decimal>("Quantity")
-                        .HasColumnType("numeric")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid?>("SourceItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("source_item_id");
-
-                    b.Property<Guid>("UnitId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unit_id");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("integer")
-                        .HasColumnName("version");
-
-                    b.HasKey("Id")
-                        .HasName("pk_food_item");
-
-                    b.ToTable("food_item", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.FoodReferences.FoodReference", b =>
@@ -585,10 +530,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_on_utc");
 
-                    b.Property<Guid?>("FoodItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("food_item_id");
-
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
@@ -617,7 +558,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("notes");
 
-                    b.Property<Guid?>("RecipeId")
+                    b.Property<Guid>("RecipeId")
                         .HasColumnType("uuid")
                         .HasColumnName("recipe_id");
 
@@ -635,9 +576,6 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_meal_plans");
-
-                    b.HasIndex("FoodItemId")
-                        .HasDatabaseName("ix_meal_plans_food_item_id");
 
                     b.HasIndex("HouseholdId")
                         .HasDatabaseName("ix_meal_plans_household_id");
@@ -1131,7 +1069,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("calories_per_serving");
 
-                    b.Property<int>("CookTimeMinutes")
+                    b.Property<int?>("CookTimeMinutes")
                         .HasColumnType("integer")
                         .HasColumnName("cook_time_minutes");
 
@@ -1144,7 +1082,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnName("created_on_utc");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("description");
@@ -1176,7 +1113,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("notes");
 
-                    b.Property<int>("PrepTimeMinutes")
+                    b.Property<int?>("PrepTimeMinutes")
                         .HasColumnType("integer")
                         .HasColumnName("prep_time_minutes");
 
@@ -2059,12 +1996,6 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>
                 {
-                    b.HasOne("Pento.Domain.FoodItems.FoodItem", null)
-                        .WithMany()
-                        .HasForeignKey("FoodItemId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_meal_plans_food_item_food_item_id");
-
                     b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
                         .HasForeignKey("HouseholdId")
@@ -2075,7 +2006,8 @@ namespace Pento.Infrastructure.Migrations
                     b.HasOne("Pento.Domain.Recipes.Recipe", null)
                         .WithMany()
                         .HasForeignKey("RecipeId")
-                        .OnDelete(DeleteBehavior.SetNull)
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
                         .HasConstraintName("fk_meal_plans_recipe_recipe_id");
                 });
 
