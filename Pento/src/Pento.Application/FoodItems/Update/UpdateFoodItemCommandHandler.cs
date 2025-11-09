@@ -11,8 +11,10 @@ using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Households;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
+using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Update;
 
@@ -26,13 +28,18 @@ internal sealed class UpdateFoodItemCommandHandler(
 {
     public async Task<Result> Handle(UpdateFoodItemCommand command, CancellationToken cancellationToken)
     {
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId == null)
+        {
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
+        }
         IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
         FoodItem? foodItem = stream.Aggregate;
         if (foodItem is null)
         {
             return Result.Failure(FoodItemErrors.NotFound);
         }
-        if (foodItem.HouseholdId != userContext.HouseholdId)
+        if (foodItem.HouseholdId != householdId)
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }
@@ -58,7 +65,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             {
                 return Result.Failure(CompartmentErrors.NotFound);
             } 
-            else if (newCompartment.HouseholdId != userContext.HouseholdId || oldCompartment.HouseholdId != userContext.HouseholdId)
+            else if (newCompartment.HouseholdId != householdId || oldCompartment.HouseholdId != householdId)
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
             } 
@@ -74,53 +81,40 @@ internal sealed class UpdateFoodItemCommandHandler(
                 {
                     return Result.Failure(StorageErrors.NotFound);
                 }
-                else if (newStorage.HouseholdId != userContext.HouseholdId || oldStorage.HouseholdId != userContext.HouseholdId)
+                else if (newStorage.HouseholdId != householdId || oldStorage.HouseholdId != householdId)
                 {
                     return Result.Failure(StorageErrors.ForbiddenAccess);
                 } 
-                else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDateUtc == expirationDateUtc)
+                else if (oldStorage.Type != newStorage.Type)
                 {
-                    //Storage changed, adjust expiration date based on new newStorage typical shelf life
-                    FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
-                    if (foodReference is null)
-                    {
-                        return Result.Failure(FoodReferenceErrors.NotFound);
-                    }
-                    int typicalShelfLifeDays = newStorage.Type switch
-                    {
-                        StorageType.Pantry => foodReference.TypicalShelfLifeDays_Pantry,
-                        StorageType.Fridge => foodReference.TypicalShelfLifeDays_Fridge,
-                        StorageType.Freezer => foodReference.TypicalShelfLifeDays_Freezer,
-                        _ => 0
-                    };
-                    IEvent? lastMoveEvent = stream.Events
-                            .Where(x => x.EventTypesAre(typeof(IEvent<FoodItemStorageTypeChanged>), typeof(FoodItemAdded)))
-                            .OrderByDescending(x => x.Timestamp)
-                            .FirstOrDefault();
-                    if (lastMoveEvent is null)
-                    {
-                        expirationDateUtc = foodItem.ExpirationDateUtc.AddDays(typicalShelfLifeDays);
-                    }
-                    else
-                    {
-                        DateTime newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
-                            lastPlacedAtUtc: lastMoveEvent.Timestamp.UtcDateTime,
-                            oldType: oldStorage.Type,
-                            newType: newStorage.Type,
-                            foodRef: foodReference,
-                            currentExpiryUtc: foodItem.ExpirationDateUtc
-                        );
-                        expirationDateUtc = newExpirationDateUtc;
-                    }
-                    foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
                     foodItemEvents.Add(new FoodItemStorageTypeChanged(newStorage.Type));
-                    foodItemEvents.Add(new FoodItemExpirationDateUpdated(expirationDateUtc));
+                    //Recalculate expiration date only if it wasn't changed by the user
+                    if (foodItem.ExpirationDateUtc == expirationDateUtc)
+                    {
+                        FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                        if (foodReference is null)
+                        {
+                            return Result.Failure(FoodReferenceErrors.NotFound);
+                        }
+                        IEvent? lastMoveEvent = stream.Events
+                                .Where(x => x.EventTypesAre(typeof(IEvent<FoodItemStorageTypeChanged>), typeof(FoodItemAdded)))
+                                .OrderByDescending(x => x.Timestamp)
+                                .FirstOrDefault();
+                        if (lastMoveEvent is not null)
+                        {
+                            DateTime newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                                lastPlacedAtUtc: lastMoveEvent.Timestamp.UtcDateTime,
+                                oldType: oldStorage.Type,
+                                newType: newStorage.Type,
+                                foodRef: foodReference,
+                                currentExpiryUtc: foodItem.ExpirationDateUtc
+                            );
+
+                            foodItemEvents.Add(new FoodItemExpirationDateUpdated(newExpirationDateUtc));
+                        }
+                    }
                 }
-                else
-                {
-                    foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
-                }
-                
+                foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
             }
         }
         //Rename
