@@ -94,6 +94,16 @@ public sealed class FoodItemDetailProjection(
         item with { Notes = e.Data.Notes, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemExpirationDateUpdated> e, FoodItemDetail item) =>
         item with { ExpirationDateUtc = e.Data.ExpirationDateUtc, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+    public async Task<FoodItemDetail> Apply(IEvent<FoodItemStorageMoved> e, FoodItemDetail item)
+    {
+        Compartment compartment = await compartmentRepository.GetByIdAsync(e.Data.CompartmentId);
+        Storage storage = await storageRepository.GetByIdAsync(e.Data.StorageId);
+        return item with { StorageName = storage!.Name, StorageType = storage.Type, CompartmentName = compartment!.Name, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+    }
+    public async Task<FoodItemDetail> Apply(IEvent<FoodItemCompartmentRenamed> e, FoodItemDetail item) =>
+        item with { CompartmentName = e.Data.CompartmentName};
+    public async Task<FoodItemDetail> Apply(IEvent<FoodItemStorageRenamed> e, FoodItemDetail item) =>
+        item with { StorageName = e.Data.StorageName};
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemCompartmentMoved> e, FoodItemDetail item)
     {
         Compartment compartment = await compartmentRepository.GetByIdAsync(e.Data.CompartmentId);

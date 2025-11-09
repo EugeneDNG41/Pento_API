@@ -1,5 +1,7 @@
-﻿using Marten;
+﻿using JasperFx.Events;
+using Marten;
 using Marten.Events;
+using Microsoft.FSharp.Control;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
@@ -9,6 +11,7 @@ using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Storages;
 using Pento.Domain.Units;
 
 namespace Pento.Application.FoodItems.Update;
@@ -16,8 +19,9 @@ namespace Pento.Application.FoodItems.Update;
 internal sealed class UpdateFoodItemCommandHandler(
     IUserContext userContext,
     IGenericRepository<Compartment> compartmentRepository,
+    IGenericRepository<Storage> storageRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
-    IUnitConverter converter,
+    ICalculator converter,
     IDocumentSession session) : ICommandHandler<UpdateFoodItemCommand>
 {
     public async Task<Result> Handle(UpdateFoodItemCommand command, CancellationToken cancellationToken)
@@ -48,16 +52,75 @@ internal sealed class UpdateFoodItemCommandHandler(
         //Move compartment
         if (foodItem.CompartmentId != command.CompartmentId)
         {
+            Compartment? oldCompartment = await compartmentRepository.GetByIdAsync(foodItem.CompartmentId, cancellationToken);
             Compartment? newCompartment = await compartmentRepository.GetByIdAsync(command.CompartmentId, cancellationToken);
-            if (newCompartment is null)
+            if (newCompartment is null || oldCompartment is null)
             {
                 return Result.Failure(CompartmentErrors.NotFound);
-            } else if (newCompartment.HouseholdId != userContext.HouseholdId)
+            } 
+            else if (newCompartment.HouseholdId != userContext.HouseholdId || oldCompartment.HouseholdId != userContext.HouseholdId)
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
-            } else
+            } 
+            else if (oldCompartment.Id == newCompartment.Id)
             {
                 foodItemEvents.Add(new FoodItemCompartmentMoved(command.CompartmentId));
+            }
+            else
+            {
+                Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment.StorageId, cancellationToken);
+                Storage? newStorage = await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
+                if (newStorage is null || oldStorage is null)
+                {
+                    return Result.Failure(StorageErrors.NotFound);
+                }
+                else if (newStorage.HouseholdId != userContext.HouseholdId || oldStorage.HouseholdId != userContext.HouseholdId)
+                {
+                    return Result.Failure(StorageErrors.ForbiddenAccess);
+                } 
+                else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDateUtc == expirationDateUtc)
+                {
+                    //Storage changed, adjust expiration date based on new newStorage typical shelf life
+                    FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                    if (foodReference is null)
+                    {
+                        return Result.Failure(FoodReferenceErrors.NotFound);
+                    }
+                    int typicalShelfLifeDays = newStorage.Type switch
+                    {
+                        StorageType.Pantry => foodReference.TypicalShelfLifeDays_Pantry,
+                        StorageType.Fridge => foodReference.TypicalShelfLifeDays_Fridge,
+                        StorageType.Freezer => foodReference.TypicalShelfLifeDays_Freezer,
+                        _ => 0
+                    };
+                    IEvent? lastMoveEvent = stream.Events
+                            .Where(x => x.EventTypesAre(typeof(IEvent<FoodItemStorageTypeChanged>), typeof(FoodItemAdded)))
+                            .OrderByDescending(x => x.Timestamp)
+                            .FirstOrDefault();
+                    if (lastMoveEvent is null)
+                    {
+                        expirationDateUtc = foodItem.ExpirationDateUtc.AddDays(typicalShelfLifeDays);
+                    }
+                    else
+                    {
+                        DateTime newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                            lastPlacedAtUtc: lastMoveEvent.Timestamp.UtcDateTime,
+                            oldType: oldStorage.Type,
+                            newType: newStorage.Type,
+                            foodRef: foodReference,
+                            currentExpiryUtc: foodItem.ExpirationDateUtc
+                        );
+                        expirationDateUtc = newExpirationDateUtc;
+                    }
+                    foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
+                    foodItemEvents.Add(new FoodItemStorageTypeChanged(newStorage.Type));
+                    foodItemEvents.Add(new FoodItemExpirationDateUpdated(expirationDateUtc));
+                }
+                else
+                {
+                    foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
+                }
+                
             }
         }
         //Rename
@@ -82,7 +145,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         {
             foodItemEvents.Add(new FoodItemQuantityAdjusted(command.Quantity));
         }
-        //Change expiration date (override storage type change)
+        //Change expiration date (override newStorage type change)
         if (foodItem.ExpirationDateUtc != expirationDateUtc)
         {
             foodItemEvents.Add(new FoodItemExpirationDateUpdated(expirationDateUtc));
@@ -99,7 +162,9 @@ internal sealed class UpdateFoodItemCommandHandler(
         } 
         else
         {
+            session.LastModifiedBy = userContext.UserId.ToString();
             await session.Events.AppendOptimistic(command.Id, foodItemEvents);
+            await session.SaveChangesAsync(cancellationToken);
         }
         return Result.Success();
     }

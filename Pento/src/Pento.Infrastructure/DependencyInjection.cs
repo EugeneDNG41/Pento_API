@@ -117,7 +117,7 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddTransient<IUnitConverter, UnitConverter>();
+        services.AddTransient<ICalculator, Calculator>();
 
 
         services.AddScoped<IUserRepository, UserRepository>();
