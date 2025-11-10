@@ -18,4 +18,7 @@ public static class CompartmentErrors
     public static readonly Error NotEmpty = Error.Conflict(
         "Compartment.NotEmpty",
         "Compartment is not empty.");
+    public static readonly Error DuplicateName = Error.Conflict(
+        "Compartment.DuplicateName",
+        "A compartment with the same name already exists.");
 }

@@ -24,18 +24,17 @@ internal sealed class GetFoodItemByIdQueryHandler(
         {
             return Result.Failure<FoodItemDetail>(HouseholdErrors.NotInAnyHouseHold);
         }
-        FoodItemDetail? foodItem = await querySession.LoadAsync<FoodItemDetail>(request.Id, cancellationToken);
-        if (foodItem is null)
+        FoodItemDetail? foodItemDetail = await querySession.LoadAsync<FoodItemDetail>(request.Id, cancellationToken);
+        FoodItem? foodItem = await querySession.Events.AggregateStreamAsync<FoodItem>(request.Id, token: cancellationToken);
+        
+        if (foodItemDetail is null || foodItem is null)
         {
            return Result.Failure<FoodItemDetail>(FoodItemErrors.NotFound);
         }
-        bool belongsToCurrentHousehold = await querySession
-            .Query<FoodItem>()
-            .AnyAsync(fi => fi.Id == request.Id && fi.HouseholdId == currentHouseholdId, cancellationToken);
-        if (!belongsToCurrentHousehold)
+        if (foodItem.HouseholdId != currentHouseholdId)
         {
             return Result.Failure<FoodItemDetail>(FoodItemErrors.ForbiddenAccess);
         }
-        return foodItem;
+        return foodItemDetail;
     }
 }

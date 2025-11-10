@@ -93,7 +93,7 @@ public static class DependencyInjection
             options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
             options.AutoCreateSchemaObjects = AutoCreate.All;
 
-            options.Projections.Snapshot<FoodItem>(SnapshotLifecycle.Inline);
+            options.Projections.LiveStreamAggregation<FoodItem>();
             options.Projections.Errors.SkipApplyErrors = false;
             options.Projections.Errors.SkipSerializationErrors = false;
             options.Projections.Errors.SkipUnknownEvents = false;
@@ -117,7 +117,7 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddTransient<IUnitConverter, UnitConverter>();
+        services.AddTransient<ICalculator, Calculator>();
 
 
         services.AddScoped<IUserRepository, UserRepository>();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Storages;
 
 namespace Pento.Domain.FoodItems.Events;
 
@@ -27,7 +28,11 @@ public record FoodItemImageUpdated(Uri? ImageUrl) : FoodItemEvent;
 public record FoodItemNotesUpdated(string? Notes) : FoodItemEvent;
 public record FoodItemExpirationDateUpdated(DateTime ExpirationDateUtc) : FoodItemEvent;
 public record FoodItemCompartmentMoved(Guid CompartmentId) : FoodItemEvent;
+public record FoodItemStorageMoved(Guid StorageId, Guid CompartmentId) : FoodItemEvent;
 public record FoodItemQuantityAdjusted(decimal Quantity) : FoodItemEvent;
+public record FoodItemCompartmentRenamed(string CompartmentName) : FoodItemEvent;
+public record FoodItemStorageRenamed(string StorageName) : FoodItemEvent;
+public record FoodItemStorageTypeChanged(StorageType StorageType) : FoodItemEvent;
 public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity) : FoodItemEvent;
 // Reservations
 public record FoodItemReservedForMealPlan(decimal Quantity, Guid MealPlanId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;

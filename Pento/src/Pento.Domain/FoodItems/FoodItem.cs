@@ -39,7 +39,6 @@ public sealed class FoodItem
     }
     public FoodItem() { }
     public Guid Id { get; private set; }
-    public int Version { get; private set; }
     public Guid FoodReferenceId { get; private set; }
     public Guid CompartmentId { get; private set; }
     public Guid HouseholdId { get; private set; }

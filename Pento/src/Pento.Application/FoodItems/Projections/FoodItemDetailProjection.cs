@@ -28,7 +28,7 @@ public sealed record FoodItemDetail(
     DateTimeOffset? LastModifiedAt,
     BasicUserResponse? AddedBy,
     BasicUserResponse? LastModifiedBy,
-    int Version = 1   
+    long Version = 1   
 );
 public sealed record BasicUserResponse(
     Guid Id,
@@ -87,53 +87,69 @@ public sealed class FoodItemDetailProjection(
     }
 
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemRenamed> e, FoodItemDetail item) =>
-        item with { Name = e.Data.NewName, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Name = e.Data.NewName, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemImageUpdated> e, FoodItemDetail item) =>
-        item with { ImageUrl = e.Data.ImageUrl, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { ImageUrl = e.Data.ImageUrl, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemNotesUpdated> e, FoodItemDetail item) =>
-        item with { Notes = e.Data.Notes, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Notes = e.Data.Notes, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemExpirationDateUpdated> e, FoodItemDetail item) =>
-        item with { ExpirationDateUtc = e.Data.ExpirationDateUtc, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { ExpirationDateUtc = e.Data.ExpirationDateUtc, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
+    public async Task<FoodItemDetail> Apply(IEvent<FoodItemStorageMoved> e, FoodItemDetail item)
+    {
+        Compartment compartment = await compartmentRepository.GetByIdAsync(e.Data.CompartmentId);
+        Storage storage = await storageRepository.GetByIdAsync(e.Data.StorageId);
+        return item with { StorageName = storage!.Name, 
+            StorageType = storage.Type, 
+            CompartmentName = compartment!.Name, 
+            LastModifiedAt = e.Timestamp, 
+            LastModifiedBy = await MapUserToBasicResponseAsync(e),
+            Version = e.Version
+        };
+    }
+    public FoodItemDetail Apply(IEvent<FoodItemCompartmentRenamed> e, FoodItemDetail item) =>
+        item with { CompartmentName = e.Data.CompartmentName, Version = e.Version };
+    public FoodItemDetail Apply(IEvent<FoodItemStorageRenamed> e, FoodItemDetail item) =>
+        item with { StorageName = e.Data.StorageName, Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemCompartmentMoved> e, FoodItemDetail item)
     {
         Compartment compartment = await compartmentRepository.GetByIdAsync(e.Data.CompartmentId);
-        return item with { CompartmentName = compartment!.Name, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };      
+        return item with { CompartmentName = compartment!.Name, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };      
     }
         
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemQuantityAdjusted> e, FoodItemDetail item) =>
-        item with { Quantity = e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemUnitChanged> e, FoodItemDetail item)
     {
         Unit unit = await unitRepository.GetByIdAsync(e.Data.UnitId);
-        return item with { UnitAbbreviation = unit!.Abbreviation, Quantity = e.Data.ConvertedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        return item with { UnitAbbreviation = unit!.Abbreviation, Quantity = e.Data.ConvertedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     }
         
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForRecipe> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForMealPlan> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForDonation> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForRecipeCancelled> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForMealPlanCancelled> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForDonationCancelled> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForRecipeConsumed> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.ReservedQuantity - e.Data.ConsumedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.ReservedQuantity - e.Data.ConsumedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForMealPlanConsumed> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.ReservedQuantity - e.Data.ConsumedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.ReservedQuantity - e.Data.ConsumedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemReservedForDonationDonated> e, FoodItemDetail item) =>
         item with { Quantity = item.Quantity + e.Data.ReservedQuantity - e.Data.DonatedQuantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemConsumed> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemDiscarded> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemSplit> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemMerged> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity + e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
     public async Task<FoodItemDetail> Apply(IEvent<FoodItemRemovedByMerge> e, FoodItemDetail item) =>
-        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e) };
+        item with { Quantity = item.Quantity - e.Data.Quantity, LastModifiedAt = e.Timestamp, LastModifiedBy = await MapUserToBasicResponseAsync(e), Version = e.Version };
 }

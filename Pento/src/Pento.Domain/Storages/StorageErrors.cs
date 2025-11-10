@@ -18,4 +18,7 @@ public static class StorageErrors
     public static Error NotEmpty => Error.Conflict(
         "Storage.NotEmpty",
         "Storage is not empty.");
+    public static Error DuplicateName => Error.Conflict(
+        "Storage.DuplicateName",
+        "A storage with the same name already exists.");
 }
