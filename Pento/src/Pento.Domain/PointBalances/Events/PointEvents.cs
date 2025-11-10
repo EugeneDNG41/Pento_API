@@ -10,10 +10,10 @@ public sealed record BalanceCreated //create when first get by id or first point
 public sealed record PointAdded
 {
     public Guid TaskId { get; init; }
-    public PointCategory Category { get; init; }
+    public ActivityType Category { get; init; }
     public string TaskName { get; init; }
     public int Amount { get; init; }
     public bool CountedTowardsWeeklyCap { get; init; }
     public bool CountedTowardsMonthlyCap { get; init; }
 }
-public sealed record PointCapReset(Interval Interval);
+public sealed record PointCapReset(Period Period);

@@ -32,7 +32,7 @@ public sealed class Consumable
     public int Usage { get; private set; }
     public int? Quota { get; private set; }
     public bool Usable => Quota is null || Usage < Quota;
-    public Interval ResetInterval { get; init; }
+    public Period ResetPeriod { get; init; }
     public void ResetUsage()
     {
         Usage = 0;

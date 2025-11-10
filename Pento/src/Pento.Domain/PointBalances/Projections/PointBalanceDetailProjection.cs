@@ -14,7 +14,7 @@ public sealed class PointBalanceDetail
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
-    public Dictionary<PointCategory, PointsByCategory> Categories { get; init; } = [];
+    public Dictionary<ActivityType, PointsByCategory> Categories { get; init; } = [];
     public int Balance { get; private set; }
     public void Add(PointAdded e)
     {
@@ -26,27 +26,27 @@ public sealed class PointBalanceDetail
         bucket.Add(e.Amount, e.CountedTowardsWeeklyCap, e.CountedTowardsMonthlyCap);
         Balance += e.Amount;
     }
-    public void ResetPointCap(Interval interval)
+    public void ResetPointCap(Period period)
     {
         if (Categories is null || Categories.Count == 0)
         {
             return;
         }
-        switch (interval)
+        switch (period)
         {
-            case Interval.Daily:
+            case Period.Daily:
                 foreach (PointsByCategory cat in Categories.Values)
                 {
                     cat.DailyReset();
                 }
                 break;
-            case Interval.Weekly:
+            case Period.Weekly:
                 foreach (PointsByCategory cat in Categories.Values)
                 {
                     cat.WeeklyReset();
                 }
                 break;
-            case Interval.Monthly:
+            case Period.Monthly:
                 foreach (PointsByCategory cat in Categories.Values)
                 {
                     cat.MonthlyReset();
@@ -94,7 +94,7 @@ internal sealed class PointBalanceDetailProjection : SingleStreamProjection<Poin
     }
     public static PointBalanceDetail Apply(PointCapReset e, PointBalanceDetail balance)
     {
-        balance.ResetPointCap(e.Interval);
+        balance.ResetPointCap(e.Period);
         return balance;
     }
 }

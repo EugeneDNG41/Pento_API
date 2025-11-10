@@ -1,6 +1,6 @@
 ﻿namespace Pento.Domain.Shared;
 
-public enum Interval
+public enum Period
 {
     Daily,
     Weekly,

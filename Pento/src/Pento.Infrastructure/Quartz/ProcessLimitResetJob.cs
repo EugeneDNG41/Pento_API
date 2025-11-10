@@ -34,15 +34,15 @@ internal sealed class ProcessLimitResetJob(
         {
             foreach (Guid featureId in subscriptionInstance.Consumables.Keys)
             {
-                if (subscriptionInstance.Consumables[featureId].ResetInterval == Interval.Daily)
+                if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Daily)
                 {
                     session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
                 }
-                if (subscriptionInstance.Consumables[featureId].ResetInterval == Interval.Weekly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 7 == 0)
+                if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Weekly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 7 == 0)
                 {
                     session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
                 }
-                if (subscriptionInstance.Consumables[featureId].ResetInterval == Interval.Monthly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 30 == 0)
+                if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Monthly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 30 == 0)
                 {
                     session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
                 }
@@ -61,17 +61,17 @@ internal sealed class ProcessLimitResetJob(
             {
                 if (pointBalance.Categories.ContainsKey(pointCap.Category))
                 {
-                    if (pointCap.ResetInterval == Interval.Daily)
+                    if (pointCap.Limit.ResetPeriod == Period.Daily)
                     {
-                        session.Events.Append(pointBalance.Id, new PointCapReset(Interval.Daily));
+                        session.Events.Append(pointBalance.Id, new PointCapReset(Period.Daily));
                     }
-                    if (pointCap.ResetInterval == Interval.Weekly && now.DayOfWeek == DayOfWeek.Monday)
+                    if (pointCap.Limit.ResetPeriod == Period.Weekly && now.DayOfWeek == DayOfWeek.Monday)
                     {
-                        session.Events.Append(pointBalance.Id, new PointCapReset(Interval.Weekly));
+                        session.Events.Append(pointBalance.Id, new PointCapReset(Period.Weekly));
                     }
-                    if (pointCap.ResetInterval == Interval.Monthly && now.Day == 1)
+                    if (pointCap.Limit.ResetPeriod == Period.Monthly && now.Day == 1)
                     {
-                        session.Events.Append(pointBalance.Id, new PointCapReset(Interval.Monthly));
+                        session.Events.Append(pointBalance.Id, new PointCapReset(Period.Monthly));
                     }
                 }
             }
