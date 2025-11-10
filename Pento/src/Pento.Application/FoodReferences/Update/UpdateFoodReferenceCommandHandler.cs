@@ -26,11 +26,6 @@ internal sealed class UpdateFoodReferenceCommandHandler(
         {
             return Result.Failure<Guid>(FoodReferenceErrors.InvalidGroup);
         }
-        Enum.TryParse<FoodDataType>(request.DataType, true, out FoodDataType dataType);
-        if (string.IsNullOrWhiteSpace(request.Name))
-        {
-            return Result.Failure<Guid>(FoodReferenceErrors.InvalidName);
-        }
         if (!Enum.TryParse<UnitType>(request.UnitType, true, out UnitType unitType))
         {
             return Result.Failure<Guid>(FoodReferenceErrors.InvalidGroup);
@@ -40,12 +35,10 @@ internal sealed class UpdateFoodReferenceCommandHandler(
         foodRef.Update(
             name: request.Name,
             foodGroup: foodGroup,
-            dataType: dataType,
             foodCategoryId: request.FoodCategoryId,
             brand: request.Brand,
             barcode: request.Barcode,
             usdaId: request.UsdaId,
-            publishedOnUtc: request.PublishedOnUtc,
             typicalShelfLifeDaysPantry: request.TypicalShelfLifeDays_Pantry,
             typicalShelfLifeDaysFridge: request.TypicalShelfLifeDays_Fridge,
             typicalShelfLifeDaysFreezer: request.TypicalShelfLifeDays_Freezer,

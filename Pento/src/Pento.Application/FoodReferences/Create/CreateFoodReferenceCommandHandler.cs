@@ -23,12 +23,10 @@ internal sealed class CreateFoodReferenceCommandHandler(
         var foodReference = FoodReference.Create(
             request.Name,
             request.FoodGroup,
-            request.DataType,
             request.FoodCategoryId,
             request.Brand,
             request.Barcode,
             request.UsdaId,
-            request.PublishedOnUtc,
             request.TypicalShelfLifeDays_Pantry,
             request.TypicalShelfLifeDays_Fridge,
             request.TypicalShelfLifeDays_Freezer,
