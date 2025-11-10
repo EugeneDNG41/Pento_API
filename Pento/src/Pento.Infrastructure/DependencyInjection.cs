@@ -87,19 +87,22 @@ public static class DependencyInjection
         services.AddMarten(options =>
         {
             options.Connection(connectionString);
-     
-
+    
             options.Events.StreamIdentity = StreamIdentity.AsGuid;
             options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
-            options.AutoCreateSchemaObjects = AutoCreate.All;
+            
 
             options.Projections.LiveStreamAggregation<FoodItem>();
+            
             options.Projections.Errors.SkipApplyErrors = false;
             options.Projections.Errors.SkipSerializationErrors = false;
             options.Projections.Errors.SkipUnknownEvents = false;
+            options.Events.UseOptimizedProjectionRebuilds = false;
 
             options.Projections.UseIdentityMapForAggregates = true;
             options.Events.MetadataConfig.UserNameEnabled = true;
+
+            options.AutoCreateSchemaObjects = AutoCreate.All;
         })
         .AddProjectionWithServices<FoodItemDetailProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)
         .AddProjectionWithServices<FoodItemPreviewProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)

@@ -44,7 +44,6 @@ internal sealed class UpdateFoodItemCommandHandler(
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }
         var foodItemEvents = new List<FoodItemEvent>();
-        DateTime expirationDateUtc = command.ExpirationDate.ToUniversalTime();
        
         //Change measurement unit
         if (foodItem.UnitId != command.UnitId)
@@ -89,7 +88,7 @@ internal sealed class UpdateFoodItemCommandHandler(
                 {
                     foodItemEvents.Add(new FoodItemStorageTypeChanged(newStorage.Type));
                     //Recalculate expiration date only if it wasn't changed by the user
-                    if (foodItem.ExpirationDateUtc == expirationDateUtc)
+                    if (foodItem.ExpirationDateUtc == command.ExpirationDateUtc)
                     {
                         FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
                         if (foodReference is null)
@@ -140,9 +139,9 @@ internal sealed class UpdateFoodItemCommandHandler(
             foodItemEvents.Add(new FoodItemQuantityAdjusted(command.Quantity));
         }
         //Change expiration date (override newStorage type change)
-        if (foodItem.ExpirationDateUtc != expirationDateUtc)
+        if (foodItem.ExpirationDateUtc != command.ExpirationDateUtc)
         {
-            foodItemEvents.Add(new FoodItemExpirationDateUpdated(expirationDateUtc));
+            foodItemEvents.Add(new FoodItemExpirationDateUpdated(command.ExpirationDateUtc));
         }
         //Change notes
         if (foodItem.Notes != command.Notes)
@@ -150,11 +149,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             foodItemEvents.Add(new FoodItemNotesUpdated(command.Notes));
         }
 
-        if (!foodItemEvents.Any())
-        {
-            return Result.Success();
-        } 
-        else
+        if (foodItemEvents.Any())
         {
             session.LastModifiedBy = userContext.UserId.ToString();
             await session.Events.AppendOptimistic(command.Id, foodItemEvents);

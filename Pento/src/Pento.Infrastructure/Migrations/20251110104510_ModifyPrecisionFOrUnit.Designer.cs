@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251110104510_ModifyPrecisionFOrUnit")]
+    partial class ModifyPrecisionFOrUnit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1273,208 +1276,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasName("pk_units");
 
                     b.ToTable("units", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7ef1-9d84-83ae2c3ca50d"),
-                            Abbreviation = "g",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Gram",
-                            ToBaseFactor = 1m,
-                            Type = "Weight"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7719-b0da-8aac472cf0f7"),
-                            Abbreviation = "kg",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Kilogram",
-                            ToBaseFactor = 1000m,
-                            Type = "Weight"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-78df-b39c-ccf24b46ff5c"),
-                            Abbreviation = "mg",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Milligram",
-                            ToBaseFactor = 0.001m,
-                            Type = "Weight"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7a8e-96e7-bbe01ecc0515"),
-                            Abbreviation = "oz",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Ounce",
-                            ToBaseFactor = 28.3495m,
-                            Type = "Weight"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-72ff-9fce-10da157e462a"),
-                            Abbreviation = "lb",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Pound",
-                            ToBaseFactor = 453.592m,
-                            Type = "Weight"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7fa7-bb57-a778307838a3"),
-                            Abbreviation = "mL",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Millilitre",
-                            ToBaseFactor = 1m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7d08-9613-59b8cdec9d8c"),
-                            Abbreviation = "L",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Litre",
-                            ToBaseFactor = 1000m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7bfb-b2d4-f027df22cd8b"),
-                            Abbreviation = "tsp",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Teaspoon (US)",
-                            ToBaseFactor = 5m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7e9e-93fc-d560e253f89c"),
-                            Abbreviation = "Tbsp",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Tablespoon (US)",
-                            ToBaseFactor = 15m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7b42-8006-61dbed3441f3"),
-                            Abbreviation = "fl oz",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Fluid ounce (US)",
-                            ToBaseFactor = 29.574m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7522-8216-ef1ad1dc813a"),
-                            Abbreviation = "cup (US)",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Cup (US)",
-                            ToBaseFactor = 240m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-70a4-97bd-49ffc419b6c9"),
-                            Abbreviation = "pt",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Pint (US)",
-                            ToBaseFactor = 473.2m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7ad6-8425-f0a0eb6b5ea5"),
-                            Abbreviation = "qt",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Quart (US)",
-                            ToBaseFactor = 946.35m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7b42-a8a2-a60655f347d5"),
-                            Abbreviation = "gal",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Gallon (US)",
-                            ToBaseFactor = 3785.4m,
-                            Type = "Volume"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-785d-a459-d738757017ac"),
-                            Abbreviation = "serving",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Serving",
-                            ToBaseFactor = 1m,
-                            Type = "Count"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-79b1-9035-3a08c9f630c0"),
-                            Abbreviation = "pc",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Piece",
-                            ToBaseFactor = 1m,
-                            Type = "Count"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-74ca-b47f-bfc3247bb7ef"),
-                            Abbreviation = "ea",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Each",
-                            ToBaseFactor = 1m,
-                            Type = "Count"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-74b1-bc45-3fa37d35dd9c"),
-                            Abbreviation = "pair",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Pair",
-                            ToBaseFactor = 2m,
-                            Type = "Count"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-74cb-bab3-22826d12bd8b"),
-                            Abbreviation = "doz",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Dozen",
-                            ToBaseFactor = 12m,
-                            Type = "Count"
-                        },
-                        new
-                        {
-                            Id = new Guid("019a6d86-5225-7400-be11-3981abc39f09"),
-                            Abbreviation = "gross",
-                            IsArchived = false,
-                            IsDeleted = false,
-                            Name = "Gross",
-                            ToBaseFactor = 144m,
-                            Type = "Count"
-                        });
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>

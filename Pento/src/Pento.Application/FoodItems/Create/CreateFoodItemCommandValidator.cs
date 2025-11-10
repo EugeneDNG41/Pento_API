@@ -14,9 +14,9 @@ internal sealed class CreateFoodItemCommandValidator : AbstractValidator<CreateF
         RuleFor(x => x.FoodReferenceId).NotEmpty().WithMessage("Food reference Id must not be empty.");
         RuleFor(x => x.CompartmentId).NotEmpty().WithMessage("Compartment Id must not be empty.");
         RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
-        RuleFor(x => x.ExpirationDate!.Value.ToUniversalTime())
+        RuleFor(x => x.ExpirationDateUtc!.Value)
                 .GreaterThan(DateTime.UtcNow)
-                .When(x => x.ExpirationDate.HasValue)
-                .WithMessage("ExpirationDate must be in the future.");
+                .When(x => x.ExpirationDateUtc.HasValue)
+                .WithMessage("Expiration Date must be in the future.");
     }
 }

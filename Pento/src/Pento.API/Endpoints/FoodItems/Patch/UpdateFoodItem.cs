@@ -23,7 +23,7 @@ internal sealed class UpdateFoodItem : IEndpoint
                 request.UnitId,
                 request.Name,
                 request.Quantity,
-                request.ExpirationDate,
+                request.ExpirationDate.ToUniversalTime(),
                 request.Notes,
                 ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);

@@ -11,7 +11,6 @@ using Pento.Domain.Users;
 
 
 namespace Pento.Application.FoodItems.GetById;
-#pragma warning disable S1481
 internal sealed class GetFoodItemByIdQueryHandler(
     IUserContext userContext,
     IQuerySession querySession)
@@ -24,14 +23,17 @@ internal sealed class GetFoodItemByIdQueryHandler(
         {
             return Result.Failure<FoodItemDetail>(HouseholdErrors.NotInAnyHouseHold);
         }
-        FoodItem? foodItem = await querySession.Query<FoodItem>().Where(f => f.HouseholdId == currentHouseholdId && f.Id == request.Id).FirstOrDefaultAsync(cancellationToken);
         FoodItemDetail? foodItemDetail = await querySession.LoadAsync<FoodItemDetail>(request.Id, cancellationToken);
-        
-        if (foodItemDetail is null || foodItem is null)
+
+        bool belongsToCurrentHousehold = await querySession.Query<FoodItem>()
+            .AnyAsync(fi => fi.Id == request.Id && fi.HouseholdId == currentHouseholdId, cancellationToken);
+
+
+        if (foodItemDetail is null)
         {
            return Result.Failure<FoodItemDetail>(FoodItemErrors.NotFound);
         }
-        if (foodItem.HouseholdId != currentHouseholdId)
+        if (!belongsToCurrentHousehold)
         {
             return Result.Failure<FoodItemDetail>(FoodItemErrors.ForbiddenAccess);
         }

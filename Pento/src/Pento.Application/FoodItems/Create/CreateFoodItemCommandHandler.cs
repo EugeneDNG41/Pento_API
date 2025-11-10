@@ -72,7 +72,7 @@ internal sealed class CreateFoodItemCommandHandler(
         {
             return Result.Failure<Guid>(StorageErrors.NotFound);
         }
-        DateTime validExpirationDate = command.ExpirationDate is null
+        DateTime validExpirationDate = command.ExpirationDateUtc is null
             ? dateTimeProvider.UtcNow.AddDays(storage.Type switch
             {
                 StorageType.Pantry => foodReference.TypicalShelfLifeDays_Pantry,
@@ -80,12 +80,12 @@ internal sealed class CreateFoodItemCommandHandler(
                 StorageType.Freezer => foodReference.TypicalShelfLifeDays_Freezer,
                 _ => 5
             })
-            : command.ExpirationDate.Value.ToUniversalTime();
+            : command.ExpirationDateUtc.Value.ToUniversalTime();
 
         var e = new FoodItemAdded(
                 Guid.CreateVersion7(),
-                command.FoodReferenceId,
-                command.CompartmentId,
+                foodReference.Id,
+                compartment.Id,
                 householdId.Value,
                 command.Name is null ? foodReference.Name : command.Name,
                 foodReference.ImageUrl,
@@ -95,8 +95,9 @@ internal sealed class CreateFoodItemCommandHandler(
                 command.Notes,
                 null);
 
-        session.Events.StartStream<FoodItem>(e.Id, e);
         session.LastModifiedBy = userContext.UserId.ToString();
+        session.Events.StartStream<FoodItem>(e.Id, e);       
+
         await session.SaveChangesAsync(cancellationToken);
         return e.Id;
     }

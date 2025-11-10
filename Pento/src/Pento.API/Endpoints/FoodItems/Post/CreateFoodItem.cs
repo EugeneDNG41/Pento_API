@@ -23,7 +23,7 @@ internal sealed class CreateFoodItem : IEndpoint
                 request.Name,
                 request.Quantity,
                 request.UnitId,
-                request.ExpirationDate,
+                request.ExpirationDate.HasValue ? request.ExpirationDate.Value.ToUniversalTime() : null,
                 request.Notes);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);

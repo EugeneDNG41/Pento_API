@@ -14,7 +14,7 @@ public sealed record UpdateFoodItemCommand(
     Guid UnitId,
     string? Name, 
     decimal Quantity, 
-    DateTime ExpirationDate, 
+    DateTime ExpirationDateUtc, 
     string? Notes, 
     int Version) : ICommand;
 

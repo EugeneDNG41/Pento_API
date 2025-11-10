@@ -8,9 +8,10 @@ using Pento.Domain.RecipeMedia;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Users;
 using JasperFx.Events;
+using Marten.Events.Aggregation;
 
 namespace Pento.Domain.FoodItems;
-public sealed class FoodItem
+public sealed class FoodItem 
 {
     public FoodItem(
         Guid id,
@@ -49,20 +50,19 @@ public sealed class FoodItem
     public DateTime ExpirationDateUtc { get; private set; }
     public string? Notes { get; private set; } 
     public Guid? SourceItemId { get; private set; } // If created from split
-    
-    public static FoodItem Create(IEvent<FoodItemAdded> @event)
+    public static FoodItem Create(FoodItemAdded @event)
         => new(
-            @event.Data.Id,
-            @event.Data.FoodReferenceId,
-            @event.Data.CompartmentId,
-            @event.Data.HouseholdId,
-            @event.Data.Name,
-            @event.Data.ImageUrl,
-            @event.Data.Quantity,
-            @event.Data.UnitId,
-            @event.Data.ExpirationDateUtc,
-            @event.Data.Notes,
-            @event.Data.SourceItemId);
+            @event.Id,
+            @event.FoodReferenceId,
+            @event.CompartmentId,
+            @event.HouseholdId,
+            @event.Name,
+            @event.ImageUrl,
+            @event.Quantity,
+            @event.UnitId,
+            @event.ExpirationDateUtc,
+            @event.Notes,
+            @event.SourceItemId);
     public void Apply(FoodItemRenamed @event)
         => Name = @event.NewName;
     public void Apply(FoodItemNotesUpdated @event)
@@ -90,7 +90,7 @@ public sealed class FoodItem
         => Quantity += @event.Quantity;
     public void Apply(FoodItemReservedForMealPlanCancelled @event)
         => Quantity += @event.Quantity;
-    public void Apply(FoodItemReservedForDonationCancelled @event)
+    public  void Apply(FoodItemReservedForDonationCancelled @event)
         => Quantity += @event.Quantity;
     public void Apply(FoodItemReservedForRecipeConsumed @event)
         => Quantity += @event.ReservedQuantity - @event.ConsumedQuantity;
