@@ -22,10 +22,6 @@ internal sealed class UpdateFoodReferenceCommandValidator : AbstractValidator<Up
             .NotEmpty()
             .WithMessage("Food group is required.");
 
-        RuleFor(x => x.PublishedOnUtc)
-            .LessThanOrEqualTo(DateTime.UtcNow)
-            .WithMessage("Published date cannot be in the future.");
-
         RuleFor(x => x.TypicalShelfLifeDays_Pantry).GreaterThanOrEqualTo(0);
         RuleFor(x => x.TypicalShelfLifeDays_Fridge).GreaterThanOrEqualTo(0);
         RuleFor(x => x.TypicalShelfLifeDays_Freezer).GreaterThanOrEqualTo(0);

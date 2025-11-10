@@ -49,6 +49,10 @@ internal sealed class CreateFoodItemCommandHandler(
             {
                 return Result.Failure<Guid>(UnitErrors.NotFound);
             }
+            else if (commandUnit.Type != foodReference.UnitType)
+            {
+                return Result.Failure<Guid>(FoodItemErrors.InvalidMeasurementUnit);
+            }
             else
             {
                 validUnit = commandUnit;
