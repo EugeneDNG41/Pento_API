@@ -3,4 +3,4 @@ using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.FoodItems.UploadImage;
 
-public record class UploadFoodItemImageCommand(Guid Id, IFormFile? File, int Version) : ICommand<Uri>;
+public record class UploadFoodItemImageCommand(Guid Id, IFormFile? File) : ICommand<Uri>;

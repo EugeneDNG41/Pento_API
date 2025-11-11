@@ -14,6 +14,5 @@ public sealed record UpdateFoodItemCommand(
     string? Name, 
     decimal Quantity, 
     DateOnly ExpirationDate, 
-    string? Notes, 
-    int Version) : ICommand;
+    string? Notes) : ICommand;
 

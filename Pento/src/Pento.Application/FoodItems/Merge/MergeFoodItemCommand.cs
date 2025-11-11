@@ -2,4 +2,4 @@
 
 namespace Pento.Application.FoodItems.Merge;
 
-public sealed record MergeFoodItemCommand(Guid SourceId, Guid TargetId, decimal Quantity, int SourceVersion, int TargetVersion) : ICommand;
+public sealed record MergeFoodItemCommand(Guid SourceId, Guid TargetId, decimal Quantity) : ICommand;

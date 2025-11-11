@@ -13,7 +13,6 @@ internal sealed class UpdateFoodItem : IEndpoint
         app.MapPatch("food-items/{foodItemId:guid}", async (
             Guid foodItemId,
             Request request,
-            [FromIfMatchHeader] string eTag,
             ICommandHandler<UpdateFoodItemCommand> handler,
             CancellationToken cancellationToken) =>
         {
@@ -24,8 +23,7 @@ internal sealed class UpdateFoodItem : IEndpoint
                 request.Name,
                 request.Quantity,
                 request.ExpirationDate,
-                request.Notes,
-                ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
+                request.Notes), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)

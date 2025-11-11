@@ -12,11 +12,10 @@ internal sealed class UploadFoodItemImage : IEndpoint
         app.MapPut("food-items/{id:guid}/image", async (
             Guid id, 
             IFormFile? file,
-            [FromIfMatchHeader] int version,
             ICommandHandler<UploadFoodItemImageCommand, Uri> handler, 
             CancellationToken ct) =>
             {
-                Result<Uri> result = await handler.Handle(new UploadFoodItemImageCommand(id, file, version), ct);
+                Result<Uri> result = await handler.Handle(new UploadFoodItemImageCommand(id, file), ct);
                 return result.Match(Results.Ok, CustomResults.Problem);
             })
             .RequireAuthorization()
