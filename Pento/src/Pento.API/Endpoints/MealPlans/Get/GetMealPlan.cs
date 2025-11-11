@@ -9,11 +9,11 @@ internal sealed class GetMealPlan : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("meal-plans/{mealPlanId:guid}", async (Guid mealPlanId, IQueryHandler<GetMealPlanQuery, MealPlanResponse> handler, CancellationToken cancellationToken) =>
+        app.MapGet("meal-plans/{mealPlanId:guid}", async (Guid mealPlanId, IQueryHandler<GetMealPlanQuery, MealPlanDetailResponse> handler, CancellationToken cancellationToken) =>
         {
             var query = new GetMealPlanQuery(mealPlanId);
 
-            Result<MealPlanResponse> result = await handler.Handle(query, cancellationToken);
+            Result<MealPlanDetailResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(
                 mealPlan => Results.Ok(mealPlan),

@@ -12,5 +12,7 @@ internal static class MigrationExtensions
 
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        dbContext.Database.Migrate();
+
     }
 }
