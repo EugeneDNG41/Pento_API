@@ -68,8 +68,8 @@ internal sealed class GetMealPlanQueryHandler(
                 Id: record.recipeid,
                 Title: record.title,
                 Description: record.description,
-                ImageUrl: record.image_url is not null ? new Uri(record.image_url) : null,
-                Servings: record.recipeservings,
+                ImageUrl: record.image_url is string s && !string.IsNullOrWhiteSpace(s) ? new Uri(s) : null,
+                Servings: (int?)record.recipeservings,
                 DifficultyLevel: record.difficulty_level
             );
         }
@@ -78,31 +78,31 @@ internal sealed class GetMealPlanQueryHandler(
         if (record.fooditemid is not null)
         {
             foodItem = new FoodItemInfo(
-                Id: record.fooditemid,
-                Name: record.fooditemname,
-                FoodReferenceName: record.foodreferencename,
-                FoodGroup: record.foodgroup,
-                ImageUrl: record.foodimageurl is not null ? new Uri(record.foodimageurl) : null,
-                Quantity: record.quantity,
-                UnitAbbreviation: record.unitabbreviation,
-                ExpirationDate: record.expiration_date
-            );
+               Id: record.fooditemid,
+               Name: record.fooditemname,
+               FoodReferenceName: record.foodreferencename,
+               FoodGroup: record.foodgroup,
+               ImageUrl: record.foodimageurl is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
+               Quantity: (decimal)record.quantity,
+               UnitAbbreviation: record.unitabbreviation,
+               ExpirationDate: record.expiration_date is DateTime exp ? DateOnly.FromDateTime(exp) : record.expiration_date
+           );
         }
 
         var mealPlan = new MealPlanDetailResponse(
-            Id: record.id,
-            HouseholdId: record.household_id,
-            Name: record.name,
-            ScheduledDate: record.scheduled_date,
-            MealType: record.meal_type,
-            Servings: record.servings,
-            Notes: record.notes,
-            CreatedBy: record.created_by,
-            CreatedOnUtc: record.created_on_utc,
-            UpdatedOnUtc: record.updated_on_utc,
-            Recipe: recipe,
-            FoodItem: foodItem
-        );
+         Id: record.id,
+         HouseholdId: record.household_id,
+         Name: record.name,
+         ScheduledDate: record.scheduled_date is DateTime dt ? DateOnly.FromDateTime(dt) : record.scheduled_date,
+         MealType: record.meal_type,
+         Servings: (int)record.servings,
+         Notes: record.notes,
+         CreatedBy: record.created_by,
+         CreatedOnUtc: record.created_on_utc,
+         UpdatedOnUtc: record.updated_on_utc,
+         Recipe: recipe,
+         FoodItem: foodItem
+     );
 
         return mealPlan;
     }
