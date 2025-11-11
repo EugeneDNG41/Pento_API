@@ -1,17 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
-using Pento.Domain.RecipeMedia;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.Users;
-using JasperFx.Events;
-using Marten.Events.Aggregation;
 
 namespace Pento.Domain.FoodItems;
-public sealed class FoodItem 
+public sealed class FoodItem : Entity
 {
     public FoodItem(
         Guid id,
@@ -22,9 +13,9 @@ public sealed class FoodItem
         Uri? imageUrl,
         decimal quantity, 
         Guid unitId, 
-        DateTime expirationDateUtc, 
+        DateOnly expirationDate, 
         string? notes,
-        Guid? sourceItemId)
+        Guid addedBy)
     {
         Id = id;
         FoodReferenceId = foodReferenceId;
@@ -34,12 +25,11 @@ public sealed class FoodItem
         ImageUrl = imageUrl;
         Quantity = quantity;
         UnitId = unitId;
-        ExpirationDateUtc = expirationDateUtc;
+        ExpirationDate = expirationDate;
         Notes = notes;
-        SourceItemId = sourceItemId;
+        AddedBy = addedBy;
     }
     public FoodItem() { }
-    public Guid Id { get; private set; }
     public Guid FoodReferenceId { get; private set; }
     public Guid CompartmentId { get; private set; }
     public Guid HouseholdId { get; private set; }
@@ -47,65 +37,96 @@ public sealed class FoodItem
     public Uri? ImageUrl { get; private set; }
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }
-    public DateTime ExpirationDateUtc { get; private set; }
+    public DateOnly ExpirationDate { get; private set; }
     public string? Notes { get; private set; } 
-    public Guid? SourceItemId { get; private set; } // If created from split
-    public static FoodItem Create(FoodItemAdded @event)
-        => new(
-            @event.Id,
-            @event.FoodReferenceId,
-            @event.CompartmentId,
-            @event.HouseholdId,
-            @event.Name,
-            @event.ImageUrl,
-            @event.Quantity,
-            @event.UnitId,
-            @event.ExpirationDateUtc,
-            @event.Notes,
-            @event.SourceItemId);
-    public void Apply(FoodItemRenamed @event)
-        => Name = @event.NewName;
-    public void Apply(FoodItemNotesUpdated @event)
-        => Notes = @event.Notes;
-    public void Apply(FoodItemImageUpdated @event)
-        => ImageUrl = @event.ImageUrl;
-    public void Apply(FoodItemExpirationDateUpdated @event)
-        => ExpirationDateUtc = @event.ExpirationDateUtc;
-    public void Apply(FoodItemCompartmentMoved @event)
-        => CompartmentId = @event.CompartmentId;
-    public void Apply(FoodItemQuantityAdjusted @event)
-        => Quantity = @event.Quantity;
-    public void Apply(FoodItemUnitChanged @event)
+    public Guid AddedBy { get; private set; }
+    public Guid? LastModifiedBy { get; private set; }
+
+    public static FoodItem Create(
+        Guid foodReferenceId,
+        Guid compartmentId,
+        Guid householdId,
+        string name,
+        Uri? imageUrl,
+        decimal quantity,
+        Guid unitId,
+        DateOnly expirationDate,
+        string? notes,
+        Guid addedBy)
     {
-        UnitId = @event.UnitId;
-        Quantity = @event.ConvertedQuantity;
+        var foodItem = new FoodItem(
+            Guid.CreateVersion7(),
+            foodReferenceId,
+            compartmentId,
+            householdId,
+            name,
+            imageUrl,
+            quantity,
+            unitId,
+            expirationDate,
+            notes,
+            addedBy);
+        foodItem.Raise(new FoodItemAddedDomainEvent(foodItem.Id, quantity, unitId, addedBy));
+        return foodItem;
     }
-    public void Apply(FoodItemReservedForRecipe @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemReservedForMealPlan @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemReservedForDonation @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemReservedForRecipeCancelled @event)
-        => Quantity += @event.Quantity;
-    public void Apply(FoodItemReservedForMealPlanCancelled @event)
-        => Quantity += @event.Quantity;
-    public  void Apply(FoodItemReservedForDonationCancelled @event)
-        => Quantity += @event.Quantity;
-    public void Apply(FoodItemReservedForRecipeConsumed @event)
-        => Quantity += @event.ReservedQuantity - @event.ConsumedQuantity;
-    public void Apply(FoodItemReservedForMealPlanConsumed @event)
-        => Quantity += @event.ReservedQuantity - @event.ConsumedQuantity;
-    public void Apply(FoodItemReservedForDonationDonated @event)
-        => Quantity += @event.ReservedQuantity - @event.DonatedQuantity;
-    public void Apply(FoodItemConsumed @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemDiscarded @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemSplit @event)
-        => Quantity -= @event.Quantity;
-    public void Apply(FoodItemMerged @event)
-        => Quantity += @event.Quantity;
-    public void Apply(FoodItemRemovedByMerge @event)
-        => Quantity -= @event.Quantity;
+
+    public void AdjustQuantity(decimal newQuantity, Guid UserId)
+    {
+        Quantity = newQuantity;
+        LastModifiedBy = UserId;
+    }
+    public void Consume(decimal quantity, Guid UserId)
+    {
+        Quantity -= quantity;
+        LastModifiedBy = UserId;
+        Raise(new FoodItemConsumedDomainEvent(Id, quantity, UnitId, UserId));
+    }
+    public void Discard(decimal quantity, Guid UserId)
+    {
+        Quantity -= quantity;
+        LastModifiedBy = UserId;
+        Raise(new FoodItemDiscardedDomainEvent(Id, quantity, UnitId, UserId));
+    }
+    public void Reserve(decimal quantity)
+    {
+        Quantity -= quantity;
+        Raise(new FoodItemReservedDomainEvent(Id, quantity, UnitId));
+    }
+    public void CancelReservation(decimal quantity, Guid reservationId)
+    {
+        Quantity += quantity;
+        Raise(new FoodItemReservationCancelledDomainEvent(reservationId));
+    }
+    public void ChangeUnit(Guid newUnitId, decimal convertedQuantity, Guid UserId)
+    {
+        UnitId = newUnitId;
+        Quantity = convertedQuantity;
+        LastModifiedBy = UserId;
+    }
+    public void AdjustExpirationDate(DateOnly newExpirationDate, Guid UserId)
+    {
+        ExpirationDate = newExpirationDate;
+        LastModifiedBy = UserId;
+    }
+    public void UpdateNotes(string? newNotes, Guid UserId)
+    {
+        Notes = newNotes;
+        LastModifiedBy = UserId;
+    }
+    public void UpdateImageUrl(Uri? newImageUrl, Guid UserId)
+    {
+        ImageUrl = newImageUrl;
+        LastModifiedBy = UserId;
+    }
+    public void Rename(string newName, Guid UserId)
+    {
+        Name = newName;
+        LastModifiedBy = UserId;
+    }
+    public void MoveToCompartment(Guid newCompartmentId, Guid UserId)
+    {
+        CompartmentId = newCompartmentId;
+        LastModifiedBy = UserId;
+    }
+
 }

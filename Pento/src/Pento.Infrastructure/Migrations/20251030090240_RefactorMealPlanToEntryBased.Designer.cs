@@ -323,7 +323,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("pickup_start_date");
 
-                    b.Property<decimal>("Quantity")
+                    b.Property<decimal>("BaseQuantity")
                         .HasColumnType("numeric")
                         .HasColumnName("quantity");
 
@@ -565,7 +565,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("notes");
 
-                    b.Property<decimal>("Quantity")
+                    b.Property<decimal>("BaseQuantity")
                         .HasColumnType("numeric")
                         .HasColumnName("quantity");
 
@@ -689,7 +689,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("custom_name");
 
-                    b.Property<DateTime>("ExpirationDateUtc")
+                    b.Property<DateTime>("ExpirationDate")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expiration_date_utc");
 
@@ -702,7 +702,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("notes");
 
-                    b.Property<decimal>("Quantity")
+                    b.Property<decimal>("BaseQuantity")
                         .HasColumnType("decimal(10,2)")
                         .HasColumnName("quantity");
 
@@ -919,7 +919,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("error");
 
-                    b.Property<DateTime>("OccurredOnUtc")
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("occurred_on_utc");
 

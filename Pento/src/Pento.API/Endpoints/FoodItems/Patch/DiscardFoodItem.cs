@@ -13,18 +13,21 @@ internal sealed class DiscardFoodItem : IEndpoint
     {
         app.MapPatch("food-items/{foodItemId:guid}/discard", async (
             Guid foodItemId,
-            decimal quantity,
-            DiscardReason reason,
-            [FromIfMatchHeader] string eTag,
+            Request request,
             ICommandHandler<DiscardFoodItemCommand> handler,
             CancellationToken cancellationToken) =>
         {
 
-            Result result = await handler.Handle(new DiscardFoodItemCommand(foodItemId, quantity, reason, ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
+            Result result = await handler.Handle(new DiscardFoodItemCommand(foodItemId, request.Quantity, request.UnitId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)
         .RequireAuthorization()
-        .WithDescription("Discards a specific quantity of a food item for a given reason");
+        .WithDescription("Discards a specific quantity of a food item");
+    }
+    internal sealed class Request
+    {
+        public decimal Quantity { get; init; }
+        public Guid UnitId { get; init; }
     }
 }

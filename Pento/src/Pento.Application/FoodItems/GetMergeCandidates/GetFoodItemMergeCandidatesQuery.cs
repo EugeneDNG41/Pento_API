@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.GetById;
-using Pento.Application.FoodItems.Projections;
+using Pento.Application.FoodItems.Search;
 
 namespace Pento.Application.FoodItems.GetMergeCandidates;
 

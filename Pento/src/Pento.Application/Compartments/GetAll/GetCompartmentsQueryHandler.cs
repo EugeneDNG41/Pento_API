@@ -1,7 +1,5 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Marten;
-using Marten.Pagination;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;

@@ -1,8 +1,4 @@
-﻿using JasperFx.Events;
-using Marten;
-using Marten.Events;
-using Microsoft.FSharp.Control;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -23,8 +19,9 @@ internal sealed class UpdateFoodItemCommandHandler(
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
-    ICalculator converter,
-    IDocumentSession session) : ICommandHandler<UpdateFoodItemCommand>
+    IConverterService converter,
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<UpdateFoodItemCommand>
 {
     public async Task<Result> Handle(UpdateFoodItemCommand command, CancellationToken cancellationToken)
     {
@@ -33,8 +30,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         {
             return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
-        IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItem? foodItem = stream.Aggregate;
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure(FoodItemErrors.NotFound);
@@ -42,9 +38,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         if (foodItem.HouseholdId != householdId)
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
-        }
-        var foodItemEvents = new List<FoodItemEvent>();
-       
+        }      
         //Change measurement unit
         if (foodItem.UnitId != command.UnitId)
         {
@@ -53,7 +47,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             {
                 return Result.Failure(convertedResult.Error);
             }
-            foodItemEvents.Add(new FoodItemUnitChanged(command.UnitId, convertedResult.Value));
+            foodItem.ChangeUnit(command.UnitId, convertedResult.Value, userContext.UserId);
         }
         //Move compartment
         if (foodItem.CompartmentId != command.CompartmentId)
@@ -70,7 +64,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             } 
             else if (oldCompartment.Id == newCompartment.Id)
             {
-                foodItemEvents.Add(new FoodItemCompartmentMoved(command.CompartmentId));
+                foodItem.MoveToCompartment(newCompartment.Id, userContext.UserId);
             }
             else
             {
@@ -84,36 +78,21 @@ internal sealed class UpdateFoodItemCommandHandler(
                 {
                     return Result.Failure(StorageErrors.ForbiddenAccess);
                 } 
-                else if (oldStorage.Type != newStorage.Type)
+                else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDate == command.ExpirationDate)
                 {
-                    foodItemEvents.Add(new FoodItemStorageTypeChanged(newStorage.Type));
-                    //Recalculate expiration date only if it wasn't changed by the user
-                    if (foodItem.ExpirationDateUtc == command.ExpirationDateUtc)
+                    FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                    if (foodReference is null)
                     {
-                        FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
-                        if (foodReference is null)
-                        {
-                            return Result.Failure(FoodReferenceErrors.NotFound);
-                        }
-                        IEvent? lastMoveEvent = stream.Events
-                                .Where(x => x.EventTypesAre(typeof(IEvent<FoodItemStorageTypeChanged>), typeof(FoodItemAdded)))
-                                .OrderByDescending(x => x.Timestamp)
-                                .FirstOrDefault();
-                        if (lastMoveEvent is not null)
-                        {
-                            DateTime newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
-                                lastPlacedAtUtc: lastMoveEvent.Timestamp.UtcDateTime,
-                                oldType: oldStorage.Type,
-                                newType: newStorage.Type,
-                                foodRef: foodReference,
-                                currentExpiryUtc: foodItem.ExpirationDateUtc
-                            );
-
-                            foodItemEvents.Add(new FoodItemExpirationDateUpdated(newExpirationDateUtc));
-                        }
+                        return Result.Failure(FoodReferenceErrors.NotFound);
                     }
+                    DateOnly newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                            oldType: oldStorage.Type,
+                            newType: newStorage.Type,
+                            foodRef: foodReference,
+                            currentExpiry: foodItem.ExpirationDate
+                        );
+                    foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
                 }
-                foodItemEvents.Add(new FoodItemStorageMoved(newStorage.Id, newCompartment.Id));
             }
         }
         //Rename
@@ -126,35 +105,30 @@ internal sealed class UpdateFoodItemCommandHandler(
                 {
                     return Result.Failure(FoodReferenceErrors.NotFound);
                 }
-                foodItemEvents.Add(new FoodItemRenamed(foodReference.Name));
+                foodItem.Rename(foodReference.Name, userContext.UserId);
             }
             else
             {
-                foodItemEvents.Add(new FoodItemRenamed(command.Name));
+                foodItem.Rename(command.Name, userContext.UserId);
             }
         }
         //Change quantity (override converted quantity)
         if (foodItem.Quantity != command.Quantity)
         {
-            foodItemEvents.Add(new FoodItemQuantityAdjusted(command.Quantity));
+            foodItem.AdjustQuantity(command.Quantity, userContext.UserId);
         }
         //Change expiration date (override newStorage type change)
-        if (foodItem.ExpirationDateUtc != command.ExpirationDateUtc)
+        if (foodItem.ExpirationDate != command.ExpirationDate)
         {
-            foodItemEvents.Add(new FoodItemExpirationDateUpdated(command.ExpirationDateUtc));
+            foodItem.AdjustExpirationDate(command.ExpirationDate, userContext.UserId);
         }
         //Change notes
         if (foodItem.Notes != command.Notes)
         {
-            foodItemEvents.Add(new FoodItemNotesUpdated(command.Notes));
+            foodItem.UpdateNotes(command.Notes, userContext.UserId);
         }
-
-        if (foodItemEvents.Any())
-        {
-            session.LastModifiedBy = userContext.UserId.ToString();
-            await session.Events.AppendOptimistic(command.Id, foodItemEvents);
-            await session.SaveChangesAsync(cancellationToken);
-        }
+        foodItemRepository.Update(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

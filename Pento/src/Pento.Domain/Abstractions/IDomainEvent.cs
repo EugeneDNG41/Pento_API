@@ -9,5 +9,5 @@ namespace Pento.Domain.Abstractions;
 public interface IDomainEvent
 {
     Guid Id { get; }
-    DateTime OccurredOnUtc { get; }
+    DateTime Timestamp { get; }
 }

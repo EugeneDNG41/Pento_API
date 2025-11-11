@@ -21,7 +21,7 @@ public sealed class CreateRecipeIngredientCommandValidator
             .NotEmpty().WithMessage("UnitId is required.");
 
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+            .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
 
         RuleFor(x => x.Notes)
             .MaximumLength(500)

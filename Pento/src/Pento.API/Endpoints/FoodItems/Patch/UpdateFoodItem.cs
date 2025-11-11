@@ -23,7 +23,7 @@ internal sealed class UpdateFoodItem : IEndpoint
                 request.UnitId,
                 request.Name,
                 request.Quantity,
-                request.ExpirationDate.ToUniversalTime(),
+                request.ExpirationDate,
                 request.Notes,
                 ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
@@ -38,7 +38,7 @@ internal sealed class UpdateFoodItem : IEndpoint
         public Guid UnitId { get; init; }
         public string? Name { get; init; }
         public decimal Quantity { get; init; }
-        public DateTime ExpirationDate { get; init; }
+        public DateOnly ExpirationDate { get; init; }
         public string? Notes { get; init; }
     }
 }

@@ -13,5 +13,5 @@ public sealed record CreateFoodItemCommand(
     string? Name, 
     decimal Quantity, 
     Guid? UnitId, 
-    DateTime? ExpirationDateUtc, 
+    DateOnly? ExpirationDate, 
     string? Notes) : ICommand<Guid>;

@@ -2,4 +2,4 @@
 
 namespace Pento.Application.FoodItems.Split;
 
-public sealed record SplitFoodItemCommand(Guid Id, decimal Quantity, int Version) : ICommand<Guid>;
+public sealed record SplitFoodItemCommand(Guid Id, decimal Quantity, Guid UnitId) : ICommand<Guid>;

@@ -172,6 +172,12 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("storage_id");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id")
                         .HasName("pk_compartments");
 
@@ -248,6 +254,212 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_food_dietary_tags_food_reference_id_dietary_tag_id");
 
                     b.ToTable("food_dietary_tags", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemLogs.FoodItemLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Action")
+                        .HasColumnType("integer")
+                        .HasColumnName("action");
+
+                    b.Property<decimal>("BaseQuantity")
+                        .HasColumnType("decimal(10,3)")
+                        .HasColumnName("base_quantity");
+
+                    b.Property<string>("BaseUnitType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("base_unit_type");
+
+                    b.Property<Guid>("FoodItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_item_id");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("timestamp");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_food_item_logs");
+
+                    b.HasIndex("FoodItemId")
+                        .HasDatabaseName("ix_food_item_logs_food_item_id");
+
+                    b.HasIndex("HouseholdId")
+                        .HasDatabaseName("ix_food_item_logs_household_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_food_item_logs_user_id");
+
+                    b.ToTable("food_item_logs", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemReservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("FoodItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_item_id");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,3)")
+                        .HasColumnName("quantity");
+
+                    b.Property<DateTime>("ReservationDateUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reservation_date_utc");
+
+                    b.Property<int>("ReservationFor")
+                        .HasColumnType("integer")
+                        .HasColumnName("reservation_for");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_food_item_reservations");
+
+                    b.ToTable("food_item_reservations", (string)null);
+
+                    b.HasDiscriminator<int>("ReservationFor");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("added_by");
+
+                    b.Property<Guid>("CompartmentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("compartment_id");
+
+                    b.Property<DateOnly>("ExpirationDate")
+                        .HasColumnType("date")
+                        .HasColumnName("expiration_date");
+
+                    b.Property<Guid>("FoodReferenceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_reference_id");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("image_url");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid?>("LastModifiedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("last_modified_by");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,3)")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_food_items");
+
+                    b.HasIndex("CompartmentId")
+                        .HasDatabaseName("ix_food_items_compartment_id");
+
+                    b.HasIndex("FoodReferenceId")
+                        .HasDatabaseName("ix_food_items_food_reference_id");
+
+                    b.HasIndex("HouseholdId")
+                        .HasDatabaseName("ix_food_items_household_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_food_items_unit_id");
+
+                    b.ToTable("food_items", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.FoodReferences.FoodReference", b =>
@@ -564,6 +776,12 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<DateTime>("UpdatedOnUtc")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
 
                     b.HasKey("Id")
                         .HasName("pk_meal_plans");
@@ -1223,6 +1441,12 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("type");
 
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id")
                         .HasName("pk_storages");
 
@@ -1277,7 +1501,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7ef1-9d84-83ae2c3ca50d"),
+                            Id = new Guid("019a72d1-cf22-7400-8f1c-85aac238e180"),
                             Abbreviation = "g",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1287,7 +1511,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7719-b0da-8aac472cf0f7"),
+                            Id = new Guid("019a72d1-cf23-7a24-857f-005b1837cdaf"),
                             Abbreviation = "kg",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1297,7 +1521,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-78df-b39c-ccf24b46ff5c"),
+                            Id = new Guid("019a72d1-cf23-7cc2-b4ab-b52a6476df81"),
                             Abbreviation = "mg",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1307,7 +1531,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7a8e-96e7-bbe01ecc0515"),
+                            Id = new Guid("019a72d1-cf23-7450-86e7-1338d5aca9db"),
                             Abbreviation = "oz",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1317,7 +1541,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-72ff-9fce-10da157e462a"),
+                            Id = new Guid("019a72d1-cf23-75e5-825a-ec24fdffcc17"),
                             Abbreviation = "lb",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1327,7 +1551,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7fa7-bb57-a778307838a3"),
+                            Id = new Guid("019a72d1-cf23-7816-8162-b7856f234a16"),
                             Abbreviation = "mL",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1337,7 +1561,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7d08-9613-59b8cdec9d8c"),
+                            Id = new Guid("019a72d1-cf23-7f4f-a749-011d205c891c"),
                             Abbreviation = "L",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1347,7 +1571,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7bfb-b2d4-f027df22cd8b"),
+                            Id = new Guid("019a72d1-cf23-7a55-bb6f-8baae55ff930"),
                             Abbreviation = "tsp",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1357,7 +1581,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7e9e-93fc-d560e253f89c"),
+                            Id = new Guid("019a72d1-cf23-73bf-a9e4-2064d9c56c60"),
                             Abbreviation = "Tbsp",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1367,7 +1591,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7b42-8006-61dbed3441f3"),
+                            Id = new Guid("019a72d1-cf23-7ef3-a336-7fcaffeee62d"),
                             Abbreviation = "fl oz",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1377,7 +1601,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7522-8216-ef1ad1dc813a"),
+                            Id = new Guid("019a72d1-cf23-7d86-9256-78cd8c05bb21"),
                             Abbreviation = "cup (US)",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1387,7 +1611,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-70a4-97bd-49ffc419b6c9"),
+                            Id = new Guid("019a72d1-cf23-7d56-b203-e9211a170627"),
                             Abbreviation = "pt",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1397,7 +1621,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7ad6-8425-f0a0eb6b5ea5"),
+                            Id = new Guid("019a72d1-cf23-7521-8117-cc70fe844afb"),
                             Abbreviation = "qt",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1407,7 +1631,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7b42-a8a2-a60655f347d5"),
+                            Id = new Guid("019a72d1-cf23-7814-9a0b-63265469720b"),
                             Abbreviation = "gal",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1417,7 +1641,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-785d-a459-d738757017ac"),
+                            Id = new Guid("019a72d1-cf23-777b-9fe9-ef5e685a69b3"),
                             Abbreviation = "serving",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1427,7 +1651,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-79b1-9035-3a08c9f630c0"),
+                            Id = new Guid("019a72d1-cf23-758e-98f3-13ca7e9c3c68"),
                             Abbreviation = "pc",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1437,7 +1661,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-74ca-b47f-bfc3247bb7ef"),
+                            Id = new Guid("019a72d1-cf23-774f-bef2-1318caf354d2"),
                             Abbreviation = "ea",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1447,7 +1671,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-74b1-bc45-3fa37d35dd9c"),
+                            Id = new Guid("019a72d1-cf23-72a2-a4b4-77bd62fd8de9"),
                             Abbreviation = "pair",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1457,7 +1681,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-74cb-bab3-22826d12bd8b"),
+                            Id = new Guid("019a72d1-cf23-7e16-9ba5-fcab61f7bafa"),
                             Abbreviation = "doz",
                             IsArchived = false,
                             IsDeleted = false,
@@ -1467,7 +1691,7 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Id = new Guid("019a6d86-5225-7400-be11-3981abc39f09"),
+                            Id = new Guid("019a72d1-cf23-7d3a-a383-a15a0d311bd9"),
                             Abbreviation = "gross",
                             IsArchived = false,
                             IsDeleted = false,
@@ -2107,6 +2331,54 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemDonationReservation", b =>
+                {
+                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
+
+                    b.Property<Guid>("GiveawayPostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("giveaway_post_id");
+
+                    b.HasIndex("GiveawayPostId")
+                        .HasDatabaseName("ix_food_item_reservations_giveaway_post_id");
+
+                    b.ToTable("food_item_reservations", (string)null);
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemMealPlanReservation", b =>
+                {
+                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
+
+                    b.Property<Guid>("MealPlanId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("meal_plan_id");
+
+                    b.HasIndex("MealPlanId")
+                        .HasDatabaseName("ix_food_item_reservations_meal_plan_id");
+
+                    b.ToTable("food_item_reservations", (string)null);
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemRecipeReservation", b =>
+                {
+                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
+
+                    b.Property<Guid>("RecipeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recipe_id");
+
+                    b.HasIndex("RecipeId")
+                        .HasDatabaseName("ix_food_item_reservations_recipe_id");
+
+                    b.ToTable("food_item_reservations", (string)null);
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
             modelBuilder.Entity("Pento.Domain.BlogPosts.BlogPost", b =>
                 {
                     b.HasOne("Pento.Domain.Users.User", null)
@@ -2159,6 +2431,61 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_food_dietary_tags_dietary_tags_dietary_tag_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemLogs.FoodItemLog", b =>
+                {
+                    b.HasOne("Pento.Domain.FoodItems.FoodItem", null)
+                        .WithMany()
+                        .HasForeignKey("FoodItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_logs_food_items_food_item_id");
+
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_logs_household_household_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_logs_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
+                {
+                    b.HasOne("Pento.Domain.Compartments.Compartment", null)
+                        .WithMany()
+                        .HasForeignKey("CompartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_compartments_compartment_id");
+
+                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
+                        .WithMany()
+                        .HasForeignKey("FoodReferenceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_food_references_food_reference_id");
+
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_household_household_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_units_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
@@ -2338,6 +2665,36 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_roles_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemDonationReservation", b =>
+                {
+                    b.HasOne("Pento.Domain.GiveawayPosts.GiveawayPost", null)
+                        .WithMany()
+                        .HasForeignKey("GiveawayPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_reservations_giveaway_post_giveaway_post_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemMealPlanReservation", b =>
+                {
+                    b.HasOne("Pento.Domain.MealPlans.MealPlan", null)
+                        .WithMany()
+                        .HasForeignKey("MealPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_reservations_meal_plan_meal_plan_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemRecipeReservation", b =>
+                {
+                    b.HasOne("Pento.Domain.Recipes.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_reservations_recipe_recipe_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>

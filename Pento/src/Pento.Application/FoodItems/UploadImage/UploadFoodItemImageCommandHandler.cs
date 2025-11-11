@@ -1,6 +1,4 @@
-﻿using Marten;
-using Marten.Events;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Messaging;
@@ -15,12 +13,12 @@ internal sealed class UploadFoodItemImageCommandHandler(
     IUserContext userContext,
     IBlobService blobService,
     IGenericRepository<FoodReference> foodReferenceRepository,
-    IDocumentSession session) : ICommandHandler<UploadFoodItemImageCommand, Uri>
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<UploadFoodItemImageCommand, Uri>
 {
     public async Task<Result<Uri>> Handle(UploadFoodItemImageCommand command, CancellationToken cancellationToken)
     {
-        IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItem? foodItem = stream.Aggregate;
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure<Uri>(FoodItemErrors.NotFound);
@@ -29,6 +27,12 @@ internal sealed class UploadFoodItemImageCommandHandler(
         {
             return Result.Failure<Uri>(FoodItemErrors.ForbiddenAccess);
         }
+        FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+        if (foodReference is null)
+        {
+            return Result.Failure<Uri>(FoodReferenceErrors.NotFound);
+        }
+        Uri? oldImageUrl = foodItem.ImageUrl;
         if (command.File is not null)
         {
             Result<Uri> uploadResult = await blobService.UploadImageAsync(command.File, nameof(FoodItem), cancellationToken);
@@ -36,26 +40,18 @@ internal sealed class UploadFoodItemImageCommandHandler(
             {
                 return Result.Failure<Uri>(uploadResult.Error);
             }
-            await session.Events.AppendOptimistic(command.Id, new FoodItemImageUpdated(uploadResult.Value));
-            session.LastModifiedBy = userContext.UserId.ToString();
-            await session.SaveChangesAsync(cancellationToken);
-            return uploadResult.Value;
+            foodItem.UpdateImageUrl(uploadResult.Value, userContext.UserId);            
         } 
         else
         {
-            FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
-            if (foodReference is null)
-            {
-                return Result.Failure<Uri>(FoodReferenceErrors.NotFound);
-            }
-            if (foodReference.ImageUrl is not null && foodItem.ImageUrl is not null && foodItem.ImageUrl != foodReference.ImageUrl)
-            {
-                await blobService.DeleteImageAsync(nameof(FoodItem), foodItem.ImageUrl.AbsoluteUri, cancellationToken);
-            }
-            await session.Events.AppendOptimistic(command.Id, new FoodItemImageUpdated(foodReference.ImageUrl));
-            session.LastModifiedBy = userContext.UserId.ToString();
-            await session.SaveChangesAsync(cancellationToken);
-            return foodReference.ImageUrl;
-        }   
+            foodItem.UpdateImageUrl(foodReference.ImageUrl, userContext.UserId);
+        }
+        if (foodReference.ImageUrl is not null && oldImageUrl is not null && oldImageUrl != foodReference.ImageUrl)
+        {
+            await blobService.DeleteImageAsync(nameof(FoodItem), oldImageUrl.AbsoluteUri, cancellationToken);
+        }
+        foodItemRepository.Update(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return foodReference.ImageUrl;
     }
 }

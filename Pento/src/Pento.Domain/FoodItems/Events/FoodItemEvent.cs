@@ -3,56 +3,94 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
 
 namespace Pento.Domain.FoodItems.Events;
 
-public abstract record FoodItemEvent();
-public record FoodItemAdded(
-    Guid Id, 
-    Guid FoodReferenceId,
-    Guid CompartmentId,
-    Guid HouseholdId,
-    string Name,
-    Uri? ImageUrl,
-    decimal Quantity,
-    Guid UnitId, 
-    DateTime ExpirationDateUtc,
-    string? Notes,
-    Guid? SourceItemId) : FoodItemEvent;
+
+public class FoodItemAddedDomainEvent(Guid foodItemId, decimal quantity, Guid unitId, Guid userId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = quantity;
+    public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
+}
 
 // Property Changes
-public record FoodItemRenamed(string NewName) : FoodItemEvent;
-public record FoodItemImageUpdated(Uri? ImageUrl) : FoodItemEvent;
-public record FoodItemNotesUpdated(string? Notes) : FoodItemEvent;
-public record FoodItemExpirationDateUpdated(DateTime ExpirationDateUtc) : FoodItemEvent;
-public record FoodItemCompartmentMoved(Guid CompartmentId) : FoodItemEvent;
-public record FoodItemStorageMoved(Guid StorageId, Guid CompartmentId) : FoodItemEvent;
-public record FoodItemQuantityAdjusted(decimal Quantity) : FoodItemEvent;
-public record FoodItemCompartmentRenamed(string CompartmentName) : FoodItemEvent;
-public record FoodItemStorageRenamed(string StorageName) : FoodItemEvent;
-public record FoodItemStorageTypeChanged(StorageType StorageType) : FoodItemEvent;
-public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity) : FoodItemEvent;
-// Reservations
-public record FoodItemReservedForMealPlan(decimal Quantity, Guid MealPlanId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;
-public record FoodItemReservedForMealPlanCancelled(decimal Quantity, Guid MealPlanId) : FoodItemEvent;
-public record FoodItemReservedForMealPlanConsumed(decimal ReservedQuantity, decimal ConsumedQuantity, Guid MealPlanId) : FoodItemEvent;
-public record FoodItemReservedForRecipe(decimal Quantity, Guid RecipeId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;
-public record FoodItemReservedForRecipeCancelled(decimal Quantity, Guid RecipeId) : FoodItemEvent;
-public record FoodItemReservedForRecipeConsumed(decimal ReservedQuantity, decimal ConsumedQuantity, Guid RecipeId) : FoodItemEvent;
-public record FoodItemReservedForDonation(decimal Quantity, Guid DonationId, DateTime? ReservationExpiresOnUtc) : FoodItemEvent;
-public record FoodItemReservedForDonationCancelled(decimal Quantity, Guid DonationId): FoodItemEvent;
-public record FoodItemReservedForDonationDonated(decimal ReservedQuantity, decimal DonatedQuantity, Guid DonationId, Guid RecipientHouseholdId): FoodItemEvent;
-public record FoodItemConsumed(decimal Quantity): FoodItemEvent;
-public record FoodItemDiscarded(decimal Quantity, DiscardReason Reason): FoodItemEvent;
-public record FoodItemSplit(decimal Quantity): FoodItemEvent;
-public record FoodItemMerged(Guid SourceItemId, decimal Quantity): FoodItemEvent;
-public record FoodItemRemovedByMerge(Guid TargetItemId, decimal Quantity): FoodItemEvent;
-public enum DiscardReason
+
+public class FoodItemQuantityAdjustedDomainEvent(Guid foodItemId, decimal quantity, Guid unitId) : DomainEvent
 {
-    Expired, //due to past expiration date
-    Spoiled, // due to spoilage before expiration date
-    Damaged, // due to damage
-    Other
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = quantity;
+    public Guid UnitId { get; } = unitId;
+}
+public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity);
+// Reservations
+public class FoodItemReservedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+}
+public class FoodItemReservationCancelledDomainEvent(Guid reservationId) : DomainEvent
+{
+    public Guid ReservationId { get; } = reservationId;
+}
+public class FoodItemReservedForMealPlanDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+}
+public class FoodItemReservedForMealPlanCancelledDomainEvent(Guid reservationId) : DomainEvent
+{
+    public Guid ReservationId { get; } = reservationId;
+}
+public record FoodItemReservedForMealPlanConsumed(decimal ReservedQuantity, decimal ConsumedQuantity, Guid MealPlanId);
+public record FoodItemReservedForRecipe(decimal Quantity, Guid RecipeId, DateTime? ReservationExpiresOnUtc);
+public record FoodItemReservedForRecipeCancelled(decimal Quantity, Guid RecipeId);
+public record FoodItemReservedForRecipeConsumed(decimal ReservedQuantity, decimal ConsumedQuantity, Guid RecipeId);
+public record FoodItemReservedForDonation(decimal Quantity, Guid DonationId, DateTime? ReservationExpiresOnUtc);
+public class FoodItemReservedForDonationCancelledDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+}
+public class FoodItemReservedForDonationDonatedDomainEvent(decimal ReservedQuantity, decimal DonatedQuantity, Guid DonationId, Guid RecipientHouseholdId) : DomainEvent
+{
+    public decimal ReservedQuantity { get; } = ReservedQuantity;
+    public decimal DonatedQuantity { get; } = DonatedQuantity;
+    public Guid DonationId { get; } = DonationId;
+    public Guid RecipientHouseholdId { get; } = RecipientHouseholdId;
+}
+public class FoodItemConsumedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
+}
+public class FoodItemDiscardedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
+}
+public class FoodItemSplitDomainEvent(decimal Quantity) : DomainEvent
+{
+    public decimal Quantity { get; } = Quantity;
+}
+public class FoodItemMergedDomainEvent(Guid SourceItemId, decimal Quantity) : DomainEvent
+{
+    public Guid SourceItemId { get; } = SourceItemId;
+    public decimal Quantity { get; } = Quantity;
+}
+public class FoodItemRemovedByMergeDomainEvent(Guid TargetItemId, decimal Quantity) : DomainEvent
+{
+    public Guid TargetItemId { get; } = TargetItemId;
+    public decimal Quantity { get; } = Quantity;
 }

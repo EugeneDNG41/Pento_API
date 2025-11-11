@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.GetById;
-using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.FoodItems.Get;

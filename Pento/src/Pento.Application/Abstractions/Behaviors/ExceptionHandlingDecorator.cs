@@ -1,9 +1,8 @@
-﻿using JasperFx;
+﻿
 using Microsoft.Extensions.Logging;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
-using ConcurrencyException = JasperFx.ConcurrencyException;
 
 namespace Pento.Application.Abstractions.Behaviors;
 

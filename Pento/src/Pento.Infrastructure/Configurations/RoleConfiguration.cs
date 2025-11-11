@@ -1,4 +1,4 @@
-﻿using Marten.Linq.SoftDeletes;
+﻿
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Roles;

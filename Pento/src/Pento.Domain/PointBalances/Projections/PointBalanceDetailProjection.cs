@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Marten.Events.Aggregation;
+﻿
 using Pento.Domain.PointBalances.Events;
 using Pento.Domain.PointTasks;
 using Pento.Domain.Shared;
@@ -83,7 +78,7 @@ public sealed class PointsByCategory
         MonthlyEarnedPoints = 0;
     }
 }
-internal sealed class PointBalanceDetailProjection : SingleStreamProjection<PointBalanceDetail, Guid>
+internal sealed class PointBalanceDetailProjection
 {
     public PointBalanceDetail Create(BalanceCreated e) => new() { Id = e.Id, UserId = e.UserId };
 

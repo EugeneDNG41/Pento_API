@@ -1,5 +1,4 @@
-﻿using Marten;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -21,7 +20,8 @@ internal sealed class CreateFoodItemCommandHandler(
     IGenericRepository<Unit> unitRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Storage> storageRepository,
-    IDocumentSession session)
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork)
     : ICommandHandler<CreateFoodItemCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateFoodItemCommand command, CancellationToken cancellationToken)
@@ -72,18 +72,17 @@ internal sealed class CreateFoodItemCommandHandler(
         {
             return Result.Failure<Guid>(StorageErrors.NotFound);
         }
-        DateTime validExpirationDate = command.ExpirationDateUtc is null
-            ? dateTimeProvider.UtcNow.AddDays(storage.Type switch
+        DateOnly validExpirationDate = command.ExpirationDate is null
+            ? dateTimeProvider.Today.AddDays(storage.Type switch
             {
                 StorageType.Pantry => foodReference.TypicalShelfLifeDays_Pantry,
                 StorageType.Fridge => foodReference.TypicalShelfLifeDays_Fridge,
                 StorageType.Freezer => foodReference.TypicalShelfLifeDays_Freezer,
                 _ => 5
             })
-            : command.ExpirationDateUtc.Value.ToUniversalTime();
+            : command.ExpirationDate.Value;
 
-        var e = new FoodItemAdded(
-                Guid.CreateVersion7(),
+        var foodItem = FoodItem.Create(
                 foodReference.Id,
                 compartment.Id,
                 householdId.Value,
@@ -93,12 +92,10 @@ internal sealed class CreateFoodItemCommandHandler(
                 validUnit.Id,
                 validExpirationDate,
                 command.Notes,
-                null);
+                userContext.UserId);
+        foodItemRepository.Add(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        session.LastModifiedBy = userContext.UserId.ToString();
-        session.Events.StartStream<FoodItem>(e.Id, e);       
-
-        await session.SaveChangesAsync(cancellationToken);
-        return e.Id;
+        return foodItem.Id;
     }
 }

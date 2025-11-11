@@ -37,11 +37,6 @@ internal sealed class RegisterUserCommandHandler(
         {
             return Result.Failure<AuthToken>(tokenResult.Error);
         }
-        Result emailSentResult = await identityProviderService.SendVerificationEmailAsync(result.Value, cancellationToken);
-        if (emailSentResult.IsFailure)
-        {
-            return Result.Failure<AuthToken>(UserErrors.VerificationEmailFailed);
-        }
         return tokenResult;
     }
 }
