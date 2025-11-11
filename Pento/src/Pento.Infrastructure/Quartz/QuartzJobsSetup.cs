@@ -2,13 +2,13 @@
 using Quartz;
 
 namespace Pento.Infrastructure.Quartz;
-
+#pragma warning disable S125 // Sections of code should not be commented out
 internal sealed class QuartzJobsSetup : IConfigureOptions<QuartzOptions>
 {
     public void Configure(QuartzOptions options)
     {
         const string expirationTracker = nameof(ProcessExpirationDateTrackingJob);
-        const string limitReset = nameof(ProcessLimitResetJob);
+        //const string limitReset = nameof(ProcessLimitResetJob);
 
 
         options
@@ -18,12 +18,12 @@ internal sealed class QuartzJobsSetup : IConfigureOptions<QuartzOptions>
                     .ForJob(expirationTracker)
                     .WithCronSchedule("0 0 0/12 ? * * *")// Every 12 hours 
                     .Build());
-        options
-            .AddJob<ProcessLimitResetJob>(configure => configure.WithIdentity(limitReset))
-            .AddTrigger(configure =>
-                configure
-                    .ForJob(limitReset)
-                    .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(0, 0)) // Every day at midnight
-                    .Build());
+        //options
+        //    .AddJob<ProcessLimitResetJob>(configure => configure.WithIdentity(limitReset))
+        //    .AddTrigger(configure =>
+        //        configure
+        //            .ForJob(limitReset)
+        //            .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(0, 0)) // Every day at midnight
+        //            .Build());
     }
 }
