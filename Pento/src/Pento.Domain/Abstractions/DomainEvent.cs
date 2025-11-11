@@ -9,16 +9,16 @@ namespace Pento.Domain.Abstractions;
 public abstract class DomainEvent : IDomainEvent
 {
     public Guid Id { get; init; }
-    public DateTime OccurredOnUtc { get; init; }
+    public DateTime Timestamp { get; init; }
     protected DomainEvent()
     {
         Id = Guid.CreateVersion7();
-        OccurredOnUtc = DateTime.UtcNow;
+        Timestamp = DateTime.UtcNow;
     }
 
-    protected DomainEvent(Guid id, DateTime occurredOnUtc)
+    protected DomainEvent(Guid id, DateTime timestamp)
     {
         Id = id;
-        OccurredOnUtc = occurredOnUtc;
+        Timestamp = timestamp;
     }
 }

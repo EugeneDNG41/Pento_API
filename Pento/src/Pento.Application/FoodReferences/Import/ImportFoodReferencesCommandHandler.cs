@@ -37,10 +37,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
         var records = new List<FoodCsv>();
         await foreach (FoodCsv record in csv.GetRecordsAsync<FoodCsv>(cancellationToken))
         {
-            if (record.DataType == "foundation_food")
-            {
-                records.Add(record);
-            }
+            records.Add(record);
         }
         records = records
             .DistinctBy(r => r.FdcId)
@@ -56,14 +53,10 @@ internal sealed class ImportFoodReferencesCommandHandler(
             var food = FoodReference.Create(
                 name: f.Description,
                 foodGroup: group,
-                dataType: FoodDataType.USDAFood,
                 foodCategoryId: f.FoodCategoryId,
                 brand: null,
                 barcode: null,
                 usdaId: f.FdcId.ToString(CultureInfo.InvariantCulture),
-                publishedOnUtc: DateTime.SpecifyKind(
-                    DateTime.Parse(f.PublicationDate, CultureInfo.InvariantCulture),
-                    DateTimeKind.Utc),
                 typicalShelfLifeDaysPantry: 0,
                 typicalShelfLifeDaysFridge: 0,
                 typicalShelfLifeDaysFreezer: 0,
@@ -114,10 +107,8 @@ internal sealed class ImportFoodReferencesCommandHandler(
     private sealed class FoodCsv
     {
         public int FdcId { get; set; } = default!;
-        public string DataType { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public int? FoodCategoryId { get; set; }= null!;
-        public string PublicationDate { get; set; } = string.Empty;
     }
 
     private sealed class FoodCsvMap : ClassMap<FoodCsv>
@@ -125,10 +116,8 @@ internal sealed class ImportFoodReferencesCommandHandler(
         public FoodCsvMap()
         {
             Map(m => m.FdcId).Name("fdc_id");
-            Map(m => m.DataType).Name("data_type");
             Map(m => m.Description).Name("description");
             Map(m => m.FoodCategoryId).Name("food_category_id");
-            Map(m => m.PublicationDate).Name("publication_date");
         }
     }
 }

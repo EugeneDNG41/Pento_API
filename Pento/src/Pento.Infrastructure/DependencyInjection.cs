@@ -1,11 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Dapper;
-using JasperFx;
-using JasperFx.Events;
-using JasperFx.Events.Daemon;
-using JasperFx.Events.Projections;
-using Marten;
-using Marten.Events.Projections;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +20,6 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
-using Pento.Application.FoodItems.Projections;
 using Pento.Common.Infrastructure.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -54,7 +47,6 @@ using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Quartz;
-using Weasel.Core;
 
 namespace Pento.Infrastructure;
 
@@ -74,6 +66,8 @@ public static class DependencyInjection
 
         AddCaching(services, configuration);
 
+        AddBackgroundJobs(services, configuration);
+
         return services;
     }
 
@@ -84,28 +78,7 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
         });
-        services.AddMarten(options =>
-        {
-            options.Connection(connectionString);
-     
-
-            options.Events.StreamIdentity = StreamIdentity.AsGuid;
-            options.UseSystemTextJsonForSerialization(EnumStorage.AsString);
-            options.AutoCreateSchemaObjects = AutoCreate.All;
-
-            options.Projections.Snapshot<FoodItem>(SnapshotLifecycle.Inline);
-            options.Projections.Errors.SkipApplyErrors = false;
-            options.Projections.Errors.SkipSerializationErrors = false;
-            options.Projections.Errors.SkipUnknownEvents = false;
-
-            options.Projections.UseIdentityMapForAggregates = true;
-            options.Events.MetadataConfig.UserNameEnabled = true;
-        })
-        .AddProjectionWithServices<FoodItemDetailProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)
-        .AddProjectionWithServices<FoodItemPreviewProjection>(ProjectionLifecycle.Inline, ServiceLifetime.Scoped)
-        .ApplyAllDatabaseChangesOnStartup()
-        .UseLightweightSessions()
-        .AddAsyncDaemon(DaemonMode.HotCold);
+        
 
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
@@ -117,12 +90,11 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddTransient<IUnitConverter, UnitConverter>();
+        services.AddTransient<IConverterService, ConverterService>();
 
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
-        services.AddScoped<IFoodItemRepository, FoodItemRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
         services.AddScoped<IBlogPostRepository, BlogPostRepository>();
         services.AddScoped<IGiveawayClaimRepository, GiveawayClaimRepository>();

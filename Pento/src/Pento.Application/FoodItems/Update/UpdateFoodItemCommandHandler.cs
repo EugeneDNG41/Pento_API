@@ -1,6 +1,4 @@
-﻿using Marten;
-using Marten.Events;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -9,32 +7,38 @@ using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.Households;
+using Pento.Domain.Storages;
 using Pento.Domain.Units;
+using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Update;
 
 internal sealed class UpdateFoodItemCommandHandler(
     IUserContext userContext,
     IGenericRepository<Compartment> compartmentRepository,
+    IGenericRepository<Storage> storageRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
-    IUnitConverter converter,
-    IDocumentSession session) : ICommandHandler<UpdateFoodItemCommand>
+    IConverterService converter,
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<UpdateFoodItemCommand>
 {
     public async Task<Result> Handle(UpdateFoodItemCommand command, CancellationToken cancellationToken)
     {
-        IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItem? foodItem = stream.Aggregate;
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId == null)
+        {
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
+        }
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure(FoodItemErrors.NotFound);
         }
-        if (foodItem.HouseholdId != userContext.HouseholdId)
+        if (foodItem.HouseholdId != householdId)
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
-        }
-        var foodItemEvents = new List<FoodItemEvent>();
-        DateTime expirationDateUtc = command.ExpirationDate.ToUniversalTime();
-       
+        }      
         //Change measurement unit
         if (foodItem.UnitId != command.UnitId)
         {
@@ -43,21 +47,52 @@ internal sealed class UpdateFoodItemCommandHandler(
             {
                 return Result.Failure(convertedResult.Error);
             }
-            foodItemEvents.Add(new FoodItemUnitChanged(command.UnitId, convertedResult.Value));
+            foodItem.ChangeUnit(command.UnitId, convertedResult.Value, userContext.UserId);
         }
         //Move compartment
         if (foodItem.CompartmentId != command.CompartmentId)
         {
+            Compartment? oldCompartment = await compartmentRepository.GetByIdAsync(foodItem.CompartmentId, cancellationToken);
             Compartment? newCompartment = await compartmentRepository.GetByIdAsync(command.CompartmentId, cancellationToken);
-            if (newCompartment is null)
+            if (newCompartment is null || oldCompartment is null)
             {
                 return Result.Failure(CompartmentErrors.NotFound);
-            } else if (newCompartment.HouseholdId != userContext.HouseholdId)
+            } 
+            else if (newCompartment.HouseholdId != householdId || oldCompartment.HouseholdId != householdId)
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
-            } else
+            } 
+            else if (oldCompartment.Id == newCompartment.Id)
             {
-                foodItemEvents.Add(new FoodItemCompartmentMoved(command.CompartmentId));
+                foodItem.MoveToCompartment(newCompartment.Id, userContext.UserId);
+            }
+            else
+            {
+                Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment.StorageId, cancellationToken);
+                Storage? newStorage = await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
+                if (newStorage is null || oldStorage is null)
+                {
+                    return Result.Failure(StorageErrors.NotFound);
+                }
+                else if (newStorage.HouseholdId != householdId || oldStorage.HouseholdId != householdId)
+                {
+                    return Result.Failure(StorageErrors.ForbiddenAccess);
+                } 
+                else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDate == command.ExpirationDate)
+                {
+                    FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                    if (foodReference is null)
+                    {
+                        return Result.Failure(FoodReferenceErrors.NotFound);
+                    }
+                    DateOnly newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                            oldType: oldStorage.Type,
+                            newType: newStorage.Type,
+                            foodRef: foodReference,
+                            currentExpiry: foodItem.ExpirationDate
+                        );
+                    foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
+                }
             }
         }
         //Rename
@@ -70,37 +105,30 @@ internal sealed class UpdateFoodItemCommandHandler(
                 {
                     return Result.Failure(FoodReferenceErrors.NotFound);
                 }
-                foodItemEvents.Add(new FoodItemRenamed(foodReference.Name));
+                foodItem.Rename(foodReference.Name, userContext.UserId);
             }
             else
             {
-                foodItemEvents.Add(new FoodItemRenamed(command.Name));
+                foodItem.Rename(command.Name, userContext.UserId);
             }
         }
         //Change quantity (override converted quantity)
         if (foodItem.Quantity != command.Quantity)
         {
-            foodItemEvents.Add(new FoodItemQuantityAdjusted(command.Quantity));
+            foodItem.AdjustQuantity(command.Quantity, userContext.UserId);
         }
-        //Change expiration date (override storage type change)
-        if (foodItem.ExpirationDateUtc != expirationDateUtc)
+        //Change expiration date (override newStorage type change)
+        if (foodItem.ExpirationDate != command.ExpirationDate)
         {
-            foodItemEvents.Add(new FoodItemExpirationDateUpdated(expirationDateUtc));
+            foodItem.AdjustExpirationDate(command.ExpirationDate, userContext.UserId);
         }
         //Change notes
         if (foodItem.Notes != command.Notes)
         {
-            foodItemEvents.Add(new FoodItemNotesUpdated(command.Notes));
+            foodItem.UpdateNotes(command.Notes, userContext.UserId);
         }
-
-        if (!foodItemEvents.Any())
-        {
-            return Result.Success();
-        } 
-        else
-        {
-            await session.Events.AppendOptimistic(command.Id, foodItemEvents);
-        }
+        foodItemRepository.Update(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

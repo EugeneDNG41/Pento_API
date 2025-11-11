@@ -1,16 +1,15 @@
-﻿using Marten.Pagination;
-using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItems.Projections;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodItems.Search;
 
 public sealed record SearchFoodItemQuery(
     string? SearchText,
-    string? FoodGroups,
+    FoodGroup? FoodGroup,
     decimal? FromQuantity,
     decimal? ToQuantity,
-    DateTime? ExpirationDateAfter,
-    DateTime? ExpirationDateBefore,
+    DateOnly? ExpirationDateAfter,
+    DateOnly? ExpirationDateBefore,
     int PageNumber,
-    int PageSize) : IQuery<IPagedList<FoodItemPreview>>;
+    int PageSize) : IQuery<PagedList<FoodItemPreview>>;

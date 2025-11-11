@@ -2,6 +2,8 @@
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Storages;
 using Pento.Domain.Users;
 
@@ -24,7 +26,18 @@ internal sealed class UpdateStorageCommandHandler(
         {
             return Result.Failure(StorageErrors.ForbiddenAccess);
         }
-        storage.Update(command.Name, command.Notes);
+        if (storage.Name == command.Name && storage.Notes == command.Notes)
+        {
+            return Result.Success();
+        }
+        if (await repository.AnyAsync(s => s.Name == command.Name && s.Id != storage.Id && s.HouseholdId == userHouseholdId, cancellationToken))
+        {
+            return Result.Failure(StorageErrors.DuplicateName);
+        }
+        if (storage.Notes != command.Notes)
+        {
+            storage.UpdateNotes(command.Notes);
+        }
         repository.Update(storage);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

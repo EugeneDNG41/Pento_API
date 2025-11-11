@@ -10,17 +10,16 @@ namespace Pento.Domain.PointCaps;
 public sealed class PointCap
 {
     public Guid Id { get; private set; }
-    public PointCategory Category { get; private set; }
-    public int CapAmount { get; private set; }
-    public Interval ResetInterval { get; private set; }
+    public ActivityType Category { get; private set; }
+    public Limit Limit { get; private set;  }
+    public Period ResetPeriod { get; private set; } //convert to limit by period later
     private PointCap() { }
-    public PointCap(PointCategory category, int capAmount, Interval resetInterval)
+    public PointCap(ActivityType category, Limit limit)
     {
         Id = Guid.CreateVersion7();
         Category = category;
-        CapAmount = capAmount;
-        ResetInterval = resetInterval;
+        Limit = limit;
     }
-    public static PointCap Create(PointCategory category, int capAmount, Interval resetInterval)
-        => new(category, capAmount, resetInterval);
+    public static PointCap Create(ActivityType category, Limit limit)
+        => new(category, limit);
 }

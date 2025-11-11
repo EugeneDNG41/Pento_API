@@ -18,12 +18,10 @@ public sealed class FoodReference : Entity
       Guid id,
         string name,
         FoodGroup foodGroup,
-        FoodDataType dataType,
         int? foodCategoryId,
         string? brand,
         string? barcode,
         string usdaId,
-        DateTime publishedOnUtc,
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
@@ -35,12 +33,10 @@ public sealed class FoodReference : Entity
     {
         Name = name;
         FoodGroup = foodGroup;
-        DataType = dataType;
         FoodCategoryId = foodCategoryId;
         Brand = brand;
         Barcode = barcode;
         UsdaId = usdaId;
-        PublishedOnUtc = publishedOnUtc;
         TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
         TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
@@ -52,12 +48,10 @@ public sealed class FoodReference : Entity
     }
     public string Name { get; private set; }
     public FoodGroup FoodGroup { get; private set; }
-    public FoodDataType DataType { get; private set; } // "foundation_food"
     public int? FoodCategoryId { get; private set; }
     public string? Brand { get; private set; }
     public string? Barcode { get; private set; }
     public string UsdaId { get; private set; }
-    public DateTime PublishedOnUtc { get; private set; }
     public int TypicalShelfLifeDays_Pantry { get; private set; }
     public int TypicalShelfLifeDays_Fridge { get; private set; }
     public int TypicalShelfLifeDays_Freezer { get; private set; }
@@ -69,12 +63,10 @@ public sealed class FoodReference : Entity
     public static FoodReference Create(
         string name,
         FoodGroup foodGroup,
-        FoodDataType dataType,
         int? foodCategoryId,
         string? brand,
         string? barcode,
         string usdaId,
-        DateTime publishedOnUtc,
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
@@ -87,12 +79,10 @@ public sealed class FoodReference : Entity
             Guid.CreateVersion7(),
             name,
             foodGroup,
-            dataType,
             foodCategoryId,
             brand,
             barcode,
             usdaId,
-            publishedOnUtc,
             typicalShelfLifeDaysPantry,
             typicalShelfLifeDaysFridge,
             typicalShelfLifeDaysFreezer,
@@ -108,12 +98,10 @@ public sealed class FoodReference : Entity
     public void Update(
         string name,
         FoodGroup foodGroup,
-        FoodDataType dataType,
         int? foodCategoryId,
         string? brand,
         string? barcode,
         string usdaId,
-        DateTime publishedOnUtc,
         int? typicalShelfLifeDaysPantry,
         int? typicalShelfLifeDaysFridge,
         int? typicalShelfLifeDaysFreezer,
@@ -124,12 +112,10 @@ public sealed class FoodReference : Entity
     {
         Name = name;
         FoodGroup = foodGroup;
-        DataType = dataType;
         FoodCategoryId = foodCategoryId;
         Brand = brand;
         Barcode = barcode;
         UsdaId = usdaId;
-        PublishedOnUtc = publishedOnUtc;
         TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
         TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;

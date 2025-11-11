@@ -12,17 +12,20 @@ internal sealed class SplitFoodItem : IEndpoint
     {
         app.MapPost("food-items/{foodItemId:guid}/split", async (
             Guid foodItemId,
-            decimal quantity,
-            [FromIfMatchHeader] string eTag,
+            Request request,
             ICommandHandler<SplitFoodItemCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<Guid> result = await handler.Handle(new SplitFoodItemCommand(foodItemId, quantity, ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
+            Result<Guid> result = await handler.Handle(new SplitFoodItemCommand(foodItemId, request.Quantity, request.UnitId), cancellationToken);
             return result.Match(guid => Results.CreatedAtRoute(RouteNames.GetFoodItemById, new {id = guid}, new { id = guid }), CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)
         .RequireAuthorization()
         .WithDescription("Splits a specific quantity from a food item into a new food item");
     }
-
+    internal sealed class Request
+    {
+        public decimal Quantity { get; init; }
+        public Guid UnitId { get; init; }
+    }
 }

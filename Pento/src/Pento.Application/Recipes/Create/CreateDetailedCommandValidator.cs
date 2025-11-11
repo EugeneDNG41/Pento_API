@@ -41,7 +41,7 @@ namespace Pento.Application.Recipes.Create;
                 .NotEmpty().WithMessage("Unit ID is required for each ingredient.");
 
             ingredients.RuleFor(i => i.Quantity)
-                .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+                .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
 
             ingredients.RuleFor(i => i.Notes)
                 .MaximumLength(300)

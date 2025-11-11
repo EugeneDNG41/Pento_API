@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Marten.Events.Aggregation;
+﻿
 using Pento.Domain.Shared;
 
 namespace Pento.Domain.UserSubscriptions;
@@ -32,7 +27,7 @@ public sealed class Consumable
     public int Usage { get; private set; }
     public int? Quota { get; private set; }
     public bool Usable => Quota is null || Usage < Quota;
-    public Interval ResetInterval { get; init; }
+    public Period ResetPeriod { get; init; }
     public void ResetUsage()
     {
         Usage = 0;
@@ -43,7 +38,7 @@ public sealed record NonConsumable
     public string Name { get; init; }
     public DateTime? ExpirationDateUtc { get; init; }
 }
-internal sealed class UserSubscriptionInstanceProjection : SingleStreamProjection<UserSubscriptionInstance, Guid>
+internal sealed class UserSubscriptionInstanceProjection
 {
 }
 

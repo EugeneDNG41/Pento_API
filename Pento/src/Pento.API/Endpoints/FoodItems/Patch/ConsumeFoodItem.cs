@@ -3,6 +3,7 @@ using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.Consume;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Units;
 
 namespace Pento.API.Endpoints.FoodItems.Patch;
 
@@ -13,11 +14,10 @@ internal sealed class ConsumeFoodItem : IEndpoint
         app.MapPatch("food-items/{foodItemId:guid}/consumption", async (
             Guid foodItemId,
             Request request,
-            [FromIfMatchHeader] string eTag,
             ICommandHandler<ConsumeFoodItemCommand> handler,
             CancellationToken cancellationToken) =>
         {
-            Result result = await handler.Handle(new ConsumeFoodItemCommand(foodItemId, request.Quantity, ETagExtensions.ToExpectedVersion(eTag)), cancellationToken);
+            Result result = await handler.Handle(new ConsumeFoodItemCommand(foodItemId, request.Quantity, request.UnitId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)
@@ -27,5 +27,6 @@ internal sealed class ConsumeFoodItem : IEndpoint
     internal sealed class Request
     {
         public decimal Quantity { get; init; }
+        public Guid UnitId { get; init; }
     }
 }

@@ -8,8 +8,7 @@ namespace Pento.Application.FoodReferences.Get;
 public sealed record FoodReferenceResponse(
     Guid Id,
     string Name,
-    string FoodGroup,
-    string DataType,                    
+    string FoodGroup,              
     int TypicalShelfLifeDays_Pantry,
     int TypicalShelfLifeDays_Fridge,
     int TypicalShelfLifeDays_Freezer,

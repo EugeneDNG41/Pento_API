@@ -1,6 +1,7 @@
-﻿using Marten;
-using Marten.Events;
+﻿
 using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Converter;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
@@ -9,13 +10,14 @@ using Pento.Domain.FoodItems.Events;
 namespace Pento.Application.FoodItems.Discard;
 
 internal sealed class DiscardFoodItemCommandHandler(
+    IConverterService converter,
     IUserContext userContext,
-    IDocumentSession session) : ICommandHandler<DiscardFoodItemCommand>
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<DiscardFoodItemCommand>
 {
     public async Task<Result> Handle(DiscardFoodItemCommand command, CancellationToken cancellationToken)
     {
-        IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItem? foodItem = stream.Aggregate;
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure(FoodItemErrors.NotFound);
@@ -24,13 +26,29 @@ internal sealed class DiscardFoodItemCommandHandler(
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }
+        if (foodItem.UnitId != command.UnitId)
+        {
+            Result<decimal> convertedResult = await converter.ConvertAsync(
+                command.Quantity,
+                fromUnitId: command.UnitId,
+                toUnitId: foodItem.UnitId,
+                cancellationToken);
+            if (convertedResult.IsFailure)
+            {
+                return Result.Failure(convertedResult.Error);
+            }
+            command = command with { Quantity = convertedResult.Value, UnitId = foodItem.UnitId };
+        }
         if (foodItem.Quantity < command.Quantity)
         {
             return Result.Failure(FoodItemErrors.InsufficientQuantity);
         }
-        await session.Events.AppendOptimistic(command.Id, new FoodItemDiscarded(command.Quantity, command.Reason));
-        session.LastModifiedBy = userContext.UserId.ToString();
-        await session.SaveChangesAsync(cancellationToken);
+        else if (foodItem.Quantity > command.Quantity)
+        {
+            foodItem.Discard(command.Quantity, userContext.UserId);
+            foodItemRepository.Update(foodItem);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
         return Result.Success();
     }
 }

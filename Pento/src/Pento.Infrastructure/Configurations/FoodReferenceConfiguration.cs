@@ -18,7 +18,6 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.Id).HasColumnName("id");
         builder.Property(fr => fr.Name).HasColumnName("name");
         builder.Property(fr => fr.FoodGroup).HasColumnName("food_group");
-        builder.Property(fr => fr.DataType).HasColumnName("data_type");
         builder.Property(fr => fr.Barcode).HasColumnName("barcode");
         builder.Property(fr => fr.Brand).HasColumnName("brand");
         builder.Property(fr => fr.TypicalShelfLifeDays_Pantry)
@@ -38,7 +37,6 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.UpdatedOnUtc).HasColumnName("updated_on_utc");
         builder.Property(fr => fr.FoodCategoryId).HasColumnName("food_category_id");
         builder.Property(fr => fr.ImageUrl).HasColumnName("image_url");
-        builder.Property(fr => fr.PublishedOnUtc).HasColumnName("published_on_utc");
 
         builder.Property(fr => fr.Name)
             .HasMaxLength(255)
@@ -49,10 +47,6 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
              .HasMaxLength(50)
              .IsRequired();
 
-        builder.Property(fr => fr.DataType)
-             .HasConversion<string>()       
-             .HasMaxLength(50)
-             .IsRequired();
 
         builder.Property(fr => fr.FoodCategoryId);
     
@@ -66,8 +60,6 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
             .HasMaxLength(100)
             .IsRequired();
 
-        builder.Property(fr => fr.PublishedOnUtc)
-            .IsRequired();
 
 
         builder.Property(fr => fr.ImageUrl)

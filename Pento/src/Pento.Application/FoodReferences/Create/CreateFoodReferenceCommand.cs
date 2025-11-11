@@ -12,12 +12,10 @@ namespace Pento.Application.FoodReferences.Create;
 public sealed record CreateFoodReferenceCommand(
     string Name,
     FoodGroup FoodGroup,
-    FoodDataType DataType,
     int? FoodCategoryId,
     string? Brand,
     string? Barcode,
     string UsdaId,
-    DateTime PublishedOnUtc,
     int? TypicalShelfLifeDays_Pantry,
     int? TypicalShelfLifeDays_Fridge,
     int? TypicalShelfLifeDays_Freezer,

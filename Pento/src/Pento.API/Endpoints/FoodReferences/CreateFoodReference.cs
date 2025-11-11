@@ -19,10 +19,6 @@ internal sealed class CreateFoodReference : IEndpoint
             {
                 return Results.BadRequest($"Invalid food group: {request.FoodGroup}");
             }
-            if (!Enum.TryParse<FoodDataType>(request.DataType, true, out FoodDataType dataType))
-            {
-                return Results.BadRequest($"Invalid data type: {request.DataType}");
-            }
             if (!Enum.TryParse<UnitType>(request.UnitType, true, out UnitType unitType))
             {
                 return Results.BadRequest($"Invalid data type: {request.UnitType}");
@@ -30,12 +26,10 @@ internal sealed class CreateFoodReference : IEndpoint
             var command = new CreateFoodReferenceCommand(
                 request.Name,
                 foodGroup,
-                dataType,
                 request.FoodCategoryId,
                 request.Brand,
                 request.Barcode,
                 request.UsdaId,
-                request.PublishedOnUtc,
                 request.TypicalShelfLifeDays_Pantry,
                 request.TypicalShelfLifeDays_Fridge,
                 request.TypicalShelfLifeDays_Freezer,
@@ -60,13 +54,11 @@ internal sealed class CreateFoodReference : IEndpoint
     {
         public string Name { get; init; } = string.Empty;
         public string FoodGroup { get; init; } = string.Empty; 
-        public string DataType { get; init; } 
         public string? Notes { get; init; }
         public int? FoodCategoryId { get; init; }
         public string? Brand { get; init; }
         public string? Barcode { get; init; }
         public string UsdaId { get; init; } = string.Empty;
-        public DateTime PublishedOnUtc { get; init; } = DateTime.UtcNow;
         public int? TypicalShelfLifeDays_Pantry { get; init; } = 0;
         public int? TypicalShelfLifeDays_Fridge { get; init; } = 0;
         public int? TypicalShelfLifeDays_Freezer { get; init; } = 0;

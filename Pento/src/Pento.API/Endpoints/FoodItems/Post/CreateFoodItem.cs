@@ -1,9 +1,7 @@
 ﻿using Pento.API.Extensions;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.Create;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Users;
 
 namespace Pento.API.Endpoints.FoodItems.Post;
 
@@ -23,7 +21,7 @@ internal sealed class CreateFoodItem : IEndpoint
                 request.Name,
                 request.Quantity,
                 request.UnitId,
-                request.ExpirationDate,
+                request.ExpirationDate.HasValue ? request.ExpirationDate.Value : null,
                 request.Notes);
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
@@ -46,7 +44,7 @@ internal sealed class CreateFoodItem : IEndpoint
         public string? Name { get; init; }
         public decimal Quantity { get; init; }
         public Guid? UnitId { get; init; }
-        public DateTime? ExpirationDate{ get; init; }
+        public DateOnly? ExpirationDate{ get; init; }
         public string? Notes { get; init; }
     }
 }

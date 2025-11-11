@@ -1,4 +1,4 @@
-﻿using JasperFx.Events.Daemon;
+﻿
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;

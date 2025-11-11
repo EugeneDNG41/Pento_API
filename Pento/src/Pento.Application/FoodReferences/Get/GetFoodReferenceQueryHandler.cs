@@ -22,8 +22,7 @@ internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConn
             SELECT
                 id AS Id,
                 name AS Name,
-                food_group AS FoodGroup,
-                data_type AS DataType,                         
+                food_group AS FoodGroup,                      
                 typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,
                 typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
                 typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer,

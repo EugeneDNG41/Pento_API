@@ -16,12 +16,10 @@ internal sealed class UpdateFoodReference : IEndpoint
                     Id: id,
                     Name: request.Name,
                     FoodGroup: request.FoodGroup,
-                    DataType: request.DataType,
                     FoodCategoryId: request.FoodCategoryId,
                     Brand: request.Brand,
                     Barcode: request.Barcode,
                     UsdaId: request.UsdaId,
-                    PublishedOnUtc: request.PublishedOnUtc,
                     TypicalShelfLifeDays_Pantry: request.TypicalShelfLifeDays_Pantry,
                     TypicalShelfLifeDays_Fridge: request.TypicalShelfLifeDays_Fridge,
                     TypicalShelfLifeDays_Freezer: request.TypicalShelfLifeDays_Freezer,
@@ -44,12 +42,10 @@ internal sealed class UpdateFoodReference : IEndpoint
     {
         public string Name { get; init; } = string.Empty;
         public string FoodGroup { get; init; } = string.Empty;
-        public string DataType { get; init; } = string.Empty;
         public int? FoodCategoryId { get; init; }
         public string? Brand { get; init; }
         public string? Barcode { get; init; }
         public string UsdaId { get; init; } = string.Empty;
-        public DateTime PublishedOnUtc { get; init; } = DateTime.UtcNow;
         public int? TypicalShelfLifeDays_Pantry { get; init; }
         public int? TypicalShelfLifeDays_Fridge { get; init; }
         public int? TypicalShelfLifeDays_Freezer { get; init; }

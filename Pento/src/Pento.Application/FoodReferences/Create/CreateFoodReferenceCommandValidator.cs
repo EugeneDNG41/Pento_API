@@ -13,8 +13,6 @@ internal sealed class CreateFoodReferenceCommandValidator : AbstractValidator<Cr
         RuleFor(c => c.Name)
             .NotEmpty()
             .MaximumLength(255);
-        RuleFor(c => c.DataType)
-             .IsInEnum();
 
         RuleFor(c => c.FoodGroup)
             .IsInEnum();

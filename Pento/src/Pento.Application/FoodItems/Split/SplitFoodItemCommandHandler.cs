@@ -1,8 +1,7 @@
-﻿using Marten;
-using Marten.Events;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Converter;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItems.Projections;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
@@ -11,13 +10,14 @@ using Pento.Domain.Units;
 namespace Pento.Application.FoodItems.Split;
 
 internal sealed class SplitFoodItemCommandHandler(
+    IConverterService converter,
     IUserContext userContext,
-    IDocumentSession session) : ICommandHandler<SplitFoodItemCommand, Guid>
+    IGenericRepository<FoodItem> foodItemRepository,
+    IUnitOfWork unitOfWork) : ICommandHandler<SplitFoodItemCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(SplitFoodItemCommand command, CancellationToken cancellationToken)
     {
-        IEventStream<FoodItem> stream = await session.Events.FetchForWriting<FoodItem>(command.Id, command.Version, cancellationToken);
-        FoodItem? foodItem = stream.Aggregate;
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
@@ -26,27 +26,40 @@ internal sealed class SplitFoodItemCommandHandler(
         {
             return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
         }
-        if (command.Quantity >= foodItem.Quantity)
+        decimal requestedQtyInItemUnit = command.Quantity;
+        if (foodItem.UnitId != command.UnitId)
+        {
+            Result<decimal> convertedResult = await converter.ConvertAsync(
+                command.Quantity,
+                fromUnitId: command.UnitId,
+                toUnitId: foodItem.UnitId,
+                cancellationToken);
+            if (convertedResult.IsFailure)
+            {
+                return Result.Failure<Guid>(convertedResult.Error);
+            }
+            requestedQtyInItemUnit = convertedResult.Value;
+        }
+        if (requestedQtyInItemUnit >= foodItem.Quantity)
         {
             return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
-        await session.Events.AppendOptimistic(command.Id, new FoodItemSplit(command.Quantity));
-
-        var added = new FoodItemAdded(
-            Guid.CreateVersion7(),
-            foodItem.FoodReferenceId,
-            foodItem.CompartmentId,
-            foodItem.HouseholdId,
-            foodItem.Name,
-            foodItem.ImageUrl,
-            command.Quantity,
-            foodItem.UnitId,
-            foodItem.ExpirationDateUtc,
-            foodItem.Notes,
-            foodItem.Id);
-        session.Events.StartStream<FoodItem>(added.Id, added);
-        session.LastModifiedBy = userContext.UserId.ToString();
-        await session.SaveChangesAsync(cancellationToken);
-        return added.Id;
+        var newFoodItem = FoodItem.Create(
+            foodReferenceId: foodItem.FoodReferenceId,
+            compartmentId: foodItem.CompartmentId,
+            householdId: foodItem.HouseholdId,
+            name: foodItem.Name,
+            imageUrl: foodItem.ImageUrl,
+            quantity: command.Quantity,
+            unitId: command.UnitId,
+            expirationDate: foodItem.ExpirationDate,
+            notes: foodItem.Notes,
+            addedBy: userContext.UserId);
+        foodItemRepository.Add(newFoodItem);
+        foodItem.AdjustQuantity(
+            foodItem.Quantity - requestedQtyInItemUnit,
+            userContext.UserId);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return newFoodItem.Id;
     }
 }

@@ -11,7 +11,7 @@ internal sealed class MergeFoodItemCommandValidator : AbstractValidator<MergeFoo
         RuleFor(x => x.TargetId)
             .NotEmpty().WithMessage("Target food item Id must not be empty.");
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+            .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
         RuleFor(x => x)
             .Must(x => x.SourceId != x.TargetId)
             .WithMessage("Source and target food item Ids must be different.");
