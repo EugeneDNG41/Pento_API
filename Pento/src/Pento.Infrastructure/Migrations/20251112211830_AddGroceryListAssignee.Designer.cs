@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251112211830_AddGroceryListAssignee")]
+    partial class AddGroceryListAssignee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -721,83 +724,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_grocery_list_assignees_grocery_list_id_household_member_id");
 
                     b.ToTable("grocery_list_assignees", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.GroceryListItems.GroceryListItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<Guid>("AddedBy")
-                        .HasColumnType("uuid")
-                        .HasColumnName("added_by");
-
-                    b.Property<DateTime>("CreatedOnUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_on_utc");
-
-                    b.Property<string>("CustomName")
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)")
-                        .HasColumnName("custom_name");
-
-                    b.Property<decimal?>("EstimatedPrice")
-                        .HasPrecision(12, 2)
-                        .HasColumnType("numeric(12,2)")
-                        .HasColumnName("estimated_price");
-
-                    b.Property<Guid>("FoodRefId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("food_ref_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<Guid>("ListId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("list_id");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)")
-                        .HasColumnName("notes");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("priority");
-
-                    b.Property<decimal>("Quantity")
-                        .HasPrecision(10, 2)
-                        .HasColumnType("numeric(10,2)")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid?>("UnitId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unit_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_grocery_list_items");
-
-                    b.HasIndex("AddedBy")
-                        .HasDatabaseName("ix_grocery_list_items_added_by");
-
-                    b.HasIndex("FoodRefId")
-                        .HasDatabaseName("ix_grocery_list_items_food_ref_id");
-
-                    b.HasIndex("UnitId")
-                        .HasDatabaseName("ix_grocery_list_items_unit_id");
-
-                    b.HasIndex("ListId", "FoodRefId")
-                        .HasDatabaseName("ix_grocery_list_items_list_id_food_ref_id");
-
-                    b.ToTable("grocery_list_items", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.GroceryLists.GroceryList", b =>
@@ -2492,36 +2418,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_grocery_list_assignees_user_household_member_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.GroceryListItems.GroceryListItem", b =>
-                {
-                    b.HasOne("Pento.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("AddedBy")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_grocery_list_items_user_added_by");
-
-                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
-                        .WithMany()
-                        .HasForeignKey("FoodRefId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_grocery_list_items_food_references_food_ref_id");
-
-                    b.HasOne("Pento.Domain.GroceryLists.GroceryList", null)
-                        .WithMany()
-                        .HasForeignKey("ListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_grocery_list_items_grocery_list_list_id");
-
-                    b.HasOne("Pento.Domain.Units.Unit", null)
-                        .WithMany()
-                        .HasForeignKey("UnitId")
-                        .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_grocery_list_items_units_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>
