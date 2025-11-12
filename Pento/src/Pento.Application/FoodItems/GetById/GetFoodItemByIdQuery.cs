@@ -29,19 +29,22 @@ public sealed record BasicUserResponse(
     string LastName,
     Uri? AvatarUrl
 );
-public sealed record FoodItemDetailRow(
-    Guid Id,
-    string FoodReferenceName,
-    string StorageName,
-    StorageType StorageType,
-    string CompartmentName,
-    string Name,
-    FoodGroup FoodGroup,
-    Uri? ImageUrl,
-    decimal Quantity,
-    string UnitAbbreviation,
-    DateOnly ExpirationDate,
-    string? Notes,
-    Guid AddedById,
-    Guid? LastModifiedById
-);
+public sealed record FoodItemDetailRow 
+{
+    public Guid Id { get; init; }
+    public string FoodReferenceName { get; init; }
+    public string StorageName { get; init; }
+    public StorageType StorageType { get; init; }
+    public string CompartmentName { get; init; }
+    public FoodGroup FoodGroup { get; init; }
+    public string Name { get; init; }
+    public Uri? ImageUrl { get; init; }
+    public decimal Quantity { get; init; }
+    public string UnitAbbreviation { get; init; }
+    public DateOnly ExpirationDate { get; init; }
+    public string? Notes { get; init; }
+    public Guid AddedById { get; init; }
+    public Guid? LastModifiedById { get; init; }
+
+}
+

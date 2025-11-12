@@ -30,9 +30,9 @@ internal sealed class GetCompartmentByIdQueryHandler(
         await using DbConnection connection = await connectionFactory.OpenConnectionAsync();
         var filters = new List<string>
         {
-            "is_deleted IS FALSE",
-            "is_archived IS FALSE",
-            "compartment_id = @CompartmentId"
+            "fi.is_deleted IS FALSE",
+            "fi.is_archived IS FALSE",
+            "fi.compartment_id = @CompartmentId"
 
         };
         var parameters = new DynamicParameters();
@@ -57,19 +57,19 @@ internal sealed class GetCompartmentByIdQueryHandler(
             WHERE id = @CompartmentId AND is_deleted = false AND is_archived = false;
 
             SELECT COUNT(*) 
-                FROM food_items
+                FROM food_items fi
                 {whereClause};
             SELECT
-                id AS {nameof(FoodItemPreviewRow.Id)},
-                name AS {nameof(FoodItemPreviewRow.Name)},
+                fi.id AS {nameof(FoodItemPreviewRow.Id)},
+                fi.name AS {nameof(FoodItemPreviewRow.Name)},
                 fr.food_group AS {nameof(FoodItemPreviewRow.FoodGroup)},
-                image_url AS {nameof(FoodItemPreviewRow.ImageUrl)},
-                quantity AS {nameof(FoodItemPreviewRow.Quantity)},
-                u.unit_abbreviation AS {nameof(FoodItemPreviewRow.UnitAbbreviation)},
+                fi.image_url AS {nameof(FoodItemPreviewRow.ImageUrl)},
+                fi.quantity AS {nameof(FoodItemPreviewRow.Quantity)},
+                u.abbreviation AS {nameof(FoodItemPreviewRow.UnitAbbreviation)},
                 expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)}
-            FROM food_items
-            LEFT JOIN food_references fr ON food_reference_id = fr.id
-            LEFT JOIN units u ON unit_id = u.id
+            FROM food_items fi
+            LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
+            LEFT JOIN units u ON fi.unit_id = u.id
             {whereClause}
             ORDER BY name
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;

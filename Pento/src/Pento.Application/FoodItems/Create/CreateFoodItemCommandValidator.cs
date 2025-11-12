@@ -15,7 +15,7 @@ internal sealed class CreateFoodItemCommandValidator : AbstractValidator<CreateF
             .WithMessage("Name must not exceed 200 characters.");
         RuleFor(x => x.FoodReferenceId).NotEmpty().WithMessage("Food reference Id must not be empty.");
         RuleFor(x => x.CompartmentId).NotEmpty().WithMessage("Compartment Id must not be empty.");
-        RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
+        RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x.ExpirationDate!.Value)
                 .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))           
                 .When(x => x.ExpirationDate.HasValue)
