@@ -1,0 +1,15 @@
+﻿namespace Pento.Application.GroceryListItems.Get;
+
+public sealed record GroceryListItemResponse(
+    Guid Id,
+    Guid ListId,
+    Guid FoodRefId,
+    string? CustomName,
+    decimal Quantity,
+    Guid? UnitId,
+    decimal? EstimatedPrice,
+    string? Notes,
+    string Priority,
+    Guid AddedBy,
+    DateTime CreatedOnUtc
+);

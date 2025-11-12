@@ -33,7 +33,21 @@ public sealed class GroceryListItem : Entity
         Notes = notes;
         Priority = priority;
     }
+    public void Update(
+    decimal quantity,
+    string? notes,
+    string? customName,
+    decimal? estimatedPrice,
+    GroceryItemPriority priority)
+    {
 
+        Quantity = quantity;
+        Notes = notes;
+        CustomName = customName;
+        EstimatedPrice = estimatedPrice;
+        Priority = priority;
+
+    }
     private GroceryListItem() { }
 
     public Guid ListId { get; private set; }
