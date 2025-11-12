@@ -22,4 +22,8 @@ public static class GroceryListErrors
         code: "GroceryList.Forbidden",
         description: "You do not have permission to modify this grocery list."
     );
+    public static readonly Error NotFoundByHousehold = Error.NotFound(
+        code: "GroceryList.NotFoundByHousehold",
+        description: "No grocery lists were found for this household."
+    );
 }

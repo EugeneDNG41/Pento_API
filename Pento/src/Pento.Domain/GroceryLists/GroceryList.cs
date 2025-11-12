@@ -31,4 +31,9 @@ public sealed class GroceryList : Entity
     public DateTime CreatedOnUtc { get; private set; }
     public DateTime UpdatedOnUtc { get; private set; }
 
+    public void UpdateName(string name, DateTime updatedOnUtc)
+    {
+        Name = name;
+        UpdatedOnUtc = updatedOnUtc;
+    }
 }
