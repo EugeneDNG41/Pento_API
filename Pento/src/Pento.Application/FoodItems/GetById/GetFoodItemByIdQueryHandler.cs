@@ -43,21 +43,22 @@ internal sealed class GetFoodItemByIdQueryHandler(
             SELECT
                 fi.id                    AS {nameof(FoodItemDetailRow.Id)},
                 fr.name                  AS {nameof(FoodItemDetailRow.FoodReferenceName)},
-                fr.food_group            AS {nameof(FoodItemDetailRow.FoodGroup)},
                 s.name                   AS {nameof(FoodItemDetailRow.StorageName)},
-                s.type                   AS {nameof(FoodItemDetailRow.StorageType)},
+                s.type                   AS {nameof(FoodItemDetailRow.StorageType)},              
                 c.name                   AS {nameof(FoodItemDetailRow.CompartmentName)},
+                fr.food_group            AS {nameof(FoodItemDetailRow.FoodGroup)},
                 fi.name                  AS {nameof(FoodItemDetailRow.Name)},
                 fi.image_url             AS {nameof(FoodItemDetailRow.ImageUrl)},
                 fi.quantity              AS {nameof(FoodItemDetailRow.Quantity)},
                 u.abbreviation           AS {nameof(FoodItemDetailRow.UnitAbbreviation)},
+                fi.expiration_date       AS {nameof(FoodItemDetailRow.ExpirationDate)},
                 fi.notes                 AS {nameof(FoodItemDetailRow.Notes)},
                 fi.added_by              AS {nameof(FoodItemDetailRow.AddedById)},
                 fi.last_modified_by      AS {nameof(FoodItemDetailRow.LastModifiedById)}
             FROM food_items fi
             LEFT JOIN food_references fr ON fr.id = fi.food_reference_id
-            LEFT JOIN storages s        ON s.id  = fi.storage_id
             LEFT JOIN compartments c    ON c.id  = fi.compartment_id
+            LEFT JOIN storages s        ON s.id  = c.storage_id            
             LEFT JOIN units u           ON u.id  = fi.unit_id
             {whereClause}
             LIMIT 1;
