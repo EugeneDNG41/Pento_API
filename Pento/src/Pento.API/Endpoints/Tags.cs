@@ -40,4 +40,6 @@ internal sealed class Tags
 
     internal const string PointBalances = "PointBalances";
     internal const string PointCategories = "PointCategories";
+
+    internal const string DietaryTags = "DietaryTags";
 }
