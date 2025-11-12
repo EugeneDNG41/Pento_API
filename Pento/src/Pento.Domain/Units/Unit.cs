@@ -60,6 +60,7 @@ public sealed class Unit : Entity
 
         Raise(new UnitUpdatedDomainEvent(Id, name));
     }
+
 }
 public enum UnitType
 {
