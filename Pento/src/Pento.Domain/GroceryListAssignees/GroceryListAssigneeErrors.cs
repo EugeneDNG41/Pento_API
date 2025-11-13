@@ -28,4 +28,8 @@ public static class GroceryListAssigneeErrors
         code: "GroceryListAssignee.NotFoundByList",
         description: $"No assignees were found for grocery list '{listId}'."
     );
+    public static Error NotFoundByMember => Error.NotFound(
+        code: "GroceryListAssignee.NotFoundByMember",
+        description: $"This user does not exist in the current household"
+    );
 }

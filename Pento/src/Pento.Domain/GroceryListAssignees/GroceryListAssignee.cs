@@ -22,5 +22,9 @@ public sealed class GroceryListAssignee : Entity
         HouseholdMemberId = householdMemberId;
         AssignedOnUtc = assignedOnUtc;
     }
+    public void UpdateCompletionStatus(bool isCompleted)
+    {
+        IsCompleted = isCompleted;
+    }
 
 }
