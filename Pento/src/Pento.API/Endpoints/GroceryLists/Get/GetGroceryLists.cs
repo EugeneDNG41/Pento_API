@@ -9,12 +9,11 @@ internal sealed class GetGroceryLists : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("grocery-lists", async (
-            Guid householdId,
+        app.MapGet("grocery-lists/current-house", async (
             IQueryHandler<GetGroceryListsByHouseholdIdQuery, IReadOnlyList<GroceryListResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetGroceryListsByHouseholdIdQuery(householdId);
+            var query = new GetGroceryListsByHouseholdIdQuery();
 
             Result<IReadOnlyList<GroceryListResponse>> result = await handler.Handle(query, cancellationToken);
 

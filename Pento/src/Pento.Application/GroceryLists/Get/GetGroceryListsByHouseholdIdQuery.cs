@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.GroceryLists.Get;
-public sealed record GetGroceryListsByHouseholdIdQuery(Guid HouseholdId)
+public sealed record GetGroceryListsByHouseholdIdQuery()
     : IQuery<IReadOnlyList<GroceryListResponse>>;
