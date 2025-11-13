@@ -678,6 +678,170 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("giveaway_posts", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.GroceryListAssignees.GroceryListAssignee", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("AssignedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("assigned_on_utc");
+
+                    b.Property<Guid>("GroceryListId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("grocery_list_id");
+
+                    b.Property<Guid>("HouseholdMemberId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_member_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsCompleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_completed");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.HasKey("Id")
+                        .HasName("pk_grocery_list_assignees");
+
+                    b.HasIndex("HouseholdMemberId")
+                        .HasDatabaseName("ix_grocery_list_assignees_household_member_id");
+
+                    b.HasIndex("GroceryListId", "HouseholdMemberId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_grocery_list_assignees_grocery_list_id_household_member_id");
+
+                    b.ToTable("grocery_list_assignees", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.GroceryListItems.GroceryListItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AddedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("added_by");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<string>("CustomName")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("custom_name");
+
+                    b.Property<decimal?>("EstimatedPrice")
+                        .HasPrecision(12, 2)
+                        .HasColumnType("numeric(12,2)")
+                        .HasColumnName("estimated_price");
+
+                    b.Property<Guid>("FoodRefId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_ref_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("ListId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("list_id");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("priority");
+
+                    b.Property<decimal>("Quantity")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_grocery_list_items");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_grocery_list_items_added_by");
+
+                    b.HasIndex("FoodRefId")
+                        .HasDatabaseName("ix_grocery_list_items_food_ref_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_grocery_list_items_unit_id");
+
+                    b.HasIndex("ListId", "FoodRefId")
+                        .HasDatabaseName("ix_grocery_list_items_list_id_food_ref_id");
+
+                    b.ToTable("grocery_list_items", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.GroceryLists.GroceryList", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTime>("CreatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on_utc");
+
+                    b.Property<Guid>("HouseholdId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("household_id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime>("UpdatedOnUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_on_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_grocery_list");
+
+                    b.ToTable("grocery_list", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.Households.Household", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2311,6 +2475,53 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_giveaway_posts_user_user_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.GroceryListAssignees.GroceryListAssignee", b =>
+                {
+                    b.HasOne("Pento.Domain.GroceryLists.GroceryList", null)
+                        .WithMany()
+                        .HasForeignKey("GroceryListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_grocery_list_assignees_grocery_list_grocery_list_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdMemberId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_grocery_list_assignees_user_household_member_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.GroceryListItems.GroceryListItem", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_grocery_list_items_user_added_by");
+
+                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
+                        .WithMany()
+                        .HasForeignKey("FoodRefId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_grocery_list_items_food_references_food_ref_id");
+
+                    b.HasOne("Pento.Domain.GroceryLists.GroceryList", null)
+                        .WithMany()
+                        .HasForeignKey("ListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_grocery_list_items_grocery_list_list_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_grocery_list_items_units_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>

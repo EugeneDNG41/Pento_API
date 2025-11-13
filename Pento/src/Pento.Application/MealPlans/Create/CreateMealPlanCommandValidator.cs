@@ -22,6 +22,11 @@ public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMea
         RuleFor(x => x)
     .Must(x => x.RecipeId is not null || x.FoodItemId is not null)
     .WithMessage("You must specify either a recipe or a food item.");
+        RuleFor(x => x)
+    .Must(x => !(x.RecipeId is not null && x.FoodItemId is not null))
+    .WithMessage("Meal plan can only reference either a recipe or a food item, not both.");
+
     }
+
 }
 
