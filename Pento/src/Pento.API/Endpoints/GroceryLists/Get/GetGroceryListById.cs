@@ -11,11 +11,11 @@ internal sealed class GetGroceryListById : IEndpoint
     {
         app.MapGet("grocery-lists/{id:guid}", async (
             Guid id,
-            IQueryHandler<GetGroceryListQuery, GroceryListResponse> handler,
+            IQueryHandler<GetGroceryListQuery, GroceryListDetailResponse> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetGroceryListQuery(id);
-            Result<GroceryListResponse> result = await handler.Handle(query, cancellationToken);
+            Result<GroceryListDetailResponse> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(
                 Results.Ok,
