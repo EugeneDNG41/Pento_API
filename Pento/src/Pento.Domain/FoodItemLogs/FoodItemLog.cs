@@ -57,12 +57,3 @@ public sealed class FoodItemLog : Entity
             unitType);
     }
 }
-
-public enum FoodItemLogAction
-{
-    Intake,
-    Consumption,
-    Reservation,
-    Donation,
-    Discard
-}

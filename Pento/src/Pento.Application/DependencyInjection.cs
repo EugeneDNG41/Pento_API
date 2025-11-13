@@ -26,6 +26,10 @@ public static class DependencyInjection
                 .WithScopedLifetime()
             .AddClasses(classes => classes.AssignableTo(typeof(ICommandHandler<,>)), publicOnly: false)
                 .AsImplementedInterfaces()
+                .WithScopedLifetime()
+            .AddClasses(classes => classes.AssignableTo(typeof(IDomainEventHandler<>)), publicOnly: false)
+                .AsSelf()
+                .AsImplementedInterfaces()
                 .WithScopedLifetime());
 
         services.Decorate(typeof(ICommandHandler<,>), typeof(ValidationDecorator.CommandHandler<,>));

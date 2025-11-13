@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Reflection.Metadata;
 using Dapper;
+using Google.Protobuf;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -53,18 +54,26 @@ internal sealed class ProcessOutboxMessagesJob : IJob
         foreach (OutboxMessageResponse outboxMessage in outboxMessages)
         {
             Exception? exception = null;
+            var eventType = Type.GetType(outboxMessage.Type);
 
+            if (eventType is null)
+            {
+                // log & skip or throw
+                _logger.LogError("Could not resolve type {Type} from Outbox Message {Id}", outboxMessage.Type, outboxMessage.Id);
+                continue;
+            }
             try
             {
-                IDomainEvent domainEvent = JsonConvert.DeserializeObject<IDomainEvent>(
+                var domainEvent = (IDomainEvent)JsonConvert.DeserializeObject(
                     outboxMessage.Content,
+                    type: eventType,
                     JsonSerializerSettings)!;
                 using IServiceScope scope = _serviceScopeFactory.CreateScope();
 
                 IEnumerable<IDomainEventHandler> handlers = DomainEventHandlersFactory.GetHandlers(
                     domainEvent.GetType(),
                     scope.ServiceProvider,
-                    typeof(AssemblyReference).Assembly);
+                    typeof(IDomainEventHandler).Assembly);
 
                 foreach (IDomainEventHandler domainEventHandler in handlers)
                 {
@@ -94,7 +103,7 @@ internal sealed class ProcessOutboxMessagesJob : IJob
         IDbTransaction transaction)
     {
         string sql = $"""
-                      SELECT id, content
+                      SELECT id, content, type
                       FROM outbox_messages
                       WHERE processed_on_utc IS NULL
                       ORDER BY occurred_on_utc
@@ -132,5 +141,5 @@ internal sealed class ProcessOutboxMessagesJob : IJob
             transaction: transaction);
     }
 
-    internal sealed record OutboxMessageResponse(Guid Id, string Content);
+    internal sealed record OutboxMessageResponse(Guid Id, string Content, string Type);
 }

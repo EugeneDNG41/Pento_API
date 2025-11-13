@@ -1,49 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.GroceryLists;
-using Pento.Domain.MealPlans;
-using Pento.Domain.Storages;
 using Pento.Domain.Units;
 using Pento.Infrastructure.Outbox;
 
 namespace Pento.Infrastructure;
 
-public sealed class ApplicationDbContext : DbContext, IUnitOfWork
+public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(options), IUnitOfWork
 {
-    private readonly IDateTimeProvider _dateTimeProvider;
-
-    public ApplicationDbContext(DbContextOptions options, IDateTimeProvider dateTimeProvider) : base(options)
-    {
-        _dateTimeProvider = dateTimeProvider;
-    }
-    private void TryEnsureDatabaseCreated()
-    {
-        try
-        {
-            if (Database.GetService<IDatabaseCreator>() is RelationalDatabaseCreator databaseCreator)
-            {
-                if (!databaseCreator.CanConnect())
-                {
-                    databaseCreator.Create();
-                }
-                if (!databaseCreator.HasTables())
-                {
-                    databaseCreator.CreateTables();
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Database creation failed: {ex.Message}");
-        }
-    }
     private static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {
         TypeNameHandling = TypeNameHandling.All,
@@ -78,21 +46,22 @@ public sealed class ApplicationDbContext : DbContext, IUnitOfWork
 
     private void AddDomainEventsAsOutboxMessages()
     {
-        var outboxMessages = ChangeTracker
+        var domainEvents = ChangeTracker
             .Entries<Entity>()
             .Select(entry => entry.Entity)
             .SelectMany(entity =>
             {
-                IReadOnlyList<IDomainEvent> domainEvents = entity.GetDomainEvents();
+                IReadOnlyList<IDomainEvent> events = entity.GetDomainEvents();
 
                 entity.ClearDomainEvents();
 
-                return domainEvents;
-            })
-            .Select(domainEvent => new OutboxMessage(
+                return events;
+
+            }).ToList();
+        var outboxMessages = domainEvents.Select(domainEvent => new OutboxMessage(
                 Guid.NewGuid(),
-                _dateTimeProvider.UtcNow,
-                domainEvent.GetType().Name,
+                domainEvent.Timestamp,
+                domainEvent.GetType().AssemblyQualifiedName!,
                 JsonConvert.SerializeObject(domainEvent, JsonSerializerSettings)))
             .ToList();
 

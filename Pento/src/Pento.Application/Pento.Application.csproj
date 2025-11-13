@@ -22,9 +22,9 @@
   </ItemGroup>
 	
   <ItemGroup>
+    <Folder Include="FoodItemLogs\Search\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
-    <Folder Include="FoodItemLogs\" />
     <Folder Include="Subscriptions\" />
   </ItemGroup>
 

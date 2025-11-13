@@ -1,5 +1,6 @@
 ﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.Users;
 
 namespace Pento.Domain.FoodItems;
 public sealed class FoodItem : Entity
@@ -70,22 +71,24 @@ public sealed class FoodItem : Entity
         return foodItem;
     }
 
-    public void AdjustQuantity(decimal newQuantity, Guid UserId)
+    public void AdjustQuantity(decimal newQuantity, Guid userId)
     {
+        Raise(new FoodItemQuantityAdjustedDomainEvent(Id, newQuantity - Quantity, UnitId, userId));
         Quantity = newQuantity;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
+        
     }
-    public void Consume(decimal quantity, Guid UserId)
+    public void Consume(decimal quantity, Guid userId)
     {
         Quantity -= quantity;
-        LastModifiedBy = UserId;
-        Raise(new FoodItemConsumedDomainEvent(Id, quantity, UnitId, UserId));
+        LastModifiedBy = userId;
+        Raise(new FoodItemConsumedDomainEvent(Id, quantity, UnitId, userId));
     }
-    public void Discard(decimal quantity, Guid UserId)
+    public void Discard(decimal quantity, Guid userId)
     {
         Quantity -= quantity;
-        LastModifiedBy = UserId;
-        Raise(new FoodItemDiscardedDomainEvent(Id, quantity, UnitId, UserId));
+        LastModifiedBy = userId;
+        Raise(new FoodItemDiscardedDomainEvent(Id, quantity, UnitId, userId));
     }
     public void Reserve(decimal quantity)
     {
@@ -97,36 +100,36 @@ public sealed class FoodItem : Entity
         Quantity += quantity;
         Raise(new FoodItemReservationCancelledDomainEvent(reservationId));
     }
-    public void ChangeUnit(Guid newUnitId, decimal convertedQuantity, Guid UserId)
+    public void ChangeUnit(Guid newUnitId, decimal convertedQuantity, Guid userId)
     {
         UnitId = newUnitId;
         Quantity = convertedQuantity;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
-    public void AdjustExpirationDate(DateOnly newExpirationDate, Guid UserId)
+    public void AdjustExpirationDate(DateOnly newExpirationDate, Guid userId)
     {
         ExpirationDate = newExpirationDate;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
-    public void UpdateNotes(string? newNotes, Guid UserId)
+    public void UpdateNotes(string? newNotes, Guid userId)
     {
         Notes = newNotes;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
-    public void UpdateImageUrl(Uri? newImageUrl, Guid UserId)
+    public void UpdateImageUrl(Uri? newImageUrl, Guid userId)
     {
         ImageUrl = newImageUrl;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
-    public void Rename(string newName, Guid UserId)
+    public void Rename(string newName, Guid userId)
     {
         Name = newName;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
-    public void MoveToCompartment(Guid newCompartmentId, Guid UserId)
+    public void MoveToCompartment(Guid newCompartmentId, Guid userId)
     {
         CompartmentId = newCompartmentId;
-        LastModifiedBy = UserId;
+        LastModifiedBy = userId;
     }
 
 }
