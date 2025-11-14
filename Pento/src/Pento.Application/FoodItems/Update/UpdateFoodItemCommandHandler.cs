@@ -61,39 +61,34 @@ internal sealed class UpdateFoodItemCommandHandler(
             else if (newCompartment.HouseholdId != householdId || oldCompartment.HouseholdId != householdId)
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
-            } 
-            else if (oldCompartment.Id == newCompartment.Id)
-            {
-                foodItem.MoveToCompartment(newCompartment.Id, userContext.UserId);
             }
-            else
+
+            Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment.StorageId, cancellationToken);
+            Storage? newStorage = await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
+            if (newStorage is null || oldStorage is null)
             {
-                Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment.StorageId, cancellationToken);
-                Storage? newStorage = await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
-                if (newStorage is null || oldStorage is null)
-                {
-                    return Result.Failure(StorageErrors.NotFound);
-                }
-                else if (newStorage.HouseholdId != householdId || oldStorage.HouseholdId != householdId)
-                {
-                    return Result.Failure(StorageErrors.ForbiddenAccess);
-                } 
-                else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDate == command.ExpirationDate)
-                {
-                    FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
-                    if (foodReference is null)
-                    {
-                        return Result.Failure(FoodReferenceErrors.NotFound);
-                    }
-                    DateOnly newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
-                            oldType: oldStorage.Type,
-                            newType: newStorage.Type,
-                            foodRef: foodReference,
-                            currentExpiry: foodItem.ExpirationDate
-                        );
-                    foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
-                }
+                return Result.Failure(StorageErrors.NotFound);
             }
+            else if (newStorage.HouseholdId != householdId || oldStorage.HouseholdId != householdId)
+            {
+                return Result.Failure(StorageErrors.ForbiddenAccess);
+            }
+            else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDate == command.ExpirationDate)
+            {
+                FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                if (foodReference is null)
+                {
+                    return Result.Failure(FoodReferenceErrors.NotFound);
+                }
+                DateOnly newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                        oldType: oldStorage.Type,
+                        newType: newStorage.Type,
+                        foodRef: foodReference,
+                        currentExpiry: foodItem.ExpirationDate
+                    );
+                foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
+            }
+            foodItem.MoveToCompartment(command.CompartmentId.Value, userContext.UserId);
         }
         //Rename
         if (!string.IsNullOrEmpty(command.Name) && foodItem.Name != command.Name)
