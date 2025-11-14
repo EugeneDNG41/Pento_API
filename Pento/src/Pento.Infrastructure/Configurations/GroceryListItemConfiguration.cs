@@ -6,7 +6,7 @@ using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 
-namespace Pento.Infrastructure.Configurations.GroceryListItems;
+namespace Pento.Infrastructure.Configurations;
 
 internal sealed class GroceryListItemConfiguration : IEntityTypeConfiguration<GroceryListItem>
 {

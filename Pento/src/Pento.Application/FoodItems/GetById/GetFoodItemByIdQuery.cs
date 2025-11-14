@@ -3,6 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Get;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
+using Pento.Domain.Units;
 
 namespace Pento.Application.FoodItems.GetById;
 
@@ -18,6 +19,7 @@ public sealed record FoodItemDetail(
     Uri? ImageUrl,
     decimal Quantity,
     string UnitAbbreviation,
+    string UnitType,
     DateOnly ExpirationDate,
     string? Notes,
     BasicUserResponse AddedBy,
@@ -41,6 +43,7 @@ public sealed record FoodItemDetailRow
     public Uri? ImageUrl { get; init; }
     public decimal Quantity { get; init; }
     public string UnitAbbreviation { get; init; }
+    public string UnitType { get; init; }
     public DateOnly ExpirationDate { get; init; }
     public string? Notes { get; init; }
     public Guid AddedById { get; init; }

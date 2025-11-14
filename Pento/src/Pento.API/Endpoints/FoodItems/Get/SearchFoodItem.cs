@@ -34,8 +34,7 @@ internal sealed class SearchFoodItemGet : IEndpoint
                     expirationDateBefore,
                     pageNumber,
                     pageSize), cancellationToken);
-            return result
-            .Match(compartment => Results.Ok(compartment), CustomResults.Problem);
+            return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)
         .RequireAuthorization();

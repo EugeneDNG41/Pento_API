@@ -1,5 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using Dapper;
+using GenerativeAI;
+using GenerativeAI.Types;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,7 +22,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
-using Pento.Common.Infrastructure.Clock;
+using Pento.Application.Abstractions.OpenFoodFacts;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
 using Pento.Domain.Comments;
@@ -38,12 +40,14 @@ using Pento.Infrastructure.AI;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Caching;
+using Pento.Infrastructure.Clock;
 using Pento.Infrastructure.Configurations;
 using Pento.Infrastructure.Converter;
 using Pento.Infrastructure.Data;
 using Pento.Infrastructure.Email;
 using Pento.Infrastructure.File;
 using Pento.Infrastructure.Identity;
+using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Quartz;
@@ -68,6 +72,19 @@ public static class DependencyInjection
 
         AddBackgroundJobs(services, configuration);
 
+        services.AddHttpClient<IOpenFoodFactsService, OpenFoodFactsService>((httpClient) =>
+        {
+            httpClient.BaseAddress = new Uri("https://world.openfoodfacts.org/api/v0");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Pento - Mobile - Version 1.0");
+            httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        });
+        services.AddScoped<OffApiClient>();
+        services.AddSingleton(sp =>
+        {
+            var googleAI = new GoogleAi("placeholder");
+            
+            return googleAI.CreateGeminiModel("gemini-2.0-flash");
+        });
         return services;
     }
 
@@ -79,7 +96,6 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
         });
         
-
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(connectionString).Build();

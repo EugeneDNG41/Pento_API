@@ -4,7 +4,7 @@ using Pento.Domain.GroceryListAssignees;
 using Pento.Domain.GroceryLists;
 using Pento.Domain.Users;
 
-namespace Pento.Infrastructure.Configurations.GroceryListAssignees;
+namespace Pento.Infrastructure.Configurations;
 
 internal sealed class GroceryListAssigneeConfiguration : IEntityTypeConfiguration<GroceryListAssignee>
 {

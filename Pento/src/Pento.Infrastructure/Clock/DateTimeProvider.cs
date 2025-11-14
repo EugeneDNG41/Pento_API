@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Clock;
 
-namespace Pento.Common.Infrastructure.Clock;
+namespace Pento.Infrastructure.Clock;
 
 internal sealed class DateTimeProvider : IDateTimeProvider
 {
