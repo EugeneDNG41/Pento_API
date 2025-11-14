@@ -6,7 +6,7 @@ using Pento.Domain.Units;
 using Pento.Domain.Users;
 using Pento.Infrastructure.Authentication;
 
-namespace Pento.API.Endpoints.Units;
+namespace Pento.API.Endpoints.Units.Post;
 
 internal sealed class CreateUnit : IEndpoint
 {
