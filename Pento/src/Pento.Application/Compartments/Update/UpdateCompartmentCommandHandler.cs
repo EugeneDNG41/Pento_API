@@ -30,15 +30,10 @@ internal sealed class UpdateCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.DuplicateName);
         }
-        if (compartment.Notes != command.Notes)
-        {
-            compartment.UpdateNotes(command.Notes);
-        }
-        if (compartment.Name != command.Name || compartment.Notes != command.Notes)
-        {
-            compartmentRepository.Update(compartment);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }      
+        compartment.UpdateName(command.Name);
+        compartment.UpdateNotes(command.Notes);
+        compartmentRepository.Update(compartment);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

@@ -9,9 +9,12 @@ internal sealed class UpdateCompartmentCommandValidator : AbstractValidator<Upda
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(100);
-        
+            .WithMessage("Compartment name must not be empty.")
+            .MaximumLength(100)
+            .WithMessage("Compartment name must not exceed 100 characters.");
+
         RuleFor(x => x.Notes)
-            .MaximumLength(500);
+            .MaximumLength(500)
+            .WithMessage("Notes must not exceed 500 characters.");
     }
 }

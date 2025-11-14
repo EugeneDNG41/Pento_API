@@ -34,10 +34,8 @@ internal sealed class UpdateStorageCommandHandler(
         {
             return Result.Failure(StorageErrors.DuplicateName);
         }
-        if (storage.Notes != command.Notes)
-        {
-            storage.UpdateNotes(command.Notes);
-        }
+        storage.UpdateName(command.Name);
+        storage.UpdateNotes(command.Notes);
         repository.Update(storage);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

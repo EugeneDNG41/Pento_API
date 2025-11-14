@@ -8,8 +8,11 @@ internal sealed class UpdateStorageCommandValidator : AbstractValidator<UpdateSt
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .MaximumLength(100);
+            .WithMessage("Storage name must not be empty.")
+            .MaximumLength(100)
+            .WithMessage("Storage name must not exceed 100 characters.");
         RuleFor(x => x.Notes)
-            .MaximumLength(500);
+            .MaximumLength(500)
+            .WithMessage("Notes must not exceed 500 characters.");
     }
 }
