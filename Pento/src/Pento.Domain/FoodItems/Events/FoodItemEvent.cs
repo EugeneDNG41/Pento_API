@@ -29,11 +29,12 @@ public class FoodItemQuantityAdjustedDomainEvent(Guid foodItemId, decimal quanti
 }
 public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity);
 // Reservations
-public class FoodItemReservedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId) : DomainEvent
+public class FoodItemReservedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
 {
     public Guid FoodItemId { get; } = foodItemId;
     public decimal Quantity { get; } = Quantity;
     public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
 }
 public class FoodItemReservationCancelledDomainEvent(Guid reservationId) : DomainEvent
 {

@@ -1,5 +1,6 @@
 ﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.Units;
 using Pento.Domain.Users;
 
 namespace Pento.Domain.FoodItems;
@@ -78,22 +79,23 @@ public sealed class FoodItem : Entity
         LastModifiedBy = userId;
         
     }
-    public void Consume(decimal quantity, Guid userId)
+    public void Consume(decimal qtyInItemUnit, decimal qtyInRequestUnit, Guid unitId, Guid userId)
     {
-        Quantity -= quantity;
+        Quantity -= qtyInItemUnit;
         LastModifiedBy = userId;
-        Raise(new FoodItemConsumedDomainEvent(Id, quantity, UnitId, userId));
+        Raise(new FoodItemConsumedDomainEvent(Id, qtyInRequestUnit, unitId, userId));
     }
-    public void Discard(decimal quantity, Guid userId)
+    public void Discard(decimal qtyInItemUnit, decimal qtyInRequestUnit, Guid unitId, Guid userId)
     {
-        Quantity -= quantity;
+        Quantity -= qtyInItemUnit;
         LastModifiedBy = userId;
-        Raise(new FoodItemDiscardedDomainEvent(Id, quantity, UnitId, userId));
+        Raise(new FoodItemDiscardedDomainEvent(Id, qtyInRequestUnit, unitId, userId));
     }
-    public void Reserve(decimal quantity)
+    public void Reserve(decimal qtyInItemUnit, decimal qtyInRequestUnit, Guid unitId, Guid userId)
     {
-        Quantity -= quantity;
-        Raise(new FoodItemReservedDomainEvent(Id, quantity, UnitId));
+        Quantity -= qtyInItemUnit;
+        LastModifiedBy = userId;
+        Raise(new FoodItemReservedDomainEvent(Id, qtyInRequestUnit, unitId, userId));
     }
     public void CancelReservation(decimal quantity, Guid reservationId)
     {

@@ -7,21 +7,21 @@ internal sealed class UpdateFoodItemCommandValidator : AbstractValidator<UpdateF
     public UpdateFoodItemCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Food item Id must not be empty.");
-        RuleFor(x => x.CompartmentId)
-            .NotEmpty().WithMessage("Compartment Id must not be empty.");
-        RuleFor(x => x.UnitId)
-            .NotEmpty().WithMessage("Measurement unit Id must not be empty.");
+            .NotEmpty().WithMessage("Food item Id must not be empty.")
+            .When(x => x != null);
         RuleFor(x => x.Name)
-            .NotNull().WithMessage("Name must not be null.")
-            .MaximumLength(200).WithMessage("Name must not exceed 200 characters.");
+            .MaximumLength(200).WithMessage("Name must not exceed 200 characters.")
+            .When(x => !string.IsNullOrEmpty(x.Name));
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
+            .GreaterThan(0).WithMessage("Quantity must be greater than zero.")
+            .When(x => x != null);
         RuleFor(x => x.ExpirationDate)
             .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
-            .WithMessage("Expiration date must not be in the past.");
+            .WithMessage("Expiration date must not be in the past.")
+            .When(x => x != null);
         RuleFor(x => x.Notes)
-            .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.");
+            .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.")
+            .When(x => x != null);
     }
 }
 

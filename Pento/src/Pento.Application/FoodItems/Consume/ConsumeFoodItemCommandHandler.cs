@@ -4,7 +4,6 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodItems.Events;
 
 namespace Pento.Application.FoodItems.Consume;
 
@@ -25,6 +24,7 @@ internal sealed class ConsumeFoodItemCommandHandler(
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }
+        decimal requestedQtyInItemUnit = command.Quantity;
         if (foodItem.UnitId != command.UnitId)
         {
             Result<decimal> convertedResult = await converter.ConvertAsync(
@@ -34,20 +34,17 @@ internal sealed class ConsumeFoodItemCommandHandler(
                 cancellationToken);
             if (convertedResult.IsFailure)
             {
-                return Result.Failure(convertedResult.Error);
+                return Result.Failure<Guid>(convertedResult.Error);
             }
-            command = command with { Quantity = convertedResult.Value, UnitId = foodItem.UnitId };
+            requestedQtyInItemUnit = convertedResult.Value;
         }
-        if (foodItem.Quantity < command.Quantity)
+        if (requestedQtyInItemUnit > foodItem.Quantity)
         {
-            return Result.Failure(FoodItemErrors.InsufficientQuantity);
+            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
-        else if (foodItem.Quantity > command.Quantity)
-        {
-            foodItem.Consume(command.Quantity, userContext.UserId);
-            foodItemRepository.Update(foodItem);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        foodItem.Consume(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
+        foodItemRepository.Update(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

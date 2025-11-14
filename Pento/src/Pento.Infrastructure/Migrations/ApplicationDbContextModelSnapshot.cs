@@ -263,19 +263,11 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<int>("Action")
-                        .HasColumnType("integer")
-                        .HasColumnName("action");
-
-                    b.Property<decimal>("BaseQuantity")
-                        .HasColumnType("decimal(10,3)")
-                        .HasColumnName("base_quantity");
-
-                    b.Property<string>("BaseUnitType")
+                    b.Property<string>("Action")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
-                        .HasColumnName("base_unit_type");
+                        .HasColumnName("action");
 
                     b.Property<Guid>("FoodItemId")
                         .HasColumnType("uuid")
@@ -293,9 +285,17 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(10,3)")
+                        .HasColumnName("quantity");
+
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("timestamp");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
@@ -309,6 +309,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasIndex("HouseholdId")
                         .HasDatabaseName("ix_food_item_logs_household_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_food_item_logs_unit_id");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_food_item_logs_user_id");
@@ -2410,6 +2413,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_food_item_logs_household_household_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_logs_units_unit_id");
 
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()

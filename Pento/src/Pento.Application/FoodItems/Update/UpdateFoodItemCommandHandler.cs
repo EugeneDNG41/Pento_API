@@ -40,20 +40,20 @@ internal sealed class UpdateFoodItemCommandHandler(
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }      
         //Change measurement unit
-        if (foodItem.UnitId != command.UnitId)
+        if (command.UnitId != null && foodItem.UnitId != command.UnitId)
         {
-            Result<decimal> convertedResult = await converter.ConvertAsync(foodItem.Quantity, foodItem.UnitId, command.UnitId, cancellationToken);
+            Result<decimal> convertedResult = await converter.ConvertAsync(foodItem.Quantity, foodItem.UnitId, command.UnitId.Value, cancellationToken);
             if (convertedResult.IsFailure)
             {
                 return Result.Failure(convertedResult.Error);
             }
-            foodItem.ChangeUnit(command.UnitId, convertedResult.Value, userContext.UserId);
+            foodItem.ChangeUnit(command.UnitId.Value, convertedResult.Value, userContext.UserId);
         }
         //Move compartment
-        if (foodItem.CompartmentId != command.CompartmentId)
+        if (command.CompartmentId != null && foodItem.CompartmentId != command.CompartmentId)
         {
             Compartment? oldCompartment = await compartmentRepository.GetByIdAsync(foodItem.CompartmentId, cancellationToken);
-            Compartment? newCompartment = await compartmentRepository.GetByIdAsync(command.CompartmentId, cancellationToken);
+            Compartment? newCompartment = await compartmentRepository.GetByIdAsync(command.CompartmentId.Value, cancellationToken);
             if (newCompartment is null || oldCompartment is null)
             {
                 return Result.Failure(CompartmentErrors.NotFound);
@@ -96,31 +96,19 @@ internal sealed class UpdateFoodItemCommandHandler(
             }
         }
         //Rename
-        if (foodItem.Name != command.Name)
+        if (!string.IsNullOrEmpty(command.Name) && foodItem.Name != command.Name)
         {
-            if (string.IsNullOrEmpty(command.Name))
-            {
-                FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
-                if (foodReference is null)
-                {
-                    return Result.Failure(FoodReferenceErrors.NotFound);
-                }
-                foodItem.Rename(foodReference.Name, userContext.UserId);
-            }
-            else
-            {
-                foodItem.Rename(command.Name, userContext.UserId);
-            }
+            foodItem.Rename(command.Name, userContext.UserId);
         }
         //Change quantity (override converted quantity)
-        if (foodItem.Quantity != command.Quantity)
+        if (command.Quantity != null && foodItem.Quantity != command.Quantity)
         {
-            foodItem.AdjustQuantity(command.Quantity, userContext.UserId);
+            foodItem.AdjustQuantity(command.Quantity.Value, userContext.UserId);
         }
         //Change expiration date (override newStorage type change)
-        if (foodItem.ExpirationDate != command.ExpirationDate)
+        if (command.ExpirationDate != null && foodItem.ExpirationDate != command.ExpirationDate)
         {
-            foodItem.AdjustExpirationDate(command.ExpirationDate, userContext.UserId);
+            foodItem.AdjustExpirationDate(command.ExpirationDate.Value, userContext.UserId);
         }
         //Change notes
         if (foodItem.Notes != command.Notes)

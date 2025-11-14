@@ -79,12 +79,12 @@ internal sealed class GetFoodItemByIdQueryHandler(
 
         const string userSql = """
             SELECT 
-                id, first_name AS FirstName, last_name AS LastName, avatar_url AS AvatarUrl
+                id AS UserId, first_name AS FirstName, last_name AS LastName, avatar_url AS AvatarUrl
             FROM users
             WHERE id = @AddedById;
 
             SELECT 
-                id, first_name AS FirstName, last_name AS LastName, avatar_url AS AvatarUrl
+                id AS UserId, first_name AS FirstName, last_name AS LastName, avatar_url AS AvatarUrl
             FROM users
             WHERE id = @LastModifiedById;
             """;

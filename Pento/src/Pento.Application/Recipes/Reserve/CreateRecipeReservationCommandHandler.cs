@@ -68,7 +68,7 @@ internal sealed class CreateRecipeReservationCommandHandler(
             unitId: command.UnitId,
             recipeId: command.RecipeId
             );
-
+        foodItem.Reserve(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
         foodItemReservationRepository.Add( reservation );
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return reservation.Id;

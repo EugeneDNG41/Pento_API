@@ -32,11 +32,11 @@ internal sealed class UpdateFoodItem : IEndpoint
     }
     internal sealed class Request
     {
-        public Guid CompartmentId { get; init; }
-        public Guid UnitId { get; init; }
+        public Guid? CompartmentId { get; init; }
+        public Guid? UnitId { get; init; }
         public string? Name { get; init; }
-        public decimal Quantity { get; init; }
-        public DateOnly ExpirationDate { get; init; }
+        public decimal? Quantity { get; init; }
+        public DateOnly? ExpirationDate { get; init; }
         public string? Notes { get; init; }
     }
 }

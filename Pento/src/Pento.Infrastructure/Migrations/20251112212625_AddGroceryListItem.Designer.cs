@@ -270,7 +270,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("action");
 
-                    b.Property<decimal>("BaseQuantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(10,3)")
                         .HasColumnName("base_quantity");
 

@@ -24,7 +24,7 @@ public sealed record FoodItemDetail(
     BasicUserResponse? LastModifiedBy
 );
 public sealed record BasicUserResponse(
-    Guid Id,
+    Guid UserId,
     string FirstName,
     string LastName,
     Uri? AvatarUrl

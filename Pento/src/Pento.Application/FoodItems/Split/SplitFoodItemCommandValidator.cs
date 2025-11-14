@@ -9,6 +9,6 @@ internal sealed class SplitFoodItemCommandValidator : AbstractValidator<SplitFoo
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Food item Id must not be empty.");
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
+            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
     }
 }

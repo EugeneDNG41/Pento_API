@@ -8,6 +8,8 @@ namespace Pento.API.Endpoints;
 
 internal sealed class Tags
 {
+    internal const string Utility = "Utility";
+
     internal const string Users = "Users"; //users/{guid}/subscriptions
     internal const string Households = "Households"; //households/{guid}/subscriptions
 
@@ -25,6 +27,7 @@ internal sealed class Tags
     internal const string Storages = "Storages";
     internal const string Compartments = "Compartments";
     internal const string FoodItems = "FoodItems";
+    internal const string FoodItemLogs = "FoodItemLogs";
 
     internal const string BlogPosts = "BlogPosts";
     internal const string Comments = "Comments";

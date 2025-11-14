@@ -289,7 +289,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("notes");
 
-                    b.Property<decimal>("BaseQuantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("numeric")
                         .HasColumnName("quantity");
 
@@ -503,7 +503,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("pickup_start_date");
 
-                    b.Property<decimal>("BaseQuantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("numeric")
                         .HasColumnName("quantity");
 
@@ -1048,7 +1048,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(255)")
                         .HasColumnName("notes");
 
-                    b.Property<decimal>("BaseQuantity")
+                    b.Property<decimal>("Quantity")
                         .HasColumnType("numeric")
                         .HasColumnName("quantity");
 

@@ -26,6 +26,7 @@ internal sealed class DiscardFoodItemCommandHandler(
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
         }
+        decimal requestedQtyInItemUnit = command.Quantity;
         if (foodItem.UnitId != command.UnitId)
         {
             Result<decimal> convertedResult = await converter.ConvertAsync(
@@ -35,20 +36,17 @@ internal sealed class DiscardFoodItemCommandHandler(
                 cancellationToken);
             if (convertedResult.IsFailure)
             {
-                return Result.Failure(convertedResult.Error);
+                return Result.Failure<Guid>(convertedResult.Error);
             }
-            command = command with { Quantity = convertedResult.Value, UnitId = foodItem.UnitId };
+            requestedQtyInItemUnit = convertedResult.Value;
         }
-        if (foodItem.Quantity < command.Quantity)
+        if (requestedQtyInItemUnit > foodItem.Quantity)
         {
-            return Result.Failure(FoodItemErrors.InsufficientQuantity);
+            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
-        else if (foodItem.Quantity > command.Quantity)
-        {
-            foodItem.Discard(command.Quantity, userContext.UserId);
-            foodItemRepository.Update(foodItem);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        foodItem.Discard(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
+        foodItemRepository.Update(foodItem);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

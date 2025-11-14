@@ -22,7 +22,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="FoodItemLogs\Search\" />
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
     <Folder Include="Subscriptions\" />

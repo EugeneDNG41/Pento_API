@@ -14,7 +14,7 @@ internal sealed class UpdateRecipeIngredientCommandValidator : AbstractValidator
             .NotEmpty().WithMessage("Notes must not be empty.")
             .MaximumLength(500).WithMessage("Notes must not exceed 500 characters.");
         RuleFor(x => x.Quantity)
-            .GreaterThan(0).WithMessage("BaseQuantity must be greater than zero.");
+            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x.UnitId)
             .NotEmpty().WithMessage("Unit must not be empty.");
     }

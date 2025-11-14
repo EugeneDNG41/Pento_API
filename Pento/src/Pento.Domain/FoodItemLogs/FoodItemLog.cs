@@ -18,7 +18,7 @@ public sealed class FoodItemLog : Entity
         DateTime timestamp,
         FoodItemLogAction action,
         decimal quantity,
-        UnitType unitType)
+        Guid unitId)
     {
         Id = id;
         FoodItemId = foodItemId;
@@ -26,8 +26,8 @@ public sealed class FoodItemLog : Entity
         UserId = userId;
         Timestamp = timestamp;
         Action = action;
-        BaseQuantity = quantity;
-        BaseUnitType = unitType;
+        Quantity = quantity;
+        UnitId = unitId;
     }
     private FoodItemLog() { }
     public Guid FoodItemId { get; private set; }
@@ -35,8 +35,8 @@ public sealed class FoodItemLog : Entity
     public Guid UserId { get; private set; }
     public DateTime Timestamp{ get; private set; }
     public FoodItemLogAction Action { get; private set; }
-    public decimal BaseQuantity { get; private set; }
-    public UnitType BaseUnitType { get; private set; }
+    public decimal Quantity { get; private set; }
+    public Guid UnitId { get; private set; }
     public static FoodItemLog Create(
         Guid foodItemId,
         Guid householdId,
@@ -44,7 +44,7 @@ public sealed class FoodItemLog : Entity
         DateTime timestamp,
         FoodItemLogAction action,
         decimal quantity,
-        UnitType unitType)
+        Guid unitId)
     {
         return new FoodItemLog(
             Guid.CreateVersion7(),
@@ -54,6 +54,6 @@ public sealed class FoodItemLog : Entity
             timestamp,
             action,
             quantity,
-            unitType);
+            unitId);
     }
 }

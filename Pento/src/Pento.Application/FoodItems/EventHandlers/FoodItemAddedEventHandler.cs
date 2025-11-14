@@ -46,75 +46,8 @@ internal sealed class FoodItemAddedEventHandler(
             domainEvent.UserId,
             domainEvent.Timestamp,
             FoodItemLogAction.Intake,
-            domainEvent.Quantity * unit.ToBaseFactor,
-            unit.Type);
-        logRepository.Add(log);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-}
-internal sealed class FoodItemConsumedEventHandler(
-    IGenericRepository<FoodItem> foodItemRepository,
-    IGenericRepository<Unit> unitRepository,
-    IGenericRepository<FoodItemLog> logRepository,
-    IUnitOfWork unitOfWork)
-    : DomainEventHandler<FoodItemConsumedDomainEvent>
-{
-    public override async Task Handle(
-        FoodItemConsumedDomainEvent domainEvent,
-        CancellationToken cancellationToken = default)
-    {
-        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(domainEvent.FoodItemId, cancellationToken);
-        if (foodItem is null)
-        {
-            throw new PentoException(nameof(FoodItemConsumedEventHandler), FoodItemErrors.NotFound);
-        }
-        Unit? unit = await unitRepository.GetByIdAsync(domainEvent.UnitId, cancellationToken);
-        if (unit is null)
-        {
-            throw new PentoException(nameof(FoodItemConsumedEventHandler), FoodItemErrors.InvalidMeasurementUnit);
-        }
-        var log = FoodItemLog.Create(
-            foodItem.Id,
-            foodItem.HouseholdId,
-            domainEvent.UserId,
-            domainEvent.Timestamp,
-            FoodItemLogAction.Consumption,
-            domainEvent.Quantity * unit.ToBaseFactor,
-            unit.Type);
-        logRepository.Add(log);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-}
-
-internal sealed class FoodItemDiscardedEventHandler(
-    IGenericRepository<FoodItem> foodItemRepository,
-    IGenericRepository<Unit> unitRepository,
-    IGenericRepository<FoodItemLog> logRepository,
-    IUnitOfWork unitOfWork)
-    : DomainEventHandler<FoodItemDiscardedDomainEvent>
-{
-    public override async Task Handle(
-        FoodItemDiscardedDomainEvent domainEvent,
-        CancellationToken cancellationToken = default)
-    {
-        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(domainEvent.FoodItemId, cancellationToken);
-        if (foodItem is null)
-        {
-            throw new PentoException(nameof(FoodItemDiscardedEventHandler), FoodItemErrors.NotFound);
-        }
-        Unit? unit = await unitRepository.GetByIdAsync(domainEvent.UnitId, cancellationToken);
-        if (unit is null)
-        {
-            throw new PentoException(nameof(FoodItemDiscardedEventHandler), FoodItemErrors.InvalidMeasurementUnit);
-        }
-        var log = FoodItemLog.Create(
-            foodItem.Id,
-            foodItem.HouseholdId,
-            domainEvent.UserId,
-            domainEvent.Timestamp,
-            FoodItemLogAction.Discard,
-            domainEvent.Quantity * unit.ToBaseFactor,
-            unit.Type);
+            domainEvent.Quantity,
+            unit.Id);
         logRepository.Add(log);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
