@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -51,6 +52,8 @@ using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Quartz;
+using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
 
 namespace Pento.Infrastructure;
 
@@ -72,18 +75,16 @@ public static class DependencyInjection
 
         AddBackgroundJobs(services, configuration);
 
-        services.AddHttpClient<IOpenFoodFactsService, OpenFoodFactsService>((httpClient) =>
-        {
-            httpClient.BaseAddress = new Uri("https://world.openfoodfacts.org/api/v0");
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Pento - Mobile - Version 1.0");
-            httpClient.DefaultRequestHeaders.Accept.ParseAdd("application/json");
-        });
-        services.AddScoped<OffApiClient>();
+        services.AddScoped<IBarcodeService, BarcodeService>();
+        services.AddScoped<IConverterService, ConverterService>();
         services.AddSingleton(sp =>
         {
-            var googleAI = new GoogleAi("placeholder");
-            
-            return googleAI.CreateGeminiModel("gemini-2.0-flash");
+            string apiKey = configuration["Gemini:ApiKey"];
+            var googleAI = new GoogleAi(apiKey);
+
+            GeminiModel model = googleAI.CreateGeminiModel("gemini-2.0-flash");
+
+            return model;
         });
         return services;
     }
@@ -106,7 +107,7 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        services.AddTransient<IConverterService, ConverterService>();
+        
 
 
         services.AddScoped<IUserRepository, UserRepository>();
@@ -131,14 +132,27 @@ public static class DependencyInjection
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
-        try
+        using var redis = new RedisCache(new RedisCacheOptions
         {
-            services.AddStackExchangeRedisCache(options => options.Configuration = redisConnectionString);
-        }
-        catch
+            Configuration = redisConnectionString
+        });
+
+        services.AddFusionCache()
+        .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
-            services.AddDistributedMemoryCache();
-        }
+            Duration = TimeSpan.FromHours(1),
+
+            // FACTORY TIMEOUT
+            FactorySoftTimeout = TimeSpan.FromMilliseconds(100),
+            FactoryHardTimeout = TimeSpan.FromMilliseconds(1500),
+
+            // FAILSAFE
+            IsFailSafeEnabled = true,
+            FailSafeMaxDuration = TimeSpan.FromHours(2),
+            FailSafeThrottleDuration = TimeSpan.FromSeconds(30)
+        })
+        .WithSerializer(new FusionCacheNewtonsoftJsonSerializer())
+        .WithDistributedCache(redis);
         services.AddSingleton<ICacheService, CacheService>();
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
