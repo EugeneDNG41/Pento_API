@@ -8,17 +8,19 @@ using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 
-namespace Pento.Application.Recipes.Reserve;
+namespace Pento.Application.MealPlans.Reserve;
 
-internal sealed class FulfillRecipeReservationCommandHandler(
-    IGenericRepository<FoodItemRecipeReservation> reservationRepository,
+internal sealed class FulfillMealPlanReservationCommandHandler(
+    IGenericRepository<FoodItemMealPlanReservation> reservationRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IConverterService converter,
     IUserContext userContext,
     IUnitOfWork unitOfWork
-) : ICommandHandler<FulfillRecipeReservationCommand, Guid>
+) : ICommandHandler<FulfillMealPlanReservationCommand, Guid>
 {
-    public async Task<Result<Guid>> Handle(FulfillRecipeReservationCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(
+        FulfillMealPlanReservationCommand command,
+        CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
@@ -26,7 +28,10 @@ internal sealed class FulfillRecipeReservationCommandHandler(
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        FoodItemRecipeReservation? reservation = await reservationRepository.GetByIdAsync(command.ReservationId, cancellationToken);
+        FoodItemMealPlanReservation? reservation = await reservationRepository.GetByIdAsync(
+            command.ReservationId,
+            cancellationToken);
+
         if (reservation is null)
         {
             return Result.Failure<Guid>(FoodItemReservationErrors.NotFound);
@@ -42,51 +47,45 @@ internal sealed class FulfillRecipeReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemReservationErrors.InvalidState);
         }
 
-        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(reservation.FoodItemId, cancellationToken);
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(
+            reservation.FoodItemId,
+            cancellationToken);
+
         if (foodItem is null)
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
 
-        decimal reservedQty = reservation.Quantity; 
-        decimal newQty = command.NewQuantity;
-
-        decimal newQtyInItemUnit = newQty;
+        decimal qtyInItemUnit = command.NewQuantity;
 
         if (foodItem.UnitId != command.UnitId)
         {
-            Result<decimal> convertResult = await converter.ConvertAsync(
-                newQty,
+            Result<decimal> converted = await converter.ConvertAsync(
+                command.NewQuantity,
                 fromUnitId: command.UnitId,
                 toUnitId: foodItem.UnitId,
                 cancellationToken);
 
-            if (convertResult.IsFailure)
+            if (converted.IsFailure)
             {
-                return Result.Failure<Guid>(convertResult.Error);
+                return Result.Failure<Guid>(converted.Error);
             }
 
-            newQtyInItemUnit = convertResult.Value;
+            qtyInItemUnit = converted.Value;
         }
 
-        if (newQtyInItemUnit < reservedQty)
+        if (qtyInItemUnit > foodItem.Quantity)
         {
-            decimal returnQty = reservedQty - newQtyInItemUnit;
-            foodItem.CancelReservation(returnQty, reservation.Id);
+            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
-        else if (newQtyInItemUnit > reservedQty)
-        {
-            decimal additionalQty = newQtyInItemUnit - reservedQty;
 
-            if (additionalQty > foodItem.Quantity)
-            {
-                return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
-            }
+        foodItem.Reserve(
+            qtyInItemUnit,
+            command.NewQuantity,
+            command.UnitId,
+            userContext.UserId);
 
-            foodItem.Reserve(additionalQty, command.NewQuantity, command.UnitId, userContext.UserId);
-        }
-        reservation.UpdateQuantity(newQtyInItemUnit);
-
+        reservation.UpdateQuantity(qtyInItemUnit);
         reservation.MarkAsFulfilled();
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

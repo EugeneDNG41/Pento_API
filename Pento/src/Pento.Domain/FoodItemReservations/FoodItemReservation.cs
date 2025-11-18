@@ -32,6 +32,15 @@ public abstract class FoodItemReservation : Entity
     public Guid UnitId { get; private set; }
     public ReservationStatus Status { get; protected set; } 
     public ReservationFor ReservationFor { get; private set; }
+    public void UpdateQuantity(decimal newQuantity)
+    {
+        if (newQuantity <= 0)
+        {
+            throw new ("Quantity must be greater than zero.");
+        }
+
+        Quantity = newQuantity;
+    }
 
 }
 public enum ReservationStatus
@@ -145,6 +154,25 @@ public sealed class FoodItemMealPlanReservation : FoodItemReservation
             mealPlanId
         );
     }
+    public void MarkAsFulfilled()
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new ("Only pending reservations can be fulfilled.");
+        }
+
+        Status = ReservationStatus.Fulfilled;
+    }
+    public void MarkAsCancelled()
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new("Only pending reservations can be cancelled.");
+        }
+
+        Status = ReservationStatus.Cancelled;
+    }
+
 }
 public sealed class FoodItemDonationReservation : FoodItemReservation
 {
@@ -165,4 +193,6 @@ public sealed class FoodItemDonationReservation : FoodItemReservation
     {
         GiveawayPostId = giveAwayPostId;
     }
+
 }
+
