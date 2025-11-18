@@ -29,7 +29,6 @@ internal sealed class UpdateGroceryListItemCommandHandler(
             quantity: request.Quantity,
             notes: request.Notes,
             customName: request.CustomName,
-            estimatedPrice: request.EstimatedPrice,
             priority: priority
         );
 

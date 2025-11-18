@@ -17,7 +17,6 @@ public sealed class GroceryListItem : Entity
         DateTime createdOnUtc,
         string? customName = null,
         Guid? unitId = null,
-        decimal? estimatedPrice = null,
         string? notes = null,
         GroceryItemPriority priority = GroceryItemPriority.Medium
     ) : base(id)
@@ -29,7 +28,6 @@ public sealed class GroceryListItem : Entity
         CreatedOnUtc = createdOnUtc;
         CustomName = customName;
         UnitId = unitId;
-        EstimatedPrice = estimatedPrice;
         Notes = notes;
         Priority = priority;
     }
@@ -37,14 +35,12 @@ public sealed class GroceryListItem : Entity
     decimal quantity,
     string? notes,
     string? customName,
-    decimal? estimatedPrice,
     GroceryItemPriority priority)
     {
 
         Quantity = quantity;
         Notes = notes;
         CustomName = customName;
-        EstimatedPrice = estimatedPrice;
         Priority = priority;
 
     }
@@ -55,7 +51,6 @@ public sealed class GroceryListItem : Entity
     public string? CustomName { get; private set; }
     public decimal Quantity { get; private set; }
     public Guid? UnitId { get; private set; }
-    public decimal? EstimatedPrice { get; private set; }
     public string? Notes { get; private set; }
     public GroceryItemPriority Priority { get; private set; }
     public Guid AddedBy { get; private set; }

@@ -63,7 +63,6 @@ internal sealed class CreateGroceryListDetailCommandHandler(
                 createdOnUtc: utcNow,
                 customName: item.CustomName,
                 unitId: item.UnitId,
-                estimatedPrice: item.EstimatedPrice,
                 notes: item.Notes,
                 priority: priority
             );

@@ -59,7 +59,6 @@ internal sealed class CreateGroceryListItemCommandHandler(
             createdOnUtc: _dateTimeProvider.UtcNow,
             customName: request.CustomName,
             unitId: request.UnitId,
-            estimatedPrice: request.EstimatedPrice,
             notes: request.Notes,
             priority: priority
         );
