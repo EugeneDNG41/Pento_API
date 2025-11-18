@@ -7,19 +7,10 @@ public sealed class UserSubscription
 {
     public Guid Id { get; init; }
     public Guid UserId { get; init; }
-    public Guid SubscriptionId { get; init; }
-    public DateTimeOffset StartDateUtc { get; init; }
-    public DateTimeOffset? EndDateUtc { get; init; }
-}
-public sealed record UserSubscriptionInstance
-{
-    public Guid Id { get; init; }
-    public Guid UserId { get; init; }
     public SubscriptionStatus Status { get; init; }
-    public DateTimeOffset StartDateUtc { get; init; }
-    public DateTimeOffset? EndDateUtc { get; init; }
-    public Dictionary<Guid, Consumable> Consumables { get; init; }
-    public Dictionary<Guid, NonConsumable> NonConsumables { get; init; }
+    public Guid SubscriptionId { get; init; }
+    public DateTime StartDateUtc { get; init; }
+    public DateTime? EndDateUtc { get; init; }
 }
 public sealed class Consumable
 {
@@ -38,8 +29,4 @@ public sealed record NonConsumable
     public string Name { get; init; }
     public DateTime? ExpirationDateUtc { get; init; }
 }
-internal sealed class UserSubscriptionInstanceProjection
-{
-}
 
-public sealed record ConsumableReset(Guid FeatureId);

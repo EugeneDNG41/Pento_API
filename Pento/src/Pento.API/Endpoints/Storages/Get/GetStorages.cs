@@ -1,8 +1,9 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Storages.GetAll;
-using Pento.Application.Storages.GetById;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Storages;
 
 namespace Pento.API.Endpoints.Storages.Get;
 
@@ -11,11 +12,15 @@ internal sealed class GetStorages : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("storages", async (
-            IQueryHandler<GetStoragesQuery, IReadOnlyList<StorageResponse>> handler,
-            CancellationToken cancellationToken) =>
+            string? searchText,
+            StorageType? storageType,
+            IQueryHandler<GetStoragesQuery, PagedList<StoragePreview>> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10) =>
         {
-            Result<IReadOnlyList<StorageResponse>> result = await handler.Handle(
-                new GetStoragesQuery(), cancellationToken);
+            Result<PagedList<StoragePreview>> result = await handler.Handle(
+                new GetStoragesQuery(searchText, storageType, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Storages)

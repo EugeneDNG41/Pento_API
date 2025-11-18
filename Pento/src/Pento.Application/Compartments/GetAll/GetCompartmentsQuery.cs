@@ -1,5 +1,10 @@
 ﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 
 namespace Pento.Application.Compartments.GetAll;
 
-public sealed record GetCompartmentsQuery(Guid StorageId) : IQuery<IReadOnlyList<CompartmentResponse>>;
+public sealed record GetCompartmentsQuery(
+    Guid StorageId,
+    string? SearchText,
+    int PageNumber,
+    int PageSize) : IQuery<PagedList<CompartmentPreview>>;

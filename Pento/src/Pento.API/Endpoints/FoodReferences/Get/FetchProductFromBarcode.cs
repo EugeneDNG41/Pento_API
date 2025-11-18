@@ -5,8 +5,6 @@ using Pento.Application.Abstractions.OpenFoodFacts;
 using Pento.Application.FoodReferences.Get;
 using Pento.Application.FoodReferences.Scan;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodReferences;
-using Pento.Infrastructure.OpenFoodFacts;
 
 namespace Pento.API.Endpoints.FoodReferences.Get;
 
