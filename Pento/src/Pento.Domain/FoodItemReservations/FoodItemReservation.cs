@@ -124,6 +124,27 @@ public sealed class FoodItemMealPlanReservation : FoodItemReservation
     {
         MealPlanId = mealplanId;
     }
+    public static FoodItemMealPlanReservation Create(
+      Guid foodItemId,
+      Guid householdId,
+      DateTime reservationDateUtc,
+      decimal quantity,
+      Guid unitId,
+      Guid mealPlanId
+  )
+    {
+        return new FoodItemMealPlanReservation(
+            Guid.CreateVersion7(),
+            foodItemId,
+            householdId,
+            reservationDateUtc,
+            quantity,
+            unitId,
+            ReservationStatus.Pending,
+            ReservationFor.MealPlan,
+            mealPlanId
+        );
+    }
 }
 public sealed class FoodItemDonationReservation : FoodItemReservation
 {
