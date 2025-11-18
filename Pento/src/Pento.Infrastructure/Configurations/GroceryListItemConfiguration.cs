@@ -40,9 +40,7 @@ internal sealed class GroceryListItemConfiguration : IEntityTypeConfiguration<Gr
         builder.Property(x => x.UnitId)
             .HasColumnName("unit_id");
 
-        builder.Property(x => x.EstimatedPrice)
-            .HasColumnName("estimated_price")
-            .HasPrecision(12, 2);
+
 
         builder.Property(x => x.Notes)
             .HasColumnName("notes")

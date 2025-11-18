@@ -42,7 +42,6 @@ internal sealed class GetGroceryListQueryHandler(
                 quantity AS Quantity,
                 custom_name AS CustomName,
                 unit_id AS UnitId,
-                estimated_price AS EstimatedPrice,
                 notes AS Notes,
                 priority AS Priority,
                 added_by AS AddedBy,
