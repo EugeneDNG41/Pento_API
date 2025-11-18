@@ -30,7 +30,7 @@ public abstract class FoodItemReservation : Entity
     public DateTime ReservationDateUtc { get; private set; }
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }
-    public ReservationStatus Status { get; private set; }
+    public ReservationStatus Status { get; protected set; } 
     public ReservationFor ReservationFor { get; private set; }
 
 }
@@ -86,7 +86,24 @@ public sealed class FoodItemRecipeReservation : FoodItemReservation
             );
         return reciperservation;
     }
+    public void MarkAsFulfilled()
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new ("Only pending reservations can be fulfilled.");
+        }
 
+        Status = ReservationStatus.Fulfilled;
+    }
+    public void MarkAsCancelled()
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new ("Only pending reservations can be cancelled.");
+        }
+
+        Status = ReservationStatus.Cancelled;
+    }
 }
 public sealed class FoodItemMealPlanReservation : FoodItemReservation
 {
