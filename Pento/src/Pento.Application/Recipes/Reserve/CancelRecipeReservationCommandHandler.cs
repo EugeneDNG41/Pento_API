@@ -41,7 +41,7 @@ internal sealed class CancelRecipeReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemReservationErrors.InvalidState);
         }
 
-        var foodItem = await foodItemRepository.GetByIdAsync(reservation.FoodItemId, cancellationToken);
+        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(reservation.FoodItemId, cancellationToken);
         if (foodItem is null)
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
