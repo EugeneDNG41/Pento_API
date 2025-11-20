@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.Import;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.FoodReferences;
+namespace Pento.API.Endpoints.FoodReferences.Post;
 
 internal sealed class ImportFoodReferences : IEndpoint
 {

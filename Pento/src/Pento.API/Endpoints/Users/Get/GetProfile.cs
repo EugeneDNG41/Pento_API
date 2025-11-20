@@ -22,4 +22,3 @@ internal sealed class GetProfile : IEndpoint
         .WithTags(Tags.Users);
     }
 }
-

@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Compartments.Get;
 using Pento.Application.FoodItems.Search;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.API.Endpoints.FoodItems.Get;
@@ -19,6 +20,7 @@ internal sealed class SearchFoodItemGet : IEndpoint
             decimal? toQuantity,
             DateOnly? expirationDateAfter,
             DateOnly? expirationDateBefore,
+            FoodItemStatus? status,
             IQueryHandler <SearchFoodItemQuery, PagedList<FoodItemPreview>> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
@@ -32,6 +34,7 @@ internal sealed class SearchFoodItemGet : IEndpoint
                     toQuantity,
                     expirationDateAfter,
                     expirationDateBefore,
+                    status,
                     pageNumber,
                     pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);

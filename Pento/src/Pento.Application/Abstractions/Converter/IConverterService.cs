@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
@@ -20,4 +21,5 @@ public interface IConverterService
         StorageType newType, 
         FoodReference foodRef, 
         DateOnly currentExpiry);
+    FoodItemStatus FoodItemStatusCalculator(DateOnly expirationDate);
 }

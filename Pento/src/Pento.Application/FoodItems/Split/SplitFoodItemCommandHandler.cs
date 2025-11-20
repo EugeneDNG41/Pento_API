@@ -10,7 +10,7 @@ using Pento.Domain.Units;
 namespace Pento.Application.FoodItems.Split;
 
 internal sealed class SplitFoodItemCommandHandler(
-    IConverterService converter,
+    IConverterService converterService,
     IUserContext userContext,
     IGenericRepository<FoodItem> foodItemRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<SplitFoodItemCommand, Guid>
@@ -29,7 +29,7 @@ internal sealed class SplitFoodItemCommandHandler(
         decimal requestedQtyInItemUnit = command.Quantity;
         if (foodItem.UnitId != command.UnitId)
         {
-            Result<decimal> convertedResult = await converter.ConvertAsync(
+            Result<decimal> convertedResult = await converterService.ConvertAsync(
                 command.Quantity,
                 fromUnitId: command.UnitId,
                 toUnitId: foodItem.UnitId,
@@ -53,6 +53,7 @@ internal sealed class SplitFoodItemCommandHandler(
             quantity: command.Quantity,
             unitId: command.UnitId,
             expirationDate: foodItem.ExpirationDate,
+            converterService.FoodItemStatusCalculator(foodItem.ExpirationDate),
             notes: foodItem.Notes,
             addedBy: userContext.UserId);
         foodItemRepository.Add(newFoodItem);

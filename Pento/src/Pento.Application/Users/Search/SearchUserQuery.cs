@@ -13,7 +13,7 @@ using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Users.Search;
 
-public sealed record SearchUserQuery(string? SearchText, string? Roles, int PageNumber, int PageSize) : IQuery<PagedList<UserPreview>>;
+public sealed record SearchUserQuery(string? SearchText, bool? IsDeleted, int PageNumber, int PageSize) : IQuery<PagedList<UserPreview>>;
 
 internal sealed class SearchUserQueryValidator : AbstractValidator<SearchUserQuery>
 {
@@ -31,51 +31,57 @@ internal sealed class SearchUserQueryQueryHandler(ISqlConnectionFactory dbConnec
     : IQueryHandler<SearchUserQuery, PagedList<UserPreview>>
 {
     public async Task<Result<PagedList<UserPreview>>> Handle(
-        SearchUserQuery request,
+        SearchUserQuery query,
         CancellationToken cancellationToken)
     {
+
         using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
         const string sql = $"""
             SELECT 
                 u.id AS UserId,
                 h.name AS HouseholdName,
-                u.email AS Email
+                u.email AS Email,
                 u.first_name AS FirstName,
                 u.last_name AS LastName,
                 u.created_at AS CreatedAt,
                 u.updated_at AS UpdatedAt,
-
+                u.is_deleted AS IsDeleted
             FROM users u
-            LEFT JOIN user_roles ur ON u.id = ur.user_id
-            LEFT JOIN
+            LEFT JOIN households h ON u.household_id = h.id
             WHERE (@SearchText IS NULL OR 
+                   h.name ILIKE '%' || @SearchText || '%' OR
                    u.first_name ILIKE '%' || @SearchText || '%' OR 
                    u.last_name ILIKE '%' || @SearchText || '%' OR 
-                   u.email ILIKE '%' || @SearchText || '%')
-            ORDER BY u.last_name, u.first_name
+                   u.email ILIKE '%' || @SearchText || '%') AND
+                   @IsDeleted IS NULL OR u.is_deleted = @IsDeleted
+            ORDER BY UserId
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             """;
         const string countSql = $"""
             SELECT COUNT(*)
             FROM users u
+            LEFT JOIN households h ON u.household_id = h.id
             WHERE (@SearchText IS NULL OR 
+                   h.name ILIKE '%' || @SearchText || '%' OR
                    u.first_name ILIKE '%' || @SearchText || '%' OR 
                    u.last_name ILIKE '%' || @SearchText || '%' OR 
-                   u.email ILIKE '%' || @SearchText || '%');
+                   u.email ILIKE '%' || @SearchText || '%') AND
+                   @IsDeleted IS NULL OR u.is_deleted = @IsDeleted;
             """;
         var parameters = new
         {
-            request.SearchText,
-            Offset = (request.PageNumber - 1) * request.PageSize,
-            request.PageSize
+            query.IsDeleted,
+            query.SearchText,
+            Offset = (query.PageNumber - 1) * query.PageSize,
+            query.PageSize
         };
         IEnumerable<UserPreview> users = await connection.QueryAsync<UserPreview>(sql, parameters);
         int totalCount = await connection.ExecuteScalarAsync<int>(countSql, parameters);
         var pagedList = new PagedList<UserPreview>(
             users.ToList(),
             totalCount,
-            request.PageNumber,
-            request.PageSize);
+            query.PageNumber,
+            query.PageSize);
         return pagedList;
     }
 }
