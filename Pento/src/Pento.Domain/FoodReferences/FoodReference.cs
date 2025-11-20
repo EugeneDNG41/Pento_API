@@ -142,6 +142,12 @@ public sealed class FoodReference : Entity
         Raise(new FoodReferenceUpdatedDomainEvent(Id));
 
     }
+    public void UpdateUnitType(UnitType unitType, DateTime updatedAtUtc)
+    {
+        UnitType = unitType;
+        UpdatedOnUtc = updatedAtUtc;
+        Raise(new FoodReferenceUpdatedDomainEvent(Id));
+    }
 
 }
 

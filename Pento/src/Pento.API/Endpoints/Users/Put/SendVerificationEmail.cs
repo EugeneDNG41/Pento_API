@@ -2,7 +2,6 @@
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Identity;
-
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Put;

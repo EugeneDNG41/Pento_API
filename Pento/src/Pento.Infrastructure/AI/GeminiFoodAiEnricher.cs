@@ -1,24 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using GenerativeAI;
+using GenerativeAI.Types;
 using Microsoft.Extensions.Configuration;
+using OpenFoodFacts4Net.ApiClient;
+using OpenFoodFacts4Net.Json.Data;
 using Pento.Application.Abstractions.File;
+using Pento.Application.Abstractions.OpenFoodFacts;
 using Pento.Application.FoodReferences.Enrich;
+using Pento.Domain.Abstractions;
+using Pento.Domain.FoodReferences;
+using Pento.Domain.Units;
+using Pento.Infrastructure.OpenFoodFacts;
+using Pento.Infrastructure.Repositories;
 
 namespace Pento.Infrastructure.AI;
 
-internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration config) : IFoodAiEnricher
+internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration config, GeminiModel model) : IFoodAiEnricher
 {
     private static readonly JsonSerializerOptions JsonOpts = new()
     {
         PropertyNameCaseInsensitive = true
     };
+    public async Task<Result<ProductExtraInformationWithoutFoodGroup>> EnrichAsync(string foodName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var unitTypesBuilder = new System.Text.StringBuilder();
+            foreach (UnitType ut in Enum.GetValues<UnitType>())
+            {
+                unitTypesBuilder.Append(CultureInfo.InvariantCulture, $"{(int)ut}: {ut}");
+            }
+            string unitTypes = unitTypesBuilder.ToString();
 
+            var parts = new List<Part>
+            {
+                new Part { Text = "You are a professional food storage and safety expert." },
+                new Part { Text = $"Provide information regarding {foodName}'s unit type and safe and realistic average number of days {foodName} can be stored in a pantry, fridge and freezer respectively" },
+                new Part { Text = "Ensure the following hierarchy holds: pantry <= fridge <= freeezer" },
+                new Part { Text = $"Possible unit types: {unitTypes}"},
+            };
+
+            ProductExtraInformationWithoutFoodGroup? extraInfo = await model.GenerateObjectAsync<ProductExtraInformationWithoutFoodGroup>(parts, cancellationToken);
+            if (extraInfo != null)
+            {
+                return extraInfo;
+            }
+            return Result.Failure<ProductExtraInformationWithoutFoodGroup>(FoodAiEnricherErrors.ApiError);
+        }
+        catch (Exception)
+        {
+            return Result.Failure<ProductExtraInformationWithoutFoodGroup>(FoodAiEnricherErrors.ApiError);
+        }
+    }
     public async Task<FoodEnrichmentResult> EnrichAsync(FoodEnrichmentAsk ask, CancellationToken ct)
     {
         string apiKey = config["Gemini:ApiKey"] ?? throw new InvalidOperationException("Gemini:ApiKey missing");
@@ -152,8 +193,4 @@ internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration confi
         public List<Part>? Parts { get; set; } = null!;
     }
 
-    private sealed class Part
-    {
-        public string? Text { get; set; } = null!;
-    }
 }

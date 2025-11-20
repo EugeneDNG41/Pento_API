@@ -16,6 +16,17 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         await keyCloakClient.SendVerificationEmailAsync(identityId, cancellationToken);
         return Result.Success();
     }
+    public async Task<Result> ChangePasswordAsync(string identityId, string newPassword, CancellationToken cancellationToken = default)
+    {
+        var credentialRepresentation = new CredentialRepresentation(PasswordCredentialType, newPassword, false);
+        await keyCloakClient.ChangePasswordAsync(identityId, credentialRepresentation, cancellationToken);
+        return Result.Success();
+    }
+    public async Task<Result> SendResetPasswordEmailAsync(string identityId, CancellationToken cancellationToken = default)
+    {
+        await keyCloakClient.SendResetPasswordEmailAsync(identityId, cancellationToken);
+        return Result.Success();
+    }
     public async Task<Result<string>> RegisterUserAsync(UserModel user, CancellationToken cancellationToken = default)
     {
         var userRepresentation = new UserRepresentation(

@@ -9,17 +9,16 @@ internal sealed class EnrichFoodReference : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("food-references/{id:guid}/auto-enrich-shelf-life",
-      async (
+        app.MapPost("food-references/{id:guid}/auto-enrich-shelf-life", async (
                 Guid id,
                 ICommandHandler<EnrichFoodReferenceShelfLifeCommand, FoodEnrichmentResult> handler,
                 CancellationToken cancellationToken) =>
-      {
-                var cmd = new EnrichFoodReferenceShelfLifeCommand(id);
+        {
+            var cmd = new EnrichFoodReferenceShelfLifeCommand(id);
 
-                Result<FoodEnrichmentResult> result = await handler.Handle(cmd, cancellationToken);
+            Result<FoodEnrichmentResult> result = await handler.Handle(cmd, cancellationToken);
 
-          return result.Match(
+            return result.Match(
                     value => Results.Ok(new
                     {
                         FoodReferenceId = id,
