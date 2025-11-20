@@ -85,9 +85,8 @@ internal sealed class FulfillRecipeReservationCommandHandler(
 
             foodItem.Reserve(additionalQty, command.NewQuantity, command.UnitId, userContext.UserId);
         }
-        reservation.UpdateQuantity(newQtyInItemUnit);
 
-        reservation.MarkAsFulfilled();
+        reservation.MarkAsFulfilled(command.NewQuantity, command.UnitId, userContext.UserId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

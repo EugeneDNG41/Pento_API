@@ -3,7 +3,6 @@
 public enum FoodItemStatus
 {
     Available,
-    Reserved,
     Expiring,
     Expired
 }

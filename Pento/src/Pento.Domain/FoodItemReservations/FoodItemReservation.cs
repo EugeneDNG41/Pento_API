@@ -1,4 +1,5 @@
 ﻿using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItems.Events;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
 
@@ -34,12 +35,23 @@ public abstract class FoodItemReservation : Entity
     public ReservationFor ReservationFor { get; private set; }
     public void UpdateQuantity(decimal newQuantity)
     {
-        if (newQuantity <= 0)
-        {
-            throw new ("Quantity must be greater than zero.");
-        }
 
         Quantity = newQuantity;
+    }
+    public void UpdateUnit(Guid newUnitId)
+    {
+        UnitId = newUnitId;
+    }
+    public void MarkAsFulfilled(decimal quantity, Guid unitId, Guid userId)
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new("Only pending reservations can be fulfilled.");
+        }
+        Quantity = quantity;
+        UnitId = unitId;
+        Status = ReservationStatus.Fulfilled;
+        Raise(new FoodItemConsumedDomainEvent(FoodItemId, quantity, unitId, userId));
     }
 
 }
@@ -95,15 +107,7 @@ public sealed class FoodItemRecipeReservation : FoodItemReservation
             );
         return reciperservation;
     }
-    public void MarkAsFulfilled()
-    {
-        if (Status != ReservationStatus.Pending)
-        {
-            throw new ("Only pending reservations can be fulfilled.");
-        }
-
-        Status = ReservationStatus.Fulfilled;
-    }
+    
     public void MarkAsCancelled()
     {
         if (Status != ReservationStatus.Pending)
@@ -153,15 +157,6 @@ public sealed class FoodItemMealPlanReservation : FoodItemReservation
             ReservationFor.MealPlan,
             mealPlanId
         );
-    }
-    public void MarkAsFulfilled()
-    {
-        if (Status != ReservationStatus.Pending)
-        {
-            throw new ("Only pending reservations can be fulfilled.");
-        }
-
-        Status = ReservationStatus.Fulfilled;
     }
     public void MarkAsCancelled()
     {
