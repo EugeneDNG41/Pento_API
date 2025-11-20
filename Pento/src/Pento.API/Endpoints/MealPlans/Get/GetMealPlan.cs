@@ -1,7 +1,9 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Application.MealPlans.Get;
 using Pento.Domain.Abstractions;
+using Pento.Domain.MealPlans;
 
 namespace Pento.API.Endpoints.MealPlans.Get;
 
@@ -21,20 +23,44 @@ internal sealed class GetMealPlan : IEndpoint
             );
         })
         .WithTags(Tags.MealPlans);
-        app.MapGet("meal-plans/household/{householdId:guid}",
-        async (Guid householdId, IQueryHandler<GetMealPlansByHouseholdIdQuery, IReadOnlyList<MealPlanResponse>> handler, CancellationToken cancellationToken) =>
-            {
-                var query = new GetMealPlansByHouseholdIdQuery(householdId);
+        app.MapGet("meal-plans/current-house", async (
+    int pageNumber,
+    int pageSize,
+    DateOnly? date,
+    int? month,
+    int? year,
+    MealType? mealType,
+    bool sortAsc,
+    IQueryHandler<GetMealPlansByHouseholdIdQuery, PagedList<MealPlanResponse>> handler,
+    CancellationToken cancellationToken
+) =>
+        {
+            var query = new GetMealPlansByHouseholdIdQuery(
+                PageNumber: pageNumber,
+                PageSize: pageSize,
+                Date: date,
+                Month: month,
+                Year: year,
+                MealType: mealType,
+                SortAsc: sortAsc
+            );
 
-                Result<IReadOnlyList<MealPlanResponse>> result = await handler.Handle(query, cancellationToken);
+            Result<PagedList<MealPlanResponse>> result = await handler.Handle(query, cancellationToken);
 
-                return result.Match(
-                    mealPlans => Results.Ok(mealPlans),
-                    CustomResults.Problem
-                );
-            })
-            .WithTags(Tags.MealPlans);
-
+            return result.Match(
+                Results.Ok,
+                CustomResults.Problem
+            );
+        })
+.WithTags("MealPlans")
+.WithDescription("""
+Query parameters:
+- **date**: format `yyyy-MM-dd`
+- **month**: 1–12
+- **year**: e.g., 2024, 2025
+- **mealType**: Breakfast / Lunch / Dinner / Snack
+- **sortAsc**: true = earliest first
+""")
+.RequireAuthorization();
     }
-
 }
