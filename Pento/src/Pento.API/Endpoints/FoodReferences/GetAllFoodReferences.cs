@@ -11,15 +11,18 @@ internal sealed class GetAllFoodReferences : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("food-references", async (
-            [AsParameters] QueryParams queryParams,
-            IQueryHandler<GetAllFoodReferencesQuery, PagedFoodReferencesResponse> handler,
-            CancellationToken cancellationToken) =>
+            FoodGroup? foodGroup,
+            string? search,         
+            IQueryHandler <GetAllFoodReferencesQuery, PagedFoodReferencesResponse> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10) =>
         {
             var query = new GetAllFoodReferencesQuery(
-                queryParams.FoodGroup,
-                queryParams.Search,
-                queryParams.Page,
-                queryParams.PageSize
+                foodGroup,
+                search,
+                pageNumber,
+                pageSize
             );
 
             Result<PagedFoodReferencesResponse> result =
@@ -28,13 +31,5 @@ internal sealed class GetAllFoodReferences : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.FoodReferences);
-    }
-
-    internal sealed class QueryParams
-    {
-        public FoodGroup? FoodGroup { get; init; }
-        public string? Search { get; init; }
-        public int Page { get; init; } = 1;
-        public int PageSize { get; init; } = 10;
     }
 }

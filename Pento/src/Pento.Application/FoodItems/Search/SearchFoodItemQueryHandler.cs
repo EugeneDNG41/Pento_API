@@ -66,7 +66,11 @@ internal sealed class SearchFoodItemQueryHandler(
             filters.Add("expiration_date < @ExpirationDateBefore"); // use <= for inclusive
             parameters.Add("ExpirationDateBefore", query.ExpirationDateBefore.Value);
         }
-
+        if (query.Status.HasValue)
+        {
+            filters.Add("status = @Status");
+            parameters.Add("Status", query.Status.ToString());
+        }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
 
         string sql = $"""
@@ -81,6 +85,7 @@ internal sealed class SearchFoodItemQueryHandler(
                 fi.quantity AS {nameof(FoodItemPreviewRow.Quantity)},
                 u.abbreviation AS {nameof(FoodItemPreviewRow.UnitAbbreviation)},
                 fi.expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)}
+                fi.status AS {nameof(FoodItemPreviewRow.Status)}
             FROM food_items fi
             LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
             LEFT JOIN units u ON fi.unit_id = u.id
@@ -104,7 +109,8 @@ internal sealed class SearchFoodItemQueryHandler(
                                 r.ImageUrl,
                                 r.Quantity,
                                 r.UnitAbbreviation,
-                                r.ExpirationDate
+                                r.ExpirationDate,
+                                r.Status
                             )).ToList(),
             totalCount,
             query.PageNumber,

@@ -26,8 +26,8 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            filters.Add("(LOWER(name) LIKE LOWER(@Search))");
-            parameters.Add("Search", $"%{request.Search}%");
+            filters.Add("levenshtein(name, @Search) <= 2");
+            parameters.Add("Search", $"{request.Search}");
         }
 
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;

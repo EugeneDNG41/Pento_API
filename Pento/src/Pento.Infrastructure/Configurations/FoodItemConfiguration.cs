@@ -38,7 +38,10 @@ internal sealed class FoodItemConfiguration : IEntityTypeConfiguration<FoodItem>
 
         builder.Property(x => x.ExpirationDate)
                .IsRequired();
-
+        builder.Property(x => x.Status)
+               .HasConversion<string>()
+               .HasMaxLength(50)
+               .IsRequired();
         builder.Property(x => x.HouseholdId)
                .IsRequired();
 

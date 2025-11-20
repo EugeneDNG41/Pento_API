@@ -14,7 +14,7 @@ public sealed record UserPreview(Guid UserId,
     string LastName,
     DateTime CreatedAt,
     DateTime? UpdatedAt,
-    string Roles
+    bool IsDeleted
 );
 
 

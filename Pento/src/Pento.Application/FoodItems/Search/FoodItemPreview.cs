@@ -12,6 +12,7 @@ public sealed record FoodItemPreviewRow
     public decimal Quantity { get; init; }
     public string UnitAbbreviation { get; init; }
     public DateOnly ExpirationDate { get; init; }
+    public string Status { get; init; }
 }
 public sealed record FoodItemPreview(
     Guid Id,
@@ -20,5 +21,6 @@ public sealed record FoodItemPreview(
     Uri? ImageUrl,
     decimal Quantity,
     string UnitAbbreviation,
-    DateOnly ExpirationDate
+    DateOnly ExpirationDate,
+    string Status
 );
