@@ -10,8 +10,6 @@ namespace Pento.Domain.Users;
 
 public sealed class User : Entity
 {
-    
-
     private User()
     {
     }

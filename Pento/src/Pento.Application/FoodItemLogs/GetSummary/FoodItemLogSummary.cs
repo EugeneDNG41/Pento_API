@@ -10,4 +10,4 @@ public sealed record FoodItemLogSummary
     public decimal TotalDiscardByVolume { get; init; }
     public string WeightUnit { get; init; }
     public string VolumeUnit { get; init; }
-}
+} //add total expiring, available, expired, reserved

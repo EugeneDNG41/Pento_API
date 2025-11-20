@@ -1,4 +1,5 @@
-﻿using Pento.Domain.FoodReferences;
+﻿using Pento.Application.Users.Search;
+using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
 
 namespace Pento.Application.FoodItems.GetById;

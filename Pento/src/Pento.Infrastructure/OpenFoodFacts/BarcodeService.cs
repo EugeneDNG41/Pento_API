@@ -78,3 +78,4 @@ internal sealed class BarcodeService(GeminiModel model, IGenericRepository<FoodR
     }
 }
 internal sealed record ProductExtraInformation(int FoodGroup, int UnitType, int PantryShelfLife, int FridgeShelfLife, int FreezerShelfLife);
+

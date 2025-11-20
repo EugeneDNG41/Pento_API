@@ -8,11 +8,5 @@ using Pento.Domain.Units;
 namespace Pento.Application.FoodItems.GetById;
 
 public sealed record GetFoodItemByIdQuery(Guid Id) : IQuery<FoodItemDetail>;
-public sealed record BasicUserResponse(
-    Guid UserId,
-    string FirstName,
-    string LastName,
-    Uri? AvatarUrl
-);
 
 
