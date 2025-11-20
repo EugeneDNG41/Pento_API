@@ -56,6 +56,8 @@ jobs:
           AZURE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.AZURE_KEYCLOAK_CLIENT_SECRET }}
           AZURE_GEMINI_API_KEY: ${{ secrets.AZURE_GEMINI_API_KEY }}
           AZURE_PIXABAY_API_KEY: ${{ secrets.AZURE_PIXABAY_API_KEY }}
+          AZURE_VISION_API_KEY: ${{ secrets.AZURE_VISION_API_KEY }}
+          AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
@@ -67,5 +69,7 @@ jobs:
           AZURE_KEYCLOAK_CLIENT_SECRET: ${{ secrets.AZURE_KEYCLOAK_CLIENT_SECRET }}
           AZURE_GEMINI_API_KEY: ${{ secrets.AZURE_GEMINI_API_KEY }}
           AZURE_PIXABAY_API_KEY: ${{ secrets.AZURE_PIXABAY_API_KEY }}
+          AZURE_VISION_API_KEY: ${{ secrets.AZURE_VISION_API_KEY }}
+          AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
 
         
