@@ -11,11 +11,13 @@ internal sealed class GetStorageById : IEndpoint
     {
         app.MapGet("storages/{storageId:guid}", async (
             Guid storageId,
-            IQueryHandler<GetStorageByIdQuery, StorageResponse> handler,
-            CancellationToken cancellationToken) =>
+            IQueryHandler<GetStorageByIdQuery, StorageDetailResponse> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10) =>
         {
-            Result<StorageResponse> result = await handler.Handle(
-                new GetStorageByIdQuery(storageId), cancellationToken);
+            Result<StorageDetailResponse> result = await handler.Handle(
+                new GetStorageByIdQuery(storageId, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .WithTags(Tags.Storages)

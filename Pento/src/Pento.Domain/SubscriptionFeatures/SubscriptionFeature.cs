@@ -19,6 +19,4 @@ public enum FeatureName
     AiOCR,
     RecipeSuggestions,
     FavoriteRecipes,
-
-
 }

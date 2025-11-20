@@ -3,6 +3,7 @@ using Dapper;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Users;
@@ -11,33 +12,40 @@ namespace Pento.Application.Compartments.GetAll;
 internal sealed class GetCompartmentsQueryHandler(
     IUserContext userContext,
     ISqlConnectionFactory sqlConnectionFactory) 
-    : IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentResponse>>
+    : IQueryHandler<GetCompartmentsQuery, PagedList<CompartmentPreview>>
 {
-    public async Task<Result<IReadOnlyList<CompartmentResponse>>> Handle(
+    public async Task<Result<PagedList<CompartmentPreview>>> Handle(
         GetCompartmentsQuery query,
         CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<IReadOnlyList<CompartmentResponse>>(HouseholdErrors.NotInAnyHouseHold);
+            return Result.Failure<PagedList<CompartmentPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
         const string sql =
             $"""
+            SELECT COUNT(*) FROM compartments WHERE storage_id = @StorageId AND is_deleted = false AND is_archived = false and household_id = @HouseholdId AND name ILIKE '%' || COALESCE(@SearchText, '') || '%';
             SELECT
-                id AS {nameof(CompartmentResponse.Id)},
-                storage_id AS {nameof(CompartmentResponse.StorageId)},
-                household_id AS {nameof(CompartmentResponse.HouseholdId)},
-                name AS {nameof(CompartmentResponse.Name)},
-                notes AS {nameof(CompartmentResponse.Notes)}
-            FROM compartments
-            WHERE storage_id = @StorageId and is_deleted = false
+                c.id AS {nameof(CompartmentPreview.CompartmentId)},
+                c.name AS {nameof(CompartmentPreview.CompartmentName)},
+                (SELECT COUNT(*) FROM food_items fi WHERE fi.compartment_id = c.id AND fi.is_deleted = false AND fi.is_archived = false and fi.quantity > 0) AS {nameof(CompartmentPreview.TotalItems)}
+            FROM compartments c
+            WHERE c.storage_id = @StorageId AND c.is_deleted = false AND c.is_archived = false and c.household_id = @HouseholdId
+                AND c.name ILIKE '%' || COALESCE(@SearchText, '') || '%'
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;           
             """;
-        CommandDefinition command = new(sql, query, cancellationToken: cancellationToken);
-        List<CompartmentResponse> compartments = (await connection.QueryAsync<CompartmentResponse>(command)).AsList();
+        CommandDefinition command = new(sql, new { query.StorageId, Offset = (query.PageNumber - 1) * query.PageSize, query.PageSize, HouseholdId = householdId, query.SearchText }, cancellationToken: cancellationToken);
+        SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
+        int totalItems = await multi.ReadFirstAsync<int>();
+        IEnumerable<CompartmentPreview> compartments = await multi.ReadAsync<CompartmentPreview>();
+        var pagedList = new PagedList<CompartmentPreview>(
+            compartments.ToList(),
+            totalItems,
+            query.PageNumber,
+            query.PageSize);
 
-
-        return compartments;
+        return pagedList;
     }
 }

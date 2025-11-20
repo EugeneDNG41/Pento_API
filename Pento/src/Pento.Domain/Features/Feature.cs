@@ -11,7 +11,6 @@ public sealed class Feature : Entity // can be enum
 {
     public string Name { get; private set; }
     public string Description { get; private set; }
-    public FeatureType Type { get; private set; }
     public Feature(string name, string description)
     {
         Name = name;

@@ -1,5 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Compartments.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
@@ -12,11 +13,14 @@ internal sealed class GetCompartments : IEndpoint
     {
         app.MapGet("storages/{storageId:guid}/compartments", async (
             Guid storageId,
-            IQueryHandler<GetCompartmentsQuery, IReadOnlyList<CompartmentResponse>> handler,
-            CancellationToken cancellationToken) =>
+            string? searchText,
+            IQueryHandler<GetCompartmentsQuery, PagedList<CompartmentPreview>> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10) =>
         {
-            Result<IReadOnlyList<CompartmentResponse>> result = await handler.Handle(
-                new GetCompartmentsQuery(storageId), cancellationToken);
+            Result<PagedList<CompartmentPreview>> result = await handler.Handle(
+                new GetCompartmentsQuery(storageId, searchText, pageNumber, pageSize), cancellationToken);
             return result
             .Match(compartments => Results.Ok(compartments), CustomResults.Problem);
         })
