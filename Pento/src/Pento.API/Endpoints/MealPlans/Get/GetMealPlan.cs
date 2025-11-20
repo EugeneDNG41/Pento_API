@@ -52,7 +52,7 @@ internal sealed class GetMealPlan : IEndpoint
                 CustomResults.Problem
             );
         })
-.WithTags("MealPlans")
+.WithTags(Tags.MealPlans)
 .WithDescription("""
 Query parameters:
 - **date**: format `yyyy-MM-dd`

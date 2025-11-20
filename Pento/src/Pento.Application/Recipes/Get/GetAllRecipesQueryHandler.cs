@@ -1,25 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodReferences.Get;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodReferences;
+using Pento.Domain.Recipes;
 
 namespace Pento.Application.Recipes.Get;
+
 internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
-    : IQueryHandler<GetAllRecipesQuery, IReadOnlyList<RecipeResponse>>
+    : IQueryHandler<GetAllRecipesQuery, PagedList<RecipeResponse>>
 {
-    public async Task<Result<IReadOnlyList<RecipeResponse>>> Handle(GetAllRecipesQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<RecipeResponse>>> Handle(GetAllRecipesQuery request, CancellationToken cancellationToken)
     {
         await using DbConnection connection = await factory.OpenConnectionAsync();
 
-            const string sql = """
+        var filters = new List<string>();
+        var parameters = new DynamicParameters();
+
+        if (request.DifficultyLevel is not null)
+        {
+            filters.Add("difficulty_level = @DifficultyLevel");
+            parameters.Add("DifficultyLevel", request.DifficultyLevel.ToString());
+        }
+
+        string whereClause = filters.Count > 0
+            ? "WHERE " + string.Join(" AND ", filters)
+            : string.Empty;
+
+
+        string sql = $@"
+            SELECT COUNT(*) 
+            FROM recipes
+            {whereClause};
+
             SELECT 
                 id AS Id,
                 title AS Title,
@@ -36,11 +50,25 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
                 created_on_utc AS CreatedOnUtc,
                 updated_on_utc AS UpdatedOnUtc
             FROM recipes
-            ORDER BY created_on_utc DESC;
-            """;
+            {whereClause}
+            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+        ";
 
-        IEnumerable<RecipeResponse> recipes = await connection.QueryAsync<RecipeResponse>(sql);
+        parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
+        parameters.Add("PageSize", request.PageSize);
 
-        return Result.Success<IReadOnlyList<RecipeResponse>>(recipes.ToList());
+        SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
+
+        int totalCount = await multi.ReadFirstAsync<int>();
+        var items = (await multi.ReadAsync<RecipeResponse>()).ToList();
+
+        var paged = PagedList<RecipeResponse>.Create(
+            items,
+            totalCount,
+            request.PageNumber,
+            request.PageSize
+        );
+
+        return Result.Success(paged);
     }
 }
