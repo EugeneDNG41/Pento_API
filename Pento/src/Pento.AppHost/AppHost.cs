@@ -83,16 +83,19 @@ IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("Key
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
 IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiApiKey", secret: true);
 IResourceBuilder<ParameterResource> pixabayApiKey = builder.AddParameter("PixabayApiKey", secret: true);
-
+IResourceBuilder<ParameterResource> visionEndpoint = builder.AddParameter("VisionEndpoint");
+IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiKey", secret: true);
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
     .WithEnvironment("Keycloak__AdminUrl", keycloakAdminUrl)
-    .WithEnvironment("Keycloak__TokenUrl", keycloakTokenUrl) 
+    .WithEnvironment("Keycloak__TokenUrl", keycloakTokenUrl)
     .WithEnvironment("Keycloak__ClientId", keycloakClientId)
     .WithEnvironment("Keycloak__ClientSecret", keycloakClientSecret)
     .WithEnvironment("Gemini__ApiKey", geminiApiKey)
     .WithEnvironment("Pixabay__ApiKey", pixabayApiKey)
+    .WithEnvironment("Vision__Endpoint", visionEndpoint)
+    .WithEnvironment("Vision__ApiKey", visionKey)
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)

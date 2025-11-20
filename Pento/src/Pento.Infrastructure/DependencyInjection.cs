@@ -24,6 +24,7 @@ using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.OpenFoodFacts;
+using Pento.Application.Abstractions.Vision;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
 using Pento.Domain.Comments;
@@ -51,6 +52,7 @@ using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
+using Pento.Infrastructure.Vision;
 using Quartz;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
@@ -126,6 +128,7 @@ public static class DependencyInjection
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
         services.AddScoped<IPixabayImageService,PixabayImageService>();
+        services.AddScoped<IVisionService, VisionService>();
 
     }
 
