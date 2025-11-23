@@ -41,7 +41,7 @@ internal sealed class CreateFoodItemCommandHandler(
         Unit validUnit;
         if (command.UnitId is null)
         {
-            Unit defaultUnit = (await unitRepository.FindAsync(u => u.ToBaseFactor == 1, cancellationToken)).First();
+            Unit defaultUnit = (await unitRepository.FindAsync(u => u.ToBaseFactor == 1 && u.Type == foodReference.UnitType, cancellationToken)).First();
             validUnit = defaultUnit;
         }
         else

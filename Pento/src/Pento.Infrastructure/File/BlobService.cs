@@ -58,10 +58,9 @@ public sealed class BlobService : IBlobService
             await blob.UploadAsync(stream, new BlobHttpHeaders { ContentType = file.ContentType }, cancellationToken: cancellationToken);
             return Result.Success(blob.Uri);
         }
-        catch (Exception ex)
+        catch
         {
-            return Result.Failure<Uri>(
-                Error.Failure("Blob.UploadFailed", $"Unexpected error during upload: {ex.Message}"));
+            return Result.Failure<Uri>(BlobServiceErrors.UploadFailed);
         }
     }
 
@@ -75,26 +74,33 @@ public sealed class BlobService : IBlobService
 
 
 
-    public async Task<bool> DeleteFileAsync(string domain, string filePath, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
+    public async Task<Result> DeleteFileAsync(string domain, string filePath, string fileTypeCategory = "general", CancellationToken cancellationToken = default)
     {
         try
         {
             BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain.ToLower(CultureInfo.InvariantCulture)}-{fileTypeCategory}");
             BlobClient blob = container.GetBlobClient(filePath);
-            Azure.Response<bool> response = await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
-            return response.Value;
+            await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+            return Result.Success();
         }
         catch
         {
-            return false;
+            return Result.Failure(BlobServiceErrors.DeleteFailed);
         }
     }
 
-    public Task<bool> DeleteImageAsync(string domain, string fileName, CancellationToken cancellationToken = default)
+    public Task<Result> DeleteImageAsync(string domain, string fileName, CancellationToken cancellationToken = default)
         => DeleteFileAsync(domain, fileName, "images", cancellationToken);
 
-    public Task<bool> DeleteVideoAsync(string domain, string fileName, CancellationToken cancellationToken = default)
+    public Task<Result> DeleteVideoAsync(string domain, string fileName, CancellationToken cancellationToken = default)
         => DeleteFileAsync(domain, fileName, "videos", cancellationToken);
 
 
+}
+public static class BlobServiceErrors
+{
+    public static Error UploadFailed
+        => Error.Failure("Blob.UploadFailed", "Failed to upload file to blob storage");
+    public static Error DeleteFailed
+        => Error.Failure("Blob.DeleteFailed", "Failed to delete file from blob storage");
 }

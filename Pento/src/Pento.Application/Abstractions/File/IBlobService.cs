@@ -28,19 +28,19 @@ namespace Pento.Application.Abstractions.File;
         string domain,
         CancellationToken cancellationToken = default);
 
-    Task<bool> DeleteFileAsync(
+    Task<Result> DeleteFileAsync(
         string domain,
         string filePath,
         string fileTypeCategory = "general",
         CancellationToken cancellationToken = default);
 
 
-    Task<bool> DeleteImageAsync(
+    Task<Result> DeleteImageAsync(
         string domain,
         string fileName,
         CancellationToken cancellationToken = default);
 
-    Task<bool> DeleteVideoAsync(
+    Task<Result> DeleteVideoAsync(
         string domain,
         string fileName,
         CancellationToken cancellationToken = default);

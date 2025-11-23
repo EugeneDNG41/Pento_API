@@ -18,6 +18,7 @@ internal sealed class UploadFoodItemImageCommandHandler(
 {
     public async Task<Result<Uri>> Handle(UploadFoodItemImageCommand command, CancellationToken cancellationToken)
     {
+
         FoodItem? foodItem = await foodItemRepository.GetByIdAsync(command.Id, cancellationToken);
         if (foodItem is null)
         {
@@ -32,7 +33,6 @@ internal sealed class UploadFoodItemImageCommandHandler(
         {
             return Result.Failure<Uri>(FoodReferenceErrors.NotFound);
         }
-        Uri? oldImageUrl = foodItem.ImageUrl;
         if (command.File is not null)
         {
             Result<Uri> uploadResult = await blobService.UploadImageAsync(command.File, nameof(FoodItem), cancellationToken);
@@ -40,15 +40,19 @@ internal sealed class UploadFoodItemImageCommandHandler(
             {
                 return Result.Failure<Uri>(uploadResult.Error);
             }
+            if (foodItem.ImageUrl is not null && foodItem.ImageUrl != foodReference.ImageUrl)
+            {
+                Result deleteResult = await blobService.DeleteImageAsync(nameof(FoodItem), foodItem.ImageUrl.AbsoluteUri, cancellationToken);
+                if (deleteResult.IsFailure)
+                {
+                    return Result.Failure<Uri>(deleteResult.Error);
+                }
+            }
             foodItem.UpdateImageUrl(uploadResult.Value, userContext.UserId);            
         } 
-        else
+        else if (foodReference.ImageUrl is not null)
         {
             foodItem.UpdateImageUrl(foodReference.ImageUrl, userContext.UserId);
-        }
-        if (foodReference.ImageUrl is not null && oldImageUrl is not null && oldImageUrl != foodReference.ImageUrl)
-        {
-            await blobService.DeleteImageAsync(nameof(FoodItem), oldImageUrl.AbsoluteUri, cancellationToken);
         }
         foodItemRepository.Update(foodItem);
         await unitOfWork.SaveChangesAsync(cancellationToken);
