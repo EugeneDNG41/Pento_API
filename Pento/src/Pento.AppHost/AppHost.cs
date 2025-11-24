@@ -116,7 +116,7 @@ if (builder.ExecutionContext.IsRunMode)
     project.WithReference(seq);
 }
 var webhookUrl = ReferenceExpression.Create(
-    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/webhook/handle");
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/payments/webhook/handle");
 var returnUrl = ReferenceExpression.Create(
     $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/payments/return");
 var cancelUrl = ReferenceExpression.Create(

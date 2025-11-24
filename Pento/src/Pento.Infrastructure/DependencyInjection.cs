@@ -249,6 +249,19 @@ public static class DependencyInjection
             var scheduler = Guid.NewGuid();
             configurator.SchedulerId = $"default-id-{scheduler}";
             configurator.SchedulerName = $"default-name-{scheduler}";
+            configurator.UsePersistentStore(options =>
+            {
+                options.UsePostgres(sqlServerOptions =>
+                {
+                    sqlServerOptions.ConnectionString = configuration.GetConnectionStringOrThrow("pento-db");
+                    sqlServerOptions.TablePrefix = "quartz_";
+                });
+                options.UseClustering(clusterOptions =>
+                {
+                    clusterOptions.CheckinInterval = TimeSpan.FromSeconds(20);
+                });
+                options.UseProperties = true;
+            });
         });
 
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
