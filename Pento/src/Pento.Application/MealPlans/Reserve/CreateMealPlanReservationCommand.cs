@@ -6,15 +6,12 @@ namespace Pento.Application.MealPlans.Reserve;
 
 public sealed record CreateMealPlanReservationCommand(
     Guid FoodItemId,
-    Guid? MealPlanId,   
+    Guid? MealPlanId,
     decimal Quantity,
     Guid UnitId,
-
-    string? MealPlanName,
     MealType? MealType,
     DateOnly? ScheduledDate,
-    int? Servings,
-    string? Notes,
-    Guid? RecipeId
+    int? Servings,     
+    Guid? RecipeId     
 ) : ICommand<Guid>;
 

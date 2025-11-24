@@ -36,6 +36,7 @@ internal sealed class CreateMealPlanReservationCommandHandler(
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
+
         if (foodItem.HouseholdId != householdId.Value)
         {
             return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
@@ -43,34 +44,10 @@ internal sealed class CreateMealPlanReservationCommandHandler(
 
         MealPlan? mealPlan = null;
 
-        if (command.MealPlanId is null)
-        {
-            if (command.MealPlanName is null ||
-                command.MealType is null ||
-                command.ScheduledDate is null ||
-                command.Servings is null)
-            {
-                return Result.Failure<Guid>(MealPlanErrors.InvalidName);
-            }
-
-            mealPlan = MealPlan.Create(
-                householdId.Value,
-                recipeId: command.RecipeId,
-                foodItemId: command.FoodItemId,
-                name: command.MealPlanName,
-                mealType: command.MealType.Value,
-                scheduledDate: command.ScheduledDate.Value,
-                servings: command.Servings.Value,
-                notes: command.Notes,
-                createdBy: userContext.UserId,
-                utcNow: dateTimeProvider.UtcNow
-            );
-
-            mealPlanRepository.Add(mealPlan);
-        }
-        else
+        if (command.MealPlanId is not null)
         {
             mealPlan = await mealPlanRepository.GetByIdAsync(command.MealPlanId.Value, cancellationToken);
+
             if (mealPlan is null)
             {
                 return Result.Failure<Guid>(MealPlanErrors.NotFound);
@@ -81,45 +58,91 @@ internal sealed class CreateMealPlanReservationCommandHandler(
                 return Result.Failure<Guid>(MealPlanErrors.ForbiddenAccess);
             }
         }
+        else
+        {
+            if (command.ScheduledDate is null || command.MealType is null)
+            {
+                return Result.Failure<Guid>(MealPlanErrors.InvalidName);
+            }
 
-        decimal requestedQtyInItemUnit = command.Quantity;
+            MealPlan? existing = (await mealPlanRepository.FindAsync(
+                x => x.HouseholdId == householdId.Value
+                  && x.MealType == command.MealType.Value
+                  && x.ScheduledDate == command.ScheduledDate.Value,
+                cancellationToken
+            )).FirstOrDefault();
+
+            if (existing is not null)
+            {
+                mealPlan = existing;
+            }
+            else
+            {
+                string defaultName =
+                    $"{command.MealType.Value}-{command.ScheduledDate.Value:yyyy-MM-dd}";
+
+                mealPlan = MealPlan.Create(
+                    householdId: householdId.Value,
+                    recipeId: command.RecipeId,
+                    foodItemId: command.FoodItemId,
+                    name: defaultName,
+                    mealType: command.MealType.Value,
+                    scheduledDate: command.ScheduledDate.Value,
+                    servings: command.Servings ?? 1,
+                    notes: null,
+                    createdBy: userContext.UserId,
+                    utcNow: dateTimeProvider.UtcNow
+                );
+
+                mealPlanRepository.Add(mealPlan);
+            }
+        }
+
+        decimal qtyInItemUnit = command.Quantity;
 
         if (foodItem.UnitId != command.UnitId)
         {
-            Result<decimal> convertedResult = await converter.ConvertAsync(
+            Result<decimal> converted = await converter.ConvertAsync(
                 command.Quantity,
-                fromUnitId: command.UnitId,
-                toUnitId: foodItem.UnitId,
-                cancellationToken);
+                command.UnitId,
+                foodItem.UnitId,
+                cancellationToken
+            );
 
-            if (convertedResult.IsFailure)
+            if (converted.IsFailure)
             {
-                return Result.Failure<Guid>(convertedResult.Error);
+                return Result.Failure<Guid>(converted.Error);
             }
 
-            requestedQtyInItemUnit = convertedResult.Value;
+            qtyInItemUnit = converted.Value;
         }
 
-        if (requestedQtyInItemUnit > foodItem.Quantity)
+        if (qtyInItemUnit > foodItem.Quantity)
         {
             return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
 
         var reservation = FoodItemMealPlanReservation.Create(
-            foodItemId: command.FoodItemId,
+            foodItemId: foodItem.Id,
             householdId: householdId.Value,
             reservationDateUtc: dateTimeProvider.UtcNow,
-            quantity: requestedQtyInItemUnit,
-            unitId: command.UnitId,
+            quantity: qtyInItemUnit,
+            unitId: foodItem.UnitId,
             mealPlanId: mealPlan.Id
         );
 
-        foodItem.Reserve(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
-
         reservationRepository.Add(reservation);
+
+        foodItem.Reserve(
+            qtyInItemUnit,
+            command.Quantity,
+            command.UnitId,
+            userContext.UserId
+        );
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return reservation.Id;
     }
-
 }
+
