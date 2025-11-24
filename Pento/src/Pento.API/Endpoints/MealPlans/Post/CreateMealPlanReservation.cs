@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlans.Reserve;
 using Pento.Domain.Abstractions;
+using Pento.Domain.MealPlans;
 
 namespace Pento.API.Endpoints.MealPlans.Post;
 
@@ -16,11 +17,19 @@ internal sealed class CreateMealPlanReservation : IEndpoint
         ) =>
         {
             var command = new CreateMealPlanReservationCommand(
-                FoodItemId: request.FoodItemId,
-                MealPlanId: request.MealPlanId,
-                Quantity: request.Quantity,
-                UnitId: request.UnitId
+                request.FoodItemId,
+                request.MealPlanId,
+                request.Quantity,
+                request.UnitId,
+
+                request.MealPlanName,
+                request.MealType,
+                request.ScheduledDate,
+                request.Servings,
+                request.Notes,
+                request.RecipeId
             );
+
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
@@ -29,15 +38,23 @@ internal sealed class CreateMealPlanReservation : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.MealPlans)
+        .WithTags(Tags.Reservations)
         .RequireAuthorization();
     }
 
     internal sealed class Request
     {
         public Guid FoodItemId { get; init; }
-        public Guid MealPlanId { get; init; }
+        public Guid? MealPlanId { get; init; }
         public decimal Quantity { get; init; }
         public Guid UnitId { get; init; }
+
+        public string? MealPlanName { get; init; }
+        public MealType? MealType { get; init; }
+        public DateOnly? ScheduledDate { get; init; }
+        public int? Servings { get; init; }
+        public string? Notes { get; init; }
+        public Guid? RecipeId { get; init; }
     }
+
 }
