@@ -118,9 +118,9 @@ if (builder.ExecutionContext.IsRunMode)
 var webhookUrl = ReferenceExpression.Create(
     $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/webhook/handle");
 var returnUrl = ReferenceExpression.Create(
-    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/return");
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/payments/return");
 var cancelUrl = ReferenceExpression.Create(
-    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/cancel");
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/payments/cancel");
 project.WithEnvironment("PayOS__WebhookUrl", webhookUrl)
          .WithEnvironment("PayOS__ReturnUrl", returnUrl)
          .WithEnvironment("PayOS__CancelUrl", cancelUrl);

@@ -27,6 +27,8 @@
   <ItemGroup>
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
+    <Folder Include="Payments\GetById\" />
+    <Folder Include="Payments\GetAll\" />
     <Folder Include="Subscriptions\" />
   </ItemGroup>
 
