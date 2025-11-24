@@ -6,6 +6,8 @@ using Pento.Domain.FoodReferences;
 namespace Pento.Application.FoodItems.Search;
 
 public sealed record SearchFoodItemQuery(
+    Guid? FoodReferenceId,
+    FoodItemStatus? FoodItemStatus,
     string? SearchText,
     FoodGroup? FoodGroup,
     decimal? FromQuantity,

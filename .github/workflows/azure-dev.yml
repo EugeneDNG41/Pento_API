@@ -58,6 +58,9 @@ jobs:
           AZURE_PIXABAY_API_KEY: ${{ secrets.AZURE_PIXABAY_API_KEY }}
           AZURE_VISION_API_KEY: ${{ secrets.AZURE_VISION_API_KEY }}
           AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
+          AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
+          AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
+          AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
 
       - name: Deploy Application
         run: azd deploy --no-prompt
@@ -71,5 +74,8 @@ jobs:
           AZURE_PIXABAY_API_KEY: ${{ secrets.AZURE_PIXABAY_API_KEY }}
           AZURE_VISION_API_KEY: ${{ secrets.AZURE_VISION_API_KEY }}
           AZURE_VISION_ENDPOINT: ${{ secrets.AZURE_VISION_ENDPOINT }}
+          AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
+          AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
+          AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
 
         

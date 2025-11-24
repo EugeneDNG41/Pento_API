@@ -14,6 +14,8 @@ internal sealed class SearchFoodItemGet : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("food-items/search", async(
+            Guid? foodReferenceId,
+            FoodItemStatus? foodItemStatus,
             string? searchText,
             FoodGroup? foodGroup,
             decimal? fromQuantity,
@@ -28,6 +30,8 @@ internal sealed class SearchFoodItemGet : IEndpoint
         {
             Result<PagedList<FoodItemPreview>> result = await handler.Handle(
                 new SearchFoodItemQuery(
+                    foodReferenceId,
+                    foodItemStatus,
                     searchText,
                     foodGroup,
                     fromQuantity,

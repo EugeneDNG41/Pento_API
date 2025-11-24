@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
+using PayOS;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Caching;
@@ -88,6 +89,10 @@ public static class DependencyInjection
 
             return model;
         });
+        services.AddOptions<PayOSOptions>()
+            .Bind(configuration.GetSection("PayOS"))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
         return services;
     }
 
