@@ -91,6 +91,10 @@ internal sealed class PayOSService(
             });
 
             WebhookData data = await client.Webhooks.VerifyAsync(webhook);
+            if (data.PaymentLinkId == "124c33293c43417ab7879e14c8d9eb18" && data.AccountNumber == "12345678")
+            {
+                return Result.Success();
+            }
             if (data.Code.Equals("00", StringComparison.Ordinal))
             {
                 PaymentLink paymentLink = await client.PaymentRequests.GetAsync(data.PaymentLinkId);
