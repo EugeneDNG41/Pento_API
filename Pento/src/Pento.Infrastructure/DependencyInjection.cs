@@ -25,6 +25,7 @@ using Pento.Application.Abstractions.Email;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.OpenFoodFacts;
+using Pento.Application.Abstractions.PayOS;
 using Pento.Application.Abstractions.Vision;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -52,6 +53,7 @@ using Pento.Infrastructure.File;
 using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
+using Pento.Infrastructure.PayOS;
 using Pento.Infrastructure.Repositories;
 using Pento.Infrastructure.Vision;
 using Quartz;
@@ -89,10 +91,15 @@ public static class DependencyInjection
 
             return model;
         });
-        services.AddOptions<PayOSOptions>()
+#pragma warning disable S1481 // Unused local variables should be removed
+        PayOSCustomOptions payosOptions = configuration.GetRequiredSection("PayOS").Get<PayOSCustomOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
+#pragma warning restore S1481 // Unused local variables should be removed
+
+        services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))
             .ValidateDataAnnotations()
             .ValidateOnStart();
+        services.AddScoped<IPayOSService, PayOSService>();
         return services;
     }
 
@@ -224,7 +231,6 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<IUserContext, UserContext>();
 
-        builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
         builder.Services.AddTransient<IClaimsTransformation, CustomClaimsTransformation>();
 
         builder.Services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();

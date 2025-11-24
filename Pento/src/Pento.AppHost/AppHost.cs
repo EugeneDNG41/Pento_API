@@ -116,8 +116,14 @@ if (builder.ExecutionContext.IsRunMode)
     project.WithReference(seq);
 }
 var webhookUrl = ReferenceExpression.Create(
-    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/webhook");
-project.WithEnvironment("PayOS__WebhookUrl", webhookUrl);
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/webhook/handle");
+var returnUrl = ReferenceExpression.Create(
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/return");
+var cancelUrl = ReferenceExpression.Create(
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/transactions/cancel");
+project.WithEnvironment("PayOS__WebhookUrl", webhookUrl)
+         .WithEnvironment("PayOS__ReturnUrl", returnUrl)
+         .WithEnvironment("PayOS__CancelUrl", cancelUrl);
 builder.AddAzureContainerAppEnvironment("cae");
 
 await builder.Build().RunAsync();
