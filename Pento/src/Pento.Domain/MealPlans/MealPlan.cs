@@ -14,8 +14,6 @@ public sealed class MealPlan : Entity
     public MealPlan(
         Guid id,
         Guid householdId,
-        Guid? recipeId,
-        Guid? foodItemId,
         string name,
         MealType mealType,
         DateOnly scheduledDate,
@@ -26,8 +24,6 @@ public sealed class MealPlan : Entity
         : base(id)
     {
         HouseholdId = householdId;
-        RecipeId = recipeId;
-        FoodItemId = foodItemId;
         Name = name;
         MealType = mealType;
         ScheduledDate = scheduledDate;
@@ -39,8 +35,6 @@ public sealed class MealPlan : Entity
     }
 
     public Guid HouseholdId { get; private set; }
-    public Guid? RecipeId { get; private set; }
-    public Guid? FoodItemId { get; private set; }
     public string Name { get; private set; } = null!;
     public MealType MealType { get; private set; }
     public DateOnly ScheduledDate { get; private set; }
@@ -52,8 +46,6 @@ public sealed class MealPlan : Entity
 
     public static MealPlan Create(
         Guid householdId,
-        Guid? recipeId,
-        Guid? foodItemId,
         string name,
         MealType mealType,
         DateOnly scheduledDate,
@@ -65,8 +57,6 @@ public sealed class MealPlan : Entity
         var meal = new MealPlan(
             Guid.CreateVersion7(),
             householdId,
-            recipeId,
-            foodItemId,
             name,
             mealType,
             scheduledDate,
@@ -95,5 +85,3 @@ public sealed class MealPlan : Entity
         Raise(new MealPlanUpdatedDomainEvent(Id));
     }
 }
-
-

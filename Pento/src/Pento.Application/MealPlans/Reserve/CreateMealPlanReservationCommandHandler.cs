@@ -83,8 +83,6 @@ internal sealed class CreateMealPlanReservationCommandHandler(
 
                 mealPlan = MealPlan.Create(
                     householdId: householdId.Value,
-                    recipeId: command.RecipeId,
-                    foodItemId: command.FoodItemId,
                     name: defaultName,
                     mealType: command.MealType.Value,
                     scheduledDate: command.ScheduledDate.Value,

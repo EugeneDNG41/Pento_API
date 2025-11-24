@@ -54,8 +54,6 @@ internal sealed class CreateMealPlanCommandHandler(
 
         var mealPlan = MealPlan.Create(
             householdId.Value,
-            command.RecipeId,
-            command.FoodItemId,
             command.Name,
             command.MealType,
             command.ScheduledDate,

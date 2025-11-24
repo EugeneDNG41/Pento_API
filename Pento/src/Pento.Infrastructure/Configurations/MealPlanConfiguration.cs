@@ -29,23 +29,9 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
             .HasForeignKey(mp => mp.HouseholdId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.Property(mp => mp.RecipeId)
-            .IsRequired();
-                builder.Property(mp => mp.Name)
-            .HasMaxLength(200)
-            .IsRequired();
 
-        builder.Property(mp => mp.RecipeId)
-                .HasColumnName("recipe_id")
-                .IsRequired(false);
 
-            builder.HasOne<Recipe>()
-                .WithMany()
-                .HasForeignKey(mp => mp.RecipeId)
-                .OnDelete(DeleteBehavior.SetNull);
-            builder.Property(mp => mp.FoodItemId)
-        .HasColumnName("food_item_id")
-        .IsRequired(false);
+
             builder.Property(mp => mp.MealType)
                 .IsRequired()
                 .HasConversion<string>(); 
