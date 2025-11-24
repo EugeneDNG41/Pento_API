@@ -45,27 +45,14 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
             return Result.Failure<MealPlanAutoReserveResult>(RecipeErrors.NotFound);
         }
 
-        IEnumerable<MealPlan> existingPlans = await mealPlanRepo.FindAsync(
-            x => x.HouseholdId == householdId.Value
-              && x.ScheduledDate == cmd.ScheduledDate
-              && x.MealType == cmd.MealType,
-            cancellationToken
-        );
+
 
         MealPlan mealPlan;
 
-        if (existingPlans.Any())
-        {
-            mealPlan = existingPlans.First();
-        }
-        else
-        {
             string generatedName = $"{cmd.ScheduledDate:yyyy-MM-dd} {cmd.MealType}";
 
             mealPlan = MealPlan.Create(
                 householdId.Value,
-                recipeId: cmd.RecipeId,
-                foodItemId: null,
                 name: generatedName,
                 mealType: cmd.MealType,
                 scheduledDate: cmd.ScheduledDate,
@@ -76,7 +63,8 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
             );
 
             mealPlanRepo.Add(mealPlan);
-        }
+        
+
 
         var ingredients = (await ingredientRepo.FindAsync(
             x => x.RecipeId == cmd.RecipeId,
