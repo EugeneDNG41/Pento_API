@@ -22,6 +22,6 @@ internal sealed class CreateRecipeReservation : IEndpoint
                 id => Results.Ok(new {id}),
                 CustomResults.Problem);
         })
-  .WithTags(Tags.Recipes);
+  .WithTags(Tags.Reservations);
     }
 }
