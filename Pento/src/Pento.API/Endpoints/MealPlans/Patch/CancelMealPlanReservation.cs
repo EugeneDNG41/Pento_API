@@ -24,7 +24,7 @@ internal sealed class CancelMealPlanReservation : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.MealPlans)
+        .WithTags(Tags.Reservations)
         .RequireAuthorization();
     }
 }

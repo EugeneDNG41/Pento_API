@@ -29,7 +29,7 @@ internal sealed class FullfillMealPlanReservation : IEndpoint
                 CustomResults.Problem
             );
         })
-   .WithTags(Tags.MealPlans)
+   .WithTags(Tags.Reservations)
    .RequireAuthorization();
 
     }

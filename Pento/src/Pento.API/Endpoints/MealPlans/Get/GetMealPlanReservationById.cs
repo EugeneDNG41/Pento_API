@@ -25,7 +25,7 @@ internal sealed class GetMealPlanReservationById : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.MealPlans)
+        .WithTags(Tags.Reservations)
         .RequireAuthorization();
     }
 }
