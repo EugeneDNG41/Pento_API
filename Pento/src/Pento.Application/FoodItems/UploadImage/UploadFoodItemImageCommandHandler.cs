@@ -40,7 +40,7 @@ internal sealed class UploadFoodItemImageCommandHandler(
             {
                 return Result.Failure<Uri>(uploadResult.Error);
             }
-            if (foodItem.ImageUrl is not null && foodItem.ImageUrl != foodReference.ImageUrl)
+            if (foodItem.ImageUrl is not null && foodItem.ImageUrl != foodReference.ImageUrl && foodItem.ImageUrl.AbsoluteUri.Contains(".blob.core.windows.net"))
             {
                 Result deleteResult = await blobService.DeleteImageAsync(nameof(FoodItem), foodItem.ImageUrl.AbsoluteUri, cancellationToken);
                 if (deleteResult.IsFailure)
@@ -56,6 +56,6 @@ internal sealed class UploadFoodItemImageCommandHandler(
         }
         foodItemRepository.Update(foodItem);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        return foodReference.ImageUrl;
+        return foodItem.ImageUrl;
     }
 }

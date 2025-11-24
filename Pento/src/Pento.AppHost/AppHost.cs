@@ -85,6 +85,10 @@ IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiA
 IResourceBuilder<ParameterResource> pixabayApiKey = builder.AddParameter("PixabayApiKey", secret: true);
 IResourceBuilder<ParameterResource> visionEndpoint = builder.AddParameter("VisionEndpoint");
 IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiKey", secret: true);
+IResourceBuilder<ParameterResource> payosClientId = builder.AddParameter("PayosClientId", secret: true);
+IResourceBuilder<ParameterResource> payosApiKey = builder.AddParameter("PayosApiKey", secret: true);
+IResourceBuilder<ParameterResource> payosChecksumKey = builder.AddParameter("PayosChecksumKey", secret: true);
+
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
     .WithEnvironment("Keycloak__Authority", keycloakAuthority)
@@ -96,6 +100,9 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Pixabay__ApiKey", pixabayApiKey)
     .WithEnvironment("Vision__Endpoint", visionEndpoint)
     .WithEnvironment("Vision__ApiKey", visionKey)
+    .WithEnvironment("PayOS__ClientId", payosClientId)
+    .WithEnvironment("PayOS__ApiKey", payosApiKey)
+    .WithEnvironment("PayOS__ChecksumKey", payosChecksumKey)
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)
@@ -108,6 +115,9 @@ if (builder.ExecutionContext.IsRunMode)
 {
     project.WithReference(seq);
 }
+var webhookUrl = ReferenceExpression.Create(
+    $"{project.GetEndpoint("https").Property(EndpointProperty.Url)}/webhook");
+project.WithEnvironment("PayOS__WebhookUrl", webhookUrl);
 builder.AddAzureContainerAppEnvironment("cae");
 
 await builder.Build().RunAsync();

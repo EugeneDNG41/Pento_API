@@ -32,7 +32,16 @@ internal sealed class SearchFoodItemQueryHandler(
             "fi.is_archived IS FALSE"
         };
         var parameters = new DynamicParameters();
-
+        if (query.FoodReferenceId  != null)
+        {
+            filters.Add("fi.food_reference_id = @FoodReferenceId");
+            parameters.Add("FoodReferenceId", query.FoodReferenceId);
+        }
+        if (query.FoodItemStatus.HasValue)
+        {
+            filters.Add("fi.status = @FoodItemStatus");
+            parameters.Add("FoodItemStatus", query.FoodItemStatus.ToString());
+        }
         if (query.FoodGroup.HasValue)
         {
             filters.Add("food_group = @FoodGroup");
