@@ -22,11 +22,9 @@ internal sealed class CreateMealPlanReservation : IEndpoint
                 request.Quantity,
                 request.UnitId,
 
-                request.MealPlanName,
                 request.MealType,
                 request.ScheduledDate,
                 request.Servings,
-                request.Notes,
                 request.RecipeId
             );
 
@@ -49,11 +47,9 @@ internal sealed class CreateMealPlanReservation : IEndpoint
         public decimal Quantity { get; init; }
         public Guid UnitId { get; init; }
 
-        public string? MealPlanName { get; init; }
         public MealType? MealType { get; init; }
         public DateOnly? ScheduledDate { get; init; }
         public int? Servings { get; init; }
-        public string? Notes { get; init; }
         public Guid? RecipeId { get; init; }
     }
 

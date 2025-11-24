@@ -11,8 +11,7 @@ public sealed record CreateMealPlanFromRecipeCommand(
     Guid RecipeId,
     MealType MealType,
     DateOnly ScheduledDate,
-    int Servings,
-    string? Notes
+    int Servings
 ) : ICommand<MealPlanAutoReserveResult>;
 
 public sealed record MealPlanAutoReserveResult(

@@ -19,8 +19,7 @@ internal sealed class CreateMealPlanFromRecipe : IEndpoint
                 dto.RecipeId,
                 dto.MealType,
                 dto.ScheduledDate,
-                dto.Servings,
-                dto.Notes
+                dto.Servings
             );
 
             Domain.Abstractions.Result<MealPlanAutoReserveResult> result = await handler.Handle(cmd, ct);
@@ -40,6 +39,5 @@ internal sealed class CreateMealPlanFromRecipe : IEndpoint
         public MealType MealType { get; init; }
         public DateOnly ScheduledDate { get; init; }
         public int Servings { get; init; }
-        public string? Notes { get; init; }
     }
 }
