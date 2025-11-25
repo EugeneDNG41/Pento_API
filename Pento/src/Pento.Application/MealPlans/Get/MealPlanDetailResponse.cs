@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Recipes.Get;
 
 namespace Pento.Application.MealPlans.Get;
+
 public sealed record MealPlanDetailResponse(
     Guid Id,
     Guid HouseholdId,
@@ -16,11 +18,11 @@ public sealed record MealPlanDetailResponse(
     Guid CreatedBy,
     DateTime CreatedOnUtc,
     DateTime UpdatedOnUtc,
-    RecipeInfo? Recipe,
-    FoodItemInfo? FoodItem
+    IReadOnlyList<MealPlanRecipeInfo> Recipes,
+    IReadOnlyList<MealPlanFoodItemInfo> FoodItems
 );
 
-public sealed record RecipeInfo(
+public sealed record MealPlanRecipeInfo(
     Guid Id,
     string Title,
     string? Description,
@@ -29,13 +31,15 @@ public sealed record RecipeInfo(
     string? DifficultyLevel
 );
 
-public sealed record FoodItemInfo(
+public sealed record MealPlanFoodItemInfo(
     Guid Id,
     string Name,
     string FoodReferenceName,
     string FoodGroup,
     Uri? ImageUrl,
-    decimal Quantity,
+    decimal Quantity,         
     string UnitAbbreviation,
     DateOnly ExpirationDate
 );
+
+

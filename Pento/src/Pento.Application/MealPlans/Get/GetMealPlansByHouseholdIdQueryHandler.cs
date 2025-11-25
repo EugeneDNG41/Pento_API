@@ -26,7 +26,8 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
             return Result.Failure<PagedList<MealPlanResponse>>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
+        await using DbConnection connection =
+            await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         var filters = new List<string> { "household_id = @HouseholdId" };
         var parameters = new DynamicParameters();
@@ -72,8 +73,6 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
             SELECT
                 id AS Id,
                 household_id AS HouseholdId,
-                recipe_id AS RecipeId,
-                food_item_id AS FoodItemId,
                 name AS Name,
                 scheduled_date AS ScheduledDate,
                 meal_type AS MealType,
@@ -106,4 +105,5 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
         return Result.Success(paged);
     }
 }
+
 

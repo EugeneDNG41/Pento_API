@@ -11,7 +11,6 @@ public sealed record CreateMealPlanReservationCommand(
     Guid UnitId,
     MealType? MealType,
     DateOnly? ScheduledDate,
-    int? Servings,     
-    Guid? RecipeId     
+    int? Servings
 ) : ICommand<Guid>;
 
