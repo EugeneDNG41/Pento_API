@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
 
-namespace Pento.Application.MealPlans.Reserve;
+namespace Pento.Application.MealPlans.Reserve.Fullfill;
 public sealed class FulfillMealPlanReservationCommandValidator
     : AbstractValidator<FulfillMealPlanReservationCommand>
 {

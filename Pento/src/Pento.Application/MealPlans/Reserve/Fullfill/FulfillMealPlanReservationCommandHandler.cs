@@ -8,7 +8,7 @@ using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 
-namespace Pento.Application.MealPlans.Reserve;
+namespace Pento.Application.MealPlans.Reserve.Fullfill;
 
 internal sealed class FulfillMealPlanReservationCommandHandler(
     IGenericRepository<FoodItemMealPlanReservation> reservationRepository,
@@ -57,14 +57,12 @@ internal sealed class FulfillMealPlanReservationCommandHandler(
         }
 
         decimal qtyFulfilledInItemUnit = command.NewQuantity;
-        decimal qtyReservedInItemUnit = reservation.Quantity;
-
         if (foodItem.UnitId != command.UnitId)
         {
             Result<decimal> converted = await converter.ConvertAsync(
                 command.NewQuantity,
-                fromUnitId: command.UnitId,
-                toUnitId: foodItem.UnitId,
+                command.UnitId,
+                foodItem.UnitId,
                 cancellationToken);
 
             if (converted.IsFailure)
@@ -74,35 +72,32 @@ internal sealed class FulfillMealPlanReservationCommandHandler(
 
             qtyFulfilledInItemUnit = converted.Value;
         }
-        if (foodItem.UnitId != reservation.UnitId)
-        {
-            Result<decimal> converted = await converter.ConvertAsync(
-                command.NewQuantity,
-                fromUnitId: reservation.UnitId,
-                toUnitId: foodItem.UnitId,
-                cancellationToken);
 
-            if (converted.IsFailure)
+        decimal reservedQty = reservation.Quantity;
+
+        if (qtyFulfilledInItemUnit < reservedQty)
+        {
+            decimal delta = reservedQty - qtyFulfilledInItemUnit;
+            foodItem.AdjustQuantity(foodItem.Quantity + delta, userContext.UserId);
+        }
+
+        else if (qtyFulfilledInItemUnit > reservedQty)
+        {
+            decimal delta = qtyFulfilledInItemUnit - reservedQty;
+
+            if (delta > foodItem.Quantity)
             {
-                return Result.Failure<Guid>(converted.Error);
+                return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
             }
 
-            qtyReservedInItemUnit = converted.Value;
+            foodItem.AdjustQuantity(foodItem.Quantity - delta, userContext.UserId);
         }
-        decimal actualConsumedQuantity = qtyFulfilledInItemUnit - qtyReservedInItemUnit;
-
-
-        if (actualConsumedQuantity > foodItem.Quantity)
-        {
-            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
-        }
-
-        foodItem.AdjustQuantity(foodItem.Quantity - actualConsumedQuantity, userContext.UserId);
 
         reservation.MarkAsFulfilled(command.NewQuantity, command.UnitId, userContext.UserId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return reservation.Id;
+
     }
 }
