@@ -21,7 +21,6 @@ internal sealed class GetMealPlanQueryHandler(
         await using DbConnection connection =
             await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
-        // 1️⃣ Lấy MealPlan
         const string sqlMealPlan = """
             SELECT 
                 id,
@@ -48,7 +47,6 @@ internal sealed class GetMealPlanQueryHandler(
             return Result.Failure<MealPlanDetailResponse>(MealPlanErrors.NotFound);
         }
 
-        // 2️⃣ Lấy các recipe gắn với MealPlan (bảng meal_plan_recipes)
         const string sqlRecipes = """
             SELECT
                 r.id,
@@ -107,7 +105,7 @@ internal sealed class GetMealPlanQueryHandler(
                 FoodReferenceName: r.food_reference_name,
                 FoodGroup: r.food_group,
                 ImageUrl: r.food_image_url is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
-                Quantity: (decimal)r.quantity, // số lượng tồn kho hiện tại
+                Quantity: (decimal)r.quantity, 
                 UnitAbbreviation: r.unit_abbreviation,
                 ExpirationDate: r.expiration_date is DateTime dt
                     ? DateOnly.FromDateTime(dt)

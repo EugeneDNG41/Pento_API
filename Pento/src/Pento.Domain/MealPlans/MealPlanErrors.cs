@@ -50,4 +50,7 @@ public static class MealPlanErrors
     public static readonly Error RecipeAlreadyAssigned = Error.Conflict(
         "MealPlan.RecipeAlreadyAssigned",
         "The recipe is already assigned to another meal plan on the same date.");
+    public static readonly Error RecipeNotInMealPlan = Error.NotFound(
+        "MealPlan.RecipeNotInMealPlan",
+        "The recipe is not part of the specified meal plan.");
 }

@@ -32,6 +32,25 @@ internal sealed class FullfillMealPlanReservation : IEndpoint
    .WithTags(Tags.Reservations)
    .RequireAuthorization();
 
+        app.MapPatch("meal-plans/{mealPlanId:guid}/recipes/{recipeId:guid}/fulfill", async (
+            Guid mealPlanId,
+            Guid recipeId,
+            ICommandHandler<FulfillMealPlanRecipeCommand, Guid> handler,
+            CancellationToken ct
+        ) =>
+                {
+                    var cmd = new FulfillMealPlanRecipeCommand(mealPlanId, recipeId);
+
+                    Result<Guid> result = await handler.Handle(cmd, ct);
+
+                    return result.Match(
+                        Results.Ok,
+                        CustomResults.Problem
+                    );
+                })
+        .WithTags(Tags.MealPlans)
+        .RequireAuthorization();
+
     }
 
     internal sealed class FulfillRequest
