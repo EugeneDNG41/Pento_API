@@ -18,7 +18,7 @@ internal sealed class GetRecipeDirectionsByRecipeIdQueryHandler(
         GetRecipeDirectionsByRecipeIdQuery query,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         Recipe? recipe = await recipeRepository.GetByIdAsync(query.RecipeId, cancellationToken);
         if (recipe is null)

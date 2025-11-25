@@ -21,7 +21,7 @@ internal sealed class GetCurrentHouseholdQueryHandler(
         {
             return Result.Failure<HouseholdResponse>(HouseholdErrors.NotInAnyHouseHold);
         }
-        using DbConnection connection = await connectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             $"""
                 SELECT

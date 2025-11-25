@@ -12,7 +12,7 @@ namespace Pento.Application.Abstractions.PayOS;
 #pragma warning disable CA1054 // URI-like parameters should not be strings
 public interface IPayOSService
 {
-    Task<Result> CancelPaymentAsync(Guid paymentId, string? reason, CancellationToken cancellationToken);
+    Task<Result> CancelPaymentAsync(Payment payment, string? reason, CancellationToken cancellationToken);
     Task<Result> ConfirmWebhookAsync();
     Task<Result<PaymentLinkResponse>> CreatePaymentAsync(Payment payment, string returnUrl, string cancelUrl, CancellationToken cancellationToken);
     Task<Result> HandleWebhookAsync(Webhook webhook, CancellationToken cancellationToken);

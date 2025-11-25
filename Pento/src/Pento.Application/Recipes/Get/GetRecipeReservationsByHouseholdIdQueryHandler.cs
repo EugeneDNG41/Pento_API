@@ -26,28 +26,29 @@ internal sealed class GetRecipeReservationsByHouseholdIdQueryHandler(
             return (Result<IReadOnlyList<RecipeReservationResponse>>)Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
-    SELECT
-        id AS Id,
-        food_item_id AS FoodItemId,
-        household_id AS HouseholdId,
-        reservation_date_utc AS ReservationDateUtc,
-        quantity AS Quantity,
-        unit_id AS UnitId,
-        status AS Status,
-        recipe_id AS RecipeId
-    FROM food_item_reservations
-    WHERE household_id = @HouseholdId
-      AND reservation_for = @ReservationFor
-    ORDER BY reservation_date_utc DESC
-""";
-
-        var reservations = (await connection.QueryAsync<RecipeReservationResponse>(
+            SELECT
+                id AS Id,
+                food_item_id AS FoodItemId,
+                household_id AS HouseholdId,
+                reservation_date_utc AS ReservationDateUtc,
+                quantity AS Quantity,
+                unit_id AS UnitId,
+                status AS Status,
+                recipe_id AS RecipeId
+            FROM food_item_reservations
+            WHERE household_id = @HouseholdId
+              AND reservation_for = @ReservationFor
+            ORDER BY reservation_date_utc DESC
+        """;
+        CommandDefinition command = new(
             sql,
-            new { HouseholdId = householdId.Value, ReservationFor = ReservationFor.Recipe }
-        )).ToList();
+            new { HouseholdId = householdId.Value, ReservationFor = ReservationFor.Recipe },
+            cancellationToken: cancellationToken
+        );
+        var reservations = (await connection.QueryAsync<RecipeReservationResponse>(command)).ToList();
 
 
         if (reservations.Count == 0)

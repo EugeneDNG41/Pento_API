@@ -23,7 +23,7 @@ internal sealed class GetCompartmentsQueryHandler(
         {
             return Result.Failure<PagedList<CompartmentPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             $"""
             SELECT COUNT(*) FROM compartments WHERE storage_id = @StorageId AND is_deleted = false AND is_archived = false and household_id = @HouseholdId AND name ILIKE '%' || COALESCE(@SearchText, '') || '%';

@@ -18,7 +18,7 @@ internal sealed class GetGroceryListsByHouseholdIdQueryHandler(
         GetGroceryListsByHouseholdIdQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         Guid? householdId = userContext.HouseholdId;
 

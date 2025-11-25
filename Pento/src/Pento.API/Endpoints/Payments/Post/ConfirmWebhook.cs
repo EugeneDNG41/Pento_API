@@ -8,10 +8,10 @@ internal sealed class ConfirmWebhook : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("payments/webhook/confirm", async (IPayOSService service) =>
+        app.MapPut("payments/webhook/confirm", async (IPayOSService service) =>
         {
             Result result = await service.ConfirmWebhookAsync();
-            return result.Match(() => Results.Ok(), CustomResults.Problem);
-        }).WithTags(Tags.Payments);
+            return result.Match(Results.NoContent, CustomResults.Problem);
+        }).RequireAuthorization(Permissions.ManagePayments).WithTags(Tags.Payments);
     }
 }

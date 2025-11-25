@@ -15,7 +15,7 @@ internal sealed class GetUserRolesQueryHandler(ISqlConnectionFactory dbConnectio
         GetUserRolesQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
             $"""
@@ -28,8 +28,8 @@ internal sealed class GetUserRolesQueryHandler(ISqlConnectionFactory dbConnectio
              WHERE u.identity_id = @IdentityId
              GROUP BY u.id, u.household_id;
              """;
-
-        UserPermission? permission = await connection.QuerySingleOrDefaultAsync<UserPermission>(sql, request);
+        CommandDefinition command = new(sql, request, cancellationToken: cancellationToken);
+        UserPermission? permission = await connection.QuerySingleOrDefaultAsync<UserPermission>(command);
 
         if (permission is null)
         {

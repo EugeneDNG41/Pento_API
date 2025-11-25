@@ -15,7 +15,7 @@ internal sealed class GetHouseholdRolesQueryHandler(ISqlConnectionFactory connec
 {
     public async Task<Result<IReadOnlyList<RoleResponse>>> Handle(GetHouseholdRolesQuery query, CancellationToken cancellationToken)
     {
-        using DbConnection connection = await connectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             $"""
                 SELECT 

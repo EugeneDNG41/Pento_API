@@ -20,7 +20,7 @@ internal sealed class GetRecipeDirectionQueryHandler(
         GetRecipeDirectionQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
             SELECT
@@ -34,11 +34,12 @@ internal sealed class GetRecipeDirectionQueryHandler(
             FROM recipe_directions
             WHERE id = @RecipeDirectionId
         """;
-
-        RecipeDirectionResponse? direction = await connection.QuerySingleOrDefaultAsync<RecipeDirectionResponse>(
+        CommandDefinition command = new(
             sql,
-            new { request.RecipeDirectionId }
+            new { request.RecipeDirectionId },
+            cancellationToken: cancellationToken
         );
+        RecipeDirectionResponse? direction = await connection.QuerySingleOrDefaultAsync<RecipeDirectionResponse>(command);
 
         if (direction is null)
         {

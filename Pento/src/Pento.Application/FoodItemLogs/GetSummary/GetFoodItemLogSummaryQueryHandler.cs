@@ -37,7 +37,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         {
             return Result.Failure<FoodItemLogSummary>(UnitErrors.InvalidConversion);
         }
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var filters = new List<string>
         {
             "l.is_deleted IS FALSE",

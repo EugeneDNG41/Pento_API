@@ -14,7 +14,7 @@ internal sealed class GetDietaryTagByIdQueryHandler(ISqlConnectionFactory sqlCon
         GetDietaryTagByIdQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
             $"""

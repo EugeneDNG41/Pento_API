@@ -13,7 +13,7 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
         GetAllFoodReferencesQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         var filters = new List<string>();
         var parameters = new DynamicParameters();

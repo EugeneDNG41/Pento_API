@@ -19,15 +19,10 @@ internal sealed class PayOSService(
     IGenericRepository<Payment> paymentRepo,
     IUnitOfWork unitOfWork) : IPayOSService
 {
-    public async Task<Result> CancelPaymentAsync(Guid paymentId, string? reason, CancellationToken cancellationToken)
+    public async Task<Result> CancelPaymentAsync(Payment payment, string? reason, CancellationToken cancellationToken)
     {
         try
         {
-            Payment? payment = await paymentRepo.GetByIdAsync(paymentId, cancellationToken);
-            if (payment is null)
-            {
-                return Result.Failure(PaymentErrors.PaymentNotFound);
-            }
             if (!string.IsNullOrWhiteSpace(payment.PaymentLinkId))
             {
                 using var client = new PayOSClient(new PayOSOptions
@@ -70,7 +65,7 @@ internal sealed class PayOSService(
             CreatePaymentLinkResponse response = await client.PaymentRequests.CreateAsync(paymentRequest);
             payment.UpdatePaymentLink(response.PaymentLinkId, new Uri(response.CheckoutUrl), response.QrCode, expiresAt);
             await unitOfWork.SaveChangesAsync(cancellationToken);
-            return new PaymentLinkResponse(new Uri(response.CheckoutUrl), response.QrCode);
+            return new PaymentLinkResponse(payment.Id, new Uri(response.CheckoutUrl), response.QrCode);
         }
         catch
         {
@@ -102,7 +97,7 @@ internal sealed class PayOSService(
                 Payment? payment = (await paymentRepo.FindAsync(p => p.PaymentLinkId == data.PaymentLinkId, cancellationToken)).SingleOrDefault();
                 if (payment is null)
                 {
-                    return Result.Failure(PaymentErrors.PaymentNotFound);
+                    return Result.Failure(PaymentErrors.NotFound);
                 }
                 switch (paymentLink.Status)
                 {

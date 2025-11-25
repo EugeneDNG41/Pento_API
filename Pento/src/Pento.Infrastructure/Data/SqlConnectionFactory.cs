@@ -7,8 +7,8 @@ namespace Pento.Infrastructure.Data;
 
 internal sealed class SqlConnectionFactory(NpgsqlDataSource dataSource) : ISqlConnectionFactory
 {
-    public async ValueTask<DbConnection> OpenConnectionAsync()
+    public async ValueTask<DbConnection> OpenConnectionAsync(CancellationToken cancellationToken)
     {
-        return await dataSource.OpenConnectionAsync();
+        return await dataSource.OpenConnectionAsync(cancellationToken);
     }
 }

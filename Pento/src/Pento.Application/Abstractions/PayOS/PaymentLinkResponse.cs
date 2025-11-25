@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Pento.Application.Abstractions.PayOS;
 
-public sealed record PaymentLinkResponse(Uri CheckoutUrl, string QrCode);
+public sealed record PaymentLinkResponse(Guid PaymentId, Uri CheckoutUrl, string QrCode);
 

@@ -15,10 +15,10 @@ internal sealed class SignInWeb : IEndpoint
         app.MapPost("users/web-sign-in", async (
             HttpContext context,
             Request request, 
-            ICommandHandler<SignInUserCommand, AuthToken> handler, 
+            ICommandHandler<WebSignInCommand, AuthToken> handler, 
             CancellationToken cancellationToken) =>
         {
-            Result<AuthToken> result = await handler.Handle(new SignInUserCommand(
+            Result<AuthToken> result = await handler.Handle(new WebSignInCommand(
                 request.Email,
                 request.Password), cancellationToken);
             if (result.IsSuccess)

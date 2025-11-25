@@ -25,7 +25,7 @@ internal sealed class GetCompartmentsQueryHandler(
         {
             return Result.Failure<PagedList<StoragePreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             $"""
             SELECT COUNT(*) 

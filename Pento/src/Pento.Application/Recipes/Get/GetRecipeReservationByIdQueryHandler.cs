@@ -28,10 +28,10 @@ internal sealed class GetRecipeReservationByIdQueryHandler(
         if (householdId is null)
         {
             return Result.Failure<RecipeReservationDetailResponse>(
-                HouseholdErrors.NotInThisHouseHold);
+                HouseholdErrors.NotInAnyHouseHold);
         }
 
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sqlReservation = """
             SELECT

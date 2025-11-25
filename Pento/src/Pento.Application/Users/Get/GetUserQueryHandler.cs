@@ -13,7 +13,7 @@ internal sealed class GetUserQueryHandler(ISqlConnectionFactory dbConnectionFact
 {
     public async Task<Result<UserResponse>> Handle(GetUserQuery request, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
             $"""
@@ -31,8 +31,8 @@ internal sealed class GetUserQueryHandler(ISqlConnectionFactory dbConnectionFact
              WHERE id = @UserId
              GROUP BY u.id;
              """;
-
-        UserResponse? user = await connection.QuerySingleOrDefaultAsync<UserResponse>(sql, request);
+        CommandDefinition command = new(sql, request, cancellationToken: cancellationToken);
+        UserResponse? user = await connection.QuerySingleOrDefaultAsync<UserResponse>(command);
 
         if (user is null)
         {

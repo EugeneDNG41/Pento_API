@@ -9,13 +9,13 @@ internal sealed class HandleWebhook : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("payments/webhook/handle", async (
+        app.MapPut("payments/webhook/handle", async (
             Webhook webhook,
             IPayOSService service,
             CancellationToken cancellationToken) =>
         {
             Result result = await service.HandleWebhookAsync(webhook, cancellationToken);
-            return result.Match(() => Results.Ok(), CustomResults.Problem);
+            return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Payments);
     }
 }

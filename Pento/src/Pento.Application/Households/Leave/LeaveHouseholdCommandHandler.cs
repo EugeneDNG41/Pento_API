@@ -18,16 +18,12 @@ internal sealed class LeaveHouseholdCommandHandler(
         Guid? currentHouseholdId = userContext.HouseholdId;
         if (currentHouseholdId is null)
         {
-            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
+            return Result.Success();
         }
         User? user = await userRepository.GetByIdAsync(currentUserId, cancellationToken);
         if (user is null)
         {
             return Result.Failure(UserErrors.NotFound);
-        }
-        if (user.HouseholdId != currentHouseholdId)
-        {
-            return Result.Failure(HouseholdErrors.NotInThisHouseHold);
         }
         user.SetHouseholdId(null);
         userRepository.Update(user);

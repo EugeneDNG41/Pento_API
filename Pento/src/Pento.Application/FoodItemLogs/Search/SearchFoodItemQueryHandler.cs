@@ -20,7 +20,7 @@ internal sealed class SearchFoodItemQueryHandler(
         {
             return Result.Failure<PagedList<FoodItemLogPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var filters = new List<string>
         {
             "fil.is_deleted IS FALSE",

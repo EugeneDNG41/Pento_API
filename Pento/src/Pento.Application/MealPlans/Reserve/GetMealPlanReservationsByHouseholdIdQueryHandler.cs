@@ -27,7 +27,7 @@ internal sealed class GetMealPlanReservationsByHouseholdIdQueryHandler(
             );
         }
 
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
             SELECT

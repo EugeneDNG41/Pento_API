@@ -15,7 +15,7 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
         GetUserPermissionsQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
             $"""
@@ -28,8 +28,8 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
              LEFT JOIN role_permissions rp ON rp.role_name = ur.role_name
              WHERE u.identity_id = @IdentityId
              """;
-
-        List<UserPermission> permissions = (await connection.QueryAsync<UserPermission>(sql, request)).AsList();
+        CommandDefinition command = new(sql, request, cancellationToken: cancellationToken);
+        List<UserPermission> permissions = (await connection.QueryAsync<UserPermission>(command)).AsList();
 
         if (!permissions.Any())
         {

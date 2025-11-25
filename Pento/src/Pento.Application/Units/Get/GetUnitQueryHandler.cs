@@ -11,7 +11,7 @@ internal sealed class GetUnitQueryHandler(ISqlConnectionFactory sqlConnectionFac
 {
     public async Task<Result<UnitResponse>> Handle(GetUnitQuery request, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
             """
@@ -24,8 +24,8 @@ internal sealed class GetUnitQueryHandler(ISqlConnectionFactory sqlConnectionFac
             FROM units
             WHERE id = @UnitId
             """;
-
-        UnitResponse? unit = await connection.QuerySingleOrDefaultAsync<UnitResponse>(sql, request);
+        CommandDefinition command = new(sql, request, cancellationToken: cancellationToken);
+        UnitResponse? unit = await connection.QuerySingleOrDefaultAsync<UnitResponse>(command);
 
         if (unit is null)
         {

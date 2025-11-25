@@ -13,7 +13,7 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
 {
     public async Task<Result<PagedList<RecipeResponse>>> Handle(GetAllRecipesQuery request, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await factory.OpenConnectionAsync();
+        await using DbConnection connection = await factory.OpenConnectionAsync(cancellationToken);
 
         var filters = new List<string>();
         var parameters = new DynamicParameters();

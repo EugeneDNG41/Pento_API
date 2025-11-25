@@ -14,7 +14,7 @@ internal sealed class GetRecipeQueryHandler(
 {
     public async Task<Result<RecipeDetailResponse>> Handle(GetRecipeQuery query, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string recipeSql = """
             SELECT id AS RecipeId, 

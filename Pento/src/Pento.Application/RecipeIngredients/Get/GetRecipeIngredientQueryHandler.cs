@@ -18,7 +18,7 @@ internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlC
         GetRecipeIngredientQuery request,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         RecipeIngredient? recipeIngredient = await RecipeIngredientRepository.GetByIdAsync(request.RecipeIngredientId, cancellationToken);
         if (recipeIngredient == null)
@@ -39,11 +39,12 @@ internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlC
             FROM recipe_ingredients
             WHERE id = @RecipeIngredientId
             """;
-
-        RecipeIngredientResponse? ingredient = await connection.QuerySingleOrDefaultAsync<RecipeIngredientResponse>(
+        CommandDefinition command = new(
             sql,
-            new { recipeIngredientId = request.RecipeIngredientId }
+            new { recipeIngredientId = request.RecipeIngredientId },
+            cancellationToken: cancellationToken
         );
+        RecipeIngredientResponse? ingredient = await connection.QuerySingleOrDefaultAsync<RecipeIngredientResponse>(command);
 
 
         if (ingredient is null)

@@ -16,7 +16,7 @@ internal sealed class GetMealPlanQueryHandler(
 {
     public async Task<Result<MealPlanDetailResponse>> Handle(GetMealPlanQuery request, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
             SELECT 

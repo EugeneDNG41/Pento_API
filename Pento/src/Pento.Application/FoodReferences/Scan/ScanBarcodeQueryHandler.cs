@@ -13,7 +13,7 @@ internal sealed class ScanBarcodeQueryHandler(IBarcodeService barcodeService, IS
 {
     public async Task<Result<FoodReferenceResponse>> Handle(ScanBarcodeQuery request, CancellationToken cancellationToken)
     {
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
             SELECT

@@ -1063,22 +1063,22 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
+                    b.Property<Guid>("SubscriptionPlanId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_plan_id");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.Property<Guid>("UserSubscriptionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("user_subscription_id");
-
                     b.HasKey("Id")
                         .HasName("pk_payments");
 
+                    b.HasIndex("SubscriptionPlanId")
+                        .HasDatabaseName("ix_payments_subscription_plan_id");
+
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_payments_user_id");
-
-                    b.HasIndex("UserSubscriptionId")
-                        .HasDatabaseName("ix_payments_user_subscription_id");
 
                     b.ToTable("payments", (string)null);
                 });
@@ -1371,6 +1371,12 @@ namespace Pento.Infrastructure.Migrations
                             Code = "mealplans:delete",
                             Description = "Delete meal plans.",
                             Name = "Delete Meal Plans"
+                        },
+                        new
+                        {
+                            Code = "payments:manage",
+                            Description = "Manage payment settings and view transaction history.",
+                            Name = "Manage Payments"
                         });
                 });
 
@@ -2237,6 +2243,11 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
+                            PermissionCode = "payments:manage",
+                            RoleName = "Administrator"
+                        },
+                        new
+                        {
                             PermissionCode = "household:read",
                             RoleName = "Household Head"
                         },
@@ -2878,19 +2889,19 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Payments.Payment", b =>
                 {
+                    b.HasOne("Pento.Domain.Subscriptions.SubscriptionPlan", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionPlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_payments_subscription_plan_subscription_plan_id");
+
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_payments_user_user_id");
-
-                    b.HasOne("Pento.Domain.UserSubscriptions.UserSubscription", null)
-                        .WithMany()
-                        .HasForeignKey("UserSubscriptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_payments_user_subscription_user_subscription_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.RecipeDietaryTags.RecipeDietaryTag", b =>

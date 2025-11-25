@@ -20,18 +20,14 @@ internal sealed class RemoveHouseholdMemberCommandHandler(
         {
             return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
-        User? user = (await userRepository.FindIncludeAsync(u => u.Id == userContext.UserId, u => u.Roles, cancellationToken)).SingleOrDefault();
-        if (user == null)
+        User? member = (await userRepository.FindIncludeAsync(u => u.Id == command.UserId, u => u.Roles, cancellationToken)).SingleOrDefault();
+        if (member == null || member.HouseholdId != currentHouseholdId)
         {
             return Result.Failure(UserErrors.NotFound);
         }
-        if (user.HouseholdId != currentHouseholdId)
-        {
-            return Result.Failure(HouseholdErrors.UserNotInYourHousehold);
-        }
-        user.SetHouseholdId(null);
-        user.SetRoles(new List<Role>());
-        userRepository.Update(user);
+        member.SetHouseholdId(null);
+        member.SetRoles(new List<Role>());
+        userRepository.Update(member);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

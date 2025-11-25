@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Payments;
 using Pento.Domain.Shared;
+using Pento.Domain.Subscriptions;
 using Pento.Domain.Users;
 using Pento.Domain.UserSubscriptions;
 
@@ -19,7 +20,7 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
 
         builder.Property(p => p.CancellationReason).HasMaxLength(500).IsRequired(false);
         builder.HasOne<User>().WithMany().HasForeignKey(p => p.UserId);
-        builder.HasOne<UserSubscription>().WithMany().HasForeignKey(p => p.UserSubscriptionId);
+        builder.HasOne<SubscriptionPlan>().WithMany().HasForeignKey(p => p.SubscriptionPlanId);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }
 }

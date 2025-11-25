@@ -25,7 +25,7 @@ internal sealed class SearchFoodItemQueryHandler(
         {
             return Result.Failure<PagedList<FoodItemPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",
@@ -61,7 +61,7 @@ internal sealed class SearchFoodItemQueryHandler(
         }
         if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
-            filters.Add("(LOWER(name) LIKE LOWER(@SearchText))");
+            filters.Add("name ILIKE @SearchText");
             parameters.Add("SearchText", $"%{query.SearchText}%");
         }
         if (query.ExpirationDateAfter.HasValue)
@@ -101,7 +101,7 @@ internal sealed class SearchFoodItemQueryHandler(
             {whereClause}
             ORDER BY name
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-        """;
+         """;
 
         parameters.Add("Offset", (query.PageNumber - 1) * query.PageSize);
         parameters.Add("PageSize", query.PageSize);

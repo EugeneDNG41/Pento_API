@@ -7,8 +7,8 @@ internal sealed class CancelPaymentCommandValidator : AbstractValidator<CancelPa
     public CancelPaymentCommandValidator()
     {
         RuleFor(c => c.PaymentId)
-            .NotEqual(Guid.Empty).WithMessage("Payment Id must not be empty.");
+            .NotEmpty().WithMessage("Payment Id is required.");
         RuleFor(c => c.Reason)
-            .MaximumLength(500).WithMessage("Reason must not exceed 500 characters.");
+            .MaximumLength(500).WithMessage("Reason cannot exceed 500 characters.");
     }
 }

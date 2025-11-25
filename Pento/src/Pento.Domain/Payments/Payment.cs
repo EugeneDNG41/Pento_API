@@ -10,6 +10,7 @@ public class Payment : Entity
     public Payment(
         Guid id,
         Guid userId,
+        Guid subscriptionPlanId,
         string? paymentLinkId,
         string description,
         long amountDue,
@@ -21,6 +22,7 @@ public class Payment : Entity
         DateTime createdAt) : base(id)
     {
         UserId = userId;
+        SubscriptionPlanId = subscriptionPlanId;
         PaymentLinkId = paymentLinkId;
         Description = description;
         AmountDue = amountDue;
@@ -32,7 +34,7 @@ public class Payment : Entity
         CreatedAt = createdAt;
     }
     public Guid UserId { get; private set; }
-    public Guid UserSubscriptionId { get; private set; }
+    public Guid SubscriptionPlanId { get; private set; }
     public long OrderCode { get; private set; }
     public string? PaymentLinkId { get; private set; }
     public string Description { get; private set; }
@@ -50,6 +52,7 @@ public class Payment : Entity
 
     public static Payment Create(
         Guid userId,
+        Guid subscriptionPlanId,
         string? paymentLinkId,
         string description,
         long amountDue,
@@ -62,6 +65,7 @@ public class Payment : Entity
         return new Payment(
             Guid.CreateVersion7(),
             userId,
+            subscriptionPlanId,
             paymentLinkId,
             description,
             amountDue,

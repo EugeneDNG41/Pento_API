@@ -26,7 +26,7 @@ internal sealed class GetCompartmentByIdQueryHandler(
         {
             return Result.Failure<CompartmentWithFoodItemPreviewResponse>(HouseholdErrors.NotInAnyHouseHold);
         }
-        await using DbConnection connection = await connectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",

@@ -66,4 +66,5 @@ internal sealed class Permissions
     internal const string ManageGiveaways = "giveaways:manage";
     internal const string ManageRecipes = "recipes:manage";
     internal const string ManageFoodReferences = "foodreferences:manage";
+    internal const string ManagePayments = "payments:manage";
 }

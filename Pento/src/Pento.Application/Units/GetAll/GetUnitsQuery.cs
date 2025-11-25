@@ -19,7 +19,7 @@ internal sealed class GetUnitsQueryHandler(ISqlConnectionFactory connectionFacto
         GetUnitsQuery query,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await connectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await connectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             """
             SELECT

@@ -9,5 +9,5 @@ namespace Pento.Application.Abstractions.Data;
 
 public interface ISqlConnectionFactory
 {
-    ValueTask<DbConnection> OpenConnectionAsync();
+    ValueTask<DbConnection> OpenConnectionAsync(CancellationToken cancellationToken);
 }

@@ -25,7 +25,7 @@ internal sealed class GetFoodItemByIdQueryHandler(
         {
             return Result.Failure<FoodItemDetail>(HouseholdErrors.NotInAnyHouseHold);
         }
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         var filters = new List<string>
         {

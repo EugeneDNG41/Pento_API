@@ -16,7 +16,7 @@ internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConn
 {
     public async Task<Result<FoodReferenceResponse>> Handle(GetFoodReferenceQuery request, CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql = """
             SELECT

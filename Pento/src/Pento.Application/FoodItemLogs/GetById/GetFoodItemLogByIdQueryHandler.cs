@@ -20,7 +20,7 @@ internal sealed class GetFoodItemLogByIdQueryHandler(IUserContext userContext, I
         {
             return Result.Failure<FoodItemLogDetail>(HouseholdErrors.NotInAnyHouseHold);
         }
-        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync();
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         
 
         const string sql = """

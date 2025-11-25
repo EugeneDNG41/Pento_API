@@ -23,13 +23,6 @@ public static class HouseholdErrors
         "User.UserAlreadyInHousehold",
         "You are already in this household");
 
-    public static readonly Error UserNotInYourHousehold = Error.Problem(
-        "User.UserNotInYourHousehold",
-        "The user is not a member of your household"); //when user in a household try to affect change in another user in another household
-
-    public static readonly Error NotInThisHouseHold = Error.Forbidden(
-        "User.NotInThisHouseHold",
-        "You are not in this household"); //when a user in a household try to affect change in another household's data
     public static readonly Error NotInAnyHouseHold = Error.Forbidden(
         "User.NotInThisHouseHold",
         "You are not in any household"); //when a user in a household try to affect change in another household's data

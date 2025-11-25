@@ -1,19 +1,29 @@
-﻿using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.PayOS;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Payments;
 
 namespace Pento.Application.Payments.Cancel;
 
-internal sealed class CancelPaymentCommandHandler(IPayOSService service) : ICommandHandler<CancelPaymentCommand>
+internal sealed class CancelPaymentCommandHandler(
+    IUserContext userContext,
+    IGenericRepository<Payment> paymentRepository,
+    IPayOSService service) : ICommandHandler<CancelPaymentCommand>
 {
-    public async Task<Result> Handle(CancelPaymentCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CancelPaymentCommand command, CancellationToken cancellationToken)
     {
-        Result result = await service.CancelPaymentAsync(request.PaymentId, request.Reason, cancellationToken);
-        if (result.IsFailure)
+        Payment? payment = await paymentRepository.GetByIdAsync(command.PaymentId, cancellationToken);
+        if (payment == null)
         {
-            return Result.Failure(result.Error);
-
+            return Result.Failure(PaymentErrors.NotFound);
         }
-        return Result.Success();
+        if (payment.UserId != userContext.UserId)
+        {
+            return Result.Failure(PaymentErrors.ForbiddenAccess);
+        }
+        Result result = await service.CancelPaymentAsync(payment, command.Reason, cancellationToken);
+        return result;
     }
 }

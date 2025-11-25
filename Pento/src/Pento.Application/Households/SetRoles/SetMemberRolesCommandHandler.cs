@@ -26,13 +26,9 @@ internal sealed class SetMemberRolesCommandHandler(
             return Result.Failure(HouseholdErrors.CannotAssignRolesSelf);
         }
         User? user = (await userRepository.FindIncludeAsync(u => u.Id == command.MemberId, u => u.Roles, cancellationToken)).SingleOrDefault();
-        if (user is null)
+        if (user is null || user.HouseholdId != currentHouseholdId.Value)
         {
             return Result.Failure(UserErrors.NotFound);
-        }
-        if (user.HouseholdId != currentHouseholdId.Value)
-        {
-            return Result.Failure(HouseholdErrors.UserNotInYourHousehold);
         }
         List<Role> roles = [];
         foreach (string roleName in command.Roles)

@@ -27,9 +27,11 @@
   <ItemGroup>
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
-    <Folder Include="Payments\GetById\" />
-    <Folder Include="Payments\GetAll\" />
-    <Folder Include="Subscriptions\" />
+    <Folder Include="Subscriptions\GetAll\" />
+    <Folder Include="Subscriptions\GetById\" />
+    <Folder Include="Subscriptions\Create\" />
+    <Folder Include="Subscriptions\AddPlan\" />
+    <Folder Include="Subscriptions\AddFeature\" />
   </ItemGroup>
 
 </Project>

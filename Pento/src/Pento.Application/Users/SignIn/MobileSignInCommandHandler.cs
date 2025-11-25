@@ -1,5 +1,6 @@
 ﻿
 using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -7,12 +8,19 @@ using Pento.Domain.Users;
 
 namespace Pento.Application.Users.SignIn;
 
-internal sealed class SignInUserCommandHandler(IJwtService jwtService) : ICommandHandler<SignInUserCommand, AuthToken>
+internal sealed class MobileSignInCommandHandler(IGenericRepository<User> userRepository, IJwtService jwtService) : ICommandHandler<MobileSignInCommand, AuthToken>
 {
     public async Task<Result<AuthToken>> Handle(
-        SignInUserCommand request,
+        MobileSignInCommand request,
         CancellationToken cancellationToken)
     {
+        User? user = (await userRepository.FindAsync(
+            u => u.Email == request.Email,
+            cancellationToken)).SingleOrDefault();
+        if (user == null)
+        {
+            return Result.Failure<AuthToken>(UserErrors.InvalidCredentials);
+        }
         Result<AuthToken> result = await jwtService.GetAuthTokenAsync(
             request.Email,
             request.Password,
@@ -20,7 +28,7 @@ internal sealed class SignInUserCommandHandler(IJwtService jwtService) : IComman
 
         if (result.IsFailure)
         {
-            return Result.Failure<AuthToken>(UserErrors.InvalidCredentials);
+            return Result.Failure<AuthToken>(result.Error);
         }
 
         return result.Value;
