@@ -17,7 +17,7 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.OrderCode).ValueGeneratedOnAdd();
         builder.Property(p => p.Description).HasMaxLength(500);
         builder.Property(p => p.Currency).HasConversion(currency => currency.Code, code => Currency.FromCode(code)).HasMaxLength(3);
-
+        builder.Property(p => p.Status).HasConversion<string>().HasMaxLength(20);
         builder.Property(p => p.CancellationReason).HasMaxLength(500).IsRequired(false);
         builder.HasOne<User>().WithMany().HasForeignKey(p => p.UserId);
         builder.HasOne<SubscriptionPlan>().WithMany().HasForeignKey(p => p.SubscriptionPlanId);

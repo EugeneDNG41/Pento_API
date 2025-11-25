@@ -62,7 +62,7 @@ internal sealed class CreateMealPlanReservationCommandHandler(
         {
             if (command.ScheduledDate is null || command.MealType is null)
             {
-                return Result.Failure<Guid>(MealPlanErrors.InvalidName);
+                return Result.Failure<Guid>(MealPlanErrors.InvalidName); //???
             }
 
             MealPlan? existing = (await mealPlanRepository.FindAsync(

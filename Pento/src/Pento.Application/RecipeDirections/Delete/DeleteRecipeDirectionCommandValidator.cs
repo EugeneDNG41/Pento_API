@@ -8,6 +8,6 @@ internal sealed class DeleteRecipeDirectionCommandValidator : AbstractValidator<
     {
         RuleFor(x => x.RecipeDirectionId)
             .NotEmpty()
-            .WithMessage("Recipe direction ID must not be empty.");
+            .WithMessage("Recipe direction Id is required.");
     }
 }

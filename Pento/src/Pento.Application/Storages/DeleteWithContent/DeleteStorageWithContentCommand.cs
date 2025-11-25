@@ -20,7 +20,7 @@ internal sealed class DeleteStorageWithContentCommandValidator : AbstractValidat
     public DeleteStorageWithContentCommandValidator()
     {
         RuleFor(x => x.StorageId)
-            .NotEmpty().WithMessage("Storage ID must not be empty.");
+            .NotEmpty().WithMessage("Storage Id is required.");
     }
 }
 internal sealed class DeleteStorageWithContentCommandHandler(

@@ -11,6 +11,6 @@ internal sealed class DeleteRecipeIngredientCommandValidator : AbstractValidator
     public DeleteRecipeIngredientCommandValidator()
     {
         RuleFor(x => x.RecipeIngredientId)
-            .NotEmpty().WithMessage("Recipe ingredient ID must not be empty.");
+            .NotEmpty().WithMessage("Recipe ingredient Id is required.");
     }
 }

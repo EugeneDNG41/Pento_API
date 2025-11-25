@@ -18,11 +18,6 @@ public static class FoodReferenceErrors
         "The provided food group is invalid."
     );
 
-    public static readonly Error InvalidName = Error.Problem(
-        "FoodReferences.InvalidName",
-        "The food reference name cannot be empty or whitespace."
-    );
-
     public static readonly Error Conflict = Error.Conflict(
         "FoodReferences.Conflict",
         "A food reference with the same name or code already exists."

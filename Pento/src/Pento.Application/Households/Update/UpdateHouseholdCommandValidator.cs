@@ -7,7 +7,7 @@ internal sealed class UpdateHouseholdCommandValidator : AbstractValidator<Update
     public UpdateHouseholdCommandValidator()
     {
         RuleFor(x => x.Name)
-            .NotEmpty().WithMessage("Household name must not be empty.")
+            .NotEmpty().WithMessage("Household name is required.")
             .MaximumLength(200).WithMessage("Household name must not exceed 100 characters.");
     }
 }

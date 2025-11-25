@@ -9,7 +9,7 @@ internal sealed class UpdateCompartmentCommandValidator : AbstractValidator<Upda
     {
         RuleFor(x => x.Name)
             .NotEmpty()
-            .WithMessage("Compartment name must not be empty.")
+            .WithMessage("Compartment name is required.")
             .MaximumLength(100)
             .WithMessage("Compartment name must not exceed 100 characters.");
 

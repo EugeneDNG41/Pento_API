@@ -6,9 +6,17 @@ internal sealed class RegisterUserCommandValidator : AbstractValidator<RegisterU
 {
     public RegisterUserCommandValidator()
     {
-        RuleFor(c => c.FirstName).NotEmpty();
-        RuleFor(c => c.LastName).NotEmpty();
-        RuleFor(c => c.Email).EmailAddress();
-        RuleFor(c => c.Password).MinimumLength(6);
+        RuleFor(c => c.FirstName)
+            .NotEmpty().WithMessage("First name is required.");
+        RuleFor(c => c.LastName)
+            .NotEmpty().WithMessage("Last name is required.");
+        RuleFor(c => c.Email)
+            .EmailAddress().WithMessage("A valid email address is required.");
+        RuleFor(c => c.Password)
+            .MinimumLength(6).WithMessage("Password must be at least 6 characters long.")
+            .Matches("[A-Z]").WithMessage("Password must contain at least one uppercase letter.")
+            .Matches("[a-z]").WithMessage("Password must contain at least one lowercase letter.")
+            .Matches("[0-9]").WithMessage("Password must contain at least one digit.")
+            .Matches("[^a-zA-Z0-9]").WithMessage("Password must contain at least one special character.");
     }
 }

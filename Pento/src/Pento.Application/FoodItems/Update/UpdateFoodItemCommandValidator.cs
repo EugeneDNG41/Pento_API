@@ -7,7 +7,7 @@ internal sealed class UpdateFoodItemCommandValidator : AbstractValidator<UpdateF
     public UpdateFoodItemCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Food item Id must not be empty.")
+            .NotEmpty().WithMessage("Food item Id is required.")
             .When(x => x != null);
         RuleFor(x => x.Name)
             .MaximumLength(200).WithMessage("Name must not exceed 200 characters.")

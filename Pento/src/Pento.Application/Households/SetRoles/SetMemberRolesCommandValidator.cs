@@ -15,6 +15,6 @@ internal sealed class SetMemberRolesCommandValidator : AbstractValidator<SetMemb
             .Must(r => r.Distinct().Count() == r.Count())
                 .WithMessage("Duplicate roles are not allowed.");
         RuleForEach(x => x.Roles!)
-            .NotEmpty().WithMessage("Role cannot be empty.");
+            .NotEmpty().WithMessage("Role is required.");
     }
 }

@@ -1059,8 +1059,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("qr_code");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
                         .HasColumnName("status");
 
                     b.Property<Guid>("SubscriptionPlanId")
@@ -1750,6 +1752,41 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("storages", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.Subscriptions.Feature", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Name")
+                        .HasName("pk_features");
+
+                    b.ToTable("features", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Name = "Receipt Scanning"
+                        },
+                        new
+                        {
+                            Name = "Image Scanning"
+                        },
+                        new
+                        {
+                            Name = "AI Chef"
+                        },
+                        new
+                        {
+                            Name = "Storage Slot"
+                        },
+                        new
+                        {
+                            Name = "Meal Plan Slot"
+                        });
+                });
+
             modelBuilder.Entity("Pento.Domain.Subscriptions.Subscription", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1790,11 +1827,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Feature")
+                    b.Property<string>("FeatureName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("feature");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("feature_name");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1810,6 +1846,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_subscription_features");
+
+                    b.HasIndex("FeatureName")
+                        .HasDatabaseName("ix_subscription_features_feature_name");
 
                     b.HasIndex("SubscriptionId")
                         .HasDatabaseName("ix_subscription_features_subscription_id");
@@ -1895,11 +1934,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("Feature")
+                    b.Property<string>("FeatureName")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("feature");
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("feature_name");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1919,6 +1957,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_user_entitlements");
+
+                    b.HasIndex("FeatureName")
+                        .HasDatabaseName("ix_user_entitlements_feature_name");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_user_entitlements_user_id");
@@ -2989,6 +3030,13 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionFeature", b =>
                 {
+                    b.HasOne("Pento.Domain.Subscriptions.Feature", null)
+                        .WithMany()
+                        .HasForeignKey("FeatureName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_subscription_features_features_feature_name");
+
                     b.HasOne("Pento.Domain.Subscriptions.Subscription", null)
                         .WithMany()
                         .HasForeignKey("SubscriptionId")
@@ -2996,7 +3044,7 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_subscription_features_subscriptions_subscription_id");
 
-                    b.OwnsOne("Pento.Domain.Shared.Limit", "Limit", b1 =>
+                    b.OwnsOne("Pento.Domain.Shared.Limit", "Entitlement", b1 =>
                         {
                             b1.Property<Guid>("SubscriptionFeatureId")
                                 .HasColumnType("uuid")
@@ -3004,12 +3052,12 @@ namespace Pento.Infrastructure.Migrations
 
                             b1.Property<int>("Quota")
                                 .HasColumnType("integer")
-                                .HasColumnName("limit_quota");
+                                .HasColumnName("entitlement_quota");
 
                             b1.Property<string>("ResetPer")
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
-                                .HasColumnName("limit_reset_per");
+                                .HasColumnName("entitlement_reset_per");
 
                             b1.HasKey("SubscriptionFeatureId");
 
@@ -3020,7 +3068,7 @@ namespace Pento.Infrastructure.Migrations
                                 .HasConstraintName("fk_subscription_features_subscription_features_id");
                         });
 
-                    b.Navigation("Limit");
+                    b.Navigation("Entitlement");
                 });
 
             modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionPlan", b =>
@@ -3091,6 +3139,13 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
                 {
+                    b.HasOne("Pento.Domain.Subscriptions.Feature", null)
+                        .WithMany()
+                        .HasForeignKey("FeatureName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_entitlements_features_feature_name");
+
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -3098,7 +3153,7 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_entitlements_users_user_id");
 
-                    b.OwnsOne("Pento.Domain.Shared.Limit", "Limit", b1 =>
+                    b.OwnsOne("Pento.Domain.Shared.Limit", "Entitlement", b1 =>
                         {
                             b1.Property<Guid>("UserEntitlementId")
                                 .HasColumnType("uuid")
@@ -3106,12 +3161,12 @@ namespace Pento.Infrastructure.Migrations
 
                             b1.Property<int>("Quota")
                                 .HasColumnType("integer")
-                                .HasColumnName("limit_quota");
+                                .HasColumnName("entitlement_quota");
 
                             b1.Property<string>("ResetPer")
                                 .HasMaxLength(50)
                                 .HasColumnType("character varying(50)")
-                                .HasColumnName("limit_reset_per");
+                                .HasColumnName("entitlement_reset_per");
 
                             b1.HasKey("UserEntitlementId");
 
@@ -3122,7 +3177,7 @@ namespace Pento.Infrastructure.Migrations
                                 .HasConstraintName("fk_user_entitlements_user_entitlements_id");
                         });
 
-                    b.Navigation("Limit");
+                    b.Navigation("Entitlement");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>
