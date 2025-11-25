@@ -17,5 +17,9 @@ public static class RecipeErrors
         code: "Recipe.UnauthorizedAccess",
         description: "You are not authorized to modify this recipe."
     );
+    public static readonly Error NoIngredients = Error.NotFound(
+        code: "Recipe.NoIngredients",
+        description: "A recipe must have at least one ingredient."
+        );
 
 }

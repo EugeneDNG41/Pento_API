@@ -24,8 +24,7 @@ internal sealed class CreateMealPlanReservation : IEndpoint
 
                 request.MealType,
                 request.ScheduledDate,
-                request.Servings,
-                request.RecipeId
+                request.Servings
             );
 
 
@@ -50,7 +49,6 @@ internal sealed class CreateMealPlanReservation : IEndpoint
         public MealType? MealType { get; init; }
         public DateOnly? ScheduledDate { get; init; }
         public int? Servings { get; init; }
-        public Guid? RecipeId { get; init; }
     }
 
 }

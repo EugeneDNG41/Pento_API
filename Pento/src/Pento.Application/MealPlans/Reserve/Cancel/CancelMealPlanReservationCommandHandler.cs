@@ -6,7 +6,7 @@ using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
 
-namespace Pento.Application.MealPlans.Reserve;
+namespace Pento.Application.MealPlans.Reserve.Cancel;
 
 internal sealed class CancelMealPlanReservationCommandHandler(
     IGenericRepository<FoodItemMealPlanReservation> reservationRepository,
@@ -25,7 +25,9 @@ internal sealed class CancelMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        FoodItemMealPlanReservation? reservation = await reservationRepository.GetByIdAsync(command.ReservationId, cancellationToken);
+        FoodItemMealPlanReservation? reservation =
+            await reservationRepository.GetByIdAsync(command.ReservationId, cancellationToken);
+
         if (reservation is null)
         {
             return Result.Failure<Guid>(FoodItemReservationErrors.NotFound);
@@ -41,13 +43,18 @@ internal sealed class CancelMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemReservationErrors.InvalidState);
         }
 
-        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(reservation.FoodItemId, cancellationToken);
+        FoodItem? foodItem =
+            await foodItemRepository.GetByIdAsync(reservation.FoodItemId, cancellationToken);
+
         if (foodItem is null)
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
 
-        foodItem.CancelReservation(reservation.Quantity, reservation.Id);
+        foodItem.AdjustQuantity(
+            foodItem.Quantity + reservation.Quantity,
+            userContext.UserId
+        );
 
         reservation.MarkAsCancelled();
 
@@ -56,3 +63,4 @@ internal sealed class CancelMealPlanReservationCommandHandler(
         return reservation.Id;
     }
 }
+

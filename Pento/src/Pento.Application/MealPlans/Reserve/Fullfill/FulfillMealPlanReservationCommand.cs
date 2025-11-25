@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.MealPlans.Reserve;
+namespace Pento.Application.MealPlans.Reserve.Fullfill;
 public sealed record FulfillMealPlanReservationCommand(
     Guid ReservationId,
     decimal NewQuantity,

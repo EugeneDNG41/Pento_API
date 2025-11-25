@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Reserve;
+using Pento.Application.MealPlans.Reserve.Fullfill;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.MealPlans.Patch;
@@ -31,6 +31,25 @@ internal sealed class FullfillMealPlanReservation : IEndpoint
         })
    .WithTags(Tags.Reservations)
    .RequireAuthorization();
+
+        app.MapPatch("meal-plans/{mealPlanId:guid}/recipes/{recipeId:guid}/fulfill", async (
+            Guid mealPlanId,
+            Guid recipeId,
+            ICommandHandler<FulfillMealPlanRecipeCommand, Guid> handler,
+            CancellationToken ct
+        ) =>
+                {
+                    var cmd = new FulfillMealPlanRecipeCommand(mealPlanId, recipeId);
+
+                    Result<Guid> result = await handler.Handle(cmd, ct);
+
+                    return result.Match(
+                        Results.Ok,
+                        CustomResults.Problem
+                    );
+                })
+        .WithTags(Tags.MealPlans)
+        .RequireAuthorization();
 
     }
 

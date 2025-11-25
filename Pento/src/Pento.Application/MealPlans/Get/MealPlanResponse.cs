@@ -9,8 +9,6 @@ namespace Pento.Application.MealPlans.Get;
 public sealed record MealPlanResponse(
     Guid Id,
     Guid HouseholdId,
-    Guid? RecipeId,
-    Guid? FoodItemId,
     string Name,
     DateOnly ScheduledDate,
     string MealType,
