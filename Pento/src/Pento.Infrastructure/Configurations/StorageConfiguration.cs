@@ -35,7 +35,7 @@ internal sealed class StorageConfiguration() : IEntityTypeConfiguration<Storage>
                .WithMany()
                .HasForeignKey(s => s.HouseholdId)
                .OnDelete(DeleteBehavior.Cascade);
-        builder.HasQueryFilter(c => !c.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
         builder.Property<uint>("Version").IsRowVersion();
     }
 }

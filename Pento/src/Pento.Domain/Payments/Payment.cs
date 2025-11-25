@@ -1,5 +1,6 @@
 
 using Pento.Domain.Abstractions;
+using Pento.Domain.Shared;
 
 namespace Pento.Domain.Payments;
 
@@ -11,8 +12,9 @@ public class Payment : Entity
         Guid userId,
         string? paymentLinkId,
         string description,
-        long amount,
-        string currency,
+        long amountDue,
+        long amountPaid,
+        Currency currency,
         PaymentStatus status,
         Uri? checkoutUrl,
         string? qrCode,
@@ -21,7 +23,8 @@ public class Payment : Entity
         UserId = userId;
         PaymentLinkId = paymentLinkId;
         Description = description;
-        Amount = amount;
+        AmountDue = amountDue;
+        AmountPaid = amountPaid;
         Currency = currency;
         Status = status;
         CheckoutUrl = checkoutUrl;
@@ -29,12 +32,13 @@ public class Payment : Entity
         CreatedAt = createdAt;
     }
     public Guid UserId { get; private set; }
+    public Guid UserSubscriptionId { get; private set; }
     public long OrderCode { get; private set; }
     public string? PaymentLinkId { get; private set; }
     public string Description { get; private set; }
-    public long Amount { get; private set; }
+    public long AmountDue { get; private set; }
     public long AmountPaid { get; private set; }
-    public string Currency { get; private set; }
+    public Currency Currency {  get; private set; }
     public PaymentStatus Status { get; private set; }
     public Uri? CheckoutUrl { get; private set; }
     public string? QrCode { get; private set; }
@@ -48,8 +52,9 @@ public class Payment : Entity
         Guid userId,
         string? paymentLinkId,
         string description,
-        long amount,
-        string currency,
+        long amountDue,
+        long amountPaid,
+        Currency currency,
         Uri? checkoutUrl,
         string? qrCode,
         DateTime createdAt)
@@ -59,7 +64,8 @@ public class Payment : Entity
             userId,
             paymentLinkId,
             description,
-            amount,
+            amountDue,
+            amountPaid,
             currency,
             PaymentStatus.Pending,
             checkoutUrl,
@@ -106,33 +112,6 @@ public class Payment : Entity
         CheckoutUrl = null;
         QrCode = null;
     }
-}
-public enum PaymentStatus
-{
-    Pending,
-    Cancelled,
-    Paid,
-    Expired,
-    Processing,
-    Failed
-}
-public static class PaymentErrors
-{
-    public static readonly Error PaymentCreationFailed = Error.Failure(
-        "PayOS.PaymentCreationFailed",
-        "Failed to create payment link.");
-    public static readonly Error InvalidWebhook = Error.Failure(
-        "PayOS.InvalidWebhook",
-        "The webhook could not be verified.");
-    public static readonly Error WebhookConfirmationFailed = Error.Failure(
-        "PayOS.WebhookConfirmationFailed",
-        "Failed to confirm the webhook.");
-    public static readonly Error PaymentCancellationFailed = Error.Failure(
-        "PayOS.PaymentCancellationFailed",
-        "Failed to cancel the payment.");
-    public static readonly Error PaymentNotFound = Error.Failure(
-        "Payment.NotFound",
-        "Payment not found.");
 }
 
 

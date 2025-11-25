@@ -42,7 +42,7 @@ public static class MealPlanErrors
 
     public static readonly Error InvalidDateRange = Error.Problem(
         "MealPlans.InvalidDateRange",
-        "Start date cannot be later than end date."
+        "StartDate date cannot be later than end date."
     );
     public static readonly Error ForbiddenAccess = Error.Forbidden(
     "MealPlan.ForbiddenAccess",

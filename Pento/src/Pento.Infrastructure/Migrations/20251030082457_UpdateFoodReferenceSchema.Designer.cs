@@ -1091,11 +1091,11 @@ namespace Pento.Infrastructure.Migrations
                                 .HasColumnType("uuid")
                                 .HasColumnName("id");
 
-                            b1.Property<DateOnly>("End")
+                            b1.Property<DateOnly>("EndDate")
                                 .HasColumnType("date")
                                 .HasColumnName("end_date");
 
-                            b1.Property<DateOnly>("Start")
+                            b1.Property<DateOnly>("StartDate")
                                 .HasColumnType("date")
                                 .HasColumnName("start_date");
 

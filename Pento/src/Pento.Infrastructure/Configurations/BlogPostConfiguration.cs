@@ -19,7 +19,7 @@ internal sealed class BlogPostConfiguration : IEntityTypeConfiguration<BlogPost>
         builder.Property(bp => bp.Content).HasMaxLength(2000).HasConversion(content => content.Value, value => Content.Create(value));
 
         builder.HasOne<User>().WithMany().HasForeignKey(bp => bp.UserId);
-        builder.HasQueryFilter(c => !c.IsDeleted);
+        builder.HasQueryFilter(c => !c.IsDeleted && !c.IsArchived);
 
     }
 }

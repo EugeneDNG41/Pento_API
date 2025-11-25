@@ -6,6 +6,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.PayOS;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
+using Pento.Domain.Shared;
 
 namespace Pento.Application.Payments.Create;
 
@@ -42,8 +43,9 @@ internal sealed class CreatePaymentCommandHandler(
             userId: userContext.UserId,
             paymentLinkId: null,
             description: request.Description,
-            amount: request.Amount,
-            currency: "VND",
+            amountDue: request.Amount,
+            amountPaid: 0,
+            currency: Currency.Vnd,
             checkoutUrl: null,
             qrCode: null,
             createdAt: DateTime.UtcNow);

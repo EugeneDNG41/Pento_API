@@ -42,11 +42,11 @@ using Quartz;
 //        //        {
 //        //            session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
 //        //        }
-//        //        if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Weekly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 7 == 0)
+//        //        if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Weekly && now.Subtract(subscriptionInstance.StartDate).Days % 7 == 0)
 //        //        {
 //        //            session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
 //        //        }
-//        //        if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Monthly && now.Subtract(subscriptionInstance.StartDateUtc).Days % 30 == 0)
+//        //        if (subscriptionInstance.Consumables[featureId].ResetPeriod == Period.Monthly && now.Subtract(subscriptionInstance.StartDate).Days % 30 == 0)
 //        //        {
 //        //            session.Events.Append(subscriptionInstance.Id, new ConsumableReset(featureId));
 //        //        }

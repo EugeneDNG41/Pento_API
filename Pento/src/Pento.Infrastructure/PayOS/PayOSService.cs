@@ -9,6 +9,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.PayOS;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
+using Pento.Domain.Shared;
 
 namespace Pento.Infrastructure.PayOS;
 
@@ -56,11 +57,11 @@ internal sealed class PayOSService(
                 ApiKey = options.Value.ApiKey,
                 ChecksumKey = options.Value.ChecksumKey
             });
-            DateTime expiresAt = dateTimeProvider.UtcNow.AddMinutes(5);
+            DateTime expiresAt = dateTimeProvider.UtcNow.AddMinutes(10);
             var paymentRequest = new CreatePaymentLinkRequest
             {
                 OrderCode = payment.OrderCode,
-                Amount = payment.Amount,
+                Amount = payment.AmountDue,
                 Description = payment.Description,
                 ReturnUrl = returnUrl,
                 CancelUrl = cancelUrl,

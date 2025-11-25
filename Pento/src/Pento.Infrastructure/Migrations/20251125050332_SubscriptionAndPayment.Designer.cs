@@ -12,8 +12,8 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251124143146_AddPayment")]
-    partial class AddPayment
+    [Migration("20251125050332_SubscriptionAndPayment")]
+    partial class SubscriptionAndPayment
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -994,9 +994,9 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<long>("Amount")
+                    b.Property<long>("AmountDue")
                         .HasColumnType("bigint")
-                        .HasColumnName("amount");
+                        .HasColumnName("amount_due");
 
                     b.Property<long>("AmountPaid")
                         .HasColumnType("bigint")
@@ -1021,8 +1021,8 @@ namespace Pento.Infrastructure.Migrations
 
                     b.Property<string>("Currency")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
                         .HasColumnName("currency");
 
                     b.Property<string>("Description")
@@ -1070,11 +1070,18 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<Guid>("UserSubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_subscription_id");
+
                     b.HasKey("Id")
                         .HasName("pk_payments");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_payments_user_id");
+
+                    b.HasIndex("UserSubscriptionId")
+                        .HasDatabaseName("ix_payments_user_subscription_id");
 
                     b.ToTable("payments", (string)null);
                 });
@@ -1740,6 +1747,101 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("storages", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.Subscriptions.Subscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subscriptions");
+
+                    b.ToTable("subscriptions", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionFeature", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("feature");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subscription_features");
+
+                    b.HasIndex("SubscriptionId")
+                        .HasDatabaseName("ix_subscription_features_subscription_id");
+
+                    b.ToTable("subscription_features", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionPlan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_subscription_plans");
+
+                    b.HasIndex("SubscriptionId")
+                        .HasDatabaseName("ix_subscription_plans_subscription_id");
+
+                    b.ToTable("subscription_plans", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.Units.Unit", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1783,6 +1885,44 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("units", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Feature")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("feature");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("usage_count");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_entitlements");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_entitlements_user_id");
+
+                    b.ToTable("user_entitlements", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1820,6 +1960,72 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_user_preferences_user_id_dietary_tag_id");
 
                     b.ToTable("user_preferences", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.UserSubscriptions.UserSubscription", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("cancellation_reason");
+
+                    b.Property<DateOnly?>("CancelledDateUtc")
+                        .HasColumnType("date")
+                        .HasColumnName("cancelled_date_utc");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("end_date");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_archived");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<DateOnly?>("PausedDate")
+                        .HasColumnType("date")
+                        .HasColumnName("paused_date");
+
+                    b.Property<DateOnly?>("ResumedDate")
+                        .HasColumnType("date")
+                        .HasColumnName("resumed_date");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid>("SubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("subscription_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_subscriptions");
+
+                    b.HasIndex("SubscriptionId")
+                        .HasDatabaseName("ix_user_subscriptions_subscription_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_subscriptions_user_id");
+
+                    b.ToTable("user_subscriptions", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Users.User", b =>
@@ -2681,6 +2887,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_payments_user_user_id");
+
+                    b.HasOne("Pento.Domain.UserSubscriptions.UserSubscription", null)
+                        .WithMany()
+                        .HasForeignKey("UserSubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_payments_user_subscription_user_subscription_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.RecipeDietaryTags.RecipeDietaryTag", b =>
@@ -2766,6 +2979,144 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_storages_households_household_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionFeature", b =>
+                {
+                    b.HasOne("Pento.Domain.Subscriptions.Subscription", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_subscription_features_subscriptions_subscription_id");
+
+                    b.OwnsOne("Pento.Domain.Shared.Limit", "Limit", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriptionFeatureId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("Quota")
+                                .HasColumnType("integer")
+                                .HasColumnName("limit_quota");
+
+                            b1.Property<string>("ResetPer")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("limit_reset_per");
+
+                            b1.HasKey("SubscriptionFeatureId");
+
+                            b1.ToTable("subscription_features");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriptionFeatureId")
+                                .HasConstraintName("fk_subscription_features_subscription_features_id");
+                        });
+
+                    b.Navigation("Limit");
+                });
+
+            modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionPlan", b =>
+                {
+                    b.HasOne("Pento.Domain.Subscriptions.Subscription", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_subscription_plans_subscriptions_subscription_id");
+
+                    b.OwnsOne("Pento.Domain.Shared.Duration", "Duration", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriptionPlanId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<string>("Unit")
+                                .IsRequired()
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("duration_unit");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("duration_value");
+
+                            b1.HasKey("SubscriptionPlanId");
+
+                            b1.ToTable("subscription_plans");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriptionPlanId")
+                                .HasConstraintName("fk_subscription_plans_subscription_plans_id");
+                        });
+
+                    b.OwnsOne("Pento.Domain.Shared.Money", "Price", b1 =>
+                        {
+                            b1.Property<Guid>("SubscriptionPlanId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<long>("Amount")
+                                .HasColumnType("bigint")
+                                .HasColumnName("price_amount");
+
+                            b1.Property<string>("Currency")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("character varying(3)")
+                                .HasColumnName("price_currency");
+
+                            b1.HasKey("SubscriptionPlanId");
+
+                            b1.ToTable("subscription_plans");
+
+                            b1.WithOwner()
+                                .HasForeignKey("SubscriptionPlanId")
+                                .HasConstraintName("fk_subscription_plans_subscription_plans_id");
+                        });
+
+                    b.Navigation("Duration")
+                        .IsRequired();
+
+                    b.Navigation("Price")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_entitlements_users_user_id");
+
+                    b.OwnsOne("Pento.Domain.Shared.Limit", "Limit", b1 =>
+                        {
+                            b1.Property<Guid>("UserEntitlementId")
+                                .HasColumnType("uuid")
+                                .HasColumnName("id");
+
+                            b1.Property<int>("Quota")
+                                .HasColumnType("integer")
+                                .HasColumnName("limit_quota");
+
+                            b1.Property<string>("ResetPer")
+                                .HasMaxLength(50)
+                                .HasColumnType("character varying(50)")
+                                .HasColumnName("limit_reset_per");
+
+                            b1.HasKey("UserEntitlementId");
+
+                            b1.ToTable("user_entitlements");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserEntitlementId")
+                                .HasConstraintName("fk_user_entitlements_user_entitlements_id");
+                        });
+
+                    b.Navigation("Limit");
+                });
+
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>
                 {
                     b.HasOne("Pento.Domain.DietaryTags.DietaryTag", null)
@@ -2774,6 +3125,23 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_preferences_dietary_tags_dietary_tag_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.UserSubscriptions.UserSubscription", b =>
+                {
+                    b.HasOne("Pento.Domain.Subscriptions.Subscription", null)
+                        .WithMany()
+                        .HasForeignKey("SubscriptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_subscriptions_subscriptions_subscription_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_subscriptions_users_user_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Users.User", b =>

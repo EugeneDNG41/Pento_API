@@ -52,6 +52,6 @@ internal sealed class FoodItemLogConfiguration : IEntityTypeConfiguration<FoodIt
                .WithMany()
                .HasForeignKey(x => x.UnitId)
                .OnDelete(DeleteBehavior.Restrict);
-        builder.HasQueryFilter(x => !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted && !x.IsArchived);
     }
 }

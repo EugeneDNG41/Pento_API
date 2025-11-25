@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Payments;
+using Pento.Domain.Shared;
 using Pento.Domain.Users;
+using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -13,9 +15,11 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.HasKey(p => p.Id);
         builder.Property(p => p.OrderCode).ValueGeneratedOnAdd();
         builder.Property(p => p.Description).HasMaxLength(500);
-        builder.Property(p => p.Currency).HasMaxLength(10);
+        builder.Property(p => p.Currency).HasConversion(currency => currency.Code, code => Currency.FromCode(code)).HasMaxLength(3);
+
         builder.Property(p => p.CancellationReason).HasMaxLength(500).IsRequired(false);
         builder.HasOne<User>().WithMany().HasForeignKey(p => p.UserId);
-        builder.HasQueryFilter(c => !c.IsDeleted);
+        builder.HasOne<UserSubscription>().WithMany().HasForeignKey(p => p.UserSubscriptionId);
+        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }
 }

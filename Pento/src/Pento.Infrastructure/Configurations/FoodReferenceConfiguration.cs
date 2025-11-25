@@ -78,7 +78,7 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.AddedBy);
         builder.Property(fr => fr.UpdatedOnUtc)
             .IsRequired();
-        builder.HasQueryFilter(c => !c.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
 
     }
 }

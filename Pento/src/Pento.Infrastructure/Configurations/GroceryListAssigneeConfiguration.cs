@@ -47,7 +47,7 @@ internal sealed class GroceryListAssigneeConfiguration : IEntityTypeConfiguratio
             .WithMany()
             .HasForeignKey(x => x.HouseholdMemberId)
             .OnDelete(DeleteBehavior.Restrict);
-
+        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
 
     }
 }

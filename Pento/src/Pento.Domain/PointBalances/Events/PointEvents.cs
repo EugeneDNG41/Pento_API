@@ -16,4 +16,3 @@ public sealed record PointAdded
     public bool CountedTowardsWeeklyCap { get; init; }
     public bool CountedTowardsMonthlyCap { get; init; }
 }
-public sealed record PointCapReset(Period Period);

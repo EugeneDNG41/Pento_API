@@ -12,7 +12,6 @@ public sealed class PointCap
     public Guid Id { get; private set; }
     public ActivityType Category { get; private set; }
     public Limit Limit { get; private set;  }
-    public Period ResetPeriod { get; private set; } //convert to limit by period later
     private PointCap() { }
     public PointCap(ActivityType category, Limit limit)
     {

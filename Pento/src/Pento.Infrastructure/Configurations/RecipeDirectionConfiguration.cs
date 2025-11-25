@@ -35,7 +35,6 @@ internal sealed class RecipeDirectionConfiguration : IEntityTypeConfiguration<Re
         builder.Property(x => x.UpdatedOnUtc)
             .HasColumnName("updated_on_utc")
             .IsRequired();
-        builder.HasQueryFilter(c => !c.IsDeleted);
-
+        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }
 }
