@@ -93,7 +93,7 @@ internal sealed class SearchFoodItemQueryHandler(
                 fi.image_url AS {nameof(FoodItemPreviewRow.ImageUrl)},
                 fi.quantity AS {nameof(FoodItemPreviewRow.Quantity)},
                 u.abbreviation AS {nameof(FoodItemPreviewRow.UnitAbbreviation)},
-                fi.expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)}
+                fi.expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)},
                 fi.status AS {nameof(FoodItemPreviewRow.Status)}
             FROM food_items fi
             LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
