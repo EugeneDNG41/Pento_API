@@ -18,15 +18,12 @@ internal sealed class CreateMealPlanReservation : IEndpoint
         {
             var command = new CreateMealPlanReservationCommand(
                 request.FoodItemId,
-                request.MealPlanId,
                 request.Quantity,
                 request.UnitId,
-
                 request.MealType,
                 request.ScheduledDate,
                 request.Servings
             );
-
 
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
@@ -42,13 +39,11 @@ internal sealed class CreateMealPlanReservation : IEndpoint
     internal sealed class Request
     {
         public Guid FoodItemId { get; init; }
-        public Guid? MealPlanId { get; init; }
         public decimal Quantity { get; init; }
         public Guid UnitId { get; init; }
 
-        public MealType? MealType { get; init; }
-        public DateOnly? ScheduledDate { get; init; }
+        public MealType MealType { get; init; }
+        public DateOnly ScheduledDate { get; init; }
         public int? Servings { get; init; }
     }
-
 }
