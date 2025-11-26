@@ -9,7 +9,7 @@ namespace Pento.Application.Subscriptions.GetById;
 
 internal sealed class GetSubscriptionByIdQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetSubscriptionByIdQuery, SubscriptionDetailResponse>
 {
-    public async Task<Result<SubscriptionDetailResponse>> Handle(GetSubscriptionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<SubscriptionDetailResponse>> Handle(GetSubscriptionByIdQuery query, CancellationToken cancellationToken)
     {
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
@@ -43,7 +43,7 @@ internal sealed class GetSubscriptionByIdQueryHandler(ISqlConnectionFactory sqlC
             FROM subscription_features
             WHERE subscription_id = @SubscriptionId AND is_deleted is false;
             ";
-        CommandDefinition command = new(sql, new { request.SubscriptionId });
+        CommandDefinition command = new(sql, new { query.SubscriptionId });
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         SubscriptionResponse? subscription = await multi.ReadSingleOrDefaultAsync<SubscriptionResponse>();
         if (subscription is null)
