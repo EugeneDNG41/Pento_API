@@ -9,7 +9,7 @@ internal sealed class HandleWebhook : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("payments/webhook/handle", async (
+        app.MapPost("payments/webhook/handle", async (
             Webhook webhook,
             IPayOSService service,
             CancellationToken cancellationToken) =>
