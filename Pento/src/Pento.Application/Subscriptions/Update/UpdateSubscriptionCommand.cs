@@ -2,6 +2,6 @@
 
 namespace Pento.Application.Subscriptions.Create;
 
-public sealed record CreateSubscriptionCommand(string Name, string Description) : ICommand<Guid>;
+public sealed record UpdateSubscriptionCommand(Guid Id, string? Name, string? Description) : ICommand;
 
 

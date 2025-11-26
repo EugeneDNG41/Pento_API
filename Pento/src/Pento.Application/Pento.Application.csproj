@@ -28,8 +28,6 @@
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
     <Folder Include="Subscriptions\GetAll\" />
-    <Folder Include="Subscriptions\AddPlan\" />
-    <Folder Include="Subscriptions\AddFeature\" />
   </ItemGroup>
 
 </Project>

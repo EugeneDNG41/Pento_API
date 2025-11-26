@@ -27,11 +27,6 @@
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Endpoints\Features\Get\" />
-	  <Folder Include="Endpoints\Subscriptions\Post\" />
-	</ItemGroup>
-
 
 
 </Project>
