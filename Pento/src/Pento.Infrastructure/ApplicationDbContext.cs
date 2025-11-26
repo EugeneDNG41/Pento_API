@@ -5,6 +5,7 @@ using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DietaryTags;
+using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 using Pento.Infrastructure.Outbox;
@@ -29,6 +30,7 @@ public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(
     public DbSet<Unit> Units { get; set; } = null!;
     
     public DbSet<DietaryTag> DietaryTags { get; set; } = null!;
+    public DbSet<FoodDietaryTag> FoodDietaryTags { get; set; } = null!;
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

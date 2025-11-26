@@ -2,6 +2,7 @@
 using Pento.Domain.DietaryTags;
 using Pento.Domain.Units;
 using Pento.Infrastructure;
+using Pento.Infrastructure.Seed;
 
 namespace Pento.API.Extensions;
 
@@ -39,61 +40,7 @@ internal static class MigrationExtensions
             UnitData.Dozen);
             dbContext.SaveChanges();
         }
-        if (!dbContext.DietaryTags.Any())
-        {
-            dbContext.DietaryTags.AddRange(
-                DietaryTagData.ContainsSugar,
-                DietaryTagData.ContainsFat,
-                DietaryTagData.ContainsSaturatedFat,
-                DietaryTagData.ContainsTransFat,
-                DietaryTagData.ContainsCarbohydrates,
-                DietaryTagData.ContainsProtein,
-                DietaryTagData.ContainsFiber,
-                DietaryTagData.ContainsSodium,
-                DietaryTagData.ContainsOil,
 
-                DietaryTagData.ContainsDairy,
-                DietaryTagData.ContainsMilkProtein,
-                DietaryTagData.ContainsLactose,
-                DietaryTagData.ContainsEgg,
-
-                DietaryTagData.ContainsGluten,
-                DietaryTagData.ContainsWheat,
-                DietaryTagData.ContainsBarley,
-                DietaryTagData.ContainsRye,
-
-                DietaryTagData.ContainsAlmonds,
-                DietaryTagData.ContainsCashews,
-                DietaryTagData.ContainsWalnuts,
-                DietaryTagData.ContainsPistachios,
-                DietaryTagData.ContainsHazelnuts,
-                DietaryTagData.ContainsPecan,
-                DietaryTagData.ContainsTreeNuts,
-
-                DietaryTagData.ContainsPeanuts,
-                DietaryTagData.ContainsSoy,
-
-                DietaryTagData.ContainsFish,
-                DietaryTagData.ContainsShellfish,
-                DietaryTagData.ContainsCrustaceans,
-                DietaryTagData.ContainsMollusks,
-
-                DietaryTagData.ContainsSesame,
-                DietaryTagData.ContainsMustard,
-                DietaryTagData.ContainsCelery,
-                DietaryTagData.ContainsLupine,
-
-                DietaryTagData.ContainsAlcohol,
-                DietaryTagData.ContainsCaffeine,
-                DietaryTagData.ContainsAdditives,
-                DietaryTagData.ContainsArtificialSweeteners,
-                DietaryTagData.ContainsPreservatives,
-                DietaryTagData.ContainsColoring,
-                DietaryTagData.ContainsFlavorEnhancers
-            );
-
-            dbContext.SaveChanges();
-        }
 
     }
 }
