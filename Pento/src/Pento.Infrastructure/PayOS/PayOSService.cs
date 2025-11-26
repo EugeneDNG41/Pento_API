@@ -52,7 +52,7 @@ internal sealed class PayOSService(
                 ApiKey = options.Value.ApiKey,
                 ChecksumKey = options.Value.ChecksumKey
             });
-            DateTime expiresAt = dateTimeProvider.UtcNow.AddMinutes(10);
+            DateTime expiresAt = dateTimeProvider.UtcNow.AddMinutes(8); //actually roughly 10 minutes
             var paymentRequest = new CreatePaymentLinkRequest
             {
                 OrderCode = payment.OrderCode,

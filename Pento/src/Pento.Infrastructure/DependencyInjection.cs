@@ -54,6 +54,7 @@ using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.PayOS;
+using Pento.Infrastructure.Quartz;
 using Pento.Infrastructure.Repositories;
 using Pento.Infrastructure.Vision;
 using Quartz;
@@ -250,6 +251,6 @@ public static class DependencyInjection
 
         services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
 
-        services.ConfigureOptions<ProcessOutboxMessagesJobSetup>();
+        services.ConfigureOptions<QuartzJobsSetup>();
     }
 }

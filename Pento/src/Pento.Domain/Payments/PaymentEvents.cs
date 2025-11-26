@@ -13,3 +13,4 @@ public class PaymentCompletedDomainEvent(Guid userId, Guid subscriptionPlanId) :
     public Guid UserId { get; } = userId;
     public Guid SubscriptionPlanId { get; } = subscriptionPlanId;
 }
+
