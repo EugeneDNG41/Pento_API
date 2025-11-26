@@ -7,7 +7,6 @@ public sealed record GroceryListItemResponse(
     string? CustomName,
     decimal Quantity,
     Guid? UnitId,
-    decimal? EstimatedPrice,
     string? Notes,
     string Priority,
     Guid AddedBy,

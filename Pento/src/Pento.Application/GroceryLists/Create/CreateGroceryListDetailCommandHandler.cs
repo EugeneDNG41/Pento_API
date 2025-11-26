@@ -12,7 +12,6 @@ namespace Pento.Application.GroceryLists.CreateDetail;
 internal sealed class CreateGroceryListDetailCommandHandler(
     IGenericRepository<GroceryList> groceryListRepository,
     IGenericRepository<GroceryListItem> groceryListItemRepository,
-    IGenericRepository<GroceryListAssignee> groceryListAssigneeRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork,
     IDateTimeProvider dateTimeProvider
@@ -30,6 +29,7 @@ internal sealed class CreateGroceryListDetailCommandHandler(
             x => x.HouseholdId == householdId && x.Name == request.Name,
             cancellationToken
         );
+
         if (exists)
         {
             return Result.Failure<Guid>(GroceryListErrors.DuplicateName);
@@ -45,6 +45,7 @@ internal sealed class CreateGroceryListDetailCommandHandler(
             createdBy: userContext.UserId,
             createdOnUtc: utcNow
         );
+
         groceryListRepository.Add(groceryList);
 
         foreach (GroceryListItemRequest item in request.Items)
@@ -70,20 +71,9 @@ internal sealed class CreateGroceryListDetailCommandHandler(
             groceryListItemRepository.Add(groceryItem);
         }
 
-        foreach (GroceryListAssigneeRequest assignee in request.Assignees)
-        {
-            var groceryAssignee = new GroceryListAssignee(
-                id: Guid.CreateVersion7(),
-                groceryListId: listId,
-                householdMemberId: assignee.HouseholdMemberId,
-                assignedOnUtc: utcNow
-            );
-
-            groceryListAssigneeRepository.Add(groceryAssignee);
-        }
-
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return listId;
     }
 }
+
