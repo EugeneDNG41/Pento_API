@@ -12,8 +12,7 @@ using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Payments.Create;
 
-#pragma warning disable CA1054 // URI-like parameters should not be strings
-public sealed record CreatePaymentCommand(Guid SubscriptionPlanId, string ReturnUrl, string CancelUrl) : ICommand<PaymentLinkResponse>;
+public sealed record CreatePaymentCommand(Guid SubscriptionPlanId) : ICommand<PaymentLinkResponse>;
 
 internal sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentCommand> 
 {
@@ -21,12 +20,6 @@ internal sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePa
     {
         RuleFor(c => c.SubscriptionPlanId)
             .NotEmpty().WithMessage("Subscription Plan Id is required.");
-        RuleFor(c => c.ReturnUrl)
-            .NotEmpty().WithMessage("Return Url is required.")
-            .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("ReturnUrl must be a valid absolute URI.");
-        RuleFor(c => c.CancelUrl)
-            .NotEmpty().WithMessage("Cancel Url is required.")
-            .Must(uri => Uri.IsWellFormedUriString(uri, UriKind.Absolute)).WithMessage("CancelUrl must be a valid absolute URI.");
     }
 }
 
@@ -51,7 +44,8 @@ internal sealed class CreatePaymentCommandHandler(
         {
             return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.SubscriptionNotFound);
         }
-        string description = $"Payment for a {plan.Duration.Value}-{plan.Duration.Unit} {subscription.Name} subscription";
+        string duration = plan.Duration == null ? "Lifetime" : $"{plan.Duration.Value}-{plan.Duration.Unit}";
+        string description = $"Pento {duration} {subscription.Name}";
         var payment = Payment.Create(
             userId: userContext.UserId,
             subscriptionPlanId: plan.Id,
@@ -65,7 +59,7 @@ internal sealed class CreatePaymentCommandHandler(
             createdAt: dateTimeProvider.UtcNow);
         paymentRepository.Add(payment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        Result<PaymentLinkResponse> result = await payOSService.CreatePaymentAsync(payment, request.ReturnUrl, request.CancelUrl, cancellationToken);
+        Result<PaymentLinkResponse> result = await payOSService.CreatePaymentAsync(payment, cancellationToken);
         if (result.IsFailure)
         {
             return Result.Failure<PaymentLinkResponse>(result.Error);

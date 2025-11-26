@@ -5,6 +5,7 @@ public sealed record PaymentResponse
     public Guid PaymentId { get; init; }
     public long OrderCode { get; init; }
     public string Description { get; init; }
+    public string ProviderDescription { get; init; }
     public string AmountDue { get; init; }
     public string AmountPaid { get; init; }
     public string Status { get; init; }

@@ -10,7 +10,7 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
     {
         builder.ToTable("subscriptions");
         builder.HasKey(s => s.Id);
-        builder.Property(s => s.Name).HasMaxLength(100);
+        builder.Property(s => s.Name).HasMaxLength(20);
         builder.Property(s => s.Description).HasMaxLength(500);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }

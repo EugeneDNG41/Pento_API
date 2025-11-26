@@ -18,6 +18,7 @@ internal sealed class GetPaymentByIdQueryHandler(IUserContext userContext, ISqlC
                 Id AS {nameof(PaymentResponse.PaymentId)},
                 order_code AS {nameof(PaymentResponse.OrderCode)},
                 description AS {nameof(PaymentResponse.Description)},
+                provider_description AS {nameof(PaymentResponse.ProviderDescription)},
                 CONCAT(amount_due::text, ' ', currency) AS {nameof(PaymentResponse.AmountDue)},
                 CONCAT(amount_paid::text, ' ', currency) AS {nameof(PaymentResponse.AmountPaid)},
                 status AS {nameof(PaymentResponse.Status)},
