@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.MealPlans.Create.From_Recipe;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
@@ -18,7 +14,7 @@ using Pento.Domain.MealPlans;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
 
-namespace Pento.Application.MealPlans.Create.From_Recipe;
+namespace Pento.Application.MealPlans.Create.FromRecipe;
 internal sealed class CreateMealPlanFromRecipeCommandHandler(
     IGenericRepository<Recipe> recipeRepo,
     IGenericRepository<FoodItem> foodItemRepo,
@@ -49,29 +45,6 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
             return Result.Failure<MealPlanAutoReserveResult>(RecipeErrors.NotFound);
         }
 
-        MealPlan? mealPlan = (await mealPlanRepo.FindAsync(
-            x => x.HouseholdId == householdId.Value
-              && x.ScheduledDate == cmd.ScheduledDate
-              && x.MealType == cmd.MealType,
-            cancellationToken)).FirstOrDefault();
-
-        if (mealPlan is null)
-        {
-            string name = $"{cmd.ScheduledDate:yyyy-MM-dd} {cmd.MealType}";
-            mealPlan = MealPlan.Create(
-                householdId.Value,
-                name,
-                cmd.MealType,
-                cmd.ScheduledDate,
-                cmd.Servings,
-                notes: null,
-                createdBy: userContext.UserId,
-                utcNow: clock.UtcNow
-            );
-            mealPlanRepo.Add(mealPlan);
-        }
-
-
 
         var ingredients = (await ingredientRepo.FindAsync(
             x => x.RecipeId == cmd.RecipeId,
@@ -80,17 +53,17 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
         var reserved = new List<ReservationResult>();
         var missing = new List<MissingIngredientResult>();
 
-        foreach (RecipeIngredient? ingredient in ingredients)
+        foreach (RecipeIngredient ingredient in ingredients)
         {
             FoodReference? foodRef = await foodRefRepo.GetByIdAsync(ingredient.FoodRefId, cancellationToken);
 
             string name = ingredient.Notes
-                         ?? foodRef?.Name          
-                         ?? "Unknown ingredient";   
+                         ?? foodRef?.Name
+                         ?? "Unknown ingredient";
 
             FoodItem? foodItem = (await foodItemRepo.FindAsync(
-                x => x.HouseholdId == householdId.Value
-                  && x.FoodReferenceId == ingredient.FoodRefId,
+                x => x.HouseholdId == householdId.Value &&
+                     x.FoodReferenceId == ingredient.FoodRefId,
                 cancellationToken)).FirstOrDefault();
 
             if (foodItem is null)
@@ -113,8 +86,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                     ingredient.Quantity,
                     ingredient.UnitId,
                     foodItem.UnitId,
-                    cancellationToken
-                );
+                    cancellationToken);
 
                 if (converted.IsFailure)
                 {
@@ -155,17 +127,40 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
 
         if (missing.Count > 0)
         {
-            await uow.SaveChangesAsync(cancellationToken);
             return Result.Success(
-                new MealPlanAutoReserveResult(mealPlan.Id, reserved, missing)
+                new MealPlanAutoReserveResult(Guid.Empty, reserved, missing)
             );
         }
+
+        MealPlan? mealPlan = (await mealPlanRepo.FindAsync(
+            x => x.HouseholdId == householdId.Value &&
+                 x.ScheduledDate == cmd.ScheduledDate &&
+                 x.MealType == cmd.MealType,
+            cancellationToken)).FirstOrDefault();
+
+        if (mealPlan is null)
+        {
+            string name = $"{cmd.ScheduledDate:yyyy-MM-dd} {cmd.MealType}";
+            mealPlan = MealPlan.Create(
+                householdId.Value,
+                name,
+                cmd.MealType,
+                cmd.ScheduledDate,
+                cmd.Servings,
+                notes: null,
+                createdBy: userContext.UserId,
+                utcNow: clock.UtcNow
+            );
+
+            mealPlanRepo.Add(mealPlan);
+        }
+
         var mealPlanRecipe = MealPlanRecipe.Create(mealPlan.Id, cmd.RecipeId);
         mealPlanRecipeRepo.Add(mealPlanRecipe);
+
         foreach (ReservationResult r in reserved)
         {
             FoodItem? foodItem = await foodItemRepo.GetByIdAsync(r.FoodItemId, cancellationToken);
-
             foodItem!.Reserve(r.ReservedQuantity, r.IngredientQuantity, r.IngredientUnitId, userContext.UserId);
 
             var resv = FoodItemMealPlanReservation.Create(
@@ -187,4 +182,3 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
         );
     }
 }
-
