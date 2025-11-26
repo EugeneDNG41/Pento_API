@@ -52,4 +52,19 @@ public class VisionService : IVisionService
 
         return result;
     }
+    public async Task<ImageAnalysisResult> AnalyzeTextAsync(Uri imageUrl)
+    {
+        ArgumentNullException.ThrowIfNull(imageUrl);
+
+        VisualFeatures features =
+            VisualFeatures.Read |       
+            VisualFeatures.Caption;    
+
+        var options = new ImageAnalysisOptions
+        {
+            GenderNeutralCaption = true
+        };
+
+        return await _client.AnalyzeAsync(imageUrl, features, options);
+    }
 }
