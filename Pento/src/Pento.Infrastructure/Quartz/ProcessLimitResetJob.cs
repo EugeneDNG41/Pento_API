@@ -10,15 +10,11 @@ using Pento.Domain.Shared;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.UserSubscriptions;
 using Quartz;
-#pragma warning disable S125 // Sections of code should not be commented out
-#pragma warning disable CS9113 // Sections of code should not be commented out
-#pragma warning disable IDE0060 // Remove unused parameter
 namespace Pento.Infrastructure.Quartz;
 
 [DisallowConcurrentExecution]
 internal sealed class ProcessLimitResetJob(
     IDateTimeProvider dateTimeProvider,
-    IGenericRepository<PointCap> pointCapRepository,
     IGenericRepository<UserEntitlement> userEntitlementRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
     IUnitOfWork unitOfWork
@@ -29,7 +25,6 @@ internal sealed class ProcessLimitResetJob(
     {
         DateOnly today = dateTimeProvider.Today;
         await ExecuteEntitlementReset(today, context.CancellationToken);
-        //await ExecutePointCapReset(today, context.CancellationToken);
     }
 
 
@@ -68,32 +63,3 @@ internal sealed class ProcessLimitResetJob(
     }
 }
 
-
-//    private async Task ExecutePointCapReset(DateTimeOffset today, CancellationToken cancellationToken)
-//    {
-        //IReadOnlyList<PointBalanceDetail> pointBalances = await session.Query
-        //    <PointBalanceDetail>().ToListAsync(cancellationToken);
-        //IReadOnlyList<PointCap> pointCaps = (await pointCapRepository.GetAllAsync(cancellationToken)).AsList();
-        //foreach (PointBalanceDetail pointBalance in pointBalances)
-        //{
-        //    foreach (PointCap pointCap in pointCaps)
-        //    {
-        //        if (pointBalance.Categories.ContainsKey(pointCap.Category))
-        //        {
-        //            if (pointCap.Limit.ResetPeriod == Period.Daily)
-        //            {
-        //                session.Events.Append(pointBalance.Id, new PointCapReset(Period.Daily));
-        //            }
-        //            if (pointCap.Limit.ResetPeriod == Period.Weekly && today.DayOfWeek == DayOfWeek.Monday)
-        //            {
-        //                session.Events.Append(pointBalance.Id, new PointCapReset(Period.Weekly));
-        //            }
-        //            if (pointCap.Limit.ResetPeriod == Period.Monthly && today.Day == 1)
-        //            {
-        //                session.Events.Append(pointBalance.Id, new PointCapReset(Period.Monthly));
-        //            }
-        //        }
-        //    }
-        //}
-//    }
-//}

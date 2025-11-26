@@ -85,6 +85,7 @@ public class Payment : Entity
         CheckoutUrl = checkoutUrl;
         QrCode = qrCode;
         ExpiresAt = expiresAt;
+
     }
     public void MarkAsPaid(long amountPaid, DateTime paidAt)
     {

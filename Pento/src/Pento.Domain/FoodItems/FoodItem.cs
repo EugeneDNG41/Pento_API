@@ -138,5 +138,8 @@ public sealed class FoodItem : Entity
         CompartmentId = newCompartmentId;
         LastModifiedBy = userId;
     }
-
+    public void UpdateStatus(FoodItemStatus newStatus)
+    {
+        Status = newStatus;
+    }
 }
