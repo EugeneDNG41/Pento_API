@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Recipes;
 
@@ -15,8 +16,7 @@ public sealed record CreateDetailedRecipeCommand(
     string? Notes,
     int? Servings,
     DifficultyLevel? DifficultyLevel,
-    Uri? ImageUrl,
-    Guid? CreatedBy,
+    IFormFile? ImageFile, 
     bool IsPublic,
     List<RecipeIngredientRequest> Ingredients,
     List<RecipeDirectionRequest> Directions

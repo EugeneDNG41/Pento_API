@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -19,11 +17,26 @@ internal sealed class CreateDetailedRecipeCommandHandler(
     IRecipeDirectionRepository recipeDirectionRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitRepository,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    IBlobService blobService, 
+    IUserContext userContext    
 ) : ICommandHandler<CreateDetailedRecipeCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateDetailedRecipeCommand command, CancellationToken cancellationToken)
     {
+        Guid userId = userContext.UserId;
+
+        Uri? recipeImageUrl = null;
+        if (command.ImageFile is not null)
+        {
+            Result<Uri> uploadResult = await blobService.UploadImageAsync(command.ImageFile, "recipes", cancellationToken);
+
+            if (uploadResult.IsFailure)
+            {
+                return Result.Failure<Guid>(uploadResult.Error);
+            }
+            recipeImageUrl = uploadResult.Value;
+        }
 
         var time = TimeRequirement.Create(command.PrepTimeMinutes, command.CookTimeMinutes);
 
@@ -34,8 +47,8 @@ internal sealed class CreateDetailedRecipeCommandHandler(
             command.Notes,
             command.Servings,
             command.DifficultyLevel,
-            command.ImageUrl,
-            command.CreatedBy,
+            recipeImageUrl, 
+            userId,         
             command.IsPublic,
             DateTime.UtcNow
         );
@@ -64,21 +77,22 @@ internal sealed class CreateDetailedRecipeCommandHandler(
                 item.Notes,
                 DateTime.UtcNow
             );
-
             await recipeIngredientRepository.AddAsync(ingredient, cancellationToken);
         }
 
-        foreach (RecipeDirectionRequest? dir in command.Directions.OrderBy(d => d.StepNumber))
+        if (command.Directions != null)
         {
-            var direction = RecipeDirection.Create(
-                recipe.Id,
-                dir.StepNumber,
-                dir.Description,
-                dir.ImageUrl,
-                DateTime.UtcNow
-            );
-
-            await recipeDirectionRepository.AddAsync(direction, cancellationToken);
+            foreach (RecipeDirectionRequest dir in command.Directions.OrderBy(d => d.StepNumber))
+            {
+                var direction = RecipeDirection.Create(
+                    recipe.Id,
+                    dir.StepNumber,
+                    dir.Description,
+                    dir.ImageUrl,
+                    DateTime.UtcNow
+                );
+                await recipeDirectionRepository.AddAsync(direction, cancellationToken);
+            }
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

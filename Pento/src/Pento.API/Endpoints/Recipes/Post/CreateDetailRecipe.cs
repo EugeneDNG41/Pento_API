@@ -1,4 +1,5 @@
-﻿using Pento.API.Extensions;
+﻿using Microsoft.AspNetCore.Mvc;
+using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Create;
 using Pento.Domain.Abstractions;
@@ -10,9 +11,9 @@ internal sealed class CreateDetailedRecipe : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPost("recipes/detailed", async (
-            CreateDetailedRecipeCommand request,
-            ICommandHandler<CreateDetailedRecipeCommand, Guid> handler,
-            CancellationToken cancellationToken) =>
+                  [FromForm] CreateDetailedRecipeCommand request, 
+                  ICommandHandler<CreateDetailedRecipeCommand, Guid> handler,
+                  CancellationToken cancellationToken) =>
         {
             Result<Guid> result = await handler.Handle(request, cancellationToken);
 
@@ -20,6 +21,8 @@ internal sealed class CreateDetailedRecipe : IEndpoint
                 id => Results.Ok(new { RecipeId = id }),
                 CustomResults.Problem);
         })
-        .WithTags(Tags.Recipes);
+              .WithTags(Tags.Recipes)
+              .RequireAuthorization()
+              .DisableAntiforgery(); 
     }
 }
