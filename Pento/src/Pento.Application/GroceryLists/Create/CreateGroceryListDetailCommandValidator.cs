@@ -19,11 +19,6 @@ public sealed class CreateGroceryListDetailCommandValidator : AbstractValidator<
                 .WithMessage("Priority must be one of: Low, Medium, High.");
         });
 
-        RuleForEach(x => x.Assignees).ChildRules(a =>
-        {
-            a.RuleFor(i => i.HouseholdMemberId)
-                .NotEmpty();
-        });
     }
 
     private static bool BeValidPriority(string priority)

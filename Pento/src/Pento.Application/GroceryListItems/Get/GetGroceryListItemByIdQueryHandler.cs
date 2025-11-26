@@ -26,7 +26,6 @@ internal sealed class GetGroceryListItemByIdQueryHandler(
                 custom_name AS {nameof(GroceryListItemResponse.CustomName)},
                 quantity AS {nameof(GroceryListItemResponse.Quantity)},
                 unit_id AS {nameof(GroceryListItemResponse.UnitId)},
-                estimated_price AS {nameof(GroceryListItemResponse.EstimatedPrice)},
                 notes AS {nameof(GroceryListItemResponse.Notes)},
                 priority AS {nameof(GroceryListItemResponse.Priority)},
                 added_by AS {nameof(GroceryListItemResponse.AddedBy)},

@@ -23,16 +23,16 @@ internal sealed class GetMealPlan : IEndpoint
             );
         })
         .WithTags(Tags.MealPlans);
-        app.MapGet("meal-plans/current-house", async (
-    int pageNumber,
-    int pageSize,
-    DateOnly? date,
-    int? month,
-    int? year,
-    MealType? mealType,
-    bool sortAsc,
-    IQueryHandler<GetMealPlansByHouseholdIdQuery, PagedList<MealPlanResponse>> handler,
-    CancellationToken cancellationToken
+        app.MapGet("meal-plans", async (
+            int pageNumber,
+            int pageSize,
+            DateOnly? date,
+            int? month,
+            int? year,
+            MealType? mealType,
+            bool sortAsc,
+            IQueryHandler<GetMealPlansByHouseholdIdQuery, PagedList<MealPlanResponse>> handler,
+            CancellationToken cancellationToken
 ) =>
         {
             var query = new GetMealPlansByHouseholdIdQuery(
@@ -52,15 +52,15 @@ internal sealed class GetMealPlan : IEndpoint
                 CustomResults.Problem
             );
         })
-.WithTags(Tags.MealPlans)
-.WithDescription("""
-Query parameters:
-- **date**: format `yyyy-MM-dd`
-- **month**: 1–12
-- **year**: e.g., 2024, 2025
-- **mealType**: Breakfast / Lunch / Dinner / Snack
-- **sortAsc**: true = earliest first
-""")
-.RequireAuthorization();
-    }
-}
+            .WithTags(Tags.MealPlans)
+            .WithDescription("""
+            Query parameters:
+            - **date**: format `yyyy-MM-dd`
+            - **month**: 1–12
+            - **year**: e.g., 2024, 2025
+            - **mealType**: Breakfast / Lunch / Dinner / Snack
+            - **sortAsc**: true = earliest first
+            """)
+            .RequireAuthorization();
+                }
+            }

@@ -42,58 +42,30 @@ internal sealed class CreateMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
         }
 
-        MealPlan? mealPlan = null;
+        MealPlan? mealPlan = (await mealPlanRepository.FindAsync(
+            x => x.HouseholdId == householdId.Value
+              && x.MealType == command.MealType
+              && x.ScheduledDate == command.ScheduledDate,
+            cancellationToken
+        )).FirstOrDefault();
 
-        if (command.MealPlanId is not null)
+        if (mealPlan is null)
         {
-            mealPlan = await mealPlanRepository.GetByIdAsync(command.MealPlanId.Value, cancellationToken);
+            string defaultName =
+                $"{command.MealType}-{command.ScheduledDate:yyyy-MM-dd}";
 
-            if (mealPlan is null)
-            {
-                return Result.Failure<Guid>(MealPlanErrors.NotFound);
-            }
+            mealPlan = MealPlan.Create(
+                householdId: householdId.Value,
+                name: defaultName,
+                mealType: command.MealType,
+                scheduledDate: command.ScheduledDate,
+                servings: command.Servings ?? 1,
+                notes: null,
+                createdBy: userContext.UserId,
+                utcNow: dateTimeProvider.UtcNow
+            );
 
-            if (mealPlan.HouseholdId != householdId.Value)
-            {
-                return Result.Failure<Guid>(MealPlanErrors.ForbiddenAccess);
-            }
-        }
-        else
-        {
-            if (command.ScheduledDate is null || command.MealType is null)
-            {
-                return Result.Failure<Guid>(MealPlanErrors.InvalidName); //???
-            }
-
-            MealPlan? existing = (await mealPlanRepository.FindAsync(
-                x => x.HouseholdId == householdId.Value
-                  && x.MealType == command.MealType.Value
-                  && x.ScheduledDate == command.ScheduledDate.Value,
-                cancellationToken
-            )).FirstOrDefault();
-
-            if (existing is not null)
-            {
-                mealPlan = existing;
-            }
-            else
-            {
-                string defaultName =
-                    $"{command.MealType.Value}-{command.ScheduledDate.Value:yyyy-MM-dd}";
-
-                mealPlan = MealPlan.Create(
-                    householdId: householdId.Value,
-                    name: defaultName,
-                    mealType: command.MealType.Value,
-                    scheduledDate: command.ScheduledDate.Value,
-                    servings: command.Servings ?? 1,
-                    notes: null,
-                    createdBy: userContext.UserId,
-                    utcNow: dateTimeProvider.UtcNow
-                );
-
-                mealPlanRepository.Add(mealPlan);
-            }
+            mealPlanRepository.Add(mealPlan);
         }
 
         decimal qtyInItemUnit = command.Quantity;
