@@ -22,4 +22,15 @@ public sealed class SubscriptionFeature : Entity
     public Limit? Entitlement { get; private set; }
     public static SubscriptionFeature Create(Guid subscriptionId, string featureName, Limit? entitlement)
         => new(Guid.CreateVersion7(), subscriptionId, featureName, entitlement);
+    public void UpdateDetails(string? featureName, Limit? entitlement)
+    {
+        if (!string.IsNullOrWhiteSpace(featureName))
+        {
+            FeatureName = featureName;
+        }
+        if (Entitlement != entitlement)
+        {
+            Entitlement = entitlement;
+        }
+    }
 }

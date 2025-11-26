@@ -27,7 +27,6 @@ public class FoodItemQuantityAdjustedDomainEvent(Guid foodItemId, decimal quanti
     public Guid UnitId { get; } = unitId;
     public Guid UserId { get; } = userId;
 }
-public record FoodItemUnitChanged(Guid UnitId, decimal ConvertedQuantity);
 // Reservations
 public class FoodItemReservedDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
 {

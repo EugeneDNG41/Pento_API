@@ -27,4 +27,8 @@ public sealed class UserEntitlement : Entity
     {
         UsageCount = 0;
     }
+    public void UpdateEntitlement(Limit? entitlement)
+    {
+        Entitlement = entitlement;
+    }
 }

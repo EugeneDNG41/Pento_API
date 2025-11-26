@@ -1,4 +1,6 @@
-﻿namespace Pento.Domain.Subscriptions;
+﻿using Pento.Domain.Abstractions;
+
+namespace Pento.Domain.Subscriptions;
 
 public sealed class Feature
 {
@@ -14,4 +16,9 @@ public sealed class Feature
     private Feature() { }
     
     public string Name { get; private set; }
+}
+public static class FeatureErrors
+{
+    public static readonly Error NotFound = Error.NotFound("Feature.NotFound", "Feature not found.");
+
 }

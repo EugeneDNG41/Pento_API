@@ -36,6 +36,7 @@ internal sealed class Tags
 
     internal const string Subscriptions = "Subscriptions"; //subscriptions/{guid}/plans, subscriptions/{guid}/features
     internal const string Payments = "Payments";
+    internal const string Features = "Features";
 
     internal const string Badges = "Badges"; //requirement = badges/{guid}/requirements, badges/{guid}/perks
 

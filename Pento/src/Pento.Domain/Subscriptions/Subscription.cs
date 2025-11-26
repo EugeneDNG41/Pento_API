@@ -40,5 +40,11 @@ public static class SubscriptionErrors
         Error.NotFound("SubscriptionPlan.NotFound", "Subscription plan not found.");
     public static readonly Error SubscriptionFeatureNotFound = 
         Error.NotFound("SubscriptionFeature.NotFound", "Subscription feature not found.");
+    public static readonly Error NameTaken = 
+        Error.Conflict("Subscription.NameTaken", "Subscription name already taken.");
+    public static readonly Error DuplicateSubscriptionPlan = 
+        Error.Conflict("Subscription.DuplicateSubscriptionPlan", "A subscription plan with the same price and duration already exists for this subscription.");
+    public static readonly Error DuplicateSubscriptionFeature = 
+        Error.Conflict("Subscription.DuplicateSubscriptionFeature", "This feature has already been added to the subscription.");
 }
 

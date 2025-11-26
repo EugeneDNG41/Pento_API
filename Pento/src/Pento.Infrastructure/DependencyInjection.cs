@@ -91,9 +91,6 @@ public static class DependencyInjection
 
             return model;
         });
-#pragma warning disable S1481 // Unused local variables should be removed
-        PayOSCustomOptions payosOptions = configuration.GetRequiredSection("PayOS").Get<PayOSCustomOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
-#pragma warning restore S1481 // Unused local variables should be removed
 
         services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))

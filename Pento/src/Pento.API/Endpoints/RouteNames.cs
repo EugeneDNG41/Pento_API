@@ -9,4 +9,5 @@ internal sealed class RouteNames
     internal const string GetRecipeById = "GetRecipeById";
     internal const string GetMealPlanById = "GetMealPlanById";
     internal const string GetCurrentHousehold = "GetCurrentHousehold";
+    internal const string GetSubscriptionById = "GetSubscriptionById";
 }

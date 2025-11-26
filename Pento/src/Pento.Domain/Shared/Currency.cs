@@ -1,4 +1,6 @@
-﻿namespace Pento.Domain.Shared;
+﻿using Pento.Domain.Abstractions;
+
+namespace Pento.Domain.Shared;
 
 public sealed record Currency
 {
@@ -9,10 +11,10 @@ public sealed record Currency
 
     public string Code { get; init; }
 
-    public static Currency FromCode(string code)
+    public static Result<Currency> FromCode(string code)
     {
         return All.FirstOrDefault(c => c.Code.Equals(code, StringComparison.OrdinalIgnoreCase)) ??
-               throw new ApplicationException("The currency code is invalid");
+               Result.Failure<Currency>(Error.NotFound("Currency.NotFound", "Currency not found"));
     }
 
     public static readonly IReadOnlyCollection<Currency> All = new[]
