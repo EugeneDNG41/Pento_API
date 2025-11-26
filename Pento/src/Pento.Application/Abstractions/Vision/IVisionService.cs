@@ -9,4 +9,6 @@ namespace Pento.Application.Abstractions.Vision;
 public interface IVisionService
 {
     Task<ImageAnalysisResult> DetectObjectsAsync(Uri imageUrl);
+    Task<ImageAnalysisResult> AnalyzeTextAsync(Uri imageUrl);
+
 }

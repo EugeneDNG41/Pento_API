@@ -2,7 +2,7 @@
 using Pento.Application.Abstractions.Vision;
 using Pento.Application.Vision;
 
-namespace Pento.API.Endpoints.Vision.Post;
+namespace Pento.API.Endpoints.Visions.Post;
 
 internal sealed class AnalyzeVisionByUrl : IEndpoint
 {

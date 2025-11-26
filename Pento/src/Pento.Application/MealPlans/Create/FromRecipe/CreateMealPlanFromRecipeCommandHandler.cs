@@ -11,6 +11,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
+using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlanRecipe;
 using Pento.Domain.MealPlans;
@@ -23,6 +24,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
     IGenericRepository<FoodItem> foodItemRepo,
     IGenericRepository<RecipeIngredient> ingredientRepo,
     IGenericRepository<MealPlan> mealPlanRepo,
+    IGenericRepository<FoodReference> foodRefRepo,
     IGenericRepository<MealPlanRecipe> mealPlanRecipeRepo,
     IGenericRepository<FoodItemMealPlanReservation> reservationRepo,
     IConverterService converter,
@@ -69,8 +71,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
             mealPlanRepo.Add(mealPlan);
         }
 
-        var mealPlanRecipe = MealPlanRecipe.Create(mealPlan.Id, cmd.RecipeId);
-        mealPlanRecipeRepo.Add(mealPlanRecipe);
+
 
         var ingredients = (await ingredientRepo.FindAsync(
             x => x.RecipeId == cmd.RecipeId,
@@ -81,6 +82,12 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
 
         foreach (RecipeIngredient? ingredient in ingredients)
         {
+            FoodReference? foodRef = await foodRefRepo.GetByIdAsync(ingredient.FoodRefId, cancellationToken);
+
+            string name = ingredient.Notes
+                         ?? foodRef?.Name          
+                         ?? "Unknown ingredient";   
+
             FoodItem? foodItem = (await foodItemRepo.FindAsync(
                 x => x.HouseholdId == householdId.Value
                   && x.FoodReferenceId == ingredient.FoodRefId,
@@ -91,7 +98,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 missing.Add(new MissingIngredientResult(
                     ingredient.Id,
                     ingredient.FoodRefId,
-                    ingredient.Notes ?? recipe.Title,
+                    name,
                     ingredient.Quantity,
                     ingredient.UnitId
                 ));
@@ -114,7 +121,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                     missing.Add(new MissingIngredientResult(
                         ingredient.Id,
                         ingredient.FoodRefId,
-                        ingredient.Notes ?? recipe.Title,
+                        name,
                         ingredient.Quantity,
                         ingredient.UnitId
                     ));
@@ -129,7 +136,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 missing.Add(new MissingIngredientResult(
                     ingredient.Id,
                     ingredient.FoodRefId,
-                    recipe.Title,
+                    name,
                     ingredient.Quantity,
                     ingredient.UnitId
                 ));
@@ -153,7 +160,8 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 new MealPlanAutoReserveResult(mealPlan.Id, reserved, missing)
             );
         }
-
+        var mealPlanRecipe = MealPlanRecipe.Create(mealPlan.Id, cmd.RecipeId);
+        mealPlanRecipeRepo.Add(mealPlanRecipe);
         foreach (ReservationResult r in reserved)
         {
             FoodItem? foodItem = await foodItemRepo.GetByIdAsync(r.FoodItemId, cancellationToken);
