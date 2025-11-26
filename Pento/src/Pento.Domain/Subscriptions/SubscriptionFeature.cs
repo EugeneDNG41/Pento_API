@@ -11,15 +11,15 @@ namespace Pento.Domain.Subscriptions;
 public sealed class SubscriptionFeature : Entity
 {
     private SubscriptionFeature() { }
-    public SubscriptionFeature(Guid id, Guid subscriptionId, Feature feature, Limit? limit) : base(id)
+    public SubscriptionFeature(Guid id, Guid subscriptionId, string featureName, Limit? entitlement) : base(id)
     {
         SubscriptionId = subscriptionId;
-        Feature = feature;
-        Limit = limit;
+        FeatureName = featureName;
+        Entitlement = entitlement;
     }
     public Guid SubscriptionId { get; private set; }
-    public Feature Feature { get; private set; }
-    public Limit? Limit { get; private set; }
-    public static SubscriptionFeature Create(Guid subscriptionId, Feature feature, Limit? limit)
-        => new(Guid.CreateVersion7(), subscriptionId, feature, limit);
+    public string FeatureName { get; private set; }
+    public Limit? Entitlement { get; private set; }
+    public static SubscriptionFeature Create(Guid subscriptionId, string featureName, Limit? entitlement)
+        => new(Guid.CreateVersion7(), subscriptionId, featureName, entitlement);
 }

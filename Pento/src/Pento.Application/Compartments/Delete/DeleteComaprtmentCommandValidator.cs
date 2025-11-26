@@ -7,6 +7,6 @@ internal sealed class DeleteComaprtmentCommandValidator : AbstractValidator<Dele
     public DeleteComaprtmentCommandValidator()
     {
         RuleFor(x => x.CompartmentId)
-            .NotEmpty().WithMessage("Storage ID must not be empty.");
+            .NotEmpty().WithMessage("Storage Id is required.");
     }
 }

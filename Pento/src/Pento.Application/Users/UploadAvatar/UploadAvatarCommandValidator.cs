@@ -9,6 +9,6 @@ internal sealed class UploadAvatarCommandValidator : AbstractValidator<UploadAva
 
         RuleFor(x => x.File)
             .NotNull().WithMessage("File must be provided.")
-            .Must(file => file != null && file.Length > 0).WithMessage("File must not be empty.");
+            .Must(file => file != null && file.Length > 0).WithMessage("File is required.");
     }
 }

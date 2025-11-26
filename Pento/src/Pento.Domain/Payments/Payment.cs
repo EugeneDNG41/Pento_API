@@ -38,6 +38,7 @@ public class Payment : Entity
     public long OrderCode { get; private set; }
     public string? PaymentLinkId { get; private set; }
     public string Description { get; private set; }
+    public string? ProviderDescription { get; private set; }
     public long AmountDue { get; private set; }
     public long AmountPaid { get; private set; }
     public Currency Currency {  get; private set; }
@@ -77,9 +78,10 @@ public class Payment : Entity
             createdAt);
     }
 
-    public void UpdatePaymentLink(string paymentLinkId, Uri checkoutUrl, string qrCode, DateTime expiresAt)
+    public void UpdatePaymentLink(string paymentLinkId, string? providerDescription, Uri checkoutUrl, string qrCode, DateTime expiresAt)
     {
         PaymentLinkId = paymentLinkId;
+        ProviderDescription = providerDescription;
         CheckoutUrl = checkoutUrl;
         QrCode = qrCode;
         ExpiresAt = expiresAt;

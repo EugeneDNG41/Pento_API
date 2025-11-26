@@ -12,9 +12,9 @@ public sealed class CreateRecipeCommandValidator : AbstractValidator<CreateRecip
     {
         RuleFor(x => x.Title)
             .NotEmpty()
-            .WithMessage("The recipe title cannot be empty.")
+            .WithMessage("Recipe title is required.")
             .MaximumLength(200)
-            .WithMessage("The recipe title must be 200 characters or fewer.");
+            .WithMessage("Recipe title must be 200 characters or fewer.");
 
         RuleFor(x => x.PrepTimeMinutes)
             .GreaterThanOrEqualTo(0)
@@ -31,7 +31,7 @@ public sealed class CreateRecipeCommandValidator : AbstractValidator<CreateRecip
 
         RuleFor(x => x.ImageUrl)
             .Must(uri => uri == null || uri.IsAbsoluteUri)
-            .WithMessage("ImageUrl must be a valid absolute URL if provided.");
+            .WithMessage("Image url must be a valid absolute URL if provided.");
 
     }
 }

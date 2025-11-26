@@ -17,14 +17,12 @@ internal sealed class CreatePaymentLink : IEndpoint
             CancellationToken cancellationToken) =>
         {
             Result<PaymentLinkResponse> result = await handler.Handle(
-                new CreatePaymentCommand(request.SubscriptionPlanId, request.ReturnUrl, request.CancelUrl), cancellationToken);
+                new CreatePaymentCommand(request.SubscriptionPlanId), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).RequireAuthorization().WithTags(Tags.Payments);
     }
     internal sealed class Request
     {
         public Guid SubscriptionPlanId { get; init; }
-        public string ReturnUrl { get; init; }
-        public string CancelUrl { get; init; }
     }
 }

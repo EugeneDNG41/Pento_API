@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Subscriptions;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.Users;
 
@@ -11,10 +12,10 @@ internal sealed class UserEntitlementConfiguration : IEntityTypeConfiguration<Us
     {
         builder.ToTable("user_entitlements");
         builder.HasKey(ue => ue.Id);
-        builder.Property(ue => ue.Feature).HasConversion<string>().HasMaxLength(50).IsRequired();
-        builder.OwnsOne(ue => ue.Limit, limitBuilder => limitBuilder.Property(limit => limit.ResetPer)
+        builder.OwnsOne(ue => ue.Entitlement, limitBuilder => limitBuilder.Property(limit => limit.ResetPer)
                 .HasConversion<string>().HasMaxLength(50).IsRequired(false));
         builder.HasOne<User>().WithMany().HasForeignKey(ue => ue.UserId);
+        builder.HasOne<Feature>().WithMany().HasForeignKey(ue => ue.FeatureName);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }
 }

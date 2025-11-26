@@ -42,7 +42,7 @@ internal sealed class PayOSService(
             return Result.Failure(PaymentErrors.PaymentCancellationFailed);
         }
     }
-    public async Task<Result<PaymentLinkResponse>> CreatePaymentAsync(Payment payment, string returnUrl, string cancelUrl, CancellationToken cancellationToken)
+    public async Task<Result<PaymentLinkResponse>> CreatePaymentAsync(Payment payment, CancellationToken cancellationToken)
     {
         try
         {
@@ -57,13 +57,13 @@ internal sealed class PayOSService(
             {
                 OrderCode = payment.OrderCode,
                 Amount = payment.AmountDue,
-                Description = payment.Description,
-                ReturnUrl = returnUrl,
-                CancelUrl = cancelUrl,
+                Description = payment.Description.Length > 25 ? payment.Description.Substring(0, 25) : payment.Description,
+                ReturnUrl = $"{options.Value.ReturnUrl}/{payment.Id}",
+                CancelUrl = $"{options.Value.CancelUrl}/{payment.Id}",
                 ExpiredAt = (long)expiresAt.Subtract(DateTime.UnixEpoch).TotalSeconds
             };
             CreatePaymentLinkResponse response = await client.PaymentRequests.CreateAsync(paymentRequest);
-            payment.UpdatePaymentLink(response.PaymentLinkId, new Uri(response.CheckoutUrl), response.QrCode, expiresAt);
+            payment.UpdatePaymentLink(response.PaymentLinkId, response.Description, new Uri(response.CheckoutUrl), response.QrCode, expiresAt);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return new PaymentLinkResponse(payment.Id, new Uri(response.CheckoutUrl), response.QrCode);
         }

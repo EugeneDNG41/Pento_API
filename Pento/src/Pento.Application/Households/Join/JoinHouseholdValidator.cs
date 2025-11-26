@@ -7,6 +7,6 @@ internal sealed class JoinHouseholdValidator : AbstractValidator<JoinHouseholdCo
     public JoinHouseholdValidator()
     {
         RuleFor(x => x.InviteCode)
-            .NotEmpty().WithMessage("Invite code must not be empty.");
+            .NotEmpty().WithMessage("Invite code is required.");
     }
 }

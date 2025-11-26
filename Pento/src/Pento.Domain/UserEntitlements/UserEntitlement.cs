@@ -6,19 +6,19 @@ namespace Pento.Domain.UserEntitlements;
 public sealed class UserEntitlement : Entity
 {
     private UserEntitlement() { }
-    public UserEntitlement(Guid id, Guid userId, Feature feature, Limit? limit) : base(id)
+    public UserEntitlement(Guid id, Guid userId, string featureName, Limit? entitlement) : base(id)
     {
         UserId = userId;
-        Feature = feature;
-        Limit = limit;
+        FeatureName = featureName;
+        Entitlement = entitlement;
         UsageCount = 0;
     }
     public Guid UserId { get; private set; }
-    public Feature Feature { get; private set; }
+    public string FeatureName { get; private set; }
     public int UsageCount { get; private set; }
-    public Limit? Limit { get; private set; }
-    public static UserEntitlement Create(Guid userId, Feature feature, Limit? limit)
-        => new(Guid.CreateVersion7(), userId, feature, limit);
+    public Limit? Entitlement { get; private set; }
+    public static UserEntitlement Create(Guid userId, string featureName, Limit? entitlement)
+        => new(Guid.CreateVersion7(), userId, featureName, entitlement);
     public void IncrementUsage(int amount = 1)
     {
         UsageCount += amount;
@@ -27,11 +27,4 @@ public sealed class UserEntitlement : Entity
     {
         UsageCount = 0;
     }
-}
-public static class UserEntitlementErrors
-{
-    public static readonly Error NotFound = 
-        Error.NotFound("UserEntitlement.NotFound", "User entitlement not found.");
-    public static readonly Error LimitExceeded = 
-        Error.Forbidden("UserEntitlement.LimitExceeded", "User entitlement limit exceeded.");
 }

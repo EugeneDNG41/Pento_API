@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Payments.GetById;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Payments.GetAll;
@@ -23,7 +24,7 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
         parameters.Add("UserId", userContext.UserId);
         if (!string.IsNullOrWhiteSpace(request.SearchText))
         {
-            filters.Add("description ILIKE @SearchText)");
+            filters.Add("description ILIKE @SearchText");
             parameters.Add("SearchText", $"%{request.SearchText}%");
         }
         if (request.FromAmount.HasValue)
@@ -52,8 +53,7 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
             parameters.Add("Status", request.Status.Value.ToString());
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
-        parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
-        parameters.Add("PageSize", request.PageSize);
+        
         string sql = 
             $"""
             SELECT COUNT(*) FROM payments {whereClause};
@@ -61,8 +61,7 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
                 id AS PaymentId,
                 order_code AS OrderCode,
                 description AS Description,
-                amount_due AS Amount,
-                currency AS Currency,
+                CONCAT(amount_due::text, ' ', currency) AS Amount,
                 status AS Status,
                 created_at AS CreatedAt
             FROM payments
@@ -71,6 +70,8 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
             OFFSET @Offset ROWS 
             FETCH NEXT @PageSize ROWS ONLY;          
          """;
+        parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
+        parameters.Add("PageSize", request.PageSize);
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         int totalCount = await multi.ReadFirstAsync<int>();

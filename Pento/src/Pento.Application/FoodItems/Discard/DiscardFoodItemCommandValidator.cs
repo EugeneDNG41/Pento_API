@@ -7,7 +7,7 @@ internal sealed class DiscardFoodItemCommandValidator : AbstractValidator<Discar
     public DiscardFoodItemCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Food item Id must not be empty.");
+            .NotEmpty().WithMessage("Food item Id is required.");
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
     }

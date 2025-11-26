@@ -28,7 +28,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Endpoints\Subscriptions\Get\" />
 	  <Folder Include="Endpoints\Subscriptions\Post\" />
 	</ItemGroup>
 

@@ -18,6 +18,11 @@ internal sealed class RegisterUserCommandHandler(
 {
     public async Task<Result<AuthToken>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
+        bool emailTaken = await userRepository.AnyAsync(u => u.Email == request.Email, cancellationToken);
+        if (emailTaken)
+        {
+            return Result.Failure<AuthToken>(IdentityProviderErrors.EmailTaken);
+        }
         Result<string> result = await identityProviderService.RegisterUserAsync(
             new UserModel(request.Email, request.Password, request.FirstName, request.LastName),
             cancellationToken);

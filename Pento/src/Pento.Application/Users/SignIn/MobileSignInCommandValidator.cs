@@ -9,6 +9,6 @@ internal sealed class MobileSignInCommandValidator : AbstractValidator<MobileSig
         RuleFor(c => c.Email)
             .EmailAddress().WithMessage("Invalid email format.");
         RuleFor(c => c.Password)
-            .NotEmpty().WithMessage("Password cannot be empty.");
+            .NotEmpty().WithMessage("Password is required.");
     }
 }

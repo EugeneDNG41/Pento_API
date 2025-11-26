@@ -48,7 +48,7 @@ internal sealed class IdentityProviderService(KeyCloakClient keyCloakClient, ILo
         {
             logger.LogError(exception, "User registration failed");
 
-            return Result.Failure<string>(IdentityProviderErrors.EmailIsNotUnique);
+            return Result.Failure<string>(IdentityProviderErrors.EmailTaken);
         }
     }
 }
