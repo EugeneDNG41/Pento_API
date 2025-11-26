@@ -19,9 +19,23 @@ public sealed record SubscriptionPlanResponse
     public string Price { get; init; }
     public string Duration { get; init; }
 }
+public sealed record SubscriptionPlanResponseWithSubscriptionId
+{
+    public Guid SubscriptionPlanId { get; init; }
+    public Guid SubscriptionId { get; init; }
+    public string Price { get; init; }
+    public string Duration { get; init; }
+}
 public sealed record SubscriptionFeatureResponse
 {
     public Guid SubscriptionFeatureId { get; init; }
+    public string FeatureName { get; init; }
+    public string Entitlement { get; init; }
+}
+public sealed record SubscriptionFeatureResponseWithSubscriptionId
+{
+    public Guid SubscriptionFeatureId { get; init; }
+    public Guid SubscriptionId { get; init; }
     public string FeatureName { get; init; }
     public string Entitlement { get; init; }
 }
