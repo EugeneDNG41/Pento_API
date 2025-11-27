@@ -59,7 +59,7 @@ internal sealed class ProcessOutboxMessagesJob : IJob
             if (eventType is null)
             {
                 // log & skip or throw
-                _logger.LogError("Could not resolve type {Type} from Outbox Message {Id}", outboxMessage.Type, outboxMessage.Id);
+                _logger.LogError("Could not resolve type {Type} from Outbox Message {Code}", outboxMessage.Type, outboxMessage.Id);
                 continue;
             }
             try
@@ -128,7 +128,7 @@ internal sealed class ProcessOutboxMessagesJob : IJob
             UPDATE outbox_messages
             SET processed_on_utc = @ProcessedOnUtc,
                 error = @Error
-            WHERE id = @Id";
+            WHERE id = @Code";
 
         await connection.ExecuteAsync(
             sql,

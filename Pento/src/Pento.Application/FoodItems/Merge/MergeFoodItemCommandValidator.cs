@@ -7,9 +7,9 @@ internal sealed class MergeFoodItemCommandValidator : AbstractValidator<MergeFoo
     public MergeFoodItemCommandValidator()
     {
         RuleFor(x => x.SourceId)
-            .NotEmpty().WithMessage("Source food item Id is required.");
+            .NotEmpty().WithMessage("Source food item Code is required.");
         RuleFor(x => x.TargetId)
-            .NotEmpty().WithMessage("Target food item Id is required.");
+            .NotEmpty().WithMessage("Target food item Code is required.");
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x)

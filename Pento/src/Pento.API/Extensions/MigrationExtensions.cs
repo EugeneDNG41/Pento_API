@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pento.Domain.DietaryTags;
+using Pento.Domain.Subscriptions;
 using Pento.Domain.Units;
 using Pento.Infrastructure;
 using Pento.Infrastructure.Seed;

@@ -14,7 +14,7 @@ internal sealed class CreateSubscription : IEndpoint
             ICommandHandler<CreateSubscriptionCommand, Guid> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<Guid> result = await handler.Handle(new CreateSubscriptionCommand(request.Name, request.Description), cancellationToken);
+            Result<Guid> result = await handler.Handle(new CreateSubscriptionCommand(request.Name, request.Description, request.IsActive), cancellationToken);
             return result
             .Match(id => Results.CreatedAtRoute(RouteNames.GetSubscriptionById, new { subscriptionId = id }, id), CustomResults.Problem);
         }).WithTags(Tags.Subscriptions);
@@ -23,5 +23,6 @@ internal sealed class CreateSubscription : IEndpoint
     {
         public string Name { get; init; }
         public string Description { get; init; }
+        public bool IsActive { get; init; }
     }
 }

@@ -11,26 +11,32 @@ namespace Pento.Domain.Subscriptions;
 public sealed class SubscriptionFeature : Entity
 {
     private SubscriptionFeature() { }
-    public SubscriptionFeature(Guid id, Guid subscriptionId, string featureName, Limit? entitlement) : base(id)
+    public SubscriptionFeature(Guid id, Guid subscriptionId, string featureCode, int? quota = null, TimeUnit? resetPeriod = null) : base(id)
     {
         SubscriptionId = subscriptionId;
-        FeatureName = featureName;
-        Entitlement = entitlement;
+        FeatureCode = featureCode;
+        Quota = quota;
+        ResetPeriod = resetPeriod;
     }
     public Guid SubscriptionId { get; private set; }
-    public string FeatureName { get; private set; }
-    public Limit? Entitlement { get; private set; }
-    public static SubscriptionFeature Create(Guid subscriptionId, string featureName, Limit? entitlement)
-        => new(Guid.CreateVersion7(), subscriptionId, featureName, entitlement);
-    public void UpdateDetails(string? featureName, Limit? entitlement)
+    public string FeatureCode { get; private set; }
+    public int? Quota { get; private set; }
+    public TimeUnit? ResetPeriod { get; private set; }
+    public static SubscriptionFeature Create(Guid subscriptionId, string featureId, int? quota = null, TimeUnit? resetPeriod = null)
+        => new(Guid.CreateVersion7(), subscriptionId, featureId, quota, resetPeriod);
+    public void UpdateDetails(string? featureCode, int? quota, TimeUnit? resetPeriod)
     {
-        if (!string.IsNullOrWhiteSpace(featureName))
+        if (!string.IsNullOrEmpty(featureCode) && FeatureCode != featureCode)
         {
-            FeatureName = featureName;
+            FeatureCode = featureCode;
         }
-        if (Entitlement != entitlement)
+        if (Quota != quota)
         {
-            Entitlement = entitlement;
+            Quota = quota;
         }
+        if (ResetPeriod != resetPeriod)
+        {
+            ResetPeriod = resetPeriod;
+        } 
     }
 }

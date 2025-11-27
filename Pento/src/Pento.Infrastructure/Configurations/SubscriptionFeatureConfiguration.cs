@@ -10,10 +10,10 @@ internal sealed class SubscriptionFeatureConfiguration : IEntityTypeConfiguratio
     {
         builder.ToTable("subscription_features");
         builder.HasKey(sf => sf.Id);
-        builder.OwnsOne(sf => sf.Entitlement, limitBuilder => limitBuilder.Property(limit => limit.ResetPer)
-                .HasConversion<string>().HasMaxLength(50).IsRequired(false));
+        builder.Property(f => f.Quota).IsRequired(false);
+        builder.Property(sf => sf.ResetPeriod).HasConversion<string>().HasMaxLength(10).IsRequired(false);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(sp => sp.SubscriptionId);
-        builder.HasOne<Feature>().WithMany().HasForeignKey(sp => sp.FeatureName);
+        builder.HasOne<Feature>().WithMany().HasForeignKey(sp => sp.FeatureCode);
     }
 }

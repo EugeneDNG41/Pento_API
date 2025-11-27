@@ -26,7 +26,7 @@ internal sealed class GetGroceryListAssigneeByIdQueryHandler(
                 is_completed AS {nameof(GroceryListAssigneeResponse.IsCompleted)},
                 assigned_on_utc AS {nameof(GroceryListAssigneeResponse.AssignedOnUtc)}
             FROM grocery_list_assignee
-            WHERE id = @Id
+            WHERE id = @Code
             LIMIT 1
             """;
 

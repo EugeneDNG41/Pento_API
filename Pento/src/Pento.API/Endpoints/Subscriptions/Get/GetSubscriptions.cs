@@ -12,13 +12,14 @@ internal sealed class GetSubscriptions : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("subscriptions", async (
-            string? searchTerm,           
+            string? searchTerm,
+            bool? isActive,
             IQueryHandler<GetSubscriptionsQuery, PagedList<SubscriptionDetailResponse>> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
             int pageSize = 10) =>
         {
-            Result<PagedList<SubscriptionDetailResponse>> result = await handler.Handle(new GetSubscriptionsQuery(searchTerm, pageNumber, pageSize), cancellationToken);
+            Result<PagedList<SubscriptionDetailResponse>> result = await handler.Handle(new GetSubscriptionsQuery(searchTerm, isActive, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Subscriptions);
     }

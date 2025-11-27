@@ -22,7 +22,7 @@ internal sealed class GetUserEntitlements : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .RequireAuthorization(Permissions.ManageUsers)
-        .WithSummary("Get entitlements for a specific user by their user Id (admin only).")
+        .WithSummary("Get entitlements for a specific user (admin only).")
         .WithTags(Tags.Users);
     }
 }

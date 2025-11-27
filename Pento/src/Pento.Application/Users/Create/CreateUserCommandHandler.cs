@@ -3,6 +3,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Get;
+using Pento.Application.Users.Search;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
@@ -13,14 +14,14 @@ internal sealed class CreateUserCommandHandler(
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<User> userRepository,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<CreateUserCommand, UserResponse>
+    : ICommandHandler<CreateUserCommand, BasicUserResponse>
 {
-    public async Task<Result<UserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<BasicUserResponse>> Handle(CreateUserCommand request, CancellationToken cancellationToken)
     {
         bool emailTaken = await userRepository.AnyAsync(u => u.Email == request.Email, cancellationToken);
         if (emailTaken)
         {
-            return Result.Failure<UserResponse>(IdentityProviderErrors.EmailTaken);
+            return Result.Failure<BasicUserResponse>(IdentityProviderErrors.EmailTaken);
         }
         Result<string> result = await identityProviderService.RegisterUserAsync(
             new UserModel(request.Email, request.Password, request.FirstName, request.LastName),
@@ -28,7 +29,7 @@ internal sealed class CreateUserCommandHandler(
 
         if (result.IsFailure)
         {
-            return Result.Failure<UserResponse>(result.Error);
+            return Result.Failure<BasicUserResponse>(result.Error);
         }
 
         var user = User.Create(request.Email, request.FirstName, request.LastName, result.Value, dateTimeProvider.UtcNow);
@@ -36,6 +37,6 @@ internal sealed class CreateUserCommandHandler(
         userRepository.Add(user);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        return new UserResponse(user.Id, user.HouseholdId, user.AvatarUrl, user.Email, user.FirstName, user.LastName, user.CreatedAt, string.Empty);
+        return new BasicUserResponse(user.Id, user.FirstName, user.LastName, user.AvatarUrl);
     }
 }

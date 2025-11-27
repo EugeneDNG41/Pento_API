@@ -7,6 +7,6 @@ internal sealed class GetPaymentByIdQueryValidator : AbstractValidator<GetPaymen
     public GetPaymentByIdQueryValidator()
     {
         RuleFor(q => q.PaymentId)
-            .NotEmpty().WithMessage("Payment Id is required.");
+            .NotEmpty().WithMessage("Payment Code is required.");
     }
 }

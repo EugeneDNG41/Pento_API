@@ -18,7 +18,7 @@ internal sealed class UpdateSubscriptionFeature : IEndpoint
         {
             Result result = await handler.Handle(new UpdateSubscriptionFeatureCommand(
                 subscriptionFeatureId,
-                request.FeatureName,
+                request.FeatureCode,
                 request.EntitlementQuota,
                 request.EntitlementResetPer), cancellationToken);
             return result.Match(() => Results.NoContent(), CustomResults.Problem);
@@ -26,7 +26,7 @@ internal sealed class UpdateSubscriptionFeature : IEndpoint
     }
     internal sealed class Request
     {
-        public string FeatureName { get; init; }
+        public string FeatureCode { get; init; }
         public int? EntitlementQuota { get; init; }
         public TimeUnit? EntitlementResetPer { get; init; }
     }

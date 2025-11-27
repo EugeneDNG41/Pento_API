@@ -18,18 +18,16 @@ internal sealed class UpdateSubscriptionPlan : IEndpoint
         {
             Result result = await handler.Handle(new UpdateSubscriptionPlanCommand(
                 subscriptionPlanId,
-                request.PriceAmount,
-                request.PriceCurrency,
-                request.DurationValue,
-                request.DurationUnit), cancellationToken);
+                request.Amount,
+                request.Currency,
+                request.DurationInDays), cancellationToken);
             return result.Match(() => Results.NoContent(), CustomResults.Problem);
         }).WithTags(Tags.Subscriptions);
     }
     internal sealed class Request
     {
-        public long? PriceAmount { get; init; }
-        public string? PriceCurrency { get; init; }
-        public int? DurationValue { get; init; }
-        public TimeUnit? DurationUnit { get; init; }
+        public long? Amount { get; init; }
+        public Currency? Currency { get; init; }
+        public int? DurationInDays { get; init; }
     }
 }

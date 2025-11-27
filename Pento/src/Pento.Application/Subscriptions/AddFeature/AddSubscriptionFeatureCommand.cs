@@ -5,8 +5,8 @@ namespace Pento.Application.Subscriptions.AddFeature;
 
 public sealed record AddSubscriptionFeatureCommand(
     Guid SubscriptionId,
-    string FeatureName,
-    int? EntitlementQuota,
-    TimeUnit? EntitlementResetPer) : ICommand<Guid>;
+    string FeatureCode,
+    int? Quota,
+    TimeUnit? ResetPeriod) : ICommand<Guid>;
 
 

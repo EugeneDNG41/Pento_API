@@ -8,11 +8,12 @@ internal sealed class UpdateSubscriptionFeatureCommandValidator : AbstractValida
     {
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Subscription Feature Id is required.");
-        RuleFor(x => x.FeatureName)
-            .MaximumLength(50).WithMessage("Feature name must not exceed 100 characters.");
-        RuleFor(x => x.EntitlementQuota)
-            .GreaterThan(0).When(x => x.EntitlementResetPer != null)
-            .WithMessage("Entitlement quota must be greater than zero when entitlement reset period is specified.");
+        RuleFor(x => x.FeatureCode)
+            .MaximumLength(50).WithMessage("Feature Code must not exceed 50 characters.")
+            .When(x => x.FeatureCode != null);
+        RuleFor(x => x.Quota)
+            .GreaterThan(0).When(x => x.ResetPeriod != null)
+            .WithMessage("Quota must be greater than zero when reset period is specified.");
     }
 }
 

@@ -31,7 +31,7 @@ internal sealed class GetGroceryListItemByIdQueryHandler(
                 added_by AS {nameof(GroceryListItemResponse.AddedBy)},
                 created_on_utc AS {nameof(GroceryListItemResponse.CreatedOnUtc)}
             FROM grocery_list_items
-            WHERE id = @Id
+            WHERE id = @Code
             LIMIT 1
             """;
 

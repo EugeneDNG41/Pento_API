@@ -18,30 +18,36 @@ internal sealed class GetSubscriptionByIdQueryHandler(ISqlConnectionFactory sqlC
             SELECT
                 id AS SubscriptionId,
                 name AS Name,
-                description AS Description
+                description AS Description,
+                is_active AS IsActive
             FROM subscriptions
             WHERE id = @SubscriptionId AND is_deleted is false;
             SELECT
                 id AS SubscriptionPlanId,
-                CONCAT(price_amount::text, ' ', price_currency) AS price,
-                CONCAT(duration_value::text, ' ',
-                         duration_unit,
-                         CASE WHEN COALESCE(duration_value,0) = 1 THEN '' ELSE 's' END
-                  ) AS duration
+                CONCAT(amount::text, ' ', currency) AS price,
+                CASE
+                    WHEN duration_in_days IS NULL THEN 'Lifetime'
+                    ELSE CONCAT(duration_in_days::text, ' ', 'day',
+                        CASE 
+                            WHEN COALESCE(duration_in_days,0) = 1 THEN '' ELSE 's' 
+                        END)
+                END
+                AS duration
             FROM subscription_plans
             WHERE subscription_id = @SubscriptionId AND is_deleted is false;
             SELECT
-                id AS SubscriptionFeatureId,
-                feature_name AS FeatureName,
+                sf.id AS SubscriptionFeatureId,
+                f.name AS FeatureName,
                 CASE
-                    WHEN entitlement_quota IS NULL AND entitlement_reset_per IS NULL
+                    WHEN sf.quota IS NULL AND sf.reset_period IS NULL
                       THEN 'Unlocked'
-                    WHEN entitlement_quota IS NOT NULL AND entitlement_reset_per IS NULL
-                      THEN CONCAT(entitlement_quota::text, ' Total')
-                    ELSE CONCAT(entitlement_quota::text, ' Per ', entitlement_reset_per)
+                    WHEN sf.quota IS NOT NULL AND sf.reset_period IS NULL
+                      THEN CONCAT(sf.quota::text, ' Total')
+                    ELSE CONCAT(sf.quota::text, ' Per ', sf.reset_period)
                 END AS Entitlement
-            FROM subscription_features
-            WHERE subscription_id = @SubscriptionId AND is_deleted is false;
+            FROM subscription_features sf
+            LEFT JOIN features f ON sf.feature_code = f.code
+            WHERE sf.subscription_id = @SubscriptionId AND sf.is_deleted is false;
             ";
         CommandDefinition command = new(sql, new { query.SubscriptionId });
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
@@ -56,6 +62,7 @@ internal sealed class GetSubscriptionByIdQueryHandler(ISqlConnectionFactory sqlC
             subscription.SubscriptionId,
             subscription.Name,
             subscription.Description,
+            subscription.IsActive,
             plans,
             features
         );

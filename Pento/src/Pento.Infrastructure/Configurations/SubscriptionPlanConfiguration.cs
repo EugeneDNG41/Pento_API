@@ -11,10 +11,9 @@ internal sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<S
     {
         builder.ToTable("subscription_plans");
         builder.HasKey(sp => sp.Id);
-        builder.OwnsOne(sp => sp.Price, moneyBuilder => moneyBuilder.Property(money => money.Currency)
-                .HasConversion(currency => currency.Code, code => Currency.FromCode(code).Value).HasMaxLength(3));
-        builder.OwnsOne(sp => sp.Duration, durationBuilder => durationBuilder.Property(duration => duration.Unit)
-                .HasConversion<string>().HasMaxLength(10));
+        builder.Property(sp => sp.Amount).IsRequired();
+        builder.Property(sp => sp.Currency).HasConversion<string>().HasMaxLength(3).IsRequired();
+        builder.Property(sp => sp.DurationInDays).IsRequired(false);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(sp => sp.SubscriptionId);
     }

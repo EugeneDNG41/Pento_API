@@ -8,6 +8,7 @@ namespace Pento.Application.Subscriptions.UpdatePlan;
 
 internal sealed class UpdateSubscriptionPlanCommandHandler(
     IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
+    IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateSubscriptionPlanCommand>
 {
     public async Task<Result> Handle(UpdateSubscriptionPlanCommand command, CancellationToken cancellationToken)
@@ -17,31 +18,22 @@ internal sealed class UpdateSubscriptionPlanCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.SubscriptionPlanNotFound);
         }
-        Money? price = null;
-        if (command.PriceAmount.HasValue || command.PriceCurrency != null)
+        
+
+        bool lifetimeFeatureExists = await subscriptionFeatureRepository
+            .AnyAsync(sf => sf.SubscriptionId == plan.SubscriptionId &&  sf.ResetPeriod == null, cancellationToken);
+        if (lifetimeFeatureExists && command.DurationInDays != null)
         {
-            long amount = command.PriceAmount ?? plan.Price.Amount;
-            string currencyCode = command.PriceCurrency ?? plan.Price.Currency.Code;
-            Result<Currency> currencyResult = Currency.FromCode(currencyCode);
-            if (currencyResult.IsFailure)
-            {
-                return Result.Failure(currencyResult.Error);
-            }
-            price = new Money(amount, currencyResult.Value);
-        }
-        Duration? duration = null;
-        if (command.DurationUnit.HasValue && command.DurationValue.HasValue)
-        {
-            duration = new Duration(command.DurationValue.Value, command.DurationUnit.Value);
+            return Result.Failure<Guid>(SubscriptionErrors.CannotAddTimedPlanToSubscriptionWithLifetimeFeatures);
         }
         bool duplicatePlan = await subscriptionPlanRepository
-            .AnyAsync(sp => sp.Id != command.Id && sp.Price == price && sp.Duration == duration,
+            .AnyAsync(sp => sp.Id != command.Id && sp.Amount == command.Amount && sp.Currency == command.Currency && sp.DurationInDays == command.DurationInDays,
                 cancellationToken);
         if (duplicatePlan)
         {
             return Result.Failure(SubscriptionErrors.DuplicateSubscriptionPlan);
         }
-        plan.UpdateDetails(price, duration);
+        plan.UpdateDetails(command.Amount, command.Currency, command.DurationInDays);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

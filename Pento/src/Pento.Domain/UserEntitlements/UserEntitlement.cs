@@ -6,19 +6,24 @@ namespace Pento.Domain.UserEntitlements;
 public sealed class UserEntitlement : Entity
 {
     private UserEntitlement() { }
-    public UserEntitlement(Guid id, Guid userId, string featureName, Limit? entitlement) : base(id)
+    public UserEntitlement(Guid id,  Guid userId, Guid? userSubscription, string featureCode, int? quota = null, TimeUnit? resetPeriod = null)
+        : base(id)
     {
         UserId = userId;
-        FeatureName = featureName;
-        Entitlement = entitlement;
+        UserSubscriptionId = userSubscription;
+        FeatureCode = featureCode;
         UsageCount = 0;
+        Quota = quota;
+        ResetPeriod = resetPeriod;
     }
     public Guid UserId { get; private set; }
-    public string FeatureName { get; private set; }
+    public Guid? UserSubscriptionId { get; private set; }
+    public string FeatureCode { get; private set; }
     public int UsageCount { get; private set; }
-    public Limit? Entitlement { get; private set; }
-    public static UserEntitlement Create(Guid userId, string featureName, Limit? entitlement)
-        => new(Guid.CreateVersion7(), userId, featureName, entitlement);
+    public int? Quota { get; private set; }
+    public TimeUnit? ResetPeriod { get; private set; }
+    public static UserEntitlement Create(Guid userId, Guid? userSubscription, string featureCode, int? quota = null, TimeUnit? resetPeriod = null)
+        => new(Guid.CreateVersion7(), userId, userSubscription, featureCode, quota, resetPeriod);
     public void IncrementUsage(int amount = 1)
     {
         UsageCount += amount;
@@ -27,8 +32,9 @@ public sealed class UserEntitlement : Entity
     {
         UsageCount = 0;
     }
-    public void UpdateEntitlement(Limit? entitlement)
+    public void UpdateEntitlement(int? quota = null, TimeUnit? resetPeriod = null)
     {
-        Entitlement = entitlement;
+        Quota = quota;
+        ResetPeriod = resetPeriod;
     }
 }

@@ -5,9 +5,8 @@ namespace Pento.Application.Subscriptions.UpdatePlan;
 
 public sealed record UpdateSubscriptionPlanCommand(
     Guid Id,
-    long? PriceAmount,
-    string? PriceCurrency,
-    int? DurationValue,
-    TimeUnit? DurationUnit) : ICommand;
+    long? Amount,
+    Currency? Currency,
+    int? DurationInDays) : ICommand;
 
 

@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Create;
 using Pento.Application.Users.Get;
+using Pento.Application.Users.Search;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Post;
@@ -13,10 +14,10 @@ internal sealed class CreateUser : IEndpoint
         app.MapPost("users", async (
             HttpContext context,
             Request request, 
-            ICommandHandler<CreateUserCommand, UserResponse> handler, 
+            ICommandHandler<CreateUserCommand, BasicUserResponse> handler, 
             CancellationToken cancellationToken) =>
         {
-            Result<UserResponse> result = await handler.Handle(new CreateUserCommand(
+            Result<BasicUserResponse> result = await handler.Handle(new CreateUserCommand(
                 request.Email,
                 request.Password,
                 request.FirstName,

@@ -11,14 +11,12 @@ public sealed class PointCap
 {
     public Guid Id { get; private set; }
     public ActivityType Category { get; private set; }
-    public Limit Limit { get; private set;  }
     private PointCap() { }
-    public PointCap(ActivityType category, Limit limit)
+    public PointCap(ActivityType category)
     {
         Id = Guid.CreateVersion7();
         Category = category;
-        Limit = limit;
     }
-    public static PointCap Create(ActivityType category, Limit limit)
-        => new(category, limit);
+    public static PointCap Create(ActivityType category)
+        => new(category);
 }

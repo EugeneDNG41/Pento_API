@@ -53,43 +53,30 @@ internal sealed class PaymentCompletedEventHandler(
                 subscription.Id,
                 SubscriptionStatus.Active,
                 dateTimeProvider.Today,
-                plan.Duration is null ? null : dateTimeProvider.Today.AddDays(plan.Duration.Unit switch
-                {
-                    TimeUnit.Day => plan.Duration.Value,
-                    TimeUnit.Week => plan.Duration.Value * 7,
-                    TimeUnit.Month => plan.Duration.Value * 30,
-                    TimeUnit.Year => plan.Duration.Value * 365,
-                    _ => 0
-                }));
+                plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Add(newUserSubscription);
+            userSubscription = newUserSubscription;
         } 
         else
         {
             userSubscription.Renew(
-                plan.Duration is null ? null : dateTimeProvider.Today.AddDays(plan.Duration.Unit switch
-                {
-                    TimeUnit.Day => plan.Duration.Value,
-                    TimeUnit.Week => plan.Duration.Value * 7,
-                    TimeUnit.Month => plan.Duration.Value * 30,
-                    TimeUnit.Year => plan.Duration.Value * 365,
-                    _ => 0
-                }));
+                plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Update(userSubscription);
         }
         var features = (await subscriptionFeatureRepository.FindAsync(uf => uf.SubscriptionId == subscription.Id, cancellationToken)).ToList();
         foreach (SubscriptionFeature? subscriptionFeature in features)
         {
             UserEntitlement? existingEntitlement = (await userEntitlementRepository.FindAsync(
-                    ue => ue.UserId == domainEvent.UserId && ue.FeatureName == subscriptionFeature.FeatureName,
+                    ue => ue.UserId == domainEvent.UserId && ue.FeatureCode == subscriptionFeature.FeatureCode && ue.UserSubscriptionId == userSubscription.Id,
                     cancellationToken)).SingleOrDefault();
             if (existingEntitlement == null)
             {
-                var entitlement = UserEntitlement.Create(domainEvent.UserId, subscriptionFeature.FeatureName, subscriptionFeature.Entitlement);
+                var entitlement = UserEntitlement.Create(domainEvent.UserId, userSubscription.Id, subscriptionFeature.FeatureCode, subscriptionFeature.Quota, subscriptionFeature.ResetPeriod);
                 userEntitlementRepository.Add(entitlement);
             }
-            else if (existingEntitlement.Entitlement != subscriptionFeature.Entitlement) 
+            else if (existingEntitlement.Quota != subscriptionFeature.Quota || existingEntitlement.ResetPeriod != subscriptionFeature.ResetPeriod) 
             {
-                existingEntitlement.UpdateEntitlement(subscriptionFeature.Entitlement);
+                existingEntitlement.UpdateEntitlement(subscriptionFeature.Quota, subscriptionFeature.ResetPeriod);
                 userEntitlementRepository.Update(existingEntitlement);
             }
         }

@@ -1759,12 +1759,33 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Subscriptions.Feature", b =>
                 {
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<int?>("DefaultQuota")
+                        .HasColumnType("integer")
+                        .HasColumnName("default_quota");
+
+                    b.Property<string>("DefaultResetPeriod")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("default_reset_period");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("name");
 
-                    b.HasKey("Name")
+                    b.HasKey("Code")
                         .HasName("pk_features");
 
                     b.ToTable("features", (string)null);
@@ -1772,22 +1793,38 @@ namespace Pento.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
+                            Code = "OCR",
+                            DefaultQuota = 5,
+                            DefaultResetPeriod = "Day",
+                            Description = "Automatically extract food item names from photographed receipts.",
                             Name = "Receipt Scanning"
                         },
                         new
                         {
+                            Code = "IMAGE_RECOGNITION",
+                            DefaultQuota = 5,
+                            DefaultResetPeriod = "Day",
+                            Description = "Detect food items from images.",
                             Name = "Image Scanning"
                         },
                         new
                         {
+                            Code = "AI_CHEF",
+                            Description = "Generate personalized recipes.",
                             Name = "AI Chef"
                         },
                         new
                         {
+                            Code = "STORAGE_SLOT",
+                            DefaultQuota = 5,
+                            Description = "Total storage slots for pantry management.",
                             Name = "Storage Slot"
                         },
                         new
                         {
+                            Code = "MEAL_PLAN_SLOT",
+                            DefaultQuota = 5,
+                            Description = "Total meal plan slot for scheduling and tracking meals.",
                             Name = "Meal Plan Slot"
                         });
                 });
@@ -1804,6 +1841,12 @@ namespace Pento.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true)
+                        .HasColumnName("is_active");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1832,10 +1875,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("FeatureName")
+                    b.Property<string>("FeatureCode")
                         .IsRequired()
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("feature_name");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("feature_code");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1845,6 +1888,15 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<int?>("Quota")
+                        .HasColumnType("integer")
+                        .HasColumnName("quota");
+
+                    b.Property<string>("ResetPeriod")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("reset_period");
+
                     b.Property<Guid>("SubscriptionId")
                         .HasColumnType("uuid")
                         .HasColumnName("subscription_id");
@@ -1852,8 +1904,8 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_subscription_features");
 
-                    b.HasIndex("FeatureName")
-                        .HasDatabaseName("ix_subscription_features_feature_name");
+                    b.HasIndex("FeatureCode")
+                        .HasDatabaseName("ix_subscription_features_feature_code");
 
                     b.HasIndex("SubscriptionId")
                         .HasDatabaseName("ix_subscription_features_subscription_id");
@@ -1867,6 +1919,20 @@ namespace Pento.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<long>("Amount")
+                        .HasColumnType("bigint")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("Currency")
+                        .IsRequired()
+                        .HasMaxLength(3)
+                        .HasColumnType("character varying(3)")
+                        .HasColumnName("currency");
+
+                    b.Property<int?>("DurationInDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("duration_in_days");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1939,10 +2005,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<string>("FeatureName")
+                    b.Property<string>("FeatureCode")
                         .IsRequired()
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("feature_name");
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("feature_code");
 
                     b.Property<bool>("IsArchived")
                         .HasColumnType("boolean")
@@ -1952,6 +2018,15 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
+                    b.Property<int?>("Quota")
+                        .HasColumnType("integer")
+                        .HasColumnName("quota");
+
+                    b.Property<string>("ResetPeriod")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("reset_period");
+
                     b.Property<int>("UsageCount")
                         .HasColumnType("integer")
                         .HasColumnName("usage_count");
@@ -1960,14 +2035,27 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
+                    b.Property<Guid?>("UserSubscriptionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_subscription_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
                     b.HasKey("Id")
                         .HasName("pk_user_entitlements");
 
-                    b.HasIndex("FeatureName")
-                        .HasDatabaseName("ix_user_entitlements_feature_name");
+                    b.HasIndex("FeatureCode")
+                        .HasDatabaseName("ix_user_entitlements_feature_code");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_user_entitlements_user_id");
+
+                    b.HasIndex("UserSubscriptionId")
+                        .HasDatabaseName("ix_user_entitlements_user_subscription_id");
 
                     b.ToTable("user_entitlements", (string)null);
                 });
@@ -2023,9 +2111,9 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("cancellation_reason");
 
-                    b.Property<DateOnly?>("CancelledDateUtc")
+                    b.Property<DateOnly?>("CancelledDate")
                         .HasColumnType("date")
-                        .HasColumnName("cancelled_date_utc");
+                        .HasColumnName("cancelled_date");
 
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date")
@@ -2043,9 +2131,9 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("paused_date");
 
-                    b.Property<DateOnly?>("ResumedDate")
-                        .HasColumnType("date")
-                        .HasColumnName("resumed_date");
+                    b.Property<int?>("RemainingDaysAfterPause")
+                        .HasColumnType("integer")
+                        .HasColumnName("remaining_days_after_pause");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date")
@@ -3037,10 +3125,10 @@ namespace Pento.Infrastructure.Migrations
                 {
                     b.HasOne("Pento.Domain.Subscriptions.Feature", null)
                         .WithMany()
-                        .HasForeignKey("FeatureName")
+                        .HasForeignKey("FeatureCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_subscription_features_features_feature_name");
+                        .HasConstraintName("fk_subscription_features_features_feature_code");
 
                     b.HasOne("Pento.Domain.Subscriptions.Subscription", null)
                         .WithMany()
@@ -3048,32 +3136,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_subscription_features_subscriptions_subscription_id");
-
-                    b.OwnsOne("Pento.Domain.Shared.Limit", "Entitlement", b1 =>
-                        {
-                            b1.Property<Guid>("SubscriptionFeatureId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<int>("Quota")
-                                .HasColumnType("integer")
-                                .HasColumnName("entitlement_quota");
-
-                            b1.Property<string>("ResetPer")
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)")
-                                .HasColumnName("entitlement_reset_per");
-
-                            b1.HasKey("SubscriptionFeatureId");
-
-                            b1.ToTable("subscription_features");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SubscriptionFeatureId")
-                                .HasConstraintName("fk_subscription_features_subscription_features_id");
-                        });
-
-                    b.Navigation("Entitlement");
                 });
 
             modelBuilder.Entity("Pento.Domain.Subscriptions.SubscriptionPlan", b =>
@@ -3084,71 +3146,16 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_subscription_plans_subscriptions_subscription_id");
-
-                    b.OwnsOne("Pento.Domain.Shared.Duration", "Duration", b1 =>
-                        {
-                            b1.Property<Guid>("SubscriptionPlanId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("Unit")
-                                .IsRequired()
-                                .HasMaxLength(10)
-                                .HasColumnType("character varying(10)")
-                                .HasColumnName("duration_unit");
-
-                            b1.Property<int>("Value")
-                                .HasColumnType("integer")
-                                .HasColumnName("duration_value");
-
-                            b1.HasKey("SubscriptionPlanId");
-
-                            b1.ToTable("subscription_plans");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SubscriptionPlanId")
-                                .HasConstraintName("fk_subscription_plans_subscription_plans_id");
-                        });
-
-                    b.OwnsOne("Pento.Domain.Shared.Money", "Price", b1 =>
-                        {
-                            b1.Property<Guid>("SubscriptionPlanId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<long>("Amount")
-                                .HasColumnType("bigint")
-                                .HasColumnName("price_amount");
-
-                            b1.Property<string>("Currency")
-                                .IsRequired()
-                                .HasMaxLength(3)
-                                .HasColumnType("character varying(3)")
-                                .HasColumnName("price_currency");
-
-                            b1.HasKey("SubscriptionPlanId");
-
-                            b1.ToTable("subscription_plans");
-
-                            b1.WithOwner()
-                                .HasForeignKey("SubscriptionPlanId")
-                                .HasConstraintName("fk_subscription_plans_subscription_plans_id");
-                        });
-
-                    b.Navigation("Duration");
-
-                    b.Navigation("Price")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
                 {
                     b.HasOne("Pento.Domain.Subscriptions.Feature", null)
                         .WithMany()
-                        .HasForeignKey("FeatureName")
+                        .HasForeignKey("FeatureCode")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_user_entitlements_features_feature_name");
+                        .HasConstraintName("fk_user_entitlements_features_feature_code");
 
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
@@ -3157,31 +3164,10 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_user_entitlements_users_user_id");
 
-                    b.OwnsOne("Pento.Domain.Shared.Limit", "Entitlement", b1 =>
-                        {
-                            b1.Property<Guid>("UserEntitlementId")
-                                .HasColumnType("uuid")
-                                .HasColumnName("id");
-
-                            b1.Property<int>("Quota")
-                                .HasColumnType("integer")
-                                .HasColumnName("entitlement_quota");
-
-                            b1.Property<string>("ResetPer")
-                                .HasMaxLength(50)
-                                .HasColumnType("character varying(50)")
-                                .HasColumnName("entitlement_reset_per");
-
-                            b1.HasKey("UserEntitlementId");
-
-                            b1.ToTable("user_entitlements");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserEntitlementId")
-                                .HasConstraintName("fk_user_entitlements_user_entitlements_id");
-                        });
-
-                    b.Navigation("Entitlement");
+                    b.HasOne("Pento.Domain.UserSubscriptions.UserSubscription", null)
+                        .WithMany()
+                        .HasForeignKey("UserSubscriptionId")
+                        .HasConstraintName("fk_user_entitlements_user_subscription_user_subscription_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>

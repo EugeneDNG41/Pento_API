@@ -31,11 +31,11 @@ internal sealed class GetFoodItemByIdQueryHandler(
         {
             "fi.is_deleted IS FALSE",
             "fi.is_archived IS FALSE",
-            "fi.id = @Id",
+            "fi.id = @Code",
             "fi.household_id = @HouseholdId"
         };
         var parameters = new DynamicParameters();
-        parameters.Add("Id", query.Id);
+        parameters.Add("Code", query.Id);
         parameters.Add("HouseholdId", currentHouseholdId);
 
         string whereClause = "WHERE " + string.Join(" AND ", filters);
