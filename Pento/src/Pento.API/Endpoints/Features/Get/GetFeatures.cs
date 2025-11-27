@@ -10,10 +10,11 @@ internal sealed class GetFeatures : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("features", async (
+            string? searchText,
             IQueryHandler<GetFeaturesQuery, IReadOnlyList<FeatureResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<IReadOnlyList<FeatureResponse>> result = await handler.Handle(new GetFeaturesQuery(), cancellationToken);
+            Result<IReadOnlyList<FeatureResponse>> result = await handler.Handle(new GetFeaturesQuery(searchText), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Features);
     }

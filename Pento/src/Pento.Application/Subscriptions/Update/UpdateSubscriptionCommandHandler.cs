@@ -25,7 +25,7 @@ internal sealed class UpdateSubscriptionCommandHandler(
                 return Result.Failure(SubscriptionErrors.NameTaken);
             }
         }
-        subscription.UpdateDetails(command.Name, command.Description);
+        subscription.UpdateDetails(command.Name, command.Description, command.IsActive);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

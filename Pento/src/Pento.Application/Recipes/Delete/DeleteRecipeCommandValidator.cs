@@ -12,6 +12,6 @@ public sealed class DeleteRecipeCommandValidator : AbstractValidator<DeleteRecip
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Recipe Id is required.");
+            .WithMessage("Recipe Code is required.");
     }
 }

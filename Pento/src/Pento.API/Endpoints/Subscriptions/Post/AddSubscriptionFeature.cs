@@ -18,7 +18,7 @@ internal sealed class AddSubscriptionFeature : IEndpoint
         {
             Result<Guid> result = await handler.Handle(new AddSubscriptionFeatureCommand(
                 subscriptionId,
-                request.FeatureName,
+                request.FeatureCode,
                 request.EntitlementQuota,
                 request.EntitlementResetPer), cancellationToken);
             return result
@@ -27,7 +27,7 @@ internal sealed class AddSubscriptionFeature : IEndpoint
     }
     internal sealed class Request
     {
-        public string FeatureName { get; init; }
+        public string FeatureCode { get; init; }
         public int? EntitlementQuota { get; init; }
         public TimeUnit? EntitlementResetPer { get; init; }
     }

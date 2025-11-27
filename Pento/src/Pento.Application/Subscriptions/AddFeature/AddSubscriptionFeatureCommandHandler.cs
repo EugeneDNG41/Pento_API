@@ -10,6 +10,7 @@ internal sealed class AddSubscriptionFeatureCommandHandler(
     IGenericRepository<Feature> featureRepository,
     IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
+    IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<AddSubscriptionFeatureCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(AddSubscriptionFeatureCommand command, CancellationToken cancellationToken)
@@ -19,27 +20,30 @@ internal sealed class AddSubscriptionFeatureCommandHandler(
         {
             return Result.Failure<Guid>(SubscriptionErrors.SubscriptionNotFound);
         }
-        Feature? feature = (await featureRepository
-            .FindAsync(f => f.Name == command.FeatureName, cancellationToken)).SingleOrDefault();
+        Feature? feature = (await featureRepository.FindAsync(f => f.Code == command.FeatureCode, cancellationToken)).SingleOrDefault();
         if (feature is null)
         {
             return Result.Failure<Guid>(FeatureErrors.NotFound);
         }
         
         bool duplicateFeature = await subscriptionFeatureRepository
-            .AnyAsync(sf => sf.SubscriptionId == command.SubscriptionId && sf.FeatureName == command.FeatureName,
+            .AnyAsync(sf => sf.SubscriptionId == command.SubscriptionId && sf.FeatureCode == command.FeatureCode,
                 cancellationToken);
         if (duplicateFeature)
         {
             return Result.Failure<Guid>(SubscriptionErrors.DuplicateSubscriptionFeature);
         }
-        Limit? entitlement = command.EntitlementQuota.HasValue
-            ? new Limit(command.EntitlementQuota.Value, command.EntitlementResetPer)
-            : null;
+        bool hasTimedPlans = await subscriptionPlanRepository
+            .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && sp.DurationInDays != null, cancellationToken);
+        if (hasTimedPlans && command.ResetPeriod == null)
+        {
+            return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
+        }
         var subscriptionFeature = SubscriptionFeature.Create(
             command.SubscriptionId,
-            feature.Name,
-            entitlement);
+            feature.Code,
+            command.Quota,
+            command.ResetPeriod);
         subscriptionFeatureRepository.Add(subscriptionFeature);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return subscription.Id;

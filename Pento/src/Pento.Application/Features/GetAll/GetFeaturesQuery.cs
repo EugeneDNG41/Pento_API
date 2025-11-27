@@ -2,4 +2,4 @@
 
 namespace Pento.Application.Features.GetAll;
 
-public sealed record GetFeaturesQuery : IQuery<IReadOnlyList<FeatureResponse>>;
+public sealed record GetFeaturesQuery(string? SearchText) : IQuery<IReadOnlyList<FeatureResponse>>;

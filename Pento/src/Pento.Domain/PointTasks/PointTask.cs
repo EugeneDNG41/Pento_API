@@ -16,5 +16,4 @@ public sealed class PointTask
     public string Instructions { get; private set; }
     public ActivityType ActivityType { get; private set; }
     public int Weight { get; private set; }
-    public Limit Limit { get; private set; }
 }

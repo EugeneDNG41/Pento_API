@@ -9,6 +9,7 @@ namespace Pento.Application.Subscriptions.UpdateFeature;
 internal sealed class UpdateSubscriptionFeatureCommandHandler(
     IGenericRepository<Feature> featureRepository,
     IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
+    IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateSubscriptionFeatureCommand>
 {
     public async Task<Result> Handle(UpdateSubscriptionFeatureCommand command, CancellationToken cancellationToken)
@@ -18,23 +19,29 @@ internal sealed class UpdateSubscriptionFeatureCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.SubscriptionFeatureNotFound);
         }
-        Feature? feature = (await featureRepository
-            .FindAsync(f => f.Name == command.FeatureName, cancellationToken)).SingleOrDefault();
-        if (feature is null)
+
+        if (!string.IsNullOrEmpty(command.FeatureCode))
         {
-            return Result.Failure(FeatureErrors.NotFound);
-        }
-        bool duplicateFeature = await subscriptionFeatureRepository
-            .AnyAsync(sf => sf.Id != command.Id && sf.FeatureName == command.FeatureName,
+            Feature? feature = (await featureRepository.FindAsync(f => f.Code == command.FeatureCode, cancellationToken)).SingleOrDefault();
+            if (feature is null)
+            {
+                return Result.Failure(FeatureErrors.NotFound);
+            }
+            bool duplicateFeature = await subscriptionFeatureRepository
+            .AnyAsync(sf => sf.Id != command.Id && sf.FeatureCode == command.FeatureCode,
                 cancellationToken);
-        if (duplicateFeature)
+            if (duplicateFeature)
+            {
+                return Result.Failure(SubscriptionErrors.DuplicateSubscriptionFeature);
+            }
+        }      
+        bool hasTimedPlans = await subscriptionPlanRepository
+            .AnyAsync(sp => sp.SubscriptionId == subscriptionFeature.SubscriptionId && sp.DurationInDays != null, cancellationToken);
+        if (hasTimedPlans && command.ResetPeriod == null)
         {
-            return Result.Failure(SubscriptionErrors.DuplicateSubscriptionFeature);
+            return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
         }
-        Limit? entitlement = command.EntitlementQuota.HasValue
-            ? new Limit(command.EntitlementQuota.Value, command.EntitlementResetPer)
-            : null;
-        subscriptionFeature.UpdateDetails(feature.Name, entitlement);
+        subscriptionFeature.UpdateDetails(command.FeatureCode, command.Quota, command.ResetPeriod);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

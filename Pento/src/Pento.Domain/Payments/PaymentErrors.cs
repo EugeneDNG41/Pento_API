@@ -23,6 +23,9 @@ public static class PaymentErrors
     public static readonly Error ForbiddenAccess = Error.Forbidden(
         "Payment.ForbiddenAccess",
         "You do not have permission to access this payment.");
+    public static readonly Error PendingOrProcessingPayment = Error.Conflict(
+        "Payment.PendingOrProcessingPayment",
+        "You already have a pending or processing payment for this subscription plan."); //business rule
 }
 
 

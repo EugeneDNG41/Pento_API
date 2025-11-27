@@ -76,7 +76,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
 
             -- MealPlans
             SELECT
-                id AS Id,
+                id AS Code,
                 household_id AS HouseholdId,
                 name AS Name,
                 scheduled_date AS ScheduledDate,

@@ -10,17 +10,19 @@ namespace Pento.Domain.Subscriptions;
 public sealed class Subscription : Entity
 {
     private Subscription() { }
-    public Subscription(Guid id, string name, string description) : base(id)
+    public Subscription(Guid id, string name, string description, bool isActive) : base(id)
     {
         Name = name;
         Description = description;
+        IsActive = isActive;
     }
     public string Name { get; private set; }
     public string Description { get; private set; }
+    public bool IsActive { get; private set; }
 
-    public static Subscription Create(string name, string description)
-        => new(Guid.CreateVersion7(), name, description);
-    public void UpdateDetails(string? name, string? description)
+    public static Subscription Create(string name, string description, bool isActive)
+        => new(Guid.CreateVersion7(), name, description, isActive);
+    public void UpdateDetails(string? name, string? description, bool? isActive)
     {
         if (!string.IsNullOrWhiteSpace(name))
         {
@@ -30,21 +32,10 @@ public sealed class Subscription : Entity
         {
             Description = description;
         }
+        if (isActive.HasValue && IsActive != isActive)
+        {
+            IsActive = isActive.Value;
+        }
     }
-}
-public static class SubscriptionErrors
-{
-    public static readonly Error SubscriptionNotFound = 
-        Error.NotFound("Subscription.NotFound", "Subscription not found.");
-    public static readonly Error SubscriptionPlanNotFound = 
-        Error.NotFound("SubscriptionPlan.NotFound", "Subscription plan not found.");
-    public static readonly Error SubscriptionFeatureNotFound = 
-        Error.NotFound("SubscriptionFeature.NotFound", "Subscription feature not found.");
-    public static readonly Error NameTaken = 
-        Error.Conflict("Subscription.NameTaken", "Subscription name already taken.");
-    public static readonly Error DuplicateSubscriptionPlan = 
-        Error.Conflict("Subscription.DuplicateSubscriptionPlan", "A subscription plan with the same price and duration already exists for this subscription.");
-    public static readonly Error DuplicateSubscriptionFeature = 
-        Error.Conflict("Subscription.DuplicateSubscriptionFeature", "This feature has already been added to the subscription.");
 }
 

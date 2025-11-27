@@ -21,15 +21,18 @@ internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConn
             WHERE   (@SearchText IS NULL OR 
                     name ILIKE '%' || @SearchText || '%' OR
                     description ILIKE '%' || @SearchText || '%') AND
+                    (@IsActive IS NULL OR is_active = @IsActive) AND
                     is_deleted is false;
             SELECT
                 id AS SubscriptionId,
                 name AS Name,
-                description AS Description
+                description AS Description,
+                is_active AS IsActive
             FROM subscriptions
             WHERE   (@SearchText IS NULL OR 
                     name ILIKE '%' || @SearchText || '%' OR
                     description ILIKE '%' || @SearchText || '%') AND
+                    (@IsActive IS NULL OR is_active = @IsActive) AND
                     is_deleted is false
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             ";
@@ -38,6 +41,7 @@ internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConn
             new
             {
                 SearchText = string.IsNullOrWhiteSpace(query.SearchTerm) ? null : query.SearchTerm,
+                query.IsActive,
                 Offset = (query.PageNumber - 1) * query.PageSize,
                 query.PageSize
             });
@@ -51,26 +55,28 @@ internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConn
                 SELECT
                     id AS SubscriptionPlanId,
                     subscription_id AS SubscriptionId,
-                    CONCAT(price_amount::text, ' ', price_currency) AS price,
-                    CONCAT(duration_value::text, ' ',
-                             duration_unit,
-                             CASE WHEN COALESCE(duration_value,0) = 1 THEN '' ELSE 's' END
+                    CONCAT(amount::text, ' ', currency) AS price,
+                    CONCAT(duration_in_days::text, ' ', 'day',
+                            CASE 
+                                WHEN COALESCE(duration_in_days,0) = 1 THEN '' ELSE 's' 
+                            END
                       ) AS duration
                 FROM subscription_plans
                 WHERE subscription_id = ANY(@SubscriptionIds) AND is_deleted is false;
                 SELECT
-                    id AS SubscriptionFeatureId,
-                    subscription_id AS SubscriptionId,
-                    feature_name AS FeatureName,
+                    sf.id AS SubscriptionFeatureId,
+                    sf.subscription_id AS SubscriptionId,
+                    f.name AS FeatureName,
                     CASE
-                        WHEN entitlement_quota IS NULL AND entitlement_reset_per IS NULL
+                        WHEN sf.quota IS NULL AND sf.reset_period IS NULL
                           THEN 'Unlocked'
-                        WHEN entitlement_quota IS NOT NULL AND entitlement_reset_per IS NULL
-                          THEN CONCAT(entitlement_quota::text, ' Total')
-                        ELSE CONCAT(entitlement_quota::text, ' Per ', entitlement_reset_per)
+                        WHEN sf.quota IS NOT NULL AND sf.reset_period IS NULL
+                          THEN CONCAT(sf.quota::text, ' Total')
+                        ELSE CONCAT(sf.quota::text, ' Per ', sf.reset_period)
                     END AS Entitlement
-                FROM subscription_features
-                WHERE subscription_id = ANY(@SubscriptionIds) AND is_deleted is false;
+                FROM subscription_features sf
+                LEFT JOIN features f ON sf.feature_code = f.code
+                WHERE sf.subscription_id = ANY(@SubscriptionIds) AND sf.is_deleted is false;
                 ";
             CommandDefinition planAndFeatureCommand = new(planAndFeatureSql, new { SubscriptionIds = subscriptions.Select(s => s.SubscriptionId).ToArray() });
             using SqlMapper.GridReader planAndFeatureMulti = await connection.QueryMultipleAsync(planAndFeatureCommand);
@@ -99,6 +105,7 @@ internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConn
                     subscription.SubscriptionId,
                     subscription.Name,
                     subscription.Description,
+                    subscription.IsActive,
                     subscriptionPlans,
                     subscriptionFeatures));
             }

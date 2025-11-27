@@ -30,29 +30,29 @@ internal sealed class ProcessLimitResetJob(
 
     private async Task ExecuteEntitlementReset(DateOnly today, CancellationToken cancellationToken)
     {
-        var resettableEntitlements = (await userEntitlementRepository.FindAsync(e => e.Entitlement != null && e.Entitlement.ResetPer != null, cancellationToken)).ToList();
+        var resettableEntitlements = (await userEntitlementRepository.FindAsync(e => e.ResetPeriod != null, cancellationToken)).ToList();
         foreach (UserEntitlement entitlement in resettableEntitlements)
         {
             UserSubscription? subscriptionInstance = (await userSubscriptionRepository
                 .FindAsync(s => s.UserId == entitlement.UserId && s.Status == SubscriptionStatus.Active, cancellationToken))
                 .LastOrDefault();
-            if (entitlement.Entitlement!.ResetPer == TimeUnit.Day)
+            if (entitlement.ResetPeriod == TimeUnit.Day)
             {
                 entitlement.ResetUsage();
             }
-            if (entitlement.Entitlement!.ResetPer == TimeUnit.Week &&
+            if (entitlement.ResetPeriod == TimeUnit.Week &&
                 (subscriptionInstance == null && today.DayOfWeek == DayOfWeek.Monday ||
                 subscriptionInstance != null && (today.DayNumber - subscriptionInstance.StartDate.DayNumber) % 7 == 0))
             {
                 entitlement.ResetUsage();
             }
-            if (entitlement.Entitlement!.ResetPer == TimeUnit.Month &&
+            if (entitlement.ResetPeriod == TimeUnit.Month &&
                 (subscriptionInstance == null && today.Day == 1 ||
                 subscriptionInstance != null && (today.DayNumber - subscriptionInstance.StartDate.DayNumber) % 30 == 0))
             {
                 entitlement.ResetUsage();
             }
-            if (entitlement.Entitlement!.ResetPer == TimeUnit.Year &&
+            if (entitlement.ResetPeriod == TimeUnit.Year &&
                 (subscriptionInstance == null && today.Day == 1 && today.Month == 1  ||
                 subscriptionInstance != null && (today.DayNumber - subscriptionInstance.StartDate.DayNumber) % 365 == 0))
             {

@@ -12,6 +12,6 @@ internal sealed class DeleteMealPlanCommandValidator : AbstractValidator<DeleteM
     {
         RuleFor(x => x.Id)
             .NotEmpty()
-            .WithMessage("Meal plan Id is required.");
+            .WithMessage("Meal plan Code is required.");
     }
 }

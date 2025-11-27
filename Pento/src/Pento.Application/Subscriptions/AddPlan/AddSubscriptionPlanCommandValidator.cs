@@ -8,18 +8,13 @@ internal sealed class AddSubscriptionPlanCommandValidator : AbstractValidator<Ad
     {
         RuleFor(x => x.SubscriptionId)
             .NotEmpty().WithMessage("Subscription Id is required.");
-        RuleFor(x => x.PriceAmount)
-            .GreaterThan(0).WithMessage("Price amount must be greater than zero.");
-        RuleFor(x => x.PriceCurrency)
-            .NotEmpty().WithMessage("Price currency is required.")
-            .Length(3).WithMessage("Price currency must be a valid 3-letter ISO currency code.");
-        RuleFor(x => x.DurationValue)
-            .GreaterThan(0).When(x => x.DurationUnit != null)
-            .WithMessage("Duration value must be greater than zero when duration unit is specified.");
-        RuleFor(x => x.DurationUnit)
-            .NotNull().When(x => x.DurationValue != null)
-            .WithMessage("Duration unit is required when duration value is specified.");
-
+        RuleFor(x => x.Amount)
+            .GreaterThan(0).WithMessage("Amount must be greater than zero.");
+        RuleFor(x => x.Currency)
+            .NotNull().WithMessage("Currency is required.");
+        RuleFor(x => x.DurationInDays)
+            .GreaterThan(0).When(x => x.DurationInDays.HasValue)
+            .WithMessage("Duration must be greater than zero.");
     }
 }
 

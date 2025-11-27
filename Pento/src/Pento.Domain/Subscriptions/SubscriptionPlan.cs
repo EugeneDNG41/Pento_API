@@ -11,26 +11,34 @@ namespace Pento.Domain.Subscriptions;
 public sealed class SubscriptionPlan : Entity
 {
     private SubscriptionPlan() { }
-    public SubscriptionPlan(Guid id, Guid subscriptionId, Money price, Duration? duration) : base(id)
+    public SubscriptionPlan(Guid id, Guid subscriptionId, long amount, Currency currency, int? duration) : base(id)
     {
         SubscriptionId = subscriptionId;
-        Price = price;
-        Duration = duration;
+        Amount = amount;
+        Currency = currency;
+        DurationInDays = duration;
     }
     public Guid SubscriptionId { get; private set; }
-    public Money Price { get; private set; }
-    public Duration? Duration { get; private set; }
-    public static SubscriptionPlan Create(Guid subscriptionId, Money price, Duration? duration)
-        => new(Guid.CreateVersion7(), subscriptionId, price, duration);
-    public void UpdateDetails(Money? price, Duration? duration)
+    public long Amount { get; private set; }
+    public Currency Currency { get; private set; }
+    public int? DurationInDays { get; private set; }
+    public static SubscriptionPlan Create(Guid subscriptionId, long amount, Currency currency, int? duration)
     {
-        if (price is not null)
+        return new SubscriptionPlan(Guid.NewGuid(), subscriptionId, amount, currency, duration);
+    }
+    public void UpdateDetails(long? amount, Currency? currency, int? duration)
+    {
+        if (amount.HasValue && Amount != amount)
         {
-            Price = price;
+            Amount = amount.Value;
         }
-        if (duration is not null)
+        if (currency.HasValue && Currency != currency)
         {
-            Duration = duration;
+            Currency = currency.Value;
+        }
+        if (DurationInDays != duration)
+        {
+            DurationInDays = duration;
         }
     }
 }

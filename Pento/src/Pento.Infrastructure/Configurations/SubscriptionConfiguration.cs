@@ -12,6 +12,7 @@ internal sealed class SubscriptionConfiguration : IEntityTypeConfiguration<Subsc
         builder.HasKey(s => s.Id);
         builder.Property(s => s.Name).HasMaxLength(20);
         builder.Property(s => s.Description).HasMaxLength(500);
+        builder.Property(s => s.IsActive).IsRequired().HasDefaultValue(true);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
     }
 }

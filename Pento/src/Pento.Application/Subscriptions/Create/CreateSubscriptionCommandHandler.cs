@@ -17,7 +17,7 @@ internal sealed class CreateSubscriptionCommandHandler(
         {
             return Result.Failure<Guid>(SubscriptionErrors.NameTaken);
         }
-        var subscription = Subscription.Create(command.Name, command.Description);
+        var subscription = Subscription.Create(command.Name, command.Description, command.IsActive);
         subscriptionRepository.Add(subscription);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return subscription.Id;

@@ -7,6 +7,6 @@ internal sealed class DeletePaymentCommandValidator : AbstractValidator<DeletePa
     public DeletePaymentCommandValidator()
     {
         RuleFor(x => x.PaymentId)
-            .NotEmpty().WithMessage("Payment Id is required.");
+            .NotEmpty().WithMessage("Payment Code is required.");
     }
 }
