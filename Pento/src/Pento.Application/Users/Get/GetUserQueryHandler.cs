@@ -30,18 +30,18 @@ internal sealed class GetUserQueryHandler(
                  u.created_at AS {nameof(UserResponseRow.CreatedAt)},
                  string_agg(ur.role_name, ',') AS {nameof(UserResponseRow.Roles)}
              FROM users u
-             LEFT JOIN user_roles ur ON ur.user_id = id
+             LEFT JOIN user_roles ur ON ur.user_id = u.id
              LEFT JOIN households h ON h.id = u.household_id
-             WHERE id = @UserId
-             GROUP BY u.id;
+             WHERE u.id = @UserId
+             GROUP BY u.id, h.name;
              SELECT
                 us.id AS {nameof(UserSubscriptionPreview.UserSubscriptionId)},
                 s.name AS {nameof(UserSubscriptionPreview.SubscriptionName)},
                 CASE
                     WHEN us.end_date IS NOT NULL 
-                    THEN CONCAT((current_date - us.end_date::date)::text, ' ', 'day',
+                    THEN CONCAT((us.end_date::date - current_date)::text, ' ', 'day',
                         CASE 
-                            WHEN COALESCE(current_date - us.end_date::date,0) = 1 THEN '' ELSE 's' 
+                            WHEN COALESCE(us.end_date::date - current_date,0) = 1 THEN '' ELSE 's' 
                         END)
                     ELSE 'Lifetime'
                 END AS {nameof(UserSubscriptionPreview.Duration)}
@@ -49,7 +49,7 @@ internal sealed class GetUserQueryHandler(
                 INNER JOIN subscriptions s ON s.id = us.subscription_id
                 WHERE us.user_id = @UserId AND (us.end_date IS NULL OR us.end_date > CURRENT_DATE) AND us.Status = @Status;
              """;
-        CommandDefinition command = new(sql, new {query, Status = SubscriptionStatus.Active}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new {query.UserId, Status = SubscriptionStatus.Active.ToString()}, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         UserResponseRow? userRow = await multi.ReadSingleOrDefaultAsync<UserResponseRow>();
         if (userRow is null)
