@@ -8,6 +8,6 @@ internal sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePa
     public CreatePaymentCommandValidator()
     {
         RuleFor(c => c.SubscriptionPlanId)
-            .NotEmpty().WithMessage("Subscription Plan Code is required.");
+            .NotEmpty().WithMessage("Subscription Plan Id is required.");
     }
 }

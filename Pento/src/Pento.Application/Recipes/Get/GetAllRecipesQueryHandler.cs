@@ -35,7 +35,7 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
             {whereClause};
 
             SELECT 
-                id AS Code,
+                id AS Id,
                 title AS Title,
                 description AS Description,
                 prep_time_minutes AS PrepTimeMinutes,

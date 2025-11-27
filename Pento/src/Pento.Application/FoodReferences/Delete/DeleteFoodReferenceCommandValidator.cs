@@ -12,8 +12,8 @@ internal sealed class DeleteFoodReferenceCommandValidator : AbstractValidator<De
     {
         RuleFor(x => x.FoodReferenceId)
             .NotEmpty()
-            .WithMessage("Food Reference Code is required.")
+            .WithMessage("Food Reference Id is required.")
             .Must(id => id != Guid.Empty)
-            .WithMessage("Food Reference Code must be a valid GUID.");
+            .WithMessage("Food Reference Id must be a valid GUID.");
     }
 }

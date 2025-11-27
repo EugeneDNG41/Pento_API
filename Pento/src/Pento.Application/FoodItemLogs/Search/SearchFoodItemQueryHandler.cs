@@ -53,7 +53,7 @@ internal sealed class SearchFoodItemQueryHandler(
         string sql = @$"
                 SELECT COUNT(*) 
                 FROM food_item_logs fil
-                INNER JOIN food_items fi ON fil.food_item_id = fi.Code
+                INNER JOIN food_items fi ON fil.food_item_id = fi.Id
                 {whereClause};
                 SELECT
                     fil.id,
@@ -64,8 +64,8 @@ internal sealed class SearchFoodItemQueryHandler(
                     fil.quantity,
                     u.abbreviation AS UnitAbbreviation
                 FROM food_item_logs fil
-                INNER JOIN food_items fi ON fil.food_item_id = fi.Code
-                INNER JOIN units u ON fil.unit_id = u.Code
+                INNER JOIN food_items fi ON fil.food_item_id = fi.Id
+                INNER JOIN units u ON fil.unit_id = u.Id
                 {whereClause}
                 ORDER BY fil.Timestamp DESC
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;;

@@ -7,7 +7,7 @@ internal sealed class ConsumeFoodItemCommandValidator : AbstractValidator<Consum
     public ConsumeFoodItemCommandValidator()
     {
         RuleFor(x => x.Id)
-            .NotEmpty().WithMessage("Food item Code is required.");
+            .NotEmpty().WithMessage("Food item Id is required.");
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
     }

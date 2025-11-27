@@ -27,7 +27,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.BlogPosts.BlogPost", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -63,7 +63,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_blog_posts");
 
                     b.HasIndex("UserId")
@@ -74,7 +74,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Comments.Comment", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -113,7 +113,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_comments");
 
                     b.HasIndex("BlogPostId")
@@ -127,7 +127,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Compartments.Compartment", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -147,7 +147,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("storage_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_compartments");
 
                     b.HasIndex("StorageId")
@@ -158,7 +158,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.FoodReferences.FoodReference", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -245,7 +245,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("usda_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_food_references");
 
                     b.ToTable("food_references", (string)null);
@@ -253,7 +253,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.GiveawayClaims.GiveawayClaim", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -278,7 +278,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("status");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_giveaway_claims");
 
                     b.HasIndex("ClaimantId")
@@ -292,7 +292,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.GiveawayPosts.GiveawayPost", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -348,7 +348,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_giveaway_posts");
 
                     b.HasIndex("FoodItemId")
@@ -362,7 +362,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.GroceryLists.GroceryList", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -388,7 +388,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_grocery_list");
 
                     b.ToTable("grocery_list", (string)null);
@@ -396,12 +396,12 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Households.Household", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_household");
 
                     b.ToTable("household", (string)null);
@@ -409,7 +409,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -457,7 +457,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_meal_plans");
 
                     b.HasIndex("HouseholdId")
@@ -471,7 +471,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.PossibleUnits.PossibleUnit", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -496,7 +496,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_possible_units");
 
                     b.HasIndex("FoodReferenceId", "UnitId")
@@ -508,7 +508,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.RecipeDirections.RecipeDirection", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -539,7 +539,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_recipe_directions");
 
                     b.ToTable("recipe_directions", (string)null);
@@ -547,7 +547,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.RecipeIngredients.RecipeIngredient", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -581,7 +581,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_recipe_ingredients");
 
                     b.HasIndex("FoodReferenceId")
@@ -598,7 +598,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -661,7 +661,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_on_utc");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_recipes");
 
                     b.ToTable("recipes", null, t =>
@@ -676,7 +676,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.FoodItems.StorageItem", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -714,7 +714,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("unit_id");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_storage_items");
 
                     b.HasIndex("CompartmentId")
@@ -731,7 +731,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Storages.Storage", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -757,7 +757,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("type");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_storages");
 
                     b.ToTable("storages", (string)null);
@@ -765,7 +765,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Units.Unit", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -794,7 +794,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_units");
 
                     b.ToTable("units", (string)null);
@@ -845,7 +845,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Users.User", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -889,7 +889,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_at");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_users");
 
                     b.HasIndex("Email")
@@ -905,7 +905,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Infrastructure.Outbox.OutboxMessage", b =>
                 {
-                    b.Property<Guid>("Code")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
@@ -932,7 +932,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("type");
 
-                    b.HasKey("Code")
+                    b.HasKey("Id")
                         .HasName("pk_outbox_messages");
 
                     b.ToTable("outbox_messages", (string)null);

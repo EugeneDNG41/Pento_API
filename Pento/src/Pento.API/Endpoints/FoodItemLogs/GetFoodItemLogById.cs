@@ -22,6 +22,6 @@ internal sealed class GetFoodItemLogById : IEndpoint
         })
         .WithTags(Tags.FoodItemLogs)
         .RequireAuthorization()
-        .WithDescription("Get a specific food item log by its Code");
+        .WithDescription("Get a specific food item log by its Id");
     }
 }

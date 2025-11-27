@@ -40,7 +40,7 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         string sqlData = $"""
             SELECT
-                id AS Code,
+                id AS Id,
                 name AS Name,
                 food_group AS FoodGroup,
                 typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,

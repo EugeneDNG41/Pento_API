@@ -16,6 +16,6 @@ internal sealed class UpdateRecipeIngredientCommandValidator : AbstractValidator
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x.UnitId)
-            .NotEmpty().WithMessage("Unit Code is required.");
+            .NotEmpty().WithMessage("Unit Id is required.");
     }
 }

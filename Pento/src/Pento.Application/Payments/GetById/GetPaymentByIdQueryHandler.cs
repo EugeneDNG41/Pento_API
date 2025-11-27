@@ -15,7 +15,7 @@ internal sealed class GetPaymentByIdQueryHandler(IUserContext userContext, ISqlC
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql = $@"
             SELECT 
-                Code AS {nameof(PaymentResponse.PaymentId)},
+                Id AS {nameof(PaymentResponse.PaymentId)},
                 order_code AS {nameof(PaymentResponse.OrderCode)},
                 description AS {nameof(PaymentResponse.Description)},
                 provider_description AS {nameof(PaymentResponse.ProviderDescription)},
@@ -30,7 +30,7 @@ internal sealed class GetPaymentByIdQueryHandler(IUserContext userContext, ISqlC
                 cancelled_at AS {nameof(PaymentResponse.CancelledAt)},
                 cancellation_reason AS {nameof(PaymentResponse.CancellationReason)}
             FROM Payments
-            WHERE Code = @PaymentId AND is_deleted is false AND user_id = @UserId;
+            WHERE Id = @PaymentId AND is_deleted is false AND user_id = @UserId;
         ";
         CommandDefinition command = new(sql, new { request.PaymentId, userContext.UserId }, cancellationToken: cancellationToken);
         PaymentResponse? payment = await connection.QuerySingleOrDefaultAsync<PaymentResponse>(command);

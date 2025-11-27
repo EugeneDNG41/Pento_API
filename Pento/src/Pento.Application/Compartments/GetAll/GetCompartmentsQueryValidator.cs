@@ -7,7 +7,7 @@ internal sealed class GetCompartmentsQueryValidator : AbstractValidator<GetCompa
     public GetCompartmentsQueryValidator()
     {
         RuleFor(x => x.StorageId)
-            .NotEmpty().WithMessage("Storage Code is required.");
+            .NotEmpty().WithMessage("Storage Id is required.");
         RuleFor(x => x.PageNumber)
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");
         RuleFor(x => x.PageSize)
