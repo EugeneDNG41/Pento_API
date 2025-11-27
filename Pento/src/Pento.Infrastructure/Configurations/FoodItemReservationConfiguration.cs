@@ -29,7 +29,7 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
                .IsRequired();
         builder.Property(x => x.UnitId)
                .IsRequired();
-        builder.Property(x => x.Status)
+        builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(10)
                .IsRequired();
         builder.Property(x => x.ReservationFor)
                .IsRequired();
