@@ -4,6 +4,6 @@ public enum SubscriptionStatus
 {
     Active,
     Paused,
-    Canceled,
+    Cancelled,
     Expired
 }

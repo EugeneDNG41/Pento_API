@@ -23,6 +23,8 @@ public static class SubscriptionErrors
     public static readonly Error InactiveSubscription =
         Error.Conflict("Subscription.InactiveSubscription", "Cannot purchase an inactive subscription.");
     public static readonly Error SubscriptionInUse =
-        Error.Conflict("Subscription.InUse", "Cannot delete subscription as it is associated with active users.");
+        Error.Conflict("Subscription.InUse", "Cannot delete subscription as it is associated with active users."); //business rule
+    public static readonly Error CannotPauseLifetimeSubscription =
+        Error.Conflict("Subscription.CannotPauseLifetimeSubscription", "Cannot pause a lifetime subscription."); //business rule
 }
 

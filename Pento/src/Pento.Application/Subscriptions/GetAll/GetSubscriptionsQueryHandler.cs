@@ -56,11 +56,14 @@ internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConn
                     id AS SubscriptionPlanId,
                     subscription_id AS SubscriptionId,
                     CONCAT(amount::text, ' ', currency) AS price,
-                    CONCAT(duration_in_days::text, ' ', 'day',
-                            CASE 
-                                WHEN COALESCE(duration_in_days,0) = 1 THEN '' ELSE 's' 
-                            END
-                      ) AS duration
+                    CASE
+                    WHEN duration_in_days IS NULL THEN 'Lifetime'
+                    ELSE CONCAT(duration_in_days::text, ' ', 'day',
+                        CASE 
+                            WHEN COALESCE(duration_in_days,0) = 1 THEN '' ELSE 's' 
+                        END)
+                    END
+                    AS duration
                 FROM subscription_plans
                 WHERE subscription_id = ANY(@SubscriptionIds) AND is_deleted is false;
                 SELECT
