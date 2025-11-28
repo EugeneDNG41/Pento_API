@@ -4,7 +4,6 @@ using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItemLogs.GetById;
 using Pento.Domain.Abstractions;
-using static Google.Protobuf.Reflection.SourceCodeInfo.Types;
 
 namespace Pento.API.Endpoints.FoodItemLogs;
 

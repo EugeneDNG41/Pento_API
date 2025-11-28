@@ -1,5 +1,11 @@
 ﻿namespace Pento.Application.FoodItemLogs.GetSummary;
 
+public sealed record FoodSummary(
+    string WeightUnit,
+    string VolumeUnit,
+    FoodItemLogSummary FoodItemLogSummary,
+    FoodItemSummary FoodItemSummary,
+    ReservationSummary ReservationSummary);
 public sealed record FoodItemLogSummary
 {
     public decimal TotalIntakeByWeight { get; init; }
@@ -8,8 +14,6 @@ public sealed record FoodItemLogSummary
     public decimal TotalConsumptionByVolume { get; init; }
     public decimal TotalDiscardByWeight { get; init; }
     public decimal TotalDiscardByVolume { get; init; }
-    public string WeightUnit { get; init; }
-    public string VolumeUnit { get; init; }
 } //add total expiring, available, expired, reserved
 public sealed record FoodItemSummary //filter by food group
 {

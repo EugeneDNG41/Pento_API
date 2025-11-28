@@ -26,5 +26,7 @@ public static class SubscriptionErrors
         Error.Conflict("Subscription.InUse", "Cannot delete subscription as it is associated with active users."); //business rule
     public static readonly Error CannotPauseLifetimeSubscription =
         Error.Conflict("Subscription.CannotPauseLifetimeSubscription", "Cannot pause a lifetime subscription."); //business rule
+    public static readonly Error NoMoreThanOneLifetimePlan =
+        Error.Conflict("Subscription.NoMoreThanOneLifetimePlan", "A subscription can have only one lifetime plan."); //business rule
 }
 
