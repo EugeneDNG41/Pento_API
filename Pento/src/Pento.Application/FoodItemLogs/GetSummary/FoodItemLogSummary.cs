@@ -3,33 +3,40 @@
 public sealed record FoodSummary(
     string WeightUnit,
     string VolumeUnit,
-    FoodItemLogSummary FoodItemLogSummary,
-    FoodItemSummary FoodItemSummary,
-    ReservationSummary ReservationSummary);
+    FoodItemLogSummary LogSummary,
+    FoodItemSummary FoodItemSummary);
 public sealed record FoodItemLogSummary
 {
-    public decimal TotalIntakeByWeight { get; init; }
-    public decimal TotalIntakeByVolume { get; init; }
-    public decimal TotalConsumptionByWeight { get; init; }
-    public decimal TotalConsumptionByVolume { get; init; }
-    public decimal TotalDiscardByWeight { get; init; }
-    public decimal TotalDiscardByVolume { get; init; }
-} //add total expiring, available, expired, reserved
-public sealed record FoodItemSummary //filter by food group
-{
-    public decimal TotalFreshByWeight { get; init; }
-    public decimal TotalFreshByVolume { get; init; }
-    public decimal TotalExpiringByWeight { get; init; }
-    public decimal TotalExpiringByVolume { get; init; }
-    public decimal TotalExpiredByWeight { get; init; }
-    public decimal TotalExpiredByVolume { get; init; }
+    public decimal IntakeByWeight { get; init; }
+    public decimal IntakeByVolume { get; init; }
+    public decimal ConsumptionByWeight { get; init; }
+    public decimal ConsumptionByVolume { get; init; }
+    public decimal DiscardByWeight { get; init; }
+    public decimal DiscardByVolume { get; init; }
 }
-public sealed record ReservationSummary //filter by type
+public sealed record FoodItemSummary 
 {
-    public decimal TotalPendingByWeight { get; init; }
-    public decimal TotalPendingByVolume { get; init; }
-    public decimal TotalFulfilledByWeight { get; init; }
-    public decimal TotalFulfilledByVolume { get; init; }   
-    public decimal TotalCancelledByWeight { get; set; }
-    public decimal TotalCancelledByVolume { get; init; }
+    public int TotalFoodItems { get; init; }
+    public int FreshCount { get; init; }
+    public int ExpiringCount { get; init; }
+    public int ExpiredCount { get; init; }
+    public decimal FreshByWeight { get; init; }
+    public decimal FreshByVolume { get; init; }
+    public decimal ExpiringByWeight { get; init; }
+    public decimal ExpiringByVolume { get; init; }
+    public decimal ExpiredByWeight { get; init; }
+    public decimal ExpiredByVolume { get; init; }
+}
+public sealed record ReservationSummary 
+{
+    public int TotalReservations { get; init; }
+    public int PendingCount { get; init; }
+    public int FulfilledCount { get; init; }
+    public int CancelledCount { get; init; }
+    public decimal PendingByWeight { get; init; }
+    public decimal PendingByVolume { get; init; }
+    public decimal FulfilledByWeight { get; init; }
+    public decimal FulfilledByVolume { get; init; }   
+    public decimal CancelledByWeight { get; set; }
+    public decimal CancelledByVolume { get; init; }
 }

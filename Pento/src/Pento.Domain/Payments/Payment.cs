@@ -94,7 +94,7 @@ public class Payment : Entity
         PaidAt = paidAt;
         CheckoutUrl = null;
         QrCode = null;
-        Raise(new PaymentCompletedDomainEvent(UserId, SubscriptionPlanId));
+        Raise(new PaymentCompletedDomainEvent(Id));
     }
     public void MarkAsCancelled(string? reason, DateTime cancelledAt)
     {

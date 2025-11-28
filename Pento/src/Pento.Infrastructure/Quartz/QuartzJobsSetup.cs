@@ -3,14 +3,14 @@ using Pento.Infrastructure.Outbox;
 using Quartz;
 
 namespace Pento.Infrastructure.Quartz;
-#pragma warning disable S125 // Sections of code should not be commented out
 internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : IConfigureOptions<QuartzOptions>
 {
     public void Configure(QuartzOptions options)
     {
         const string expirationTracker = nameof(ProcessExpirationDateTrackingJob);
         const string limitReset = nameof(ProcessLimitResetJob);
-        const string jobName = nameof(ProcessOutboxMessagesJob);
+        const string outbox = nameof(ProcessOutboxMessagesJob);
+        const string paymentStatusTracker = nameof(ProcessPaymentStatusTrackingJob);
 
 
         options
@@ -28,11 +28,17 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(0, 0)) // Every day at midnight
                     .Build());
         options
-            .AddJob<ProcessOutboxMessagesJob>(configure => configure.WithIdentity(jobName))
+            .AddJob<ProcessOutboxMessagesJob>(configure => configure.WithIdentity(outbox))
             .AddTrigger(configure =>
                 configure
-                    .ForJob(jobName)
+                    .ForJob(outbox)
                     .WithSimpleSchedule(schedule =>
                         schedule.WithIntervalInSeconds(outboxOptions.Value.IntervalInSeconds).RepeatForever()));
+        options.AddJob<ProcessPaymentStatusTrackingJob>(configure => configure.WithIdentity(paymentStatusTracker))
+            .AddTrigger(configure =>
+                configure
+                    .ForJob(paymentStatusTracker)
+                    .WithSimpleSchedule(schedule =>
+                        schedule.WithIntervalInSeconds(60).RepeatForever()));
     }
 }

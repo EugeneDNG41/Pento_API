@@ -3,12 +3,12 @@ using Pento.Domain.Shared;
 
 namespace Pento.Domain.UserEntitlements;
 
-public sealed class UserEntitlement : Entity
+public sealed class UserEntitlement
 {
     private UserEntitlement() { }
     public UserEntitlement(Guid id,  Guid userId, Guid? userSubscription, string featureCode, int? quota = null, TimeUnit? resetPeriod = null)
-        : base(id)
     {
+        Id = id;
         UserId = userId;
         UserSubscriptionId = userSubscription;
         FeatureCode = featureCode;
@@ -16,6 +16,7 @@ public sealed class UserEntitlement : Entity
         Quota = quota;
         ResetPeriod = resetPeriod;
     }
+    public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
     public Guid? UserSubscriptionId { get; private set; }
     public string FeatureCode { get; private set; }
@@ -32,8 +33,9 @@ public sealed class UserEntitlement : Entity
     {
         UsageCount = 0;
     }
-    public void UpdateEntitlement(int? quota = null, TimeUnit? resetPeriod = null)
+    public void UpdateEntitlement(int? quota = null, TimeUnit? resetPeriod = null, Guid? userSubscriptionId = null)
     {
+        UserSubscriptionId = userSubscriptionId;
         Quota = quota;
         ResetPeriod = resetPeriod;
     }

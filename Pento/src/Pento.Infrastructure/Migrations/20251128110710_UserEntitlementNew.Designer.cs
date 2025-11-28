@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251128110710_UserEntitlementNew")]
+    partial class UserEntitlementNew
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2050,8 +2053,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_user_entitlements_user_id");
 
-                    b.HasIndex("UserSubscriptionId")
-                        .HasDatabaseName("ix_user_entitlements_user_subscription_id");
+                    b.HasIndex("UserSubscriptionId", "FeatureCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_entitlements_user_subscription_id_feature_code");
 
                     b.ToTable("user_entitlements", (string)null);
                 });
@@ -2155,8 +2159,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasIndex("SubscriptionId")
                         .HasDatabaseName("ix_user_subscriptions_subscription_id");
 
-                    b.HasIndex("UserId")
-                        .HasDatabaseName("ix_user_subscriptions_user_id");
+                    b.HasIndex("UserId", "SubscriptionId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_subscriptions_user_id_subscription_id");
 
                     b.ToTable("user_subscriptions", (string)null);
                 });

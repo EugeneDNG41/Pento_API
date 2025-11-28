@@ -6,7 +6,6 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
-using Pento.Domain.UserEntitlements;
 using Pento.Domain.Users;
 using Pento.Domain.UserSubscriptions;
 
@@ -29,7 +28,7 @@ internal sealed class PaymentCompletedEventHandler(
         {
             throw new PentoException(nameof(PaymentCompletedEventHandler), UserErrors.NotFound);
         }
-        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(domainEvent.SubscriptionPlanId, cancellationToken);
+        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(payment.SubscriptionPlanId, cancellationToken);
         if (plan == null)
         {
             throw new PentoException(nameof(PaymentCompletedEventHandler), SubscriptionErrors.SubscriptionPlanNotFound);
@@ -48,43 +47,8 @@ internal sealed class PaymentCompletedEventHandler(
         } 
         else
         {
-            userSubscription.Renew(
-                plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
+            userSubscription.Renew(plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Update(userSubscription);
-        }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-}
-internal sealed class UserSubscriptionCreatedOrRenewedEventHandler(
-    IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
-    IGenericRepository<UserSubscription> userSubscriptionRepository,
-    IGenericRepository<UserEntitlement> userEntitlementRepository,
-    IUnitOfWork unitOfWork
-    ) : DomainEventHandler<UserSubscriptionCreatedorRenewedDomainEvent>
-{
-    public override async Task Handle(UserSubscriptionCreatedorRenewedDomainEvent domainEvent, CancellationToken cancellationToken = default)
-    {
-        UserSubscription? userSubscription = await userSubscriptionRepository.GetByIdAsync(domainEvent.UserSubscriptionId, cancellationToken);
-        if (userSubscription == null)
-        {
-            throw new PentoException(nameof(UserSubscriptionCreatedOrRenewedEventHandler), SubscriptionErrors.UserSubscriptionNotFound);
-        }
-        var features = (await subscriptionFeatureRepository.FindAsync(uf => uf.SubscriptionId == userSubscription.SubscriptionId, cancellationToken)).ToList();
-        foreach (SubscriptionFeature? subscriptionFeature in features)
-        {
-            UserEntitlement? existingEntitlement = (await userEntitlementRepository.FindAsync(
-                    ue => ue.UserId == userSubscription.UserId && ue.FeatureCode == subscriptionFeature.FeatureCode && ue.UserSubscriptionId == userSubscription.Id,
-                    cancellationToken)).SingleOrDefault();
-            if (existingEntitlement == null)
-            {
-                var entitlement = UserEntitlement.Create(userSubscription.UserId, userSubscription.Id, subscriptionFeature.FeatureCode, subscriptionFeature.Quota, subscriptionFeature.ResetPeriod);
-                userEntitlementRepository.Add(entitlement);
-            }
-            else if (existingEntitlement.Quota != subscriptionFeature.Quota || existingEntitlement.ResetPeriod != subscriptionFeature.ResetPeriod)
-            {
-                existingEntitlement.UpdateEntitlement(subscriptionFeature.Quota, subscriptionFeature.ResetPeriod);
-                userEntitlementRepository.Update(existingEntitlement);
-            }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
