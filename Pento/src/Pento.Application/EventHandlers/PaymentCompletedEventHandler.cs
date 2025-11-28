@@ -28,7 +28,7 @@ internal sealed class PaymentCompletedEventHandler(
         {
             throw new PentoException(nameof(PaymentCompletedEventHandler), UserErrors.NotFound);
         }
-        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(domainEvent.SubscriptionPlanId, cancellationToken);
+        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(payment.SubscriptionPlanId, cancellationToken);
         if (plan == null)
         {
             throw new PentoException(nameof(PaymentCompletedEventHandler), SubscriptionErrors.SubscriptionPlanNotFound);

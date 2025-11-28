@@ -52,10 +52,6 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         parameters.Add("ConsumptionAction", FoodItemLogAction.Consumption.ToString(), DbType.String);
         parameters.Add("DiscardAction", FoodItemLogAction.Discard.ToString(), DbType.String);
 
-        parameters.Add("PendingStatus", ReservationStatus.Pending.ToString(), DbType.String);
-        parameters.Add("FulfilledStatus", ReservationStatus.Fulfilled.ToString(), DbType.String);
-        parameters.Add("CancelledStatus", ReservationStatus.Cancelled.ToString(), DbType.String);
-
         parameters.Add("WeightToBaseFactor", weightUnit.ToBaseFactor, DbType.Decimal);
         parameters.Add("VolumeToBaseFactor", volumeUnit.ToBaseFactor, DbType.Decimal);
 
@@ -176,59 +172,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
             AND fil.timestamp >= COALESCE(@FromUtc, fil.timestamp)
             AND fil.timestamp <= COALESCE(@ToUtc, fil.timestamp);
 
-        SELECT
-            COUNT (*) AS TotalReservations,
-        	COUNT(*) FILTER (WHERE r.Status = @PendingStatus) AS PendingCount,
-            COUNT(*) FILTER (WHERE r.Status = @FulfilledStatus) AS FulfilledCount,
-            COUNT(*) FILTER (WHERE r.Status = @CancelledStatus) AS CancelledCount,
-        	COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @WeightType AND r.status = @PendingStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS PendingByWeight,
-
-            COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @VolumeType  AND r.status = @PendingStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS PendingByVolume,
-
-            COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @WeightType AND r.status = @FulfilledStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS FulfilledByWeight,
-
-            COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @VolumeType  AND r.status = @FulfilledStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS FulfilledByVolume,
-
-            COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @WeightType AND r.status = @CancelledStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS CancelledByWeight,
-
-            COALESCE(SUM(
-                CASE 
-                    WHEN u.type = @VolumeType AND r.status = @CancelledStatus
-                    THEN r.quantity * u.to_base_factor
-                END
-            ), 0) AS CancelledByVolume
-
-
-        FROM food_item_reservations r
-        JOIN units u ON u.id = r.unit_id
-        WHERE r.is_deleted IS FALSE AND r.is_archived IS FALSE AND r.household_id = @HouseholdId
-            AND r.reservation_date_utc >= COALESCE(@FromUtc, r.reservation_date_utc)
-            AND r.reservation_date_utc <= COALESCE(@ToUtc, r.reservation_date_utc);
+        
         """;
 
         var command = new CommandDefinition(
@@ -238,13 +182,11 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         FoodItemLogSummary logSummary = await multi.ReadFirstAsync<FoodItemLogSummary>();
         FoodItemSummary itemSummary = await multi.ReadFirstAsync<FoodItemSummary>();
-        ReservationSummary reservationSummary = await multi.ReadFirstAsync<ReservationSummary>();
         var foodSummary = new FoodSummary(
             WeightUnit: weightUnit.Name,
             VolumeUnit: volumeUnit.Name,
             LogSummary: logSummary,
-            FoodItemSummary: itemSummary,
-            ReservationSummary: reservationSummary
+            FoodItemSummary: itemSummary
             );
         return foodSummary;
     }
