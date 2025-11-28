@@ -29,4 +29,8 @@ public static class GiveawayPostErrors
         code: "GiveawayPost.AlreadyExpired",
         description: "This post has already expired and cannot be claimed."
     );
+    public static readonly Error CannotDelete = Error.Conflict(
+        code: "GiveawayPost.CannotDelete",
+        description: "Only Open or Cancelled posts can be deleted."
+    );
 }

@@ -112,6 +112,10 @@ public sealed class GiveawayPost : Entity
         Status = status;
         UpdatedOnUtc = utcNow;
     }
+    public void MarkAsDeleted(DateTime utcNow)
+    {
+        UpdatedOnUtc = utcNow;
+    }
 
 
 }
