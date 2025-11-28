@@ -21,4 +21,12 @@ public static class GiveawayPostErrors
         "GiveawayPost.InsufficientQuantity",
         "The giveaway quantity must be greater than zero."
     );
+    public static readonly Error AlreadyClaimed = Error.Conflict(
+    code: "GiveawayPost.AlreadyClaimed",
+    description: "This item has already been claimed by another user."
+);
+    public static readonly Error AlreadyExpired = Error.Conflict(
+        code: "GiveawayPost.AlreadyExpired",
+        description: "This post has already expired and cannot be claimed."
+    );
 }

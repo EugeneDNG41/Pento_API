@@ -65,4 +65,53 @@ public sealed class GiveawayPost : Entity
     {
         get; private set;
     }
+    public void UpdateTitle(string newTitle)
+    {
+        TitleDescription = newTitle;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdateContact(string newContact)
+    {
+        ContactInfo = newContact;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdateAddress(string newAddress)
+    {
+        Address = newAddress;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdatePickupOption(PickupOption option)
+    {
+        PickupOption = option;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdatePickupStart(DateTime? date)
+    {
+        PickupStartDate = date;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdatePickupEnd(DateTime? date)
+    {
+        PickupEndDate = date;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdateQuantity(decimal qty)
+    {
+        Quantity = qty;
+        UpdatedOnUtc = DateTime.UtcNow;
+    }
+
+    public void UpdateStatus(GiveawayStatus status, DateTime utcNow)
+    {
+        Status = status;
+        UpdatedOnUtc = utcNow;
+    }
+
+
 }
