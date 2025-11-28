@@ -172,7 +172,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         FROM food_items f
         JOIN units u ON u.id = f.unit_id
         JOIN food_item_logs fil ON fil.food_item_id = f.id
-        WHERE f.is_deleted IS FALSE AND f.is_archived IS FALSE AND f.household_id = @HouseholdId;
+        WHERE f.is_deleted IS FALSE AND f.is_archived IS FALSE AND f.household_id = @HouseholdId
             AND fil.timestamp >= COALESCE(@FromUtc, fil.timestamp)
             AND fil.timestamp <= COALESCE(@ToUtc, fil.timestamp);
 
@@ -226,7 +226,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
 
         FROM food_item_reservations r
         JOIN units u ON u.id = r.unit_id
-        WHERE r.is_deleted IS FALSE AND r.is_archived IS FALSE AND r.household_id = @HouseholdId;
+        WHERE r.is_deleted IS FALSE AND r.is_archived IS FALSE AND r.household_id = @HouseholdId
             AND r.reservation_date_utc >= COALESCE(@FromUtc, r.reservation_date_utc)
             AND r.reservation_date_utc <= COALESCE(@ToUtc, r.reservation_date_utc);
         """;
