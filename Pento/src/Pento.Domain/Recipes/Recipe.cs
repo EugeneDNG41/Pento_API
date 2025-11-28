@@ -128,4 +128,10 @@ public sealed class Recipe: Entity
 
         Raise(new RecipeVisibilityChangedDomainEvent(Id, isPublic));
     }
+    public void UpdateImageUrl(Uri? newUrl, DateTime updatedAt)
+    {
+        ImageUrl = newUrl;
+        UpdatedOnUtc = updatedAt;
+    }
+
 }
