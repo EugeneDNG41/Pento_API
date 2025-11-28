@@ -19,7 +19,5 @@ internal sealed class UserEntitlementConfiguration : IEntityTypeConfiguration<Us
         builder.HasOne<Feature>().WithMany().HasForeignKey(ue => ue.FeatureCode);
         builder.HasOne<UserSubscription>().WithMany().HasForeignKey(ue => ue.UserSubscriptionId);
         builder.Property<uint>("Version").IsRowVersion();
-        builder.HasIndex(x => new { x.UserSubscriptionId, x.FeatureCode })
-            .IsUnique();
     }
 }

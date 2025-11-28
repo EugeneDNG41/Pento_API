@@ -107,10 +107,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
                 END
-            ), 0) AS DiscardByVolume,
-
-            CAST(@WeightUnit AS text) AS WeightUnit,
-            CAST(@VolumeUnit AS text) AS VolumeUnit
+            ), 0) AS DiscardByVolume
         FROM food_item_logs l
         JOIN units u ON u.id = l.unit_id
         WHERE l.is_deleted IS FALSE AND l.is_archived IS FALSE AND l.household_id = @HouseholdId
@@ -186,42 +183,42 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
             COUNT(*) FILTER (WHERE r.Status = @CancelledStatus) AS CancelledCount,
         	COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Weight' AND r.Status = @PendingStatus
+                    WHEN u.type = @WeightType AND r.status = @PendingStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS PendingByWeight,
 
             COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Volume' AND r.Status = @PendingStatus
+                    WHEN u.type = @VolumeType  AND r.status = @PendingStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS PendingByVolume,
 
             COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Weight' AND r.Status = @FulfilledStatus
+                    WHEN u.type = @WeightType AND r.status = @FulfilledStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS FulfilledByWeight,
 
             COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Volume' AND r.Status = @FulfilledStatus
+                    WHEN u.type = @VolumeType  AND r.status = @FulfilledStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS FulfilledByVolume,
 
             COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Weight' AND r.Status = @CancelledStatus
+                    WHEN u.type = @WeightType AND r.status = @CancelledStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS CancelledByWeight,
 
             COALESCE(SUM(
                 CASE 
-                    WHEN u.type = 'Volume' AND r.Status = @CancelledStatus
+                    WHEN u.type = @VolumeType AND r.status = @CancelledStatus
                     THEN r.quantity * u.to_base_factor
                 END
             ), 0) AS CancelledByVolume

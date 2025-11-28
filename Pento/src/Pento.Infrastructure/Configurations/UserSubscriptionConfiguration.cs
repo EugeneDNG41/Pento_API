@@ -17,7 +17,5 @@ internal sealed class UserSubscriptionConfiguration : IEntityTypeConfiguration<U
         builder.HasOne<User>().WithMany().HasForeignKey(us => us.UserId);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(us => us.SubscriptionId);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
-        builder.HasIndex(x => new { x.UserId, x.SubscriptionId })
-            .IsUnique();
     }
 }
