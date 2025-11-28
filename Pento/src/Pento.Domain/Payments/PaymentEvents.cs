@@ -8,9 +8,9 @@ using Pento.Domain.Abstractions;
 namespace Pento.Domain.Payments;
 
 
-public class PaymentCompletedDomainEvent(Guid userId, Guid subscriptionPlanId) : DomainEvent
+public class PaymentCompletedDomainEvent(Guid paymentId, Guid subscriptionPlanId) : DomainEvent
 {
-    public Guid UserId { get; } = userId;
+    public Guid PaymentId { get; } = paymentId;
     public Guid SubscriptionPlanId { get; } = subscriptionPlanId;
 }
 

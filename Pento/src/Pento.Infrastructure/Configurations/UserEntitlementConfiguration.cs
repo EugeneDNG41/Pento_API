@@ -20,5 +20,7 @@ internal sealed class UserEntitlementConfiguration : IEntityTypeConfiguration<Us
         builder.HasOne<UserSubscription>().WithMany().HasForeignKey(ue => ue.UserSubscriptionId);
         builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
         builder.Property<uint>("Version").IsRowVersion();
+        builder.HasIndex(x => new { x.UserSubscriptionId, x.FeatureCode })
+            .IsUnique();
     }
 }

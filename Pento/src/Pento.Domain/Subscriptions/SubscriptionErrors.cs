@@ -10,6 +10,8 @@ public static class SubscriptionErrors
         Error.NotFound("Subscription.PlanNotFound", "Subscription plan not found.");
     public static readonly Error SubscriptionFeatureNotFound = 
         Error.NotFound("Subscription.FeatureNotFound", "Subscription feature not found.");
+    public static readonly Error UserSubscriptionNotFound = 
+        Error.NotFound("Subscription.UserSubscriptionNotFound", "User subscription not found.");
     public static readonly Error NameTaken = 
         Error.Conflict("Subscription.NameTaken", "Subscription name already taken.");
     public static readonly Error DuplicateSubscriptionPlan = 

@@ -33,10 +33,14 @@ public sealed class UserSubscription : Entity
     public static UserSubscription Create(
         Guid userId,
         Guid subscriptionId,
-        SubscriptionStatus status,
         DateOnly startDate,
         DateOnly? endDate)
-        => new(Guid.CreateVersion7(), userId, subscriptionId, status, startDate, endDate);
+    {  
+        var userSubscription =  new UserSubscription(Guid.CreateVersion7(), userId, subscriptionId, SubscriptionStatus.Active, startDate, endDate);
+        userSubscription.Raise(new UserSubscriptionCreatedorRenewedDomainEvent(userSubscription.Id));
+        return userSubscription;
+    }
+       
     public void Renew(DateOnly? newEndDate)
     {
         Status = SubscriptionStatus.Active; //business rule: renewing a subscription always sets it to Active
@@ -49,6 +53,7 @@ public sealed class UserSubscription : Entity
         {
             EndDate = newEndDate;
         }
+        Raise(new UserSubscriptionCreatedorRenewedDomainEvent(Id));
     }
     public void Pause(DateOnly pausedDate)
     {
@@ -71,6 +76,10 @@ public sealed class UserSubscription : Entity
         CancellationReason = cancellationReason;
         EndDate = cancelledDate;
     }
+}
+public sealed class UserSubscriptionCreatedorRenewedDomainEvent(Guid userSubscriptionId) : DomainEvent
+{
+    public Guid UserSubscriptionId { get; } = userSubscriptionId;
 }
 
 

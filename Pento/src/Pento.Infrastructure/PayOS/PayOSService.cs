@@ -63,6 +63,7 @@ internal sealed class PayOSService(
                 ExpiredAt = (long)expiresAt.Subtract(DateTime.UnixEpoch).TotalSeconds
             };
             CreatePaymentLinkResponse response = await client.PaymentRequests.CreateAsync(paymentRequest);
+            expiresAt = response.ExpiredAt is not null ? DateTimeOffset.FromUnixTimeSeconds(response.ExpiredAt.Value).UtcDateTime : expiresAt;
             payment.UpdatePaymentLink(response.PaymentLinkId, response.Description, new Uri(response.CheckoutUrl), response.QrCode, expiresAt);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return new PaymentLinkResponse(payment.Id, new Uri(response.CheckoutUrl), response.QrCode);
