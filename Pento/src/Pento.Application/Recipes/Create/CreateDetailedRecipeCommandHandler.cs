@@ -1,4 +1,8 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.File;
@@ -9,6 +13,7 @@ using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
 using Pento.Domain.Units;
+using Pento.Domain.Users;
 
 namespace Pento.Application.Recipes.Create;
 internal sealed class CreateDetailedRecipeCommandHandler(
@@ -17,25 +22,35 @@ internal sealed class CreateDetailedRecipeCommandHandler(
     IRecipeDirectionRepository recipeDirectionRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitRepository,
-    IUnitOfWork unitOfWork,
-    IBlobService blobService, 
-    IUserContext userContext    
+    IUserContext userContext,
+    IBlobService blobService,
+    IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateDetailedRecipeCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateDetailedRecipeCommand command, CancellationToken cancellationToken)
     {
         Guid userId = userContext.UserId;
+        if (userId == Guid.Empty)
+        {
+            return Result.Failure<Guid>(UserErrors.NotFound);
+        }
 
         Uri? recipeImageUrl = null;
-        if (command.ImageFile is not null)
-        {
-            Result<Uri> uploadResult = await blobService.UploadImageAsync(command.ImageFile, "recipes", cancellationToken);
 
-            if (uploadResult.IsFailure)
+        if (command.Image is not null)
+        {
+            Result<Uri> upload = await blobService.UploadImageFromUrlAsync(
+                source: command.Image,
+                "recipes",
+                cancellationToken
+            );
+
+            if (upload.IsFailure)
             {
-                return Result.Failure<Guid>(uploadResult.Error);
+                return Result.Failure<Guid>(upload.Error);
             }
-            recipeImageUrl = uploadResult.Value;
+
+            recipeImageUrl = upload.Value;
         }
 
         var time = TimeRequirement.Create(command.PrepTimeMinutes, command.CookTimeMinutes);
@@ -47,13 +62,14 @@ internal sealed class CreateDetailedRecipeCommandHandler(
             command.Notes,
             command.Servings,
             command.DifficultyLevel,
-            recipeImageUrl, 
-            userId,         
+            recipeImageUrl,   
+            userId,
             command.IsPublic,
             DateTime.UtcNow
         );
 
         await recipeRepository.AddAsync(recipe, cancellationToken);
+
 
         foreach (RecipeIngredientRequest item in command.Ingredients)
         {
@@ -77,22 +93,40 @@ internal sealed class CreateDetailedRecipeCommandHandler(
                 item.Notes,
                 DateTime.UtcNow
             );
+
             await recipeIngredientRepository.AddAsync(ingredient, cancellationToken);
         }
 
-        if (command.Directions != null)
+
+        foreach (RecipeDirectionRequest? dir in command.Directions.OrderBy(d => d.StepNumber))
         {
-            foreach (RecipeDirectionRequest dir in command.Directions.OrderBy(d => d.StepNumber))
+            Uri? directionImageUrl = null;
+
+            if (dir.Image is not null)
             {
-                var direction = RecipeDirection.Create(
-                    recipe.Id,
-                    dir.StepNumber,
-                    dir.Description,
-                    dir.ImageUrl,
-                    DateTime.UtcNow
+                Result<Uri> uploaded = await blobService.UploadImageFromUrlAsync(
+                    source: dir.Image,
+                    "recipesSteps",
+                    cancellationToken
                 );
-                await recipeDirectionRepository.AddAsync(direction, cancellationToken);
+
+                if (uploaded.IsFailure)
+                {
+                    return Result.Failure<Guid>(uploaded.Error);
+                }
+
+                directionImageUrl = uploaded.Value;
             }
+
+            var direction = RecipeDirection.Create(
+                recipe.Id,
+                dir.StepNumber,
+                dir.Description,
+                directionImageUrl,    
+                DateTime.UtcNow
+            );
+
+            await recipeDirectionRepository.AddAsync(direction, cancellationToken);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

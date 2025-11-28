@@ -44,4 +44,8 @@ namespace Pento.Application.Abstractions.File;
         string domain,
         string fileName,
         CancellationToken cancellationToken = default);
+    Task<Result<Uri>> UploadImageFromUrlAsync(
+    string source,
+    string domain,
+    CancellationToken cancellationToken = default);
 }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 
 namespace Pento.Application.Recipes.Create;
-    public sealed class CreateDetailedCommandValidator:AbstractValidator<CreateDetailedRecipeCommand>
+public sealed class CreateDetailedCommandValidator : AbstractValidator<CreateDetailedRecipeCommand>
 {
     public CreateDetailedCommandValidator()
     {
@@ -73,4 +73,3 @@ namespace Pento.Application.Recipes.Create;
     }
 }
 
-    

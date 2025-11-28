@@ -95,6 +95,79 @@ public sealed class BlobService : IBlobService
     public Task<Result> DeleteVideoAsync(string domain, string fileName, CancellationToken cancellationToken = default)
         => DeleteFileAsync(domain, fileName, "videos", cancellationToken);
 
+    public async Task<Result<Uri>> UploadImageFromUrlAsync(
+        string source,
+        string domain,
+        CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            using var http = new HttpClient();
+
+            HttpResponseMessage response = await http.GetAsync(source, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                return Result.Failure<Uri>(
+                    Error.Problem(
+                        "Blob.DownloadFailed",
+                        $"Failed to download image from URL: {source}"
+                    )
+                );
+            }
+
+            string contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+
+            if (!AllowedFileTypes["images"].Contains(contentType))
+            {
+                return Result.Failure<Uri>(
+                    Error.Problem(
+                        "Blob.InvalidType",
+                        $"Downloaded content type '{contentType}' is not allowed for images."
+                    )
+                );
+            }
+
+            string extension = contentType switch
+            {
+                "image/jpeg" => ".jpg",
+                "image/png" => ".png",
+                "image/webp" => ".webp",
+                "image/gif" => ".gif",
+                _ => Path.GetExtension(source) 
+            };
+
+            if (string.IsNullOrWhiteSpace(extension))
+            {
+                extension = ".jpg"; 
+            }
+
+            string fileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}{Guid.NewGuid():N}{extension}";
+
+            BlobContainerClient container =
+                _blobServiceClient.GetBlobContainerClient($"{domain.ToLowerInvariant()}images");
+
+            await container.CreateIfNotExistsAsync(
+                publicAccessType: PublicAccessType.Blob,
+                cancellationToken: cancellationToken);
+
+            BlobClient blob = container.GetBlobClient(fileName);
+
+            using Stream stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+
+            await blob.UploadAsync(
+                stream,
+                new BlobHttpHeaders { ContentType = contentType },
+                cancellationToken: cancellationToken
+            );
+
+            return Result.Success(blob.Uri);
+        }
+        catch
+        {
+            return Result.Failure<Uri>(BlobServiceErrors.UploadFailed);
+        }
+    }
+
 
 }
 public static class BlobServiceErrors

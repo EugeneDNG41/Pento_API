@@ -54,4 +54,9 @@ public sealed class RecipeDirection : Entity
 
         Raise(new RecipeDirectionUpdatedDomainEvent(Id));
     }
+    public void UpdateImageUrl(Uri? imageUrl, DateTime utcNow)
+    {
+        ImageUrl = imageUrl;
+        UpdatedOnUtc = utcNow;
+    }
 }
