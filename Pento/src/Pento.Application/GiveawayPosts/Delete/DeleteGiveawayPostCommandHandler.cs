@@ -9,8 +9,7 @@ namespace Pento.Application.GiveawayPosts.Delete;
 
 internal sealed class DeleteGiveawayPostCommandHandler(
     IGenericRepository<GiveawayPost> giveawayRepo,
-    IUnitOfWork uow,
-    IDateTimeProvider clock
+    IUnitOfWork uow
 ) : ICommandHandler<DeleteGiveawayPostCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(DeleteGiveawayPostCommand cmd, CancellationToken cancellationToken)
@@ -26,7 +25,7 @@ internal sealed class DeleteGiveawayPostCommandHandler(
             return Result.Failure<Guid>(GiveawayPostErrors.CannotDelete);
         }
 
-        post.MarkAsDeleted(clock.UtcNow);
+        post.Delete();
         await uow.SaveChangesAsync(cancellationToken);
 
         return Result.Success(cmd.Id);
