@@ -129,13 +129,13 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 fr.name                   AS FoodReferenceName,
                 fr.food_group             AS FoodGroup,
                 fr.image_url              AS FoodImageUrl,
-                fi.quantity               AS Quantity,
+                fir.quantity               AS Quantity,
                 u.abbreviation            AS UnitAbbreviation,
                 fi.expiration_date        AS ExpirationDate
             FROM food_item_reservations fir
             JOIN food_items fi ON fir.food_item_id = fi.id
             JOIN food_references fr ON fi.food_reference_id = fr.id
-            JOIN units u ON fi.unit_id = u.id
+            JOIN units u ON fir.unit_id = u.id
             WHERE fir.meal_plan_id IN (
                 SELECT id FROM meal_plans {whereClause}
                 {orderBy}

@@ -34,23 +34,32 @@ internal sealed class GetGroceryListQueryHandler(
         {
             return Result.Failure<GroceryListDetailResponse>(GroceryListErrors.NotFound);
         }
-
         const string sqlItems = """
             SELECT
-                id AS Id,
-                food_ref_id AS FoodRefId,
-                quantity AS Quantity,
-                custom_name AS CustomName,
-                unit_id AS UnitId,
-                notes AS Notes,
-                priority AS Priority,
-                added_by AS AddedBy,
-                created_on_utc AS CreatedOnUtc
-            FROM grocery_list_items
-            WHERE list_id = @Id
-            ORDER BY created_on_utc DESC
+                gli.id              AS Id,
+                gli.food_ref_id     AS FoodRefId,
+                fr.name             AS FoodRefName,
+                fr.image_url        AS ImageUrl,
+                gli.quantity        AS Quantity,
+                gli.custom_name     AS CustomName,
+                gli.unit_id         AS UnitId,
+                u.abbreviation      AS UnitAbbreviation,
+                gli.notes           AS Notes,
+                gli.priority        AS Priority,
+                gli.added_by        AS AddedBy,
+                gli.created_on_utc  AS CreatedOnUtc
+            FROM grocery_list_items gli
+            JOIN food_references fr ON gli.food_ref_id = fr.id
+            LEFT JOIN units u ON gli.unit_id = u.id
+            WHERE gli.list_id = @Id
+            ORDER BY gli.created_on_utc DESC;
         """;
-        var items = (await connection.QueryAsync<GroceryListItemResponse>(sqlItems, new { request.Id })).ToList();
+
+        var items = (await connection.QueryAsync<GroceryListItemResponse>(
+            sqlItems,
+            new { request.Id })
+        ).ToList();
+
 
         const string sqlAssignees = """
             SELECT
