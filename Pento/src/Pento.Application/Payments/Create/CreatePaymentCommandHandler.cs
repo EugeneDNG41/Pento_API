@@ -38,7 +38,7 @@ internal sealed class CreatePaymentCommandHandler(
         {
             return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.SubscriptionNotFound);
         }
-        if (subscription.IsActive)
+        if (!subscription.IsActive)
         {
             return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.InactiveSubscription);
         }

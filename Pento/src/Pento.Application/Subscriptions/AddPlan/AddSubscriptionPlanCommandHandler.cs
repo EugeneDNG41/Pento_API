@@ -26,7 +26,12 @@ internal sealed class AddSubscriptionPlanCommandHandler(
         {
             return Result.Failure<Guid>(SubscriptionErrors.CannotAddTimedPlanToSubscriptionWithLifetimeFeatures);
         }
-
+        bool lifetimePlanExists = await subscriptionPlanRepository
+            .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && sp.DurationInDays == null, cancellationToken);
+        if (lifetimeFeatureExists || lifetimePlanExists)
+        {
+            return Result.Failure<Guid>(SubscriptionErrors.NoMoreThanOneLifetimePlan);
+        }
         bool duplicatePlan = await subscriptionPlanRepository
             .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && 
             sp.Amount == command.Amount && 

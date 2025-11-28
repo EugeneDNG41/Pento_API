@@ -31,7 +31,7 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
                .IsRequired();
         builder.Property(x => x.Status).HasConversion<string>().HasMaxLength(10)
                .IsRequired();
-        builder.Property(x => x.ReservationFor)
+        builder.Property(x => x.ReservationFor).HasConversion<string>().HasMaxLength(10)
                .IsRequired();
         builder.UseTphMappingStrategy().HasDiscriminator(x => x.ReservationFor)
                 .HasValue<FoodItemRecipeReservation>(ReservationFor.Recipe)

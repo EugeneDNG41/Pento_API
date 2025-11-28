@@ -19,8 +19,8 @@ internal sealed class AddSubscriptionFeature : IEndpoint
             Result<Guid> result = await handler.Handle(new AddSubscriptionFeatureCommand(
                 subscriptionId,
                 request.FeatureCode,
-                request.EntitlementQuota,
-                request.EntitlementResetPer), cancellationToken);
+                request.Quota,
+                request.ResetPeriod), cancellationToken);
             return result
             .Match(id => Results.CreatedAtRoute(RouteNames.GetSubscriptionById, new { subscriptionId = id }, id), CustomResults.Problem);
         }).WithTags(Tags.Subscriptions);
@@ -28,7 +28,7 @@ internal sealed class AddSubscriptionFeature : IEndpoint
     internal sealed class Request
     {
         public string FeatureCode { get; init; }
-        public int? EntitlementQuota { get; init; }
-        public TimeUnit? EntitlementResetPer { get; init; }
+        public int? Quota { get; init; }
+        public TimeUnit? ResetPeriod { get; init; }
     }
 }
