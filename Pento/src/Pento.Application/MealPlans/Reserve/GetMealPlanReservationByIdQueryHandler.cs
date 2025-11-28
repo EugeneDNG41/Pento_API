@@ -41,12 +41,12 @@ internal sealed class GetMealPlanReservationByIdQueryHandler(
                 reservation_date_utc AS ReservationDateUtc,
                 status AS Status
             FROM food_item_reservations
-            WHERE id = @Id AND reservation_for = @MealPlanEnum
+            WHERE id = @Id 
         """;
 
         MealPlanReservationInfo? reservation = await connection.QueryFirstOrDefaultAsync<MealPlanReservationInfo>(
             sqlReservation,
-            new { request.Id, MealPlanEnum = ReservationFor.MealPlan }
+            new { request.Id, MealPlanEnum = ReservationFor.MealPlan.ToString() }
         );
 
         if (reservation is null)

@@ -4,10 +4,22 @@ namespace Pento.Application.MealPlans.Reserve;
 
 public sealed record MealPlanReservationResponse(
     Guid Id,
-    Guid FoodItemId,
     Guid MealPlanId,
+
+    string MealPlanName,
+    string MealType,
+    DateOnly ScheduledDate,
+    int Servings,
+
+    Guid FoodItemId,
+    Guid FoodReferenceId,
+    string FoodReferenceName,
+    Uri? FoodReferenceImageUrl,
+    string FoodGroup,
     decimal Quantity,
-    Guid UnitId,
+    string UnitAbbreviation,
+
     DateTime ReservationDateUtc,
     ReservationStatus Status
 );
+
