@@ -19,6 +19,31 @@ internal sealed class PayOSService(
     IGenericRepository<Payment> paymentRepo,
     IUnitOfWork unitOfWork) : IPayOSService
 {
+    public async Task<Result<PaymentStatus>> GetPaymentLinkStatus(string PaymentLinkId)
+    {
+        try
+        {
+            using var client = new PayOSClient(new PayOSOptions
+            {
+                ClientId = options.Value.ClientId,
+                ApiKey = options.Value.ApiKey,
+                ChecksumKey = options.Value.ChecksumKey
+            });
+            PaymentLink paymentLink = await client.PaymentRequests.GetAsync(PaymentLinkId);
+            return paymentLink.Status switch
+            {
+                PaymentLinkStatus.Paid or PaymentLinkStatus.Underpaid => PaymentStatus.Paid,
+                PaymentLinkStatus.Expired => PaymentStatus.Expired,
+                PaymentLinkStatus.Cancelled => PaymentStatus.Cancelled,
+                PaymentLinkStatus.Processing => PaymentStatus.Processing,
+                PaymentLinkStatus.Failed or _ => PaymentStatus.Failed
+            };
+        }
+        catch
+        {
+            return Result.Failure<PaymentStatus>(PaymentErrors.PaymentStatusRetrievalFailed);
+        }
+    }
     public async Task<Result> CancelPaymentAsync(Payment payment, string? reason, CancellationToken cancellationToken)
     {
         try

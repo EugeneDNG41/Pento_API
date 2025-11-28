@@ -17,6 +17,9 @@ public static class PaymentErrors
     public static readonly Error PaymentCancellationFailed = Error.Failure(
         "PayOS.PaymentCancellationFailed",
         "Failed to cancel the payment.");
+    public static readonly Error PaymentStatusRetrievalFailed = Error.Failure(
+        "PayOS.PaymentStatusRetrievalFailed",
+        "Failed to retrieve payment status from PayOS.");
     public static readonly Error NotFound = Error.Failure(
         "Payment.NotFound",
         "Payment not found.");

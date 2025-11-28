@@ -22,6 +22,7 @@ internal sealed class UpdateFeatureCommandValidator : AbstractValidator<UpdateFe
             .WithMessage("Description must not exceed 500 characters.");
         RuleFor(x => x.DefaultQuota)
             .GreaterThan(0).When(x => x.DefaultResetPeriod != null)
-            .WithMessage("Entitlement quota must be greater than zero when entitlement reset period is specified.");
+            .NotEmpty().When(x => x.DefaultResetPeriod != null)
+            .WithMessage("Entitlement quota must be greater than zero.");
     }
 }

@@ -14,10 +14,10 @@ internal sealed class GetFoodItemLogSummary : IEndpoint
             DateTime? toDate,
             Guid? weightUnitId,
             Guid? volumeUnitId,
-            IQueryHandler<GetFoodItemLogSummaryQuery, FoodItemLogSummary> handler,
+            IQueryHandler<GetFoodItemLogSummaryQuery, FoodSummary> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<FoodItemLogSummary> result = await handler.Handle(new GetFoodItemLogSummaryQuery(
+            Result<FoodSummary> result = await handler.Handle(new GetFoodItemLogSummaryQuery(
                 fromDate?.ToUniversalTime(),
                 toDate?.ToUniversalTime(),
                 weightUnitId,

@@ -6,6 +6,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemLogs;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
 using Pento.Domain.Units;
 
@@ -14,14 +15,14 @@ namespace Pento.Application.FoodItemLogs.GetSummary;
 internal sealed class GetFoodItemLogSummaryQueryHandler(
     IUserContext userContext,
     IGenericRepository<Unit> unitRepository,
-    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetFoodItemLogSummaryQuery, FoodItemLogSummary>
+    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetFoodItemLogSummaryQuery, FoodSummary>
 {
-    public async Task<Result<FoodItemLogSummary>> Handle(GetFoodItemLogSummaryQuery query, CancellationToken cancellationToken)
+    public async Task<Result<FoodSummary>> Handle(GetFoodItemLogSummaryQuery query, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<FoodItemLogSummary>(HouseholdErrors.NotInAnyHouseHold);
+            return Result.Failure<FoodSummary>(HouseholdErrors.NotInAnyHouseHold);
         }
         Unit? weightUnit = query.WeightUnitId.HasValue
             ? await unitRepository.GetByIdAsync(query.WeightUnitId.Value, cancellationToken)
@@ -31,31 +32,19 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
             : (await unitRepository.FindAsync(u => u.Type == UnitType.Volume && u.ToBaseFactor == 1, cancellationToken)).FirstOrDefault();
         if (weightUnit is null || volumeUnit is null)
         {
-            return Result.Failure<FoodItemLogSummary>(UnitErrors.NotFound);
+            return Result.Failure<FoodSummary>(UnitErrors.NotFound);
         }
         if (weightUnit.Type != UnitType.Weight || volumeUnit.Type != UnitType.Volume)
         {
-            return Result.Failure<FoodItemLogSummary>(UnitErrors.InvalidConversion);
+            return Result.Failure<FoodSummary>(UnitErrors.InvalidConversion);
         }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
-        var filters = new List<string>
-        {
-            "l.is_deleted IS FALSE",
-            "l.is_archived IS FALSE",
-            "l.household_id = @HouseholdId"
-        };
-        var parameters = new DynamicParameters();
+
+        var parameters = new DynamicParameters();       
         parameters.Add("HouseholdId", householdId.Value, DbType.Guid);
-        if (query.FromUtc is not null)
-        {
-            filters.Add("fil.timestamp >= @FromUtc");
-            parameters.Add("FromUtc", query.FromUtc);
-        }
-        if (query.ToUtc is not null)
-        {
-            filters.Add("fil.timestamp <= @ToUtc");
-            parameters.Add("ToUtc", query.ToUtc);
-        }
+        parameters.Add("FromUtc", query.FromUtc);
+        parameters.Add("ToUtc", query.ToUtc);
+
         parameters.Add("WeightType", UnitType.Weight.ToString(), DbType.String);
         parameters.Add("VolumeType", UnitType.Volume.ToString(), DbType.String);
 
@@ -63,15 +52,14 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         parameters.Add("ConsumptionAction", FoodItemLogAction.Consumption.ToString(), DbType.String);
         parameters.Add("DiscardAction", FoodItemLogAction.Discard.ToString(), DbType.String);
 
+        parameters.Add("PendingStatus", ReservationStatus.Pending.ToString(), DbType.String);
+        parameters.Add("FulfilledStatus", ReservationStatus.Fulfilled.ToString(), DbType.String);
+        parameters.Add("CancelledStatus", ReservationStatus.Cancelled.ToString(), DbType.String);
+
         parameters.Add("WeightToBaseFactor", weightUnit.ToBaseFactor, DbType.Decimal);
         parameters.Add("VolumeToBaseFactor", volumeUnit.ToBaseFactor, DbType.Decimal);
 
-        parameters.Add("WeightUnit", weightUnit.Name ?? string.Empty, DbType.String);
-        parameters.Add("VolumeUnit", volumeUnit.Name ?? string.Empty, DbType.String);
-
-        string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
-
-        string sql = $"""
+        const string sql = $"""
         SELECT
             COALESCE(SUM(
                 CASE 
@@ -79,7 +67,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @IntakeAction 
                     THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
                 END
-            ), 0) AS TotalIntakeByWeight,
+            ), 0) AS IntakeByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -87,7 +75,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @IntakeAction 
                     THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
                 END
-            ), 0) AS TotalIntakeByVolume,
+            ), 0) AS IntakeByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -95,7 +83,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @ConsumptionAction 
                     THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
                 END
-            ), 0) AS TotalConsumptionByWeight,
+            ), 0) AS ConsumptionByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -103,7 +91,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @ConsumptionAction 
                     THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
                 END
-            ), 0) AS TotalConsumptionByVolume,
+            ), 0) AS ConsumptionByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -111,7 +99,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
                 END
-            ), 0) AS TotalDiscardByWeight,
+            ), 0) AS DiscardByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -119,26 +107,148 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
                 END
-            ), 0) AS TotalDiscardByVolume,
+            ), 0) AS DiscardByVolume,
 
             CAST(@WeightUnit AS text) AS WeightUnit,
             CAST(@VolumeUnit AS text) AS VolumeUnit
         FROM food_item_logs l
         JOIN units u ON u.id = l.unit_id
-        {whereClause};
+        WHERE l.is_deleted IS FALSE AND l.is_archived IS FALSE AND l.household_id = @HouseholdId
+            AND l.timestamp >= COALESCE(@FromUtc, l.timestamp)
+            AND l.timestamp <= COALESCE(@ToUtc, l.timestamp);
+
+        SELECT
+            COUNT (*) AS TotalFoodItems,
+            COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) > 3) AS FreshCount,
+            COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) BETWEEN 0 AND 3) AS ExpiringCount,
+            COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) < 0) AS ExpiredCount,
+        	COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @WeightType
+                        AND (f.expiration_date::date - current_date) > 3
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS FreshByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @VolumeType 
+                        AND (f.expiration_date::date - current_date) > 3
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS FreshByVolume,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @WeightType 
+                         AND (f.expiration_date::date - current_date) >= 0
+        				 AND (f.expiration_date::date - current_date) <= 3
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS ExpiringByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @VolumeType  
+                         AND (f.expiration_date::date - current_date) >= 0
+        				 AND (f.expiration_date::date - current_date) <= 3 
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS ExpiringByVolume,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @WeightType
+                         AND (f.expiration_date::date - current_date) < 0 
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS ExpiredByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @VolumeType 
+                         AND (f.expiration_date::date - current_date) < 0
+                    THEN f.quantity * u.to_base_factor
+                END
+            ), 0) AS ExpiredByVolume
+
+        FROM food_items f
+        JOIN units u ON u.id = f.unit_id
+        JOIN food_item_logs fil ON fil.food_item_id = f.id
+        WHERE f.is_deleted IS FALSE AND f.is_archived IS FALSE AND f.household_id = @HouseholdId;
+            AND fil.timestamp >= COALESCE(@FromUtc, fil.timestamp)
+            AND fil.timestamp <= COALESCE(@ToUtc, fil.timestamp);
+
+        SELECT
+            COUNT (*) AS TotalReservations,
+        	COUNT(*) FILTER (WHERE r.Status = @PendingStatus) AS PendingCount,
+            COUNT(*) FILTER (WHERE r.Status = @FulfilledStatus) AS FulfilledCount,
+            COUNT(*) FILTER (WHERE r.Status = @CancelledStatus) AS CancelledCount,
+        	COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Weight' AND r.Status = @PendingStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS PendingByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Volume' AND r.Status = @PendingStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS PendingByVolume,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Weight' AND r.Status = @FulfilledStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS FulfilledByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Volume' AND r.Status = @FulfilledStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS FulfilledByVolume,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Weight' AND r.Status = @CancelledStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS CancelledByWeight,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = 'Volume' AND r.Status = @CancelledStatus
+                    THEN r.quantity * u.to_base_factor
+                END
+            ), 0) AS CancelledByVolume
+
+
+        FROM food_item_reservations r
+        JOIN units u ON u.id = r.unit_id
+        WHERE r.is_deleted IS FALSE AND r.is_archived IS FALSE AND r.household_id = @HouseholdId;
+            AND r.reservation_date_utc >= COALESCE(@FromUtc, r.reservation_date_utc)
+            AND r.reservation_date_utc <= COALESCE(@ToUtc, r.reservation_date_utc);
         """;
 
         var command = new CommandDefinition(
             sql,
             parameters,
             cancellationToken: cancellationToken);
-
-        FoodItemLogSummary summary =
-            await connection.QuerySingleAsync<FoodItemLogSummary>(command);
-        if (summary == null)
-        {
-            return Result.Failure<FoodItemLogSummary>(FoodItemLogErrors.NotFound);
-        }
-        return summary;
+        using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
+        FoodItemLogSummary logSummary = await multi.ReadFirstAsync<FoodItemLogSummary>();
+        FoodItemSummary itemSummary = await multi.ReadFirstAsync<FoodItemSummary>();
+        ReservationSummary reservationSummary = await multi.ReadFirstAsync<ReservationSummary>();
+        var foodSummary = new FoodSummary(
+            WeightUnit: weightUnit.Name,
+            VolumeUnit: volumeUnit.Name,
+            LogSummary: logSummary,
+            FoodItemSummary: itemSummary,
+            ReservationSummary: reservationSummary
+            );
+        return foodSummary;
     }
 }

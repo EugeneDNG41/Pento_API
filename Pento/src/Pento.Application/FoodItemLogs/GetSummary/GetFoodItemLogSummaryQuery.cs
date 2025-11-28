@@ -6,4 +6,4 @@ public sealed record GetFoodItemLogSummaryQuery(
     DateTime? FromUtc,
     DateTime? ToUtc,
     Guid? WeightUnitId,
-    Guid? VolumeUnitId) : IQuery<FoodItemLogSummary>;
+    Guid? VolumeUnitId) : IQuery<FoodSummary>;
