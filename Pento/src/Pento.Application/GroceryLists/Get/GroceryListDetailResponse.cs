@@ -14,9 +14,12 @@ public sealed record GroceryListDetailResponse(
 public sealed record GroceryListItemResponse(
     Guid Id,
     Guid FoodRefId,
+    string FoodRefName,
+    Uri? ImageUrl,
     decimal Quantity,
     string? CustomName,
     Guid? UnitId,
+    string? UnitAbbreviation,
     string? Notes,
     string Priority,
     Guid AddedBy,
