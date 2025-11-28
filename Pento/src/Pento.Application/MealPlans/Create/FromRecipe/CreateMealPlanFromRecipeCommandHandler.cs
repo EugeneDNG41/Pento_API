@@ -168,7 +168,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 householdId.Value,
                 clock.UtcNow,
                 r.ReservedQuantity,
-                r.IngredientUnitId,
+                r.FoodItemUnitId,
                 mealPlan.Id
             );
 
