@@ -32,6 +32,7 @@ internal sealed class PayOSService(
             PaymentLink paymentLink = await client.PaymentRequests.GetAsync(PaymentLinkId);
             return paymentLink.Status switch
             {
+                PaymentLinkStatus.Pending => PaymentStatus.Pending,
                 PaymentLinkStatus.Paid or PaymentLinkStatus.Underpaid => PaymentStatus.Paid,
                 PaymentLinkStatus.Expired => PaymentStatus.Expired,
                 PaymentLinkStatus.Cancelled => PaymentStatus.Cancelled,

@@ -21,6 +21,7 @@ internal sealed class ProcessLimitResetJob(
     public async Task Execute(IJobExecutionContext context)
     {
         DateOnly today = dateTimeProvider.Today;
+        await ExecuteSubscriptionTracking(today, context.CancellationToken);
         await ExecuteEntitlementReset(today, context.CancellationToken);
     }
 
@@ -54,6 +55,19 @@ internal sealed class ProcessLimitResetJob(
                 subscriptionInstance != null && (today.DayNumber - subscriptionInstance.StartDate.DayNumber) % 365 == 0))
             {
                 entitlement.ResetUsage();
+            }
+        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+    }
+    private async Task ExecuteSubscriptionTracking(DateOnly today, CancellationToken cancellationToken)
+    {
+        var activeSubscriptions = (await userSubscriptionRepository
+            .FindAsync(s => s.Status == SubscriptionStatus.Active, cancellationToken)).ToList();
+        foreach (UserSubscription subscription in activeSubscriptions)
+        {
+            if (subscription.EndDate != null && subscription.EndDate <= today)
+            {
+                subscription.Expire();
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
