@@ -81,8 +81,7 @@ public sealed class FoodItem : Entity
     {
         Raise(new FoodItemQuantityAdjustedDomainEvent(Id, newQuantity - Quantity, UnitId, userId));
         Quantity = newQuantity;
-        LastModifiedBy = userId;
-        
+        LastModifiedBy = userId;      
     }
     public void Consume(decimal qtyInItemUnit, decimal qtyInRequestUnit, Guid unitId, Guid userId)
     {
