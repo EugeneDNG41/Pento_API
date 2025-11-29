@@ -7,5 +7,5 @@ namespace Pento.Application.Abstractions.Entitlement;
 
 public interface IEntitlementService
 {
-    Task<Result> CheckEntitlementAsync(Guid userId, FeatureCode featureCode, CancellationToken cancellationToken = default);
+    Task<Result> CheckEntitlementAsync(Guid userId, string featureCode, CancellationToken cancellationToken = default);
 }

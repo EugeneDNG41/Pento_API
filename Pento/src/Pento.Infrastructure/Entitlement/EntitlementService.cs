@@ -13,18 +13,12 @@ using Pento.Domain.Users;
 namespace Pento.Infrastructure.Entitlement;
 
 internal sealed class EntitlementService(
-    IGenericRepository<User> userRepository,
     IGenericRepository<UserEntitlement> userEntitlementRepository,
     IGenericRepository<Feature> featureRepository,
     IUnitOfWork unitOfWork) : IEntitlementService
 {
-    public async Task<Result> CheckEntitlementAsync(Guid userId, FeatureCode featureCode, CancellationToken cancellationToken = default)
+    public async Task<Result> CheckEntitlementAsync(Guid userId, string featureCode, CancellationToken cancellationToken = default)
     {
-        User? user = await userRepository.GetByIdAsync(userId, cancellationToken);
-        if (user is null)
-        {
-            return Result.Failure(UserErrors.NotFound);
-        }
         IEnumerable<UserEntitlement> userEntitlements = await userEntitlementRepository.FindAsync(
             ue => ue.UserId == userId && 
             ue.FeatureCode == featureCode.ToString(),
@@ -46,7 +40,7 @@ internal sealed class EntitlementService(
         }
         else
         {
-            Feature? feature = (await featureRepository.FindAsync(f => f.Code == featureCode.ToString(), cancellationToken)).SingleOrDefault();
+            Feature? feature = (await featureRepository.FindAsync(f => f.Code == featureCode, cancellationToken)).SingleOrDefault();
             if (feature is null)
             {
                 return Result.Failure(FeatureErrors.NotFound);

@@ -11,15 +11,18 @@ internal sealed class TestEntitlement : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("users/entitlements", async (
-            FeatureCode featureCode,
+        app.MapPut("users/entitlements/test", async (
+            Request request,
             IUserContext userContext,
             IEntitlementService entitlementService,
             CancellationToken cancellationToken) =>
         {
-            Result result = await entitlementService.CheckEntitlementAsync(userContext.UserId, featureCode, cancellationToken);
+            Result result = await entitlementService.CheckEntitlementAsync(userContext.UserId, request.FeatureCode, cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Users).RequireAuthorization();
     }
-
+    internal sealed class Request
+    {
+        public string FeatureCode { get; init; }
+    }
 }
