@@ -22,6 +22,7 @@ using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Email;
+using Pento.Application.Abstractions.Entitlement;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.OpenFoodFacts;
@@ -49,6 +50,7 @@ using Pento.Infrastructure.Configurations;
 using Pento.Infrastructure.Converter;
 using Pento.Infrastructure.Data;
 using Pento.Infrastructure.Email;
+using Pento.Infrastructure.Entitlement;
 using Pento.Infrastructure.File;
 using Pento.Infrastructure.Identity;
 using Pento.Infrastructure.OpenFoodFacts;
@@ -83,6 +85,7 @@ public static class DependencyInjection
 
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
+        services.AddScoped<IEntitlementService, EntitlementService>();
         services.AddSingleton(sp =>
         {
             string apiKey = configuration["Gemini:ApiKey"];
