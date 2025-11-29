@@ -1,18 +1,17 @@
-﻿
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.RefreshToken;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Users.Post;
+namespace Pento.API.Endpoints.Authentication;
 
 internal sealed class RefreshWeb : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/web-refresh", async (
+        app.MapPost("auth/web-refresh", async (
             HttpContext context,
             ICommandHandler<RefreshTokenCommand, AuthToken> handler,
             CancellationToken cancellationToken) =>
@@ -34,6 +33,6 @@ internal sealed class RefreshWeb : IEndpoint
                 });
             }
             return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
-        }).AllowAnonymous().WithTags(Tags.Users).WithSummary("Refresh user authentication token");
+        }).AllowAnonymous().WithTags(Tags.Authentication).WithSummary("Refresh user authentication token");
     }
 }

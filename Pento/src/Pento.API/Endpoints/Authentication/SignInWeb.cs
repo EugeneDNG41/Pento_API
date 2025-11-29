@@ -3,22 +3,20 @@ using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.SignIn;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Users;
-using Pento.Infrastructure.Authentication;
 
-namespace Pento.API.Endpoints.Users.Post;
+namespace Pento.API.Endpoints.Authentication;
 
-internal sealed class SignInMobile : IEndpoint
+internal sealed class SignInWeb : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/mobile-sign-in", async (
+        app.MapPost("auth/web-sign-in", async (
             HttpContext context,
             Request request, 
-            ICommandHandler<MobileSignInCommand, AuthToken> handler, 
+            ICommandHandler<WebSignInCommand, AuthToken> handler, 
             CancellationToken cancellationToken) =>
         {
-            Result<AuthToken> result = await handler.Handle(new MobileSignInCommand(
+            Result<AuthToken> result = await handler.Handle(new WebSignInCommand(
                 request.Email,
                 request.Password), cancellationToken);
             if (result.IsSuccess)
@@ -33,10 +31,10 @@ internal sealed class SignInMobile : IEndpoint
                     SameSite = SameSiteMode.None
                 });
             }
-            return result.Match(Results.Ok, CustomResults.Problem);
+            return result.Match(token => Results.Ok(new { token.AccessToken }), CustomResults.Problem);
         })
         .AllowAnonymous()
-        .WithTags(Tags.Users);
+        .WithTags(Tags.Authentication);
     }
     internal sealed class Request
     {

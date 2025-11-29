@@ -10,7 +10,7 @@ internal sealed class SearchUsers : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("users", async (
+        app.MapGet("admin/users", async (
             string? searchText,
             bool? isDeleted,
             IQueryHandler<SearchUserQuery, PagedList<UserPreview>> handler, CancellationToken cancellationToken,
@@ -19,7 +19,7 @@ internal sealed class SearchUsers : IEndpoint
         {
             Result<PagedList<UserPreview>> result = await handler.Handle(new SearchUserQuery(searchText, isDeleted, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        })
-        .WithTags(Tags.Users);
+        }).RequireAuthorization(Permissions.ManageUsers)
+        .WithTags(Tags.Admin);
     }
 }

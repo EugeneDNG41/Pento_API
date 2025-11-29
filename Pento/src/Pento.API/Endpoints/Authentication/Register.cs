@@ -4,13 +4,13 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Register;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Users.Post;
+namespace Pento.API.Endpoints.Authentication;
 
 internal sealed class Register : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users/register", async (
+        app.MapPost("auth/register", async (
             HttpContext context,
             Request request, 
             ICommandHandler<RegisterUserCommand, AuthToken> handler, 
@@ -25,7 +25,7 @@ internal sealed class Register : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .AllowAnonymous()
-        .WithTags(Tags.Users);
+        .WithTags(Tags.Authentication);
     }
 
     internal sealed class Request

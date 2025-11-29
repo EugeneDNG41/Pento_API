@@ -10,6 +10,8 @@ internal sealed class Tags
 {
     internal const string Users = "Users"; //users/{guid}/subscriptions
     internal const string Households = "Households"; //households/{guid}/subscriptions
+    internal const string Admin = "Admin";
+    internal const string Authentication = "Authentication";
 
     internal const string FoodReferences = "FoodReferences";
 

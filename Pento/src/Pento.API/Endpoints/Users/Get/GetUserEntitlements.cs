@@ -10,7 +10,7 @@ internal sealed class GetUserEntitlements : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("users/{userId:guid}/entitlements", async (
+        app.MapGet("admin/users/{userId:guid}/entitlements", async (
             Guid userId,
             string ? searchText,
             bool ? available,
@@ -22,7 +22,7 @@ internal sealed class GetUserEntitlements : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .RequireAuthorization(Permissions.ManageUsers)
-        .WithSummary("Get entitlements for a specific user (admin only).")
-        .WithTags(Tags.Users);
+        .WithSummary("Get entitlements for a specific user.")
+        .WithTags(Tags.Admin);
     }
 }

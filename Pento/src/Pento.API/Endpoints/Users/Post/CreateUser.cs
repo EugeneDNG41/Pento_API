@@ -11,7 +11,7 @@ internal sealed class CreateUser : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("users", async (
+        app.MapPost("admin/users", async (
             HttpContext context,
             Request request, 
             ICommandHandler<CreateUserCommand, BasicUserResponse> handler, 
@@ -26,8 +26,8 @@ internal sealed class CreateUser : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .RequireAuthorization(Permissions.ManageUsers)
-        .WithDescription("Creates a new user in the system (admin only).")
-        .WithTags(Tags.Users);
+        .WithDescription("Creates a new user.")
+        .WithTags(Tags.Admin);
     }
     internal sealed class Request
     {

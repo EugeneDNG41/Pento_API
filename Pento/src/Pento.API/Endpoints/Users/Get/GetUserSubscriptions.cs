@@ -11,7 +11,7 @@ internal sealed class GetUserSubscriptions : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("users/{userId:guid}/subscriptions", async (
+        app.MapGet("admin/users/{userId:guid}/subscriptions", async (
             Guid userId,
             string? searchText,
             SubscriptionStatus? status,
@@ -25,7 +25,7 @@ internal sealed class GetUserSubscriptions : IEndpoint
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .RequireAuthorization(Permissions.ManageUsers)
-        .WithSummary("Get subscriptions for a specific user (admin only).")
-        .WithTags(Tags.Users);
+        .WithSummary("Get subscriptions for a specific user.")
+        .WithTags(Tags.Admin);
     }
 }

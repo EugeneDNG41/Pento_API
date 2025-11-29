@@ -30,5 +30,21 @@ public static class SubscriptionErrors
         Error.Conflict("Subscription.CannotPauseLifetimeSubscription", "Cannot pause a lifetime subscription."); //business rule
     public static readonly Error NoMoreThanOneLifetimePlan =
         Error.Conflict("Subscription.NoMoreThanOneLifetimePlan", "A subscription can have only one lifetime plan."); //business rule
+    public static readonly Error ForbiddenAccess =
+        Error.Forbidden("Subscription.ForbiddenAccess", "You do not have permission to access this user subscription.");
+    public static readonly Error SubscriptionExpired =
+        Error.Conflict("Subscription.SubscriptionExpired", "The subscription has expired.");
+    public static readonly Error SubscriptionPaused =
+        Error.Conflict("Subscription.SubscriptionPaused", "The subscription is still on pause.");
+    public static readonly Error SubscriptionActive =
+        Error.Conflict("Subscription.SubscriptionActive", "The subscription is still active.");
+    public static readonly Error SubscriptionCancelled =
+        Error.Conflict("Subscription.SubscriptionCancelled", "The subscription has been cancelled.");
+    public static Error MinimumPauseDay(int days) =>
+        Error.Conflict("Subscription.MinimumPauseDay", $"The subscription must have been paused for at least {days} day(s).");
+    public static readonly Error CannotExtendLifetimeSubscription =
+        Error.Conflict("Subscription.CannotExtendLifetimeSubscription", "Cannot extend a lifetime subscription."); //business rule
+    public static readonly Error CannotReduceBelowRemainingDay =
+        Error.Conflict("Subscription.CannotReduceBelowRemainingDay", "Cannot reduce subscription duration below remaining day."); //business rule
 }
 

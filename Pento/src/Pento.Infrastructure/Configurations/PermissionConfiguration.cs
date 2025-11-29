@@ -67,7 +67,8 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
             Permission.UpdateMealPlans,
             Permission.DeleteMealPlans,
 
-            Permission.ManagePayments
+            Permission.ManagePayments,
+            Permission.ManageSubscriptions
             );
 
         builder
@@ -97,6 +98,7 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                     CreateRolePermission(Role.Administrator, Permission.ManageRecipes),
                     CreateRolePermission(Role.Administrator, Permission.ManageFoodReferences),
                     CreateRolePermission(Role.Administrator, Permission.ManagePayments),
+                    CreateRolePermission(Role.Administrator, Permission.ManageSubscriptions),
                     // Household permissions
                     CreateRolePermission(Role.HouseholdHead, Permission.ViewHousehold),
                     CreateRolePermission(Role.HouseholdHead, Permission.ManageHousehold),

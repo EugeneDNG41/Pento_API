@@ -84,6 +84,18 @@ public sealed class UserSubscription : Entity
         Status = SubscriptionStatus.Expired;
         Raise(new UserSubscriptionDeactivatedDomainEvent(Id));
     }
+
+    public void Extend(int durationInDays)
+    {
+        if (EndDate.HasValue)
+        {
+            EndDate = EndDate.Value.AddDays(durationInDays);
+        }
+        if (RemainingDaysAfterPause.HasValue)
+        {
+            RemainingDaysAfterPause += durationInDays;
+        }
+    }
 }
 public sealed class UserSubscriptionActivatedDomainEvent(Guid userSubscriptionId) : DomainEvent
 {

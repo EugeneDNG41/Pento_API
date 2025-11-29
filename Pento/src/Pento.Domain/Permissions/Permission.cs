@@ -71,6 +71,7 @@ public sealed class Permission
     public static readonly Permission ManageRecipes = new("recipes:manage", "Manage Recipes", "Create/update/delete recipes and moderate community submissions.");
     public static readonly Permission ManageFoodReferences = new("foodreferences:manage", "Manage Food References", "Manage the authoritative food reference catalog.");
     public static readonly Permission ManagePayments = new("payments:manage", "Manage Payments", "Manage payment settings and view transaction history.");
+    public static readonly Permission ManageSubscriptions = new("subscriptions:manage", "Manage Subscriptions", "Manage subscriptions and user subscriptions.");
 
 
 
