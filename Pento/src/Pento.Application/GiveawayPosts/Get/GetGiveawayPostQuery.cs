@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Giveaways.Get;
 
 namespace Pento.Application.GiveawayPosts.Get;
-public sealed record GetGiveawayPostQuery(Guid PostId) : IQuery<GiveawayPostResponse>
-{
-}
+public sealed record GetGiveawayPostByIdQuery(Guid Id)
+    : IQuery<GiveawayPostDetailResponse>;
