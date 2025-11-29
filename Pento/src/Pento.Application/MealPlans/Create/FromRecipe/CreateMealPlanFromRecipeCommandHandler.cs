@@ -3,7 +3,6 @@ using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Create.From_Recipe;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
@@ -13,6 +12,7 @@ using Pento.Domain.MealPlanRecipe;
 using Pento.Domain.MealPlans;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
+using Pento.Domain.Units;
 
 namespace Pento.Application.MealPlans.Create.FromRecipe;
 internal sealed class CreateMealPlanFromRecipeCommandHandler(
@@ -21,6 +21,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
     IGenericRepository<RecipeIngredient> ingredientRepo,
     IGenericRepository<MealPlan> mealPlanRepo,
     IGenericRepository<FoodReference> foodRefRepo,
+    IGenericRepository<Unit> unitRepo,
     IGenericRepository<MealPlanRecipe> mealPlanRecipeRepo,
     IGenericRepository<FoodItemMealPlanReservation> reservationRepo,
     IConverterService converter,
@@ -65,6 +66,27 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 x => x.HouseholdId == householdId.Value &&
                      x.FoodReferenceId == ingredient.FoodRefId,
                 cancellationToken)).FirstOrDefault();
+            Unit? ingredientUnit = await unitRepo.GetByIdAsync(ingredient.UnitId, cancellationToken);
+            if (ingredientUnit is null)
+            {
+                return Result.Failure<MealPlanAutoReserveResult>(
+                    UnitErrors.NotFound
+                );
+            }
+
+
+            Unit? foodItemUnit = null;
+            if (foodItem is not null)
+            {
+                foodItemUnit = await unitRepo.GetByIdAsync(foodItem.UnitId, cancellationToken);
+                if (foodItemUnit is null)
+                {
+                    return Result.Failure<MealPlanAutoReserveResult>(
+                        UnitErrors.NotFound
+                    );
+                }
+            }
+
 
             if (foodItem is null)
             {
@@ -73,7 +95,8 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                     ingredient.FoodRefId,
                     name,
                     ingredient.Quantity,
-                    ingredient.UnitId
+                    ingredient.UnitId,
+                    ingredientUnit.Abbreviation
                 ));
                 continue;
             }
@@ -95,7 +118,8 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                         ingredient.FoodRefId,
                         name,
                         ingredient.Quantity,
-                        ingredient.UnitId
+                        ingredient.UnitId,
+                        ingredientUnit.Abbreviation
                     ));
                     continue;
                 }
@@ -110,7 +134,9 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                     ingredient.FoodRefId,
                     name,
                     ingredient.Quantity,
-                    ingredient.UnitId
+                    ingredient.UnitId,
+                    ingredientUnit.Abbreviation
+
                 ));
                 continue;
             }
@@ -121,7 +147,9 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 requiredQty,
                 ingredient.Quantity,
                 ingredient.UnitId,
-                foodItem.UnitId
+                foodItem.UnitId,
+                IngredientUnitAbbreviation: ingredientUnit.Abbreviation,
+                FoodItemUnitAbbreviation: foodItemUnit!.Abbreviation 
             ));
         }
 
