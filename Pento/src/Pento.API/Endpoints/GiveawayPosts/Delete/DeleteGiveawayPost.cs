@@ -21,7 +21,7 @@ internal sealed class DeleteGiveawayPost : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags("Giveaways")
+         .WithTags(Tags.GiveawayPosts)
         .RequireAuthorization();
     }
 }

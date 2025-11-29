@@ -13,10 +13,6 @@ public static class GiveawayPostErrors
         "GiveawayPost.NotFound",
         "The specified giveaway post was not found."
     );
-    public static readonly Error InvalidDateRange = Error.Conflict(
-        "GiveawayPost.InvalidDateRange",
-        "The pickup end date must be later than the pickup start date."
-    );
     public static readonly Error InsufficientQuantity = Error.Conflict(
         "GiveawayPost.InsufficientQuantity",
         "The giveaway quantity must be greater than zero."
@@ -32,5 +28,9 @@ public static class GiveawayPostErrors
     public static readonly Error CannotDelete = Error.Conflict(
         code: "GiveawayPost.CannotDelete",
         description: "Only Open or Cancelled posts can be deleted."
+    );
+    public static readonly Error PostNotInClaimedState = Error.Conflict(
+        code: "GiveawayPost.PostNotInClaimedState",
+        description: "Only posts in Claimed state can be completed."
     );
 }

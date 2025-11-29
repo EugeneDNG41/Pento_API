@@ -1,17 +1,21 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Clock;
+using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Giveaways.Create;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.GiveawayPosts;
+using Pento.Domain.Households;
 
 namespace Pento.Application.GiveawayPosts.Create;
 
 internal sealed class CreateGiveawayPostCommandHandler(
     IGenericRepository<FoodItem> foodItemRepo,
     IGenericRepository<GiveawayPost> giveawayRepo,
+    IGenericRepository<FoodItemDonationReservation> donationReservationRepo,
     IUserContext userContext,
     IDateTimeProvider clock,
     IUnitOfWork uow
@@ -20,6 +24,12 @@ internal sealed class CreateGiveawayPostCommandHandler(
     public async Task<Result<Guid>> Handle(CreateGiveawayPostCommand cmd, CancellationToken cancellationToken)
     {
         Guid userId = userContext.UserId;
+        Guid? householdId = userContext.HouseholdId;
+
+        if (householdId is null)
+        {
+            return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
+        }
 
         FoodItem? foodItem = await foodItemRepo.GetByIdAsync(cmd.FoodItemId, cancellationToken);
         if (foodItem is null)
@@ -27,15 +37,16 @@ internal sealed class CreateGiveawayPostCommandHandler(
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
 
-        if (cmd.Quantity > foodItem.Quantity)
+
+
+        decimal qtyInItemUnit = cmd.Quantity;
+
+
+        if (qtyInItemUnit > foodItem.Quantity)
         {
             return Result.Failure<Guid>(GiveawayPostErrors.InsufficientQuantity);
         }
 
-        if (cmd.PickupStartDate.HasValue && cmd.PickupEndDate.HasValue && cmd.PickupStartDate > cmd.PickupEndDate)
-        {
-            return Result.Failure<Guid>(GiveawayPostErrors.InvalidDateRange);
-        }
 
         var post = new GiveawayPost(
             id: Guid.CreateVersion7(),
@@ -54,6 +65,26 @@ internal sealed class CreateGiveawayPostCommandHandler(
 
         giveawayRepo.Add(post);
 
+        foodItem.Reserve(
+            qtyInItemUnit,          
+            cmd.Quantity,           
+            foodItem.UnitId,        
+            userId
+        );
+
+        var donationReservation = new FoodItemDonationReservation(
+            id: Guid.CreateVersion7(),
+            foodItemId: foodItem.Id,
+            householdId: householdId.Value,
+            reservationDateUtc: clock.UtcNow,
+            quantity: qtyInItemUnit,
+            unitId: foodItem.UnitId,
+            reservationStatus: ReservationStatus.Pending,
+            reservationFor: ReservationFor.Donation,
+            giveAwayPostId: post.Id
+        );
+
+        donationReservationRepo.Add(donationReservation);
 
         await uow.SaveChangesAsync(cancellationToken);
 

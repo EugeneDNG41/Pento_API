@@ -1,6 +1,7 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GiveawayClaims.Accept;
+using Pento.Application.Giveaways.Claims.Complete;
 
 namespace Pento.API.Endpoints.GiveawayClaims.Post;
 
@@ -23,5 +24,23 @@ internal sealed class AcceptGiveawayClaim : IEndpoint
         })
         .WithTags(Tags.GiveawayClaims)
         .RequireAuthorization();
+
+        app.MapPost("giveawayclaims/{id:guid}/complete", async (
+           Guid id,
+           ICommandHandler<CompleteGiveawayClaimCommand, Guid> handler,
+           CancellationToken ct
+       ) =>
+        {
+            var command = new CompleteGiveawayClaimCommand(id);
+
+            Domain.Abstractions.Result<Guid> result = await handler.Handle(command, ct);
+
+            return result.Match(
+                _ => Results.NoContent(),
+                CustomResults.Problem
+            );
+        })
+        .WithTags(Tags.GiveawayClaims)
+       .RequireAuthorization();
     }
 }

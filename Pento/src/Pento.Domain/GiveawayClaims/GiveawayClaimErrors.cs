@@ -37,4 +37,7 @@ public static class GiveawayClaimErrors
     public static readonly Error PostNotAcceptable = Error.Failure(
         code: "GiveawayClaim.PostNotAcceptable",
         description: "The giveaway post is not in a state to accept claims.");
+    public static readonly Error NotAccepted = Error.Failure(
+        code: "GiveawayClaim.NotAccepted",
+        description: "This giveaway claim has not been accepted and cannot be completed.");
 }
