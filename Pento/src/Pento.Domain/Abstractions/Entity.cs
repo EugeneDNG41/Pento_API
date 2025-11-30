@@ -12,11 +12,9 @@ public abstract class Entity
     protected Entity(Guid id) => Id = id;
     protected Entity() { }
     public Guid Id { get; init; }
-    public bool IsArchived { get; private set; }
     public bool IsDeleted { get; private set; }
     public IReadOnlyList<IDomainEvent> GetDomainEvents() => _domainEvents.ToList();
     public void ClearDomainEvents() => _domainEvents.Clear();
     protected void Raise(IDomainEvent domainEvent) => _domainEvents.Add(domainEvent);
-    protected void Archive() => IsArchived = true;
     public void Delete() => IsDeleted = true;
 }

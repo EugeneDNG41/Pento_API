@@ -30,7 +30,6 @@ internal sealed class GetFoodItemByIdQueryHandler(
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",
-            "fi.is_archived IS FALSE",
             "fi.id = @Id",
             "fi.household_id = @HouseholdId"
         };

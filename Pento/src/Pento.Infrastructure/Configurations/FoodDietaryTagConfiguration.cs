@@ -33,6 +33,6 @@ public sealed class FoodDietaryTagConfiguration : IEntityTypeConfiguration<FoodD
             .WithMany()
             .HasForeignKey(x => x.DietaryTagId)
             .OnDelete(DeleteBehavior.Cascade);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

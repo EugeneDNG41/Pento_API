@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Vision;
+﻿namespace Pento.Application.Abstractions.Vision;
 
 public sealed class VisionAnalysisResponse
 {

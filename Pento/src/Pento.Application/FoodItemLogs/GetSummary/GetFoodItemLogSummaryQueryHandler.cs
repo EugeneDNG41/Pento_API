@@ -106,7 +106,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
             ), 0) AS DiscardByVolume
         FROM food_item_logs l
         JOIN units u ON u.id = l.unit_id
-        WHERE l.is_deleted IS FALSE AND l.is_archived IS FALSE AND l.household_id = @HouseholdId
+        WHERE l.is_deleted IS FALSE AND l.household_id = @HouseholdId
             AND l.timestamp >= COALESCE(@FromUtc, l.timestamp)
             AND l.timestamp <= COALESCE(@ToUtc, l.timestamp);
 
@@ -168,7 +168,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         FROM food_items f
         JOIN units u ON u.id = f.unit_id
         JOIN food_item_logs fil ON fil.food_item_id = f.id
-        WHERE f.is_deleted IS FALSE AND f.is_archived IS FALSE AND f.household_id = @HouseholdId
+        WHERE f.is_deleted IS FALSE AND f.household_id = @HouseholdId
             AND fil.timestamp >= COALESCE(@FromUtc, fil.timestamp)
             AND fil.timestamp <= COALESCE(@ToUtc, fil.timestamp);
 

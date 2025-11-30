@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.GroceryLists.CreateDetail;
+namespace Pento.Application.GroceryLists.Create;
 
 public sealed record CreateGroceryListDetailCommand(
     string Name,

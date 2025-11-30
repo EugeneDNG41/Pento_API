@@ -1,7 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.PayOS;
-using Pento.Application.Payments.Cancel;
 using Pento.Application.Payments.Delete;
 using Pento.Domain.Abstractions;
 

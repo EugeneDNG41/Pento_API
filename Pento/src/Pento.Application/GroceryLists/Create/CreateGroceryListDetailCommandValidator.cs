@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Pento.Domain.GroceryListItems;
 
-namespace Pento.Application.GroceryLists.CreateDetail;
+namespace Pento.Application.GroceryLists.Create;
 
 public sealed class CreateGroceryListDetailCommandValidator : AbstractValidator<CreateGroceryListDetailCommand>
 {

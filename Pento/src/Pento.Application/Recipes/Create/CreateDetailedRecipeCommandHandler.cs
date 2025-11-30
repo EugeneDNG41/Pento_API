@@ -17,9 +17,9 @@ using Pento.Domain.Users;
 
 namespace Pento.Application.Recipes.Create;
 internal sealed class CreateDetailedRecipeCommandHandler(
-    IRecipeRepository recipeRepository,
-    IRecipeIngredientRepository recipeIngredientRepository,
-    IRecipeDirectionRepository recipeDirectionRepository,
+    IGenericRepository<Recipe> recipeRepository,
+    IGenericRepository<RecipeIngredient> recipeIngredientRepository,
+    IGenericRepository<RecipeDirection> recipeDirectionRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitRepository,
     IUserContext userContext,
@@ -68,7 +68,7 @@ internal sealed class CreateDetailedRecipeCommandHandler(
             DateTime.UtcNow
         );
 
-        await recipeRepository.AddAsync(recipe, cancellationToken);
+        recipeRepository.Add(recipe);
 
 
         foreach (RecipeIngredientRequest item in command.Ingredients)
@@ -94,7 +94,7 @@ internal sealed class CreateDetailedRecipeCommandHandler(
                 DateTime.UtcNow
             );
 
-            await recipeIngredientRepository.AddAsync(ingredient, cancellationToken);
+            recipeIngredientRepository.Add(ingredient);
         }
 
 
@@ -126,7 +126,7 @@ internal sealed class CreateDetailedRecipeCommandHandler(
                 DateTime.UtcNow
             );
 
-            await recipeDirectionRepository.AddAsync(direction, cancellationToken);
+            recipeDirectionRepository.Add(direction);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

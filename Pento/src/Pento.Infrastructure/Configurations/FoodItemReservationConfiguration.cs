@@ -38,7 +38,7 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
                .HasValue<FoodItemMealPlanReservation>(ReservationFor.MealPlan)
                .HasValue<FoodItemDonationReservation>(ReservationFor.Donation);
         builder.Property<uint>("Version").IsRowVersion();
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
 internal sealed class FoodItemRecipeReservationConfiguration : IEntityTypeConfiguration<FoodItemRecipeReservation>

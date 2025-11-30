@@ -24,7 +24,6 @@ internal sealed class SearchFoodItemQueryHandler(
         var filters = new List<string>
         {
             "fil.is_deleted IS FALSE",
-            "fil.is_archived IS FALSE",
             "fil.household_id = @HouseholdId"
         };
         var parameters = new DynamicParameters();

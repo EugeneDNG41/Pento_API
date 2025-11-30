@@ -1,7 +1,5 @@
-﻿using OpenFoodFacts4Net.Json.Data;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.OpenFoodFacts;
 using Pento.Application.FoodReferences.Get;
 using Pento.Application.FoodReferences.Scan;
 using Pento.Domain.Abstractions;

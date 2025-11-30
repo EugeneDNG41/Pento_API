@@ -1,5 +1,6 @@
-﻿using Pento.Application.Abstractions.Clock;
+﻿using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 
@@ -7,12 +8,12 @@ namespace Pento.Application.Recipes.Update;
 
 internal sealed class UpdateRecipeCommandHandler : ICommandHandler<UpdateRecipeCommand>
 {
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly IGenericRepository<Recipe> _recipeRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly IDateTimeProvider _dateTimeProvider;
 
     public UpdateRecipeCommandHandler(
-        IRecipeRepository recipeRepository,
+        IGenericRepository<Recipe> recipeRepository,
         IUnitOfWork unitOfWork,
         IDateTimeProvider dateTimeProvider)
     {

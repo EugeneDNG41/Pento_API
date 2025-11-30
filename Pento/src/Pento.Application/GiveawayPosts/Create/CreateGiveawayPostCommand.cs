@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.GiveawayPosts;
 
-namespace Pento.Application.Giveaways.Create;
+namespace Pento.Application.GiveawayPosts.Create;
 
 public sealed record CreateGiveawayPostCommand(
     Guid FoodItemId,

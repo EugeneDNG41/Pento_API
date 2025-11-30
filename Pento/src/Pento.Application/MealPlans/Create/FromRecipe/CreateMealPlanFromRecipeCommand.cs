@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.MealPlans;
 
-namespace Pento.Application.MealPlans.Create.From_Recipe;
+namespace Pento.Application.MealPlans.Create.FromRecipe;
 public sealed record CreateMealPlanFromRecipeCommand(
     Guid RecipeId,
     MealType MealType,

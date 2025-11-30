@@ -32,18 +32,16 @@ internal sealed class GetCompartmentsQueryHandler(
             FROM storages 
             WHERE (@StorageType is NULL OR type = @StorageType )
             AND is_deleted = false 
-            AND is_archived = false 
             AND household_id = @HouseholdId 
             AND name ILIKE '%' || COALESCE(@SearchText, '') || '%';
             SELECT
                 s.id AS {nameof(StoragePreview.StorageId)},
                 s.name AS {nameof(StoragePreview.StorageName)},
                 s.type AS {nameof(StoragePreview.StorageType)},
-                (SELECT COUNT(*) FROM compartments c WHERE c.storage_id = s.id AND c.is_deleted = false AND c.is_archived = false) AS {nameof(StoragePreview.TotalCompartments)}
+                (SELECT COUNT(*) FROM compartments c WHERE c.storage_id = s.id AND c.is_deleted = false) AS {nameof(StoragePreview.TotalCompartments)}
             FROM storages s
             WHERE (@StorageType is NULL OR s.type = @StorageType )
             AND s.is_deleted = false 
-            AND s.is_archived = false 
             AND s.household_id = @HouseholdId
             AND s.name ILIKE '%' || COALESCE(@SearchText, '') || '%'
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;           

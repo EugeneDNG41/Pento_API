@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Create.From_Recipe;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Create.FromRecipe;

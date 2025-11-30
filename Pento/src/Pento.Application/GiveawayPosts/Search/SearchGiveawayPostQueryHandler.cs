@@ -3,10 +3,9 @@ using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
-using Pento.Application.GiveawayPosts.Search;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Giveaways.Search;
+namespace Pento.Application.GiveawayPosts.Search;
 
 internal sealed class SearchGiveawayPostQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory

@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Converter;
-using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Exceptions;
-using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;

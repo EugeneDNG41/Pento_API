@@ -26,13 +26,13 @@ internal sealed class GetCompartmentsQueryHandler(
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         const string sql =
             $"""
-            SELECT COUNT(*) FROM compartments WHERE storage_id = @StorageId AND is_deleted = false AND is_archived = false and household_id = @HouseholdId AND name ILIKE '%' || COALESCE(@SearchText, '') || '%';
+            SELECT COUNT(*) FROM compartments WHERE storage_id = @StorageId AND is_deleted = false AND household_id = @HouseholdId AND name ILIKE '%' || COALESCE(@SearchText, '') || '%';
             SELECT
                 c.id AS {nameof(CompartmentPreview.CompartmentId)},
                 c.name AS {nameof(CompartmentPreview.CompartmentName)},
-                (SELECT COUNT(*) FROM food_items fi WHERE fi.compartment_id = c.id AND fi.is_deleted = false AND fi.is_archived = false and fi.quantity > 0) AS {nameof(CompartmentPreview.TotalItems)}
+                (SELECT COUNT(*) FROM food_items fi WHERE fi.compartment_id = c.id AND fi.is_deleted = false AND  fi.quantity > 0) AS {nameof(CompartmentPreview.TotalItems)}
             FROM compartments c
-            WHERE c.storage_id = @StorageId AND c.is_deleted = false AND c.is_archived = false and c.household_id = @HouseholdId
+            WHERE c.storage_id = @StorageId AND c.is_deleted = false AND c.household_id = @HouseholdId
                 AND c.name ILIKE '%' || COALESCE(@SearchText, '') || '%'
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;           
             """;

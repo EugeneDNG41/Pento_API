@@ -17,7 +17,6 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
         var filters = new List<string>
         {
             "is_deleted IS FALSE",
-            "is_archived IS FALSE",
             "user_id = @UserId"
         };
         var parameters = new DynamicParameters();

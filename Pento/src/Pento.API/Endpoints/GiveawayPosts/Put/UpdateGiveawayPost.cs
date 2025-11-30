@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GiveawayPosts.Update;
-using Pento.Application.Giveaways.Update;
 using Pento.Domain.GiveawayPosts;
 
 namespace Pento.API.Endpoints.GiveawayPosts.Put;

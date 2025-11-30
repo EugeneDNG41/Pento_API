@@ -1,7 +1,7 @@
-﻿using Pento.Application.Abstractions.Clock;
-using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.Identity;
+﻿using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.ThirdPartyServices.Identity;
+using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Application.Users.Get;
 using Pento.Application.Users.Search;
 using Pento.Domain.Abstractions;

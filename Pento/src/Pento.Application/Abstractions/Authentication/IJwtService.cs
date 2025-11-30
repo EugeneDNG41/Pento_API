@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Identity;
+﻿using Pento.Application.Abstractions.ThirdPartyServices.Identity;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Abstractions.Authentication;

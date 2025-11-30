@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Application.Giveaways.Create;
 namespace Pento.Application.GiveawayPosts.Create;
 public sealed class CreateGiveawayPostCommandValidator
     : AbstractValidator<CreateGiveawayPostCommand>

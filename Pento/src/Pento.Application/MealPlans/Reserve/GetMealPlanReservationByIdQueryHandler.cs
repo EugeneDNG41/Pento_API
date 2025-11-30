@@ -3,14 +3,13 @@ using Dapper;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Reserve;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 
-namespace Pento.Application.FoodItemReservations.Get;
+namespace Pento.Application.MealPlans.Reserve;
 
 internal sealed class GetMealPlanReservationByIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory,

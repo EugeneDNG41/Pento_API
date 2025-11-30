@@ -29,7 +29,6 @@ internal sealed class SearchFoodItemQueryHandler(
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",
-            "fi.is_archived IS FALSE"
         };
         var parameters = new DynamicParameters();
         if (query.FoodReferenceId  != null)

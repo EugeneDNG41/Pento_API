@@ -25,6 +25,6 @@ public sealed class DietaryTagConfiguration : IEntityTypeConfiguration<DietaryTa
 
         builder.Property(x => x.Description)
             .HasMaxLength(500);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

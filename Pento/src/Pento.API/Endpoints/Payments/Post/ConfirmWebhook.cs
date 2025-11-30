@@ -1,5 +1,5 @@
 ﻿using Pento.API.Extensions;
-using Pento.Application.Abstractions.PayOS;
+using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Payments.Post;

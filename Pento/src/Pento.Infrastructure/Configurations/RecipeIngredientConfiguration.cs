@@ -38,6 +38,6 @@ internal sealed class RecipeIngredientConfiguration : IEntityTypeConfiguration<R
         builder.HasOne<Domain.Units.Unit>()
             .WithMany()
             .HasForeignKey(ri => ri.UnitId);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

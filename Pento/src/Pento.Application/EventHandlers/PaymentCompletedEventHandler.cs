@@ -1,7 +1,8 @@
-﻿using Pento.Application.Abstractions.Clock;
-using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 using Pento.Domain.Shared;
@@ -13,6 +14,7 @@ namespace Pento.Application.EventHandlers;
 
 internal sealed class PaymentCompletedEventHandler(
     IDateTimeProvider dateTimeProvider,
+    ISubscriptionService subscriptionService,
     IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IGenericRepository<Payment> paymentRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
@@ -44,11 +46,21 @@ internal sealed class PaymentCompletedEventHandler(
                 dateTimeProvider.Today,
                 plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Add(newUserSubscription);
+            userSubscription = newUserSubscription;
         } 
         else
         {
             userSubscription.Renew(plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Update(userSubscription);
+        }
+        Result activationResult = await subscriptionService.ActivateAsync(
+            userSubscription,
+            cancellationToken);
+        if (activationResult.IsFailure)
+        {
+            throw new PentoException(
+                nameof(PaymentCompletedEventHandler),
+                activationResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

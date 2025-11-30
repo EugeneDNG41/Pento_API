@@ -15,11 +15,11 @@ public sealed class Milestone : Entity
     public bool IsActive { get; private set; }
 }
 
-public sealed class UserMilestone
+public sealed class UserMilestone : Entity
 {
     public Guid UserId { get; set; }
     public Guid MilestoneId { get; private set; }
-    public DateTime AchievedOnUtc { get; private set; }
+    public DateTime AchievedOn { get; private set; }
 }
 
 public sealed class MilestoneRequirement : Entity
@@ -40,6 +40,5 @@ public sealed class UserActivity
 {
     public Guid UserId { get; private set; }
     public string ActivityCode { get; private set; }
-    public DateTime PerformedOnUtc { get; private set; }
-    public int Quantity { get; private set; }
+    public DateTime PerformedOn { get; private set; }
 }

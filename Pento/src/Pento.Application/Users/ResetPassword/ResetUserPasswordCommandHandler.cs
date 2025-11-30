@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.Identity;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.ThirdPartyServices.Identity;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 

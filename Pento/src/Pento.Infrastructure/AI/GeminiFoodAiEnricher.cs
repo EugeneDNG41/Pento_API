@@ -1,25 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Net.Http;
+﻿using System.Globalization;
 using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 using GenerativeAI;
 using GenerativeAI.Types;
 using Microsoft.Extensions.Configuration;
-using OpenFoodFacts4Net.ApiClient;
-using OpenFoodFacts4Net.Json.Data;
 using Pento.Application.Abstractions.File;
-using Pento.Application.Abstractions.OpenFoodFacts;
 using Pento.Application.FoodReferences.Enrich;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
-using Pento.Infrastructure.OpenFoodFacts;
-using Pento.Infrastructure.Repositories;
 
 namespace Pento.Infrastructure.AI;
 

@@ -28,6 +28,6 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
             .HasForeignKey(u => u.HouseholdId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.SetNull);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using Pento.Domain.FoodItemReservations;
 
-namespace Pento.Application.FoodItemReservations.Get;
+namespace Pento.Application.Recipes.Get;
 
 public sealed record RecipeReservationResponse(
     Guid Id,

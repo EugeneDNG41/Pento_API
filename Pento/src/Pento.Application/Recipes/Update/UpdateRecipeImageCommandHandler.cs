@@ -8,7 +8,7 @@ using Pento.Domain.Recipes;
 namespace Pento.Application.Recipes.Update;
 
 internal sealed class UpdateRecipeImageCommandHandler(
-    IRecipeRepository recipeRepository,
+    IGenericRepository<Recipe> recipeRepository,
     IBlobService blobService,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<UpdateRecipeImageCommand, string>

@@ -21,6 +21,6 @@ internal sealed class PaymentConfiguration : IEntityTypeConfiguration<Payment>
         builder.Property(p => p.CancellationReason).HasMaxLength(500).IsRequired(false);
         builder.HasOne<User>().WithMany().HasForeignKey(p => p.UserId);
         builder.HasOne<SubscriptionPlan>().WithMany().HasForeignKey(p => p.SubscriptionPlanId);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

@@ -21,4 +21,7 @@ public static class CompartmentErrors
     public static readonly Error DuplicateName = Error.Conflict(
         "Compartment.DuplicateName",
         "A compartment with the same name already exists.");
+    public static readonly Error AtLeastOne = Error.Conflict(
+        "Compartment.AtLeastOne",
+        "There must be at least one compartment.");
 }

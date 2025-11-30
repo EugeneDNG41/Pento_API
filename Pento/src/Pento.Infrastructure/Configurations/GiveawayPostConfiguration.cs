@@ -17,7 +17,7 @@ internal sealed class GiveawayPostConfiguration : IEntityTypeConfiguration<Givea
     {
         builder.ToTable("giveaway_posts");
         builder.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
 
     }
 }

@@ -1,7 +1,6 @@
-﻿using Pento.Application.Abstractions.Email;
-using Pento.Application.Abstractions.Exceptions;
-using Pento.Application.Abstractions.Identity;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.ThirdPartyServices.Identity;
 using Pento.Application.Users.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;

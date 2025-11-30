@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Pento.Application.RecipeDirections.Update;
 
-namespace Pento.Application.Recipes.UpdateDirectionImage;
+namespace Pento.Application.RecipeDirections.Update;
 
 public sealed class UpdateRecipeDirectionImageValidator
     : AbstractValidator<UpdateRecipeDirectionImageCommand>

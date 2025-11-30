@@ -80,6 +80,6 @@ internal sealed class GroceryListItemConfiguration : IEntityTypeConfiguration<Gr
             .WithMany()
             .HasForeignKey(x => x.AddedBy)
             .OnDelete(DeleteBehavior.Restrict);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

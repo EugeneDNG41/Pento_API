@@ -1,5 +1,5 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.PayOS;
+using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
 using Pento.Domain.Shared;
 
 namespace Pento.Application.Payments.Create;

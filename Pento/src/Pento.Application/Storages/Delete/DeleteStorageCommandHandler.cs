@@ -3,6 +3,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems;
 using Pento.Domain.Storages;
 
 namespace Pento.Application.Storages.Delete;
@@ -11,6 +12,7 @@ internal sealed class DeleteStorageCommandHandler(
     IUserContext userContext,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<Compartment> compartmentRepository,
+    IGenericRepository<FoodItem> foodItemRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<DeleteStorageCommand>
 {
     public async Task<Result> Handle(DeleteStorageCommand request, CancellationToken cancellationToken)
@@ -25,9 +27,16 @@ internal sealed class DeleteStorageCommandHandler(
         {
             return Result.Failure(StorageErrors.ForbiddenAccess);
         }
-        if (await compartmentRepository.AnyAsync(c => c.StorageId == storage.Id, cancellationToken))
+        IEnumerable<Compartment> compartments = await compartmentRepository.FindAsync(c => c.StorageId == storage.Id, cancellationToken);
+        bool hasFoodItems = await foodItemRepository.AnyAsync(fi => compartments.Select(c => c.Id).Contains(fi.CompartmentId), cancellationToken);
+        if (hasFoodItems)
         {
             return Result.Failure(StorageErrors.NotEmpty);
+        }
+        bool otherStorageExists = !await storageRepository.AnyAsync(s => s.HouseholdId == currentHouseholdId && s.Id != storage.Id, cancellationToken);
+        if (otherStorageExists)
+        {
+            return Result.Failure(StorageErrors.AtLeastOne);
         }
         storage.Delete();
         await unitOfWork.SaveChangesAsync(cancellationToken);

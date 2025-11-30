@@ -30,7 +30,6 @@ internal sealed class GetCompartmentByIdQueryHandler(
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",
-            "fi.is_archived IS FALSE",
             "fi.compartment_id = @CompartmentId"
 
         };
@@ -53,7 +52,7 @@ internal sealed class GetCompartmentByIdQueryHandler(
                 name AS {nameof(CompartmentResponse.Name)},
                 notes AS {nameof(CompartmentResponse.Notes)}
             FROM compartments
-            WHERE id = @CompartmentId AND is_deleted = false AND is_archived = false;
+            WHERE id = @CompartmentId AND is_deleted = false;
 
             SELECT COUNT(*) 
                 FROM food_items fi

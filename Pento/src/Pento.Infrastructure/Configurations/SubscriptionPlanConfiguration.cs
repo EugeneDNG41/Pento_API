@@ -14,7 +14,7 @@ internal sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<S
         builder.Property(sp => sp.Amount).IsRequired();
         builder.Property(sp => sp.Currency).HasConversion<string>().HasMaxLength(3).IsRequired();
         builder.Property(sp => sp.DurationInDays).IsRequired(false);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(sp => sp.SubscriptionId);
     }
 }

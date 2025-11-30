@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 
 namespace Pento.Application.Recipes.Create;
 internal sealed class CreateRecipeCommandHandler(
-    IRecipeRepository recipeRepository,
+    IGenericRepository<Recipe> recipeRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateRecipeCommand, Guid>
 {
@@ -32,7 +33,7 @@ internal sealed class CreateRecipeCommandHandler(
             DateTime.UtcNow
         );
 
-        await recipeRepository.AddAsync(recipe, cancellationToken);
+        recipeRepository.Add(recipe);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(recipe.Id);

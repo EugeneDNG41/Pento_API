@@ -17,16 +17,16 @@ using Npgsql;
 using PayOS;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Caching;
-using Pento.Application.Abstractions.Clock;
-using Pento.Application.Abstractions.Converter;
 using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.Email;
-using Pento.Application.Abstractions.Entitlement;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.File;
-using Pento.Application.Abstractions.Identity;
-using Pento.Application.Abstractions.OpenFoodFacts;
-using Pento.Application.Abstractions.PayOS;
+using Pento.Application.Abstractions.ThirdPartyServices.Barcode;
+using Pento.Application.Abstractions.ThirdPartyServices.Email;
+using Pento.Application.Abstractions.ThirdPartyServices.Identity;
+using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
+using Pento.Application.Abstractions.UtilityServices.Caching;
+using Pento.Application.Abstractions.UtilityServices.Clock;
+using Pento.Application.Abstractions.UtilityServices.Converter;
 using Pento.Application.Abstractions.Vision;
 using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts;
@@ -44,20 +44,20 @@ using Pento.Domain.Users;
 using Pento.Infrastructure.AI;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
-using Pento.Infrastructure.Caching;
-using Pento.Infrastructure.Clock;
 using Pento.Infrastructure.Configurations;
-using Pento.Infrastructure.Converter;
 using Pento.Infrastructure.Data;
-using Pento.Infrastructure.Email;
-using Pento.Infrastructure.Entitlement;
+using Pento.Infrastructure.DomainServices;
 using Pento.Infrastructure.File;
-using Pento.Infrastructure.Identity;
-using Pento.Infrastructure.OpenFoodFacts;
 using Pento.Infrastructure.Outbox;
-using Pento.Infrastructure.PayOS;
-using Pento.Infrastructure.Quartz;
 using Pento.Infrastructure.Repositories;
+using Pento.Infrastructure.ThirdPartyServices.Email;
+using Pento.Infrastructure.ThirdPartyServices.Identity;
+using Pento.Infrastructure.ThirdPartyServices.OpenFoodFacts;
+using Pento.Infrastructure.ThirdPartyServices.PayOS;
+using Pento.Infrastructure.ThirdPartyServices.Quartz;
+using Pento.Infrastructure.UtilityServices.Caching;
+using Pento.Infrastructure.UtilityServices.Clock;
+using Pento.Infrastructure.UtilityServices.Converter;
 using Pento.Infrastructure.Vision;
 using Quartz;
 using ZiggyCreatures.Caching.Fusion;
@@ -86,6 +86,7 @@ public static class DependencyInjection
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
+        services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddSingleton(sp =>
         {
             string apiKey = configuration["Gemini:ApiKey"];
@@ -125,17 +126,12 @@ public static class DependencyInjection
         
 
 
-        services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
-        services.AddScoped<IBlogPostRepository, BlogPostRepository>();
-        services.AddScoped<IGiveawayClaimRepository, GiveawayClaimRepository>();
-        services.AddScoped<IGiveawayPostRepository, GiveawayPostRepository>();
-        services.AddScoped<ICommentRepository, CommentRepository>();
-        services.AddScoped<IRecipeRepository, RecipeRepository>();
+
         services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
         services.AddScoped<IRecipeDirectionRepository,RecipeDirectionRepository>();
-        services.AddScoped<IUnitRepository, UnitRepository>();
+
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
         services.AddScoped<IBlobService, BlobService>();

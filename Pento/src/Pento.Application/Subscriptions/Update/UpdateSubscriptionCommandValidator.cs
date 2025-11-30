@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Subscriptions.Create;
+namespace Pento.Application.Subscriptions.Update;
 
 internal sealed class UpdateSubscriptionCommandValidator : AbstractValidator<UpdateSubscriptionCommand>
 {

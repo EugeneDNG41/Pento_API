@@ -12,7 +12,7 @@ internal sealed class SubscriptionFeatureConfiguration : IEntityTypeConfiguratio
         builder.HasKey(sf => sf.Id);
         builder.Property(f => f.Quota).IsRequired(false);
         builder.Property(sf => sf.ResetPeriod).HasConversion<string>().HasMaxLength(10).IsRequired(false);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(sp => sp.SubscriptionId);
         builder.HasOne<Feature>().WithMany().HasForeignKey(sp => sp.FeatureCode);
     }

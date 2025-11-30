@@ -22,7 +22,7 @@ internal sealed class CommentConfiguration : IEntityTypeConfiguration<Comment>
 
         builder.HasOne<User>().WithMany().HasForeignKey(c => c.UserId);
         builder.HasOne<BlogPost>().WithMany().HasForeignKey(c => c.BlogPostId);
-        builder.HasQueryFilter(c => !c.IsDeleted && !c.IsArchived);
+        builder.HasQueryFilter(c => !c.IsDeleted);
 
     }
 }

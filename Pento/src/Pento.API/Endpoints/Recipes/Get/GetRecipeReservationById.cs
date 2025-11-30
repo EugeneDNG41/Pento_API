@@ -1,6 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItemReservations.Get;
 using Pento.Application.Recipes.Get;
 using Pento.Domain.Abstractions;
 

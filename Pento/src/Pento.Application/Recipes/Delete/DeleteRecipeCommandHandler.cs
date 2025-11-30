@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
@@ -10,11 +11,11 @@ using Pento.Domain.Recipes;
 namespace Pento.Application.Recipes.Delete;
 internal sealed class DeleteRecipeCommandHandler : ICommandHandler<DeleteRecipeCommand>
 {
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly IGenericRepository<Recipe> _recipeRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeleteRecipeCommandHandler(
-        IRecipeRepository recipeRepository,
+        IGenericRepository<Recipe> recipeRepository,
         IUnitOfWork unitOfWork)
     {
         _recipeRepository = recipeRepository;

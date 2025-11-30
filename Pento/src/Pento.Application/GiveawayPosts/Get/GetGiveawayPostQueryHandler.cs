@@ -2,11 +2,9 @@
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.GiveawayPosts.Get;
-using Pento.Application.Giveaways.Get;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Giveaways.Get;
+namespace Pento.Application.GiveawayPosts.Get;
 
 internal sealed class GetGiveawayPostByIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory

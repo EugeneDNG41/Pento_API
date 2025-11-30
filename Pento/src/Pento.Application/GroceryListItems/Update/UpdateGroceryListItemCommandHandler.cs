@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.GroceryListItems;
-using Pento.Application.Abstractions.Clock;
 
 namespace Pento.Application.GroceryListItems.Update;
 

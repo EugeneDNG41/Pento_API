@@ -1,7 +1,7 @@
 ﻿using PayOS.Models.V2.PaymentRequests;
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.PayOS;
+using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
 using Pento.Application.Payments.Create;
 using Pento.Domain.Abstractions;
 

@@ -8,7 +8,7 @@ using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
 using Pento.Domain.Recipes;
 
-namespace Pento.Application.FoodItemReservations.Get;
+namespace Pento.Application.Recipes.Get;
 
 internal sealed class GetRecipeReservationsByHouseholdIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory,

@@ -4,9 +4,10 @@ using FluentValidation;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Subscriptions.GetById;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Subscriptions.GetById;
+namespace Pento.Application.Subscriptions.GetAll;
 
 internal sealed class GetSubscriptionsQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetSubscriptionsQuery, PagedList<SubscriptionDetailResponse>>
 {

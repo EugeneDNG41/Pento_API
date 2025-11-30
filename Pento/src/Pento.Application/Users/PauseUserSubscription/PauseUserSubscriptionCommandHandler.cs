@@ -1,6 +1,7 @@
-﻿using Pento.Application.Abstractions.Clock;
-using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
@@ -8,6 +9,7 @@ using Pento.Domain.UserSubscriptions;
 namespace Pento.Application.Users.PauseUserSubscription;
 
 internal sealed class PauseUserSubscriptionCommandHandler(
+    ISubscriptionService subscriptionService,
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<PauseUserSubscriptionCommand>
@@ -39,6 +41,11 @@ internal sealed class PauseUserSubscriptionCommandHandler(
         {
             userSubscription.Pause(dateTimeProvider.Today);
             userSubscriptionRepository.Update(userSubscription);
+            Result deactivationResult = await subscriptionService.DeactivateAsync(userSubscription, cancellationToken);
+            if (deactivationResult.IsFailure)
+            {
+                return Result.Failure(deactivationResult.Error);
+            }
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }

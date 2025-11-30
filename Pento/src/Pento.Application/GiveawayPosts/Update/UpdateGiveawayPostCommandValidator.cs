@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using Pento.Application.GiveawayPosts.Update;
 
-namespace Pento.Application.Giveaways.Update;
+namespace Pento.Application.GiveawayPosts.Update;
 
 public sealed class UpdateGiveawayPostCommandValidator
     : AbstractValidator<UpdateGiveawayPostCommand>

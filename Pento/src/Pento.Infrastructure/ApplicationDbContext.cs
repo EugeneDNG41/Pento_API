@@ -1,13 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.Subscriptions;
 using Pento.Domain.Units;
 using Pento.Infrastructure.Outbox;
 

@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GroceryLists.Create;
-using Pento.Application.GroceryLists.CreateDetail;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
 

@@ -30,6 +30,11 @@ internal sealed class DeleteCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.NotEmpty);
         }
+        bool otherCompartmentExists = await compartmentRepository.AnyAsync(c => c.HouseholdId == currentHouseholdId && c.Id != compartment.Id, cancellationToken);
+        if (!otherCompartmentExists)
+        {
+            return Result.Failure(CompartmentErrors.AtLeastOne);
+        }
         //should check if compartment is empty before deleting
         compartment.Delete();
         await unitOfWork.SaveChangesAsync(cancellationToken);

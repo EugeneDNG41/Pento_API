@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Giveaways.Create;
+using Pento.Application.GiveawayPosts.Create;
 using Pento.Domain.GiveawayPosts;
 
 namespace Pento.API.Endpoints.Giveaways.Post;

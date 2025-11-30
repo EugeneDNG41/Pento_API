@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Subscriptions.GetById;
+namespace Pento.Application.Subscriptions.GetAll;
 
 internal sealed class GetSubscriptionsQueryValidator : AbstractValidator<GetSubscriptionsQuery>
 {

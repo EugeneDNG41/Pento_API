@@ -27,7 +27,7 @@ public sealed class MealPlanRecipeConfiguration : IEntityTypeConfiguration<MealP
 
         builder.HasIndex(x => new { x.MealPlanId, x.RecipeId })
             .IsUnique();
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
-        builder.HasQueryFilter(x => !x.MealPlan.IsDeleted && !x.MealPlan.IsArchived);
+        builder.HasQueryFilter(x => !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.MealPlan.IsDeleted);
     }
 }

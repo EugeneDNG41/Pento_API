@@ -21,4 +21,7 @@ public static class StorageErrors
     public static Error DuplicateName => Error.Conflict(
         "Storage.DuplicateName",
         "A storage with the same name already exists.");
+    public static Error AtLeastOne => Error.Conflict(
+        "Storage.AtLeastOne",
+        "There must be at least one storage.");
 }

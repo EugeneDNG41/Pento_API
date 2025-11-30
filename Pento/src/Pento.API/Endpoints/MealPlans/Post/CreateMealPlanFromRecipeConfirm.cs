@@ -1,6 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.MealPlans.Create.From_Recipe;
 using Pento.Application.MealPlans.Create.FromRecipe;
 using Pento.Domain.MealPlans;
 

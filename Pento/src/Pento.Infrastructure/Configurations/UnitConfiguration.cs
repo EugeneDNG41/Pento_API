@@ -28,6 +28,6 @@ internal sealed class UnitConfiguration : IEntityTypeConfiguration<Unit>
 
         builder.Property(u => u.ToBaseFactor)
             .HasColumnType("decimal(10,3)");
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

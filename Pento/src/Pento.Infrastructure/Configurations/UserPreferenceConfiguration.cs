@@ -36,6 +36,6 @@ public sealed class UserPreferenceConfiguration : IEntityTypeConfiguration<UserP
             .WithMany()
             .HasForeignKey(x => x.DietaryTagId)
             .OnDelete(DeleteBehavior.Cascade);
-        builder.HasQueryFilter(x => !x.IsArchived && !x.IsDeleted);
+        builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }

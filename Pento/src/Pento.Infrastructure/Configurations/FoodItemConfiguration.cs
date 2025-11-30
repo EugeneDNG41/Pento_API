@@ -70,7 +70,7 @@ internal sealed class FoodItemConfiguration : IEntityTypeConfiguration<FoodItem>
 
         builder.Property(x => x.Notes)
            .HasMaxLength(500);
-        builder.HasQueryFilter(x => !x.IsDeleted && !x.IsArchived);
+        builder.HasQueryFilter(x => !x.IsDeleted);
         builder.Property<uint>("Version").IsRowVersion();
     }
 }

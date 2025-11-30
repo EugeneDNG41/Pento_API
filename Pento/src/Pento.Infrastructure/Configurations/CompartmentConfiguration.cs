@@ -32,7 +32,7 @@ internal sealed class CompartmentConfiguration : IEntityTypeConfiguration<Compar
                .OnDelete(DeleteBehavior.Cascade);
         builder.Property(c => c.Notes)
                .HasMaxLength(500);
-        builder.HasQueryFilter(c => !c.IsDeleted && !c.IsArchived);
+        builder.HasQueryFilter(c => !c.IsDeleted);
         builder.Property<uint>("Version").IsRowVersion();
     }
 }

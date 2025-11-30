@@ -1,6 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Vision;
-using Pento.Application.Vision;
 
 namespace Pento.API.Endpoints.Visions.Post;
 

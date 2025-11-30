@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 using Pento.Application.GiveawayPosts.Search;
-using Pento.Application.Giveaways.Search;
 using Pento.Domain.GiveawayPosts;
 
 namespace Pento.API.Endpoints.Giveaways.Get;

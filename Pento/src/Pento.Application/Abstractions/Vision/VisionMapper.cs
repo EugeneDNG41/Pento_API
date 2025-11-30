@@ -1,6 +1,6 @@
 ﻿using Azure.AI.Vision.ImageAnalysis;
 
-namespace Pento.Application.Vision;
+namespace Pento.Application.Abstractions.Vision;
 
 public static class VisionMapper
 {

@@ -43,10 +43,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -102,10 +98,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_active");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -148,10 +140,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -201,10 +189,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("description");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -234,10 +218,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("FoodReferenceId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_reference_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -276,10 +256,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -333,10 +309,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -413,10 +385,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -515,10 +483,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -588,10 +552,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("giveaway_post_id");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -640,10 +600,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("FoodItemId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_item_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -709,10 +665,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("household_member_id");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsCompleted")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -758,10 +710,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("FoodRefId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -827,10 +775,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -866,10 +810,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("invite_code_expiration_utc");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -892,10 +832,6 @@ namespace Pento.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -937,10 +873,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1035,10 +967,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<DateTime?>("ExpiresAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("expires_at");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1407,10 +1335,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("dietary_tag_id");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -1453,10 +1377,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("text")
                         .HasColumnName("image_url");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -1493,10 +1413,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("FoodRefId")
                         .HasColumnType("uuid")
                         .HasColumnName("food_ref_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1544,10 +1460,6 @@ namespace Pento.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1616,10 +1528,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
                         .HasColumnName("image_url");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1726,10 +1634,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<Guid>("HouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("household_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1858,10 +1762,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -1889,10 +1789,6 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("character varying(50)")
                         .HasColumnName("feature_code");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -1944,10 +1840,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("duration_in_days");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -1977,10 +1869,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)")
                         .HasColumnName("abbreviation");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -2076,10 +1964,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("dietary_tag_id");
 
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
@@ -2120,10 +2004,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date")
                         .HasColumnName("end_date");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -2202,10 +2082,6 @@ namespace Pento.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("identity_id");
-
-                    b.Property<bool>("IsArchived")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_archived");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")

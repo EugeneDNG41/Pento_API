@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using Pento.Application.Abstractions.Clock;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Domain.Abstractions;
 using Quartz;
 
