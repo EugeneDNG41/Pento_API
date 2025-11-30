@@ -8,7 +8,6 @@ namespace Pento.Infrastructure.ThirdPartyServices.Quartz;
 
 [DisallowConcurrentExecution]
 internal sealed class ProcessExpirationDateTrackingJob(
-    IConverterService converterService,
     IGenericRepository<FoodItem> foodItemRepository,
     IUnitOfWork unitOfWork) : IJob // + subscription notification job
 {
@@ -17,12 +16,7 @@ internal sealed class ProcessExpirationDateTrackingJob(
         var foodItems = (await foodItemRepository.FindAsync(fi => fi.Quantity > 0, context.CancellationToken)).ToList();
         foreach (FoodItem? foodItem in foodItems)
         {
-            FoodItemStatus status = converterService.FoodItemStatusCalculator(foodItem.ExpirationDate);
-            if (foodItem.Status != status)
-            {
-                foodItem.UpdateStatus(status);
-                foodItemRepository.Update(foodItem);
-            }//if expiring or expired, notify user? future enhancement
+            //do somthething
         }
         await unitOfWork.SaveChangesAsync(context.CancellationToken);
     }

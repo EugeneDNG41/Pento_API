@@ -36,11 +36,6 @@ internal sealed class SearchFoodItemQueryHandler(
             filters.Add("fi.food_reference_id = @FoodReferenceId");
             parameters.Add("FoodReferenceId", query.FoodReferenceId);
         }
-        if (query.FoodItemStatus.HasValue)
-        {
-            filters.Add("fi.status = @FoodItemStatus");
-            parameters.Add("FoodItemStatus", query.FoodItemStatus.ToString());
-        }
         if (query.FoodGroup.HasValue)
         {
             filters.Add("food_group = @FoodGroup");
@@ -73,11 +68,6 @@ internal sealed class SearchFoodItemQueryHandler(
         {
             filters.Add("expiration_date < @ExpirationDateBefore"); // use <= for inclusive
             parameters.Add("ExpirationDateBefore", query.ExpirationDateBefore.Value);
-        }
-        if (query.Status.HasValue)
-        {
-            filters.Add("status = @Status");
-            parameters.Add("Status", query.Status.ToString());
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
 

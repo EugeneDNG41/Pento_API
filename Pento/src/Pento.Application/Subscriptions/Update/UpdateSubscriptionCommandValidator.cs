@@ -9,9 +9,13 @@ internal sealed class UpdateSubscriptionCommandValidator : AbstractValidator<Upd
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Subscription Id is required.");
         RuleFor(x => x.Name)
-            .MaximumLength(20).WithMessage("Subscription name must not exceed 20 characters.");
+            .NotEmpty().When(x => x.Name != null)
+            .WithMessage("Name must not be empty if provided.")
+            .MaximumLength(20).WithMessage("Name must not exceed 20 characters.");
         RuleFor(x => x.Description)
-            .MaximumLength(500).WithMessage("Subscription description must not exceed 500 characters.");
+            .NotEmpty().When(x => x.Description != null)
+            .WithMessage("Description must not be empty if provided.")
+            .MaximumLength(500).WithMessage("Description must not exceed 500 characters.");
     }
 }
 

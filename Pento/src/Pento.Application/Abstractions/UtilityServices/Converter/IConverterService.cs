@@ -21,5 +21,4 @@ public interface IConverterService
         StorageType newType, 
         FoodReference foodRef, 
         DateOnly currentExpiry);
-    FoodItemStatus FoodItemStatusCalculator(DateOnly expirationDate);
 }

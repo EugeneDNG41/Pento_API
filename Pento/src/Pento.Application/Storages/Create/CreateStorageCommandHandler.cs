@@ -1,8 +1,10 @@
 ﻿
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Storages;
@@ -12,6 +14,7 @@ namespace Pento.Application.Storages.Create;
 
 internal sealed class CreateStorageCommandHandler(
     IUserContext userContext,
+    IActivityService activityService,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Household> householdReposiry,
@@ -41,6 +44,10 @@ internal sealed class CreateStorageCommandHandler(
             householdId.Value,
             null);
         compartmentRepository.Add(compartment);
+        await activityService.RecordActivityAsync(
+             userContext.UserId,
+             ActivityCode.STORAGE_CREATE.ToString(),
+             cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return storage.Id;
     }

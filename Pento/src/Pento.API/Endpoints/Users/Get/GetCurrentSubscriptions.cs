@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.GetCurrentSubscriptions;
+using Pento.Application.UserSubscriptions.GetCurrentSubscriptions;
 using Pento.Domain.Abstractions;
 using Pento.Domain.UserSubscriptions;
 

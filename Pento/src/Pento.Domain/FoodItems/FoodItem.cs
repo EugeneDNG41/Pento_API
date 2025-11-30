@@ -16,7 +16,6 @@ public sealed class FoodItem : Entity
         decimal quantity, 
         Guid unitId, 
         DateOnly expirationDate,
-        FoodItemStatus status,
         string? notes,
         Guid addedBy)
     {
@@ -29,7 +28,6 @@ public sealed class FoodItem : Entity
         Quantity = quantity;
         UnitId = unitId;
         ExpirationDate = expirationDate;
-        Status = status;
         Notes = notes;
         AddedBy = addedBy;
     }
@@ -42,7 +40,6 @@ public sealed class FoodItem : Entity
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }
     public DateOnly ExpirationDate { get; private set; }
-    public FoodItemStatus Status { get; private set; }
     public string? Notes { get; private set; } 
     public Guid AddedBy { get; private set; }
     public Guid? LastModifiedBy { get; private set; }
@@ -56,7 +53,6 @@ public sealed class FoodItem : Entity
         decimal quantity,
         Guid unitId,
         DateOnly expirationDate,
-        FoodItemStatus status,
         string? notes,
         Guid addedBy)
     {
@@ -70,7 +66,6 @@ public sealed class FoodItem : Entity
             quantity,
             unitId,
             expirationDate,
-            status,
             notes,
             addedBy);
         foodItem.Raise(new FoodItemAddedDomainEvent(foodItem.Id, quantity, unitId, addedBy));
@@ -136,9 +131,5 @@ public sealed class FoodItem : Entity
     {
         CompartmentId = newCompartmentId;
         LastModifiedBy = userId;
-    }
-    public void UpdateStatus(FoodItemStatus newStatus)
-    {
-        Status = newStatus;
     }
 }

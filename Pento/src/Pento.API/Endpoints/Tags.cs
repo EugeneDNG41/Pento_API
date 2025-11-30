@@ -40,7 +40,8 @@ internal sealed class Tags
     internal const string Payments = "Payments";
     internal const string Features = "Features";
 
-    internal const string Badges = "Badges"; //requirement = badges/{guid}/requirements, badges/{guid}/perks
+    internal const string Milestones = "Milestones";
+    internal const string Activities = "Activities";
 
     internal const string PointBalances = "PointBalances";
     internal const string PointCategories = "PointCategories";

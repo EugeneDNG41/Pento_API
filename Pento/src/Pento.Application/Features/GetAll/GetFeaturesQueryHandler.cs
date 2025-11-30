@@ -23,7 +23,7 @@ internal sealed class GetFeaturesQueryHandler(ISqlConnectionFactory sqlConnectio
                        THEN CONCAT(default_quota::text, ' Total')
                     ELSE CONCAT(default_quota::text, ' Per ', default_reset_period)
                 END AS DefaultEntitlement                
-            FROM Features
+            FROM features
             WHERE (@SearchText IS NULL OR name ILIKE '%' || @SearchText ||  '%' OR description ILIKE '%' || @SearchText || '%' OR code ILIKE '%' || @SearchText || '%')
             ORDER BY name;
         ";

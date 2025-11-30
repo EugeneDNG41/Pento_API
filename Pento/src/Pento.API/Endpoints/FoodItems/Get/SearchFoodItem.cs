@@ -15,14 +15,12 @@ internal sealed class SearchFoodItemGet : IEndpoint
     {
         app.MapGet("food-items/search", async(
             Guid? foodReferenceId,
-            FoodItemStatus? foodItemStatus,
             string? searchText,
             FoodGroup? foodGroup,
             decimal? fromQuantity,
             decimal? toQuantity,
             DateOnly? expirationDateAfter,
             DateOnly? expirationDateBefore,
-            FoodItemStatus? status,
             IQueryHandler <SearchFoodItemQuery, PagedList<FoodItemPreview>> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
@@ -31,14 +29,12 @@ internal sealed class SearchFoodItemGet : IEndpoint
             Result<PagedList<FoodItemPreview>> result = await handler.Handle(
                 new SearchFoodItemQuery(
                     foodReferenceId,
-                    foodItemStatus,
                     searchText,
                     foodGroup,
                     fromQuantity,
                     toQuantity,
                     expirationDateAfter,
                     expirationDateBefore,
-                    status,
                     pageNumber,
                     pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);

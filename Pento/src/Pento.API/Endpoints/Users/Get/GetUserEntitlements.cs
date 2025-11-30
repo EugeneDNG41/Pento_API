@@ -1,7 +1,7 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.GetCurrentEntitlements;
-using Pento.Application.Users.GetUserEntitlements;
+using Pento.Application.UserEntitlements.GetCurrentEntitlements;
+using Pento.Application.UserEntitlements.GetUserEntitlements;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Get;

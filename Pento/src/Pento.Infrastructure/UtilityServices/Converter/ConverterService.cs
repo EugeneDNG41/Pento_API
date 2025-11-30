@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Application.Abstractions.UtilityServices.Converter;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
@@ -13,23 +12,6 @@ internal sealed class ConverterService(
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<Unit> unitRepository) : IConverterService
 {
-    private const int ExpiringSoonThresholdDays = 3;
-    public FoodItemStatus FoodItemStatusCalculator(DateOnly expirationDate)
-    {
-        DateOnly today = dateTimeProvider.Today;
-        if (expirationDate < today)
-        {
-            return FoodItemStatus.Expired;
-        }
-        else if (expirationDate <= today.AddDays(ExpiringSoonThresholdDays))
-        {
-            return FoodItemStatus.Expiring;
-        }
-        else
-        {
-            return FoodItemStatus.Available;
-        }
-    }
     public decimal Convert(decimal quantity, Unit fromUnit, Unit toUnit)
     {
         if (fromUnit.Id == toUnit.Id)

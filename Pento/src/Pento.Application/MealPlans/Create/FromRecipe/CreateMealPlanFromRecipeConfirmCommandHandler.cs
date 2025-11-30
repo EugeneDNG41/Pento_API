@@ -94,7 +94,6 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     quantity: m.RequiredQuantity,
                     unitId: m.UnitId,
                     expirationDate: today,
-                    status: FoodItemStatus.Available, 
                     notes: $"Auto-created from missing ingredient of recipe {recipe.Title}",
                     addedBy: userContext.UserId
                 );

@@ -17,7 +17,6 @@ namespace Pento.Application.FoodItems.Create;
 internal sealed class CreateFoodItemCommandHandler(
     IUserContext userContext,
     IDateTimeProvider dateTimeProvider,
-    IConverterService converterService,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitRepository,
     IGenericRepository<Compartment> compartmentRepository,
@@ -93,7 +92,6 @@ internal sealed class CreateFoodItemCommandHandler(
                 command.Quantity,
                 validUnit.Id,
                 validExpirationDate,
-                converterService.FoodItemStatusCalculator(validExpirationDate),
                 command.Notes,
                 userContext.UserId);
         foodItemRepository.Add(foodItem);

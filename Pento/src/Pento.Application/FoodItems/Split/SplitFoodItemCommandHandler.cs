@@ -53,7 +53,6 @@ internal sealed class SplitFoodItemCommandHandler(
             quantity: command.Quantity,
             unitId: command.UnitId,
             expirationDate: foodItem.ExpirationDate,
-            converterService.FoodItemStatusCalculator(foodItem.ExpirationDate),
             notes: foodItem.Notes,
             addedBy: userContext.UserId);
         foodItemRepository.Add(newFoodItem);

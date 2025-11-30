@@ -7,13 +7,11 @@ namespace Pento.Application.FoodItems.Search;
 
 public sealed record SearchFoodItemQuery(
     Guid? FoodReferenceId,
-    FoodItemStatus? FoodItemStatus,
     string? SearchText,
     FoodGroup? FoodGroup,
     decimal? FromQuantity,
     decimal? ToQuantity,
     DateOnly? ExpirationDateAfter,
     DateOnly? ExpirationDateBefore,
-    FoodItemStatus? Status,
     int PageNumber,
     int PageSize) : IQuery<PagedList<FoodItemPreview>>;

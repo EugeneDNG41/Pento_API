@@ -1,13 +1,16 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.UtilityServices.Converter;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.FoodItems;
 
 namespace Pento.Application.FoodItems.Consume;
 
 internal sealed class ConsumeFoodItemCommandHandler(
+    IActivityService activityService,
     IConverterService converter,
     IUserContext userContext,
     IGenericRepository<FoodItem> foodItemRepository,
@@ -44,6 +47,10 @@ internal sealed class ConsumeFoodItemCommandHandler(
         }
         foodItem.Consume(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
         foodItemRepository.Update(foodItem);
+        await activityService.RecordActivityAsync(
+            userContext.UserId,
+            ActivityCode.FOOD_ITEM_CONSUME.ToString(),
+            cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

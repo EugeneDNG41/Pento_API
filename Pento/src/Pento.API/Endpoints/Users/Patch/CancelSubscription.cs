@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.CancelSubscription;
+using Pento.Application.UserSubscriptions.CancelSubscription;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Patch;

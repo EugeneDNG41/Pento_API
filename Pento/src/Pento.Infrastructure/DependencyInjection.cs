@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Dapper;
 using GenerativeAI;
-using GenerativeAI.Types;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
-using PayOS;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Data;
@@ -29,18 +27,10 @@ using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Application.Abstractions.UtilityServices.Converter;
 using Pento.Application.Abstractions.Vision;
 using Pento.Domain.Abstractions;
-using Pento.Domain.BlogPosts;
-using Pento.Domain.Comments;
-using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.GiveawayClaims;
-using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlans;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.RecipeIngredients;
-using Pento.Domain.Recipes;
-using Pento.Domain.Units;
-using Pento.Domain.Users;
 using Pento.Infrastructure.AI;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
@@ -87,6 +77,8 @@ public static class DependencyInjection
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
         services.AddScoped<ISubscriptionService, SubscriptionService>();
+        services.AddScoped<IMilestoneService, MilestoneService>();
+        services.AddScoped<IActivityService, ActivityService>();
         services.AddSingleton(sp =>
         {
             string apiKey = configuration["Gemini:ApiKey"];
@@ -124,8 +116,6 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         
-
-
         services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
         services.AddScoped<IMealPlanRepository, MealPlanRepository>();
 

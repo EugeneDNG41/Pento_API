@@ -17,7 +17,7 @@ internal sealed class TestEntitlement : IEndpoint
             IEntitlementService entitlementService,
             CancellationToken cancellationToken) =>
         {
-            Result result = await entitlementService.CheckEntitlementAsync(userContext.UserId, request.FeatureCode, cancellationToken);
+            Result result = await entitlementService.UseEntitlementAsync(userContext.UserId, request.FeatureCode, cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
         }).WithTags(Tags.Users).RequireAuthorization();
     }

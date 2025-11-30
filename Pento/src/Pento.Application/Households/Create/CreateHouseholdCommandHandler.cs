@@ -2,8 +2,10 @@
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
@@ -14,6 +16,7 @@ namespace Pento.Application.Households.Create;
 
 internal sealed class CreateHouseholdCommandHandler(
     IUserContext userContext,
+    IActivityService activityService,
     IGenericRepository<Household> householdRepository, 
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
@@ -61,7 +64,10 @@ internal sealed class CreateHouseholdCommandHandler(
         var fridgeCompartment = Compartment.Create("Default Fridge Compartment", fridge.Id, household.Id, null);
         var freezerCompartment = Compartment.Create("Default Freezer Compartment", freezer.Id, household.Id, null);
         compartmentRepository.AddRange([pantryCompartment, fridgeCompartment, freezerCompartment]);
-
+        await activityService.RecordActivityAsync(
+            currentUser.Id,
+            ActivityCode.HOUSEHOLD_CREATE.ToString(),
+            cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;
     }

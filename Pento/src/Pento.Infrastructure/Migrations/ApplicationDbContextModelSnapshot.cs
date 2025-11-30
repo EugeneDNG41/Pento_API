@@ -17,10 +17,55 @@ namespace Pento.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Pento.Domain.Activities.Activity", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Code")
+                        .HasName("pk_activities");
+
+                    b.ToTable("activities", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Code = "STORAGE_CREATE",
+                            Description = "Creating a new storage location to store your food items.",
+                            Name = "Create Storage"
+                        },
+                        new
+                        {
+                            Code = "FOOD_ITEM_CONSUME",
+                            Description = "Consuming a food item from your storage/compartment.",
+                            Name = "Consume Food Item"
+                        },
+                        new
+                        {
+                            Code = "HOUSEHOLD_CREATE",
+                            Description = "Creating a new household to manage your food, grocery lists, and meal plans with others.",
+                            Name = "Create Household"
+                        });
+                });
 
             modelBuilder.Entity("Pento.Domain.BlogPosts.BlogPost", b =>
                 {
@@ -408,12 +453,6 @@ namespace Pento.Infrastructure.Migrations
                     b.Property<decimal>("Quantity")
                         .HasColumnType("decimal(10,3)")
                         .HasColumnName("quantity");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("status");
 
                     b.Property<Guid>("UnitId")
                         .HasColumnType("uuid")
@@ -920,6 +959,79 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("meal_plans", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.MilestoneRequirements.MilestoneRequirement", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired()
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("activity_code");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<int>("Quota")
+                        .HasColumnType("integer")
+                        .HasColumnName("quota");
+
+                    b.Property<int?>("WithinDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("within_days");
+
+                    b.HasKey("Id")
+                        .HasName("pk_milestone_requirements");
+
+                    b.HasIndex("ActivityCode")
+                        .HasDatabaseName("ix_milestone_requirements_activity_code");
+
+                    b.HasIndex("MilestoneId")
+                        .HasDatabaseName("ix_milestone_requirements_milestone_id");
+
+                    b.ToTable("milestone_requirements", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Milestones.Milestone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
+
+                    b.HasKey("Id")
+                        .HasName("pk_milestones");
+
+                    b.ToTable("milestones", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.Payments.Payment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1322,6 +1434,12 @@ namespace Pento.Infrastructure.Migrations
                             Code = "subscriptions:manage",
                             Description = "Manage subscriptions and user subscriptions.",
                             Name = "Manage Subscriptions"
+                        },
+                        new
+                        {
+                            Code = "milestones:manage",
+                            Description = "Create/update/delete user milestones and requirements.",
+                            Name = "Manage Milestones"
                         });
                 });
 
@@ -1896,6 +2014,35 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("units", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.UserActivities.UserActivity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActivityCode")
+                        .IsRequired()
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("activity_code");
+
+                    b.Property<DateTime>("PerformedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("performed_on");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_activities");
+
+                    b.HasIndex("ActivityCode")
+                        .HasDatabaseName("ix_user_activities_activity_code");
+
+                    b.ToTable("user_activities", (string)null);
+                });
+
             modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1948,6 +2095,38 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_user_entitlements_user_subscription_id");
 
                     b.ToTable("user_entitlements", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.UserMilestones.UserMilestone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("AchievedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("achieved_on");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deleted");
+
+                    b.Property<Guid>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_milestones");
+
+                    b.HasIndex("MilestoneId")
+                        .HasDatabaseName("ix_user_milestones_milestone_id");
+
+                    b.ToTable("user_milestones", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>
@@ -2261,6 +2440,11 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             PermissionCode = "subscriptions:manage",
+                            RoleName = "Administrator"
+                        },
+                        new
+                        {
+                            PermissionCode = "milestones:manage",
                             RoleName = "Administrator"
                         },
                         new
@@ -2904,6 +3088,23 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_meal_plans_households_household_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.MilestoneRequirements.MilestoneRequirement", b =>
+                {
+                    b.HasOne("Pento.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_milestone_requirements_activities_activity_code");
+
+                    b.HasOne("Pento.Domain.Milestones.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("MilestoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_milestone_requirements_milestones_milestone_id");
+                });
+
             modelBuilder.Entity("Pento.Domain.Payments.Payment", b =>
                 {
                     b.HasOne("Pento.Domain.Subscriptions.SubscriptionPlan", null)
@@ -3031,6 +3232,16 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_subscription_plans_subscriptions_subscription_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.UserActivities.UserActivity", b =>
+                {
+                    b.HasOne("Pento.Domain.Activities.Activity", null)
+                        .WithMany()
+                        .HasForeignKey("ActivityCode")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_activities_activities_activity_code");
+                });
+
             modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
                 {
                     b.HasOne("Pento.Domain.Subscriptions.Feature", null)
@@ -3051,6 +3262,16 @@ namespace Pento.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UserSubscriptionId")
                         .HasConstraintName("fk_user_entitlements_user_subscription_user_subscription_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.UserMilestones.UserMilestone", b =>
+                {
+                    b.HasOne("Pento.Domain.Milestones.Milestone", null)
+                        .WithMany()
+                        .HasForeignKey("MilestoneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_milestones_milestones_milestone_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>

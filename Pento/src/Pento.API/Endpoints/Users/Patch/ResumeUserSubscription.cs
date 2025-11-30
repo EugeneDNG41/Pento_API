@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.ResumeUserSubscription;
+using Pento.Application.UserSubscriptions.ResumeUserSubscription;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Patch;

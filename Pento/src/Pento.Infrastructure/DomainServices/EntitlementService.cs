@@ -5,13 +5,12 @@ using Pento.Domain.Subscriptions;
 using Pento.Domain.UserEntitlements;
 
 namespace Pento.Infrastructure.DomainServices;
-
 internal sealed class EntitlementService(
     IGenericRepository<UserEntitlement> userEntitlementRepository,
     IGenericRepository<Feature> featureRepository,
     IUnitOfWork unitOfWork) : IEntitlementService
 {
-    public async Task<Result> CheckEntitlementAsync(Guid userId, string featureCode, CancellationToken cancellationToken = default)
+    public async Task<Result> UseEntitlementAsync(Guid userId, string featureCode, CancellationToken cancellationToken)
     {
         IEnumerable<UserEntitlement> userEntitlements = await userEntitlementRepository.FindAsync(
             ue => ue.UserId == userId && 

@@ -10,7 +10,7 @@ internal sealed class UpdateFeature : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("features/{featureCode}", async (
+        app.MapPatch("admin/features/{featureCode}", async (
             string featureCode,
             Request request,
             ICommandHandler<UpdateFeatureCommand> handler,
@@ -23,7 +23,7 @@ internal sealed class UpdateFeature : IEndpoint
                 request.DefaultQuota,
                 request.DefaultResetPeriod), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Features);
+        }).WithTags(Tags.Admin);
     }
     internal sealed class Request
     {

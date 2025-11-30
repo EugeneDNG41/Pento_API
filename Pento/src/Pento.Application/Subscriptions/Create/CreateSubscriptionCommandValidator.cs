@@ -12,6 +12,8 @@ internal sealed class CreateSubscriptionCommandValidator : AbstractValidator<Cre
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Subscription description is required.")
             .MaximumLength(500).WithMessage("Subscription description must not exceed 500 characters.");
+        RuleFor(x => x.IsActive)
+            .NotNull().WithMessage("Is Active is required.");
     }
 }
 
