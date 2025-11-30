@@ -13,6 +13,7 @@ using Pento.Domain.MealPlanRecipe;
 using Pento.Domain.MealPlans;
 using Pento.Domain.RecipeIngredients;
 using Pento.Domain.Recipes;
+using Pento.Domain.Units;
 
 namespace Pento.Application.MealPlans.Create.FromRecipe;
 
@@ -22,6 +23,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
     IGenericRepository<RecipeIngredient> ingredientRepo,
     IGenericRepository<MealPlan> mealPlanRepo,
     IGenericRepository<FoodReference> foodRefRepo,
+    IGenericRepository<Unit> unitRepo,
     IGenericRepository<MealPlanRecipe> mealPlanRecipeRepo,
     IGenericRepository<FoodItemMealPlanReservation> reservationRepo,
     IGenericRepository<Compartment> compartmentRepo,
@@ -56,6 +58,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             householdId.Value,
             foodItemRepo,
             foodRefRepo,
+            unitRepo,
             converter,
             cancellationToken
         );
@@ -106,6 +109,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 householdId.Value,
                 foodItemRepo,
                 foodRefRepo,
+                unitRepo,
                 converter,
                 cancellationToken
             );
@@ -180,6 +184,8 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
         Guid householdId,
         IGenericRepository<FoodItem> foodItemRepo,
         IGenericRepository<FoodReference> foodRefRepo,
+        IGenericRepository<Unit> unitRepo,
+
         IConverterService converter,
         CancellationToken cancellationToken)
     {
@@ -199,6 +205,13 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                      x.FoodReferenceId == ingredient.FoodRefId,
                 cancellationToken)).FirstOrDefault();
 
+            Unit? ingredientUnit = await unitRepo.GetByIdAsync(ingredient.UnitId, cancellationToken);
+            Unit? foodItemUnit = null;
+            if (foodItem is not null)
+            {
+                foodItemUnit = await unitRepo.GetByIdAsync(foodItem.UnitId, cancellationToken);
+            }
+
             if (foodItem is null)
             {
                 missing.Add(new MissingIngredientResult(
@@ -206,7 +219,8 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     ingredient.FoodRefId,
                     name,
                     ingredient.Quantity,
-                    ingredient.UnitId
+                    ingredient.UnitId,
+                    ingredientUnit?.Abbreviation ?? "un"
                 ));
                 continue;
             }
@@ -228,7 +242,8 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                         ingredient.FoodRefId,
                         name,
                         ingredient.Quantity,
-                        ingredient.UnitId
+                        ingredient.UnitId,
+                        ingredientUnit?.Abbreviation ?? "un"
                     ));
                     continue;
                 }
@@ -243,7 +258,21 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     ingredient.FoodRefId,
                     name,
                     ingredient.Quantity,
-                    ingredient.UnitId
+                    ingredient.UnitId,
+                    ingredientUnit?.Abbreviation ?? "un"
+
+                ));
+                continue;
+            }
+            if (foodItemUnit is null)
+            {
+                missing.Add(new MissingIngredientResult(
+                    ingredient.Id,
+                    ingredient.FoodRefId,
+                    name,
+                    ingredient.Quantity,
+                    ingredient.UnitId,
+                    ingredientUnit?.Abbreviation ?? "un"
                 ));
                 continue;
             }
@@ -254,7 +283,10 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 requiredQty,
                 ingredient.Quantity,
                 ingredient.UnitId,
-                foodItem.UnitId
+                foodItem.UnitId,
+                ingredientUnit?.Abbreviation ?? "un",
+                foodItemUnit.Abbreviation
+
             ));
         }
 

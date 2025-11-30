@@ -53,7 +53,15 @@ public abstract class FoodItemReservation : Entity
         Status = ReservationStatus.Fulfilled;
         Raise(new FoodItemConsumedDomainEvent(FoodItemId, quantity, unitId, userId));
     }
+    public void MarkAsCancelled()
+    {
+        if (Status != ReservationStatus.Pending)
+        {
+            throw new("Only pending reservations can be cancelled.");
+        }
 
+        Status = ReservationStatus.Cancelled;
+    }
 }
 public enum ReservationStatus
 {
@@ -107,16 +115,8 @@ public sealed class FoodItemRecipeReservation : FoodItemReservation
             );
         return reciperservation;
     }
-    
-    public void MarkAsCancelled()
-    {
-        if (Status != ReservationStatus.Pending)
-        {
-            throw new ("Only pending reservations can be cancelled.");
-        }
 
-        Status = ReservationStatus.Cancelled;
-    }
+
 }
 public sealed class FoodItemMealPlanReservation : FoodItemReservation
 {
@@ -158,15 +158,7 @@ public sealed class FoodItemMealPlanReservation : FoodItemReservation
             mealPlanId
         );
     }
-    public void MarkAsCancelled()
-    {
-        if (Status != ReservationStatus.Pending)
-        {
-            throw new("Only pending reservations can be cancelled.");
-        }
 
-        Status = ReservationStatus.Cancelled;
-    }
 
 }
 public sealed class FoodItemDonationReservation : FoodItemReservation

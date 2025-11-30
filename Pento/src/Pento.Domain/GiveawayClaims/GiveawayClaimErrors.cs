@@ -25,6 +25,19 @@ public static class GiveawayClaimErrors
     public static readonly Error DuplicatePendingClaim = Error.Failure(
         code: "GiveawayClaim.DuplicatePendingClaim",
         description: "You already have a pending claim for this giveaway post.");
-
-
+    public static readonly Error NotFound = Error.NotFound(
+        code: "GiveawayClaim.ClaimNotFound",
+        description: "The specified giveaway claim was not found.");
+    public static readonly Error NotOwner = Error.Forbidden(
+        code: "GiveawayClaim.NotOwner",
+        description: "You are not the owner of this giveaway claim.");
+    public static readonly Error AlreadyProcessed = Error.Failure(
+        code: "GiveawayClaim.AlreadyProcessed",
+        description: "This giveaway claim has already been processed.");
+    public static readonly Error PostNotAcceptable = Error.Failure(
+        code: "GiveawayClaim.PostNotAcceptable",
+        description: "The giveaway post is not in a state to accept claims.");
+    public static readonly Error NotAccepted = Error.Failure(
+        code: "GiveawayClaim.NotAccepted",
+        description: "This giveaway claim has not been accepted and cannot be completed.");
 }

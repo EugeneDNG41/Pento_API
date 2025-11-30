@@ -27,7 +27,9 @@ public sealed record ReservationResult(
     decimal ReservedQuantity,     
     decimal IngredientQuantity,   
     Guid IngredientUnitId,         
-    Guid FoodItemUnitId            
+    Guid FoodItemUnitId,
+    string IngredientUnitAbbreviation,
+    string FoodItemUnitAbbreviation
 );
 
 public sealed record MissingIngredientResult(
@@ -35,5 +37,6 @@ public sealed record MissingIngredientResult(
     Guid FoodRefId,
     string Name,
     decimal RequiredQuantity,
-    Guid UnitId
+    Guid UnitId,
+    string UnitAbbreviation
 ); 

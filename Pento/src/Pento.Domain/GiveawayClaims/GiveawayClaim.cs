@@ -25,6 +25,7 @@ public sealed class GiveawayClaim : Entity
         CreatedOnUtc = createdOnUtc;
     }
 
+
     private GiveawayClaim() { }
 
     public Guid GiveawayPostId { get; private set; }
@@ -36,6 +37,9 @@ public sealed class GiveawayClaim : Entity
     public string? Message { get; private set; }
 
     public DateTime CreatedOnUtc { get; private set; }
-}
-    
+    public void UpdateStatus(ClaimStatus newStatus)
+    {
+        Status = newStatus;
+    }
 
+}
