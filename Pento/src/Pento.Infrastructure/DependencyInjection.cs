@@ -116,11 +116,6 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
         
-        services.AddScoped<IFoodReferenceRepository, FoodReferenceRepository>();
-        services.AddScoped<IMealPlanRepository, MealPlanRepository>();
-
-        services.AddScoped<IRecipeIngredientRepository, RecipeIngredientRepository>();
-        services.AddScoped<IRecipeDirectionRepository,RecipeDirectionRepository>();
 
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();

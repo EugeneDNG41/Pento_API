@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -10,7 +11,7 @@ using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Enrich;
 internal sealed class EnrichFoodReferenceShelfLifeCommandHandler(
-    IFoodReferenceRepository foodReferenceRepository,
+    IGenericRepository<FoodReference> foodReferenceRepository,
     IFoodAiEnricher foodAiEnricher,
     IUnitOfWork unitOfWork)
     : ICommandHandler<EnrichFoodReferenceShelfLifeCommand, FoodEnrichmentResult>

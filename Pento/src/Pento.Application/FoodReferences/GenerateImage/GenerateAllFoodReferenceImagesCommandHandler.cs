@@ -4,14 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 
+
 namespace Pento.Application.FoodReferences.GenerateImage;
 internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
-    IFoodReferenceRepository foodReferenceRepository,
+    IGenericRepository<FoodReference> foodRepo,
     IPixabayImageService pixabayService,
     IBlobService blobService,
     IUnitOfWork unitOfWork)
@@ -23,8 +25,12 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
     {
         int limit = Math.Clamp(request.Limit, 1, 50);
 
-        IReadOnlyList<FoodReference> foods = await foodReferenceRepository
-            .GetAllWithoutImageAsync(limit, cancellationToken);
+        var foods = (await foodRepo.FindAsync(
+            fr => fr.ImageUrl == null ,
+            cancellationToken
+        )).Take(limit).ToList();
+
+
 
         if (foods.Count == 0)
         {
@@ -37,9 +43,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
         {
             try
             {
-                string query =
-                    $"{foodRef.Name}"
-                    .Trim();
+                string query = foodRef.Name.Trim();
 
                 Result<Uri> imgResult = await pixabayService.GetImageUrlAsync(query, cancellationToken);
                 if (imgResult.IsFailure)
@@ -63,6 +67,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
 
                 Result<Uri> uploadResult =
                     await blobService.UploadImageAsync(formFile, "foodreference", cancellationToken);
+
                 if (uploadResult.IsFailure)
                 {
                     continue;
@@ -70,10 +75,11 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
 
                 foodRef.UpdateImageUrl(uploadResult.Value, DateTime.UtcNow);
                 successCount++;
+
             }
             catch
             {
-                //continue
+                //Eror
             }
         }
 

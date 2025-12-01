@@ -6,8 +6,9 @@ using Pento.Domain.Recipes;
 
 namespace Pento.Application.RecipeDirections.Create;
 internal sealed class CreateRecipeDirectionCommandHandler(
-    IRecipeDirectionRepository recipeDirectionRepository,
-    IGenericRepository<Recipe> recipeRepository, IUnitOfWork unitOfWork
+    IGenericRepository<Recipe> recipeRepository, 
+    IGenericRepository<RecipeDirection> recipeDirectionRepository,
+    IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateRecipeDirectionCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(CreateRecipeDirectionCommand command, CancellationToken cancellationToken)
@@ -17,8 +18,11 @@ internal sealed class CreateRecipeDirectionCommandHandler(
         {
             return Result.Failure<Guid>(RecipeErrors.NotFound);
         }
-        RecipeDirection? existingDirection = await recipeDirectionRepository.GetByStep(command.StepNumber, cancellationToken);
-        if (existingDirection is not null)
+        IEnumerable<RecipeDirection>? directions = await recipeDirectionRepository.FindAsync(
+            d => d.RecipeId == command.RecipeId && d.StepNumber == command.StepNumber,
+            cancellationToken
+        );
+        if (directions is not null)
         {
             return Result.Failure<Guid>(RecipeDirectionErrors.DupicateDirectionStep(command.StepNumber));
         }
@@ -31,7 +35,7 @@ internal sealed class CreateRecipeDirectionCommandHandler(
                DateTime.UtcNow);
 
 
-        await recipeDirectionRepository.AddAsync(direction, cancellationToken);
+         recipeDirectionRepository.Add(direction);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(direction.Id);
