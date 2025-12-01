@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Get;
@@ -13,4 +14,5 @@ public sealed record GetAllFoodReferencesQuery(
     string? Search,
     int Page = 1,
     int PageSize = 10
-) : IQuery<PagedFoodReferencesResponse>;
+) : IQuery<PagedList<FoodReferenceResponse>>;
+

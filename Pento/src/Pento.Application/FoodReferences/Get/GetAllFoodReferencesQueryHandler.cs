@@ -2,14 +2,15 @@
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.FoodReferences.Get;
 
 internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
-    : IQueryHandler<GetAllFoodReferencesQuery, PagedFoodReferencesResponse>
+    : IQueryHandler<GetAllFoodReferencesQuery, PagedList<FoodReferenceResponse>>
 {
-    public async Task<Result<PagedFoodReferencesResponse>> Handle(
+    public async Task<Result<PagedList<FoodReferenceResponse>>> Handle(
         GetAllFoodReferencesQuery request,
         CancellationToken cancellationToken)
     {
@@ -26,19 +27,19 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            filters.Add("levenshtein(name, @Search) <= 2 OR name ILIKE '%' || @Search || '%'");
-            parameters.Add("Search", $"{request.Search}");
+            filters.Add("(levenshtein(name, @Search) <= 2 OR name ILIKE '%' || @Search || '%')");
+            parameters.Add("Search", request.Search);
         }
 
-        string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
+        string whereClause = filters.Count > 0
+            ? "WHERE " + string.Join(" AND ", filters)
+            : string.Empty;
 
-        string sqlCount = $"""
-            SELECT COUNT(*) 
+        string sql = $@"
+            SELECT COUNT(*)
             FROM food_references
             {whereClause};
-        """;
 
-        string sqlData = $"""
             SELECT
                 id AS Id,
                 name AS Name,
@@ -56,23 +57,28 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
             FROM food_references
             {whereClause}
             ORDER BY name
-            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-        """;
+            OFFSET @Offset LIMIT @PageSize;
+        ";
 
         parameters.Add("Offset", (request.Page - 1) * request.PageSize);
         parameters.Add("PageSize", request.PageSize);
 
-        int totalCount = await connection.ExecuteScalarAsync<int>(sqlCount, parameters);
-        IEnumerable<FoodReferenceResponse> items = await connection.QueryAsync<FoodReferenceResponse>(sqlData, parameters);
 
-        var response = new PagedFoodReferencesResponse
-        {
-            Items = items.ToList(),
-            Page = request.Page,
-            PageSize = request.PageSize,
-            TotalCount = totalCount
-        };
+        SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
 
-        return Result.Success(response);
+        int totalCount = await multi.ReadFirstAsync<int>();
+
+        var items = (await multi.ReadAsync<FoodReferenceResponse>())
+            .ToList();
+
+
+        var paged = PagedList<FoodReferenceResponse>.Create(
+            items,
+            totalCount,
+            request.Page,
+            request.PageSize
+        );
+
+        return Result.Success(paged);
     }
 }
