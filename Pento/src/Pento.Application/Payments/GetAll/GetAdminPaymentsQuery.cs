@@ -14,3 +14,7 @@ public sealed record GetAdminPaymentsQuery(
     bool? IsDeleted,
     int PageNumber,
     int PageSize) : IQuery<AdminPaymentsResponse>;
+public enum Period
+{
+    Daily, Weekly, Monthly, Quarterly, Yearly, All
+}

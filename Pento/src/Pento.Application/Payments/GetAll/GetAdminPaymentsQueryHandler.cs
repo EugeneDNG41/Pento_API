@@ -59,7 +59,8 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
         string sql =
             $"""
             SELECT
-            CONCAT(COALESCE(SUM(amount_due), 0)::text, ' ', currency) AS TotalAmount,
+            CONCAT(COALESCE(SUM(amount_due), 0)::text, ' ', currency) AS TotalDue,
+            CONCAT(COALESCE(SUM(amount_paid), 0)::text, ' ', currency) AS TotalPaid,
             COUNT(CASE WHEN status = 'Pending' THEN 1 END) AS Pending,
             COUNT(CASE WHEN status = 'Paid' THEN 1 END) AS Paid,
             COUNT(CASE WHEN status = 'Failed' THEN 1 END) AS Failed,
@@ -90,7 +91,8 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
         AdminPaymentSummary? summary = await multi.ReadFirstOrDefaultAsync<AdminPaymentSummary>();
         summary ??= new AdminPaymentSummary
             {
-                TotalAmount = "0",
+                TotalDue = "0",
+                TotalPaid = "0",
                 Pending = 0,
                 Paid = 0,
                 Failed = 0,

@@ -8,7 +8,8 @@ public sealed record AdminPaymentsResponse(
     );
 public sealed record AdminPaymentSummary
 {
-    public string TotalAmount { get; init; }
+    public string TotalDue { get; init; }
+    public string TotalPaid { get; init; }
     public int Pending { get; init; }
     public int Paid { get; init; }
     public int Failed { get; init; }

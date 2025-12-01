@@ -37,6 +37,6 @@ internal sealed class GetAdminPayments : IEndpoint
                 pageSize);
             Result<AdminPaymentsResponse> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManagePayments);
+        }).WithTags(Tags.Admin);
     }
 }
