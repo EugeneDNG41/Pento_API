@@ -93,8 +93,7 @@ internal sealed class GetCompartmentByIdQueryHandler(
                                 r.ImageUrl,
                                 r.Quantity,
                                 r.UnitAbbreviation,
-                                r.ExpirationDate,
-                                r.Status
+                                r.ExpirationDate
                             )).ToList(),
             totalCount,
             query.PageNumber,

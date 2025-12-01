@@ -1,5 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Application.FoodReferences.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -12,21 +13,21 @@ internal sealed class GetAllFoodReferences : IEndpoint
     {
         app.MapGet("food-references", async (
             FoodGroup? foodGroup,
-            string? search,         
-            IQueryHandler <GetAllFoodReferencesQuery, PagedFoodReferencesResponse> handler,
-            CancellationToken cancellationToken,
-            int pageNumber = 1,
-            int pageSize = 10) =>
+            string? search,
+            int pageNumber,
+            int pageSize,
+            IQueryHandler<GetAllFoodReferencesQuery, PagedList<FoodReferenceResponse>> handler,
+            CancellationToken cancellationToken
+        ) =>
         {
             var query = new GetAllFoodReferencesQuery(
-                foodGroup,
-                search,
-                pageNumber,
-                pageSize
+                FoodGroup: foodGroup,
+                Search: search,
+                Page: pageNumber,
+                PageSize: pageSize
             );
 
-            Result<PagedFoodReferencesResponse> result =
-                await handler.Handle(query, cancellationToken);
+            Result<PagedList<FoodReferenceResponse>> result = await handler.Handle(query, cancellationToken);
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })

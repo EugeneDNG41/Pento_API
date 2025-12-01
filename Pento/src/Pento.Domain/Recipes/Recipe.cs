@@ -92,7 +92,6 @@ public sealed class Recipe: Entity
             isPublic,
             utcNow);
 
-        recipe.Raise(new RecipeCreatedDomainEvent(recipe.Id));
 
         return recipe;
     }
@@ -113,7 +112,6 @@ public sealed class Recipe: Entity
         ImageUrl = imageUrl;
         UpdatedOnUtc = utcNow;
 
-        Raise(new RecipeUpdatedDomainEvent(Id));
     }
 
     public void ChangeVisibility(bool isPublic, DateTime utcNow)

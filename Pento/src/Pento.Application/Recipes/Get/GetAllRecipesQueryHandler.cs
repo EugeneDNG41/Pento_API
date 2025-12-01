@@ -24,10 +24,25 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
             parameters.Add("DifficultyLevel", request.DifficultyLevel.ToString());
         }
 
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            filters.Add("(title ILIKE @Search OR description ILIKE @Search)");
+            parameters.Add("Search", $"%{request.Search}%");
+        }
+
+        filters.Add("is_deleted = false");
+
         string whereClause = filters.Count > 0
             ? "WHERE " + string.Join(" AND ", filters)
             : string.Empty;
 
+        string orderBy = request.Sort?.ToLower(System.Globalization.CultureInfo.CurrentCulture) switch
+        {
+            "oldest" => "ORDER BY created_on_utc ASC",
+            "title" => "ORDER BY title ASC",
+            "title_desc" => "ORDER BY title DESC",
+            _ => "ORDER BY created_on_utc DESC"
+        };
 
         string sql = $@"
             SELECT COUNT(*) 
@@ -51,6 +66,7 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
                 updated_on_utc AS UpdatedOnUtc
             FROM recipes
             {whereClause}
+            {orderBy}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         ";
 
@@ -72,3 +88,4 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
         return Result.Success(paged);
     }
 }
+

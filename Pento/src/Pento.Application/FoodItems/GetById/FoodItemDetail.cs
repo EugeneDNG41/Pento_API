@@ -18,7 +18,6 @@ public sealed record FoodItemDetail(
     string UnitAbbreviation,
     string UnitType,
     DateOnly ExpirationDate,
-    string Status,
     int TypicalPantryShelfLifeDays,
     int TypicalShelfLifeDays,
     int TypicalFreezerShelfLifeDays,
@@ -41,7 +40,6 @@ public sealed record FoodItemDetailRow
     public string UnitAbbreviation { get; init; }
     public string UnitType { get; init; }
     public DateOnly ExpirationDate { get; init; }
-    public string Status { get; init; }
     public int TypicalPantryShelfLifeDays { get; init; }
     public int TypicalFridgeShelfLifeDays { get; init; }
     public int TypicalFreezerShelfLifeDays { get; init; }
