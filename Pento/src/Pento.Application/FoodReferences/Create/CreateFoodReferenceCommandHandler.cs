@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -10,7 +11,7 @@ using Pento.Domain.Users;
 
 namespace Pento.Application.FoodReferences.Create;
 internal sealed class CreateFoodReferenceCommandHandler(
-    IFoodReferenceRepository foodReferenceRepository,
+    IGenericRepository<FoodReference> foodReferenceRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateFoodReferenceCommand, Guid>
 {
@@ -35,7 +36,7 @@ internal sealed class CreateFoodReferenceCommandHandler(
             request.UnitType,  
             utcNow
         );
-        await foodReferenceRepository.AddAsync(foodReference, cancellationToken);
+         foodReferenceRepository.Add(foodReference);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(foodReference.Id);

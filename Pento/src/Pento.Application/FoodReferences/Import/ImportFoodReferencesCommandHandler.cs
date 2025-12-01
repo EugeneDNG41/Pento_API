@@ -2,6 +2,7 @@
 using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -10,7 +11,7 @@ using Pento.Domain.Units;
 namespace Pento.Application.FoodReferences.Import;
 
 internal sealed class ImportFoodReferencesCommandHandler(
-    IFoodReferenceRepository foodReferenceRepository,
+    IGenericRepository <FoodReference> foodReferenceRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<ImportFoodReferencesCommand, int>
 {
@@ -66,7 +67,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 utcNow: DateTime.UtcNow
             );
 
-            await foodReferenceRepository.AddAsync(food, cancellationToken);
+            foodReferenceRepository.Add(food);
             count++;
 
             if (count % 500 == 0)

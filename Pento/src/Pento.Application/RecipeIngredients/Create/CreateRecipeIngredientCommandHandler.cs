@@ -13,7 +13,7 @@ using Pento.Domain.Units;
 
 namespace Pento.Application.RecipeIngredients.Create;
 internal sealed class CreateRecipeIngredientCommandHandler(
-    IRecipeIngredientRepository recipeIngredientRepository,
+    IGenericRepository<RecipeIngredient> recipeIngredientRepository,
     IGenericRepository<Recipe> recipeRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IGenericRepository<Unit> unitsRepository,
@@ -53,7 +53,7 @@ internal sealed class CreateRecipeIngredientCommandHandler(
             utcNow
         );
 
-        await recipeIngredientRepository.AddAsync(ingredient, cancellationToken);
+         recipeIngredientRepository.Add(ingredient);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(ingredient.Id);

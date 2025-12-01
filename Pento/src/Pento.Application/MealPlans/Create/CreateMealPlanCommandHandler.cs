@@ -11,7 +11,7 @@ using Pento.Domain.Recipes;
 namespace Pento.Application.MealPlans.Create;
 
 internal sealed class CreateMealPlanCommandHandler(
-    IMealPlanRepository mealPlanRepository,
+    IGenericRepository<MealPlan> mealPlanRepository,
     IGenericRepository<Recipe> recipeRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IUserContext userContext,
@@ -43,7 +43,7 @@ internal sealed class CreateMealPlanCommandHandler(
                 return Result.Failure<Guid>(FoodItemErrors.NotFound);
             }
         }
-        MealPlan? existingPlan = await mealPlanRepository.GetByNameAsync(command.Name, cancellationToken);
+        IEnumerable<MealPlan>? existingPlan = await mealPlanRepository.FindAsync(d => d.HouseholdId == householdId.Value && d.Name == command.Name, cancellationToken);
         if (existingPlan is not null)
         {
             return Result.Failure<Guid>(MealPlanErrors.DuplicateName);
@@ -63,7 +63,7 @@ internal sealed class CreateMealPlanCommandHandler(
             utcNow
     );
 
-        await mealPlanRepository.AddAsync(mealPlan, cancellationToken);
+        mealPlanRepository.Add(mealPlan);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(mealPlan.Id);
