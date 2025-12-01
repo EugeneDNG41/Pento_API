@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Wishlist.Remove;
-using Pento.Application.RecipeWishLists.Remove;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Recipes.Delete;
