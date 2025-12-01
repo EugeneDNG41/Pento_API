@@ -24,9 +24,30 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
 {
     public async Task<Result<PagedList<CurrentUserMilestonesResponse>>> Handle(GetCurrentMilestonesQuery query, CancellationToken cancellationToken)
     {
-        
+
+        string orderBy = query.SortBy switch
+        {
+            UserMilestoneSortBy.Name => "2",
+            UserMilestoneSortBy.AchievedOn => "3",
+            UserMilestoneSortBy.Progress => "4",
+            _ => "1"
+        };
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder.ToString()}";
+        var filters = new List<string>
+        {
+            "m.is_deleted IS false"
+        };
+        if (!string.IsNullOrWhiteSpace(query.SearchTerm))
+        {
+            filters.Add("m.name ILIKE '%' || @SearchTerm || '%'");
+        }
+        if (query.IsAchieved.HasValue)
+        {
+            filters.Add("@IsAchieved = (um.achieved_on is not null)");
+        }
+        string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
-        const string sql = @"
+        string sql = $@"
             SELECT COUNT(*)
             FROM milestones m
             LEFT JOIN user_milestones um
@@ -38,9 +59,7 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
               WHERE mr.milestone_id = m.id
               LIMIT 1
             ) mr_exists ON true
-            WHERE (@SearchTerm IS NULL OR m.name ILIKE ('%' || @SearchTerm || '%'))
-	                        AND m.is_deleted IS false
-	                        AND (@IsAchieved IS NULL OR @IsAchieved = (um.achieved_on is not null));
+            {whereClause};
             SELECT
               m.id  AS MileStoneId,
               m.name,
@@ -86,26 +105,8 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
               ) sub ON true
               WHERE mr.milestone_id = m.id
               ) agg ON true
-            WHERE (@SearchTerm IS NULL OR m.name ILIKE ('%' || @SearchTerm || '%'))
-	            AND m.is_deleted IS false
-	            AND (@IsAchieved IS NULL OR @IsAchieved = (um.achieved_on is not null))
-            ORDER BY
-                  CASE WHEN @SortBy = 'Name' AND @SortOrder = 'ASC' THEN 2 END ASC,
-                  CASE WHEN @SortBy = 'Name' AND @SortOrder = 'DESC' THEN 2 END DESC,
-
-                  CASE WHEN @SortBy = 'AchievedOn' AND @SortOrder = 'ASC' THEN 3 END ASC,
-                  CASE WHEN @SortBy = 'AchievedOn' AND @SortOrder = 'DESC' THEN 3 END DESC,
-
-                  CASE WHEN @SortBy = 'Progress' AND @SortOrder = 'ASC' THEN 4 END ASC,
-                  CASE WHEN @SortBy = 'Progress' AND @SortOrder = 'DESC' THEN 4 END DESC,
-
-                  CASE WHEN @SortBy IS NULL THEN
-                    CASE
-                      WHEN um.achieved_on IS NOT NULL THEN 0
-                      WHEN COALESCE(agg.total_achieved, 0) > 0 THEN 1
-                      ELSE 2
-                    END
-                  END ASC
+            {whereClause}
+            {orderClause}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             ";
         CommandDefinition command = new(
