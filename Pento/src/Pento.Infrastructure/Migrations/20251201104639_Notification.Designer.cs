@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251201104639_Notification")]
+    partial class Notification
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1754,39 +1757,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_recipe_media_recipe_id");
 
                     b.ToTable("recipe_media", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.RecipeWishLists.RecipeWishList", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<DateTime>("AddedOnUtc")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("added_on_utc");
-
-                    b.Property<Guid>("HouseholdId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("household_id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("recipe_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_recipe_wishlists");
-
-                    b.HasIndex("HouseholdId", "RecipeId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_recipe_wishlists_household_id_recipe_id");
-
-                    b.ToTable("recipe_wishlists", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>
