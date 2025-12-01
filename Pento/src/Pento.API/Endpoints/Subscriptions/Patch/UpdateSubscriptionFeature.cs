@@ -10,7 +10,7 @@ internal sealed class UpdateSubscriptionFeature : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("subscriptions/features/{subscriptionFeatureId:guid}", async (
+        app.MapPatch("admin/subscriptions/features/{subscriptionFeatureId:guid}", async (
             Guid subscriptionFeatureId,
             Request request,
             ICommandHandler<UpdateSubscriptionFeatureCommand> handler,
@@ -22,7 +22,7 @@ internal sealed class UpdateSubscriptionFeature : IEndpoint
                 request.Quota,
                 request.ResetPeriod), cancellationToken);
             return result.Match(() => Results.NoContent(), CustomResults.Problem);
-        }).WithTags(Tags.Subscriptions);
+        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageSubscriptions);
     }
     internal sealed class Request
     {

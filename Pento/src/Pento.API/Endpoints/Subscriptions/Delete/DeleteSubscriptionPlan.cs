@@ -9,13 +9,13 @@ internal sealed class DeleteSubscriptionPlan : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapDelete("subscriptions/plans/{subscriptionPlanId:guid}", async (
+        app.MapDelete("admin/subscriptions/plans/{subscriptionPlanId:guid}", async (
             Guid subscriptionPlanId,
             ICommandHandler<DeleteSubscriptionPlanCommand> handler,
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(new DeleteSubscriptionPlanCommand(subscriptionPlanId), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Subscriptions);
+        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageSubscriptions);
     }
 }
