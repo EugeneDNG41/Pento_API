@@ -82,8 +82,7 @@ internal sealed class SearchFoodItemQueryHandler(
                 fi.image_url AS {nameof(FoodItemPreviewRow.ImageUrl)},
                 fi.quantity AS {nameof(FoodItemPreviewRow.Quantity)},
                 u.abbreviation AS {nameof(FoodItemPreviewRow.UnitAbbreviation)},
-                fi.expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)},
-                fi.status AS {nameof(FoodItemPreviewRow.Status)}
+                fi.expiration_date AS {nameof(FoodItemPreviewRow.ExpirationDate)}
             FROM food_items fi
             LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
             LEFT JOIN units u ON fi.unit_id = u.id
@@ -107,8 +106,7 @@ internal sealed class SearchFoodItemQueryHandler(
                                 r.ImageUrl,
                                 r.Quantity,
                                 r.UnitAbbreviation,
-                                r.ExpirationDate,
-                                r.Status
+                                r.ExpirationDate
                             )).ToList(),
             totalCount,
             query.PageNumber,
