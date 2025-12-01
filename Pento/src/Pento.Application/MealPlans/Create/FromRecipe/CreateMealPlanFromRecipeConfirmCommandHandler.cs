@@ -195,8 +195,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
         {
             FoodReference? foodRef = await foodRefRepo.GetByIdAsync(ingredient.FoodRefId, cancellationToken);
 
-            string name = ingredient.Notes
-                         ?? foodRef?.Name
+            string name =  foodRef?.Name
                          ?? "Unknown ingredient";
 
             FoodItem? foodItem = (await foodItemRepo.FindAsync(

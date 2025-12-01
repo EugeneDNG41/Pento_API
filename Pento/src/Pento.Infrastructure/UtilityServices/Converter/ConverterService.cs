@@ -18,7 +18,7 @@ internal sealed class ConverterService(
         {
             return quantity;
         }
-        decimal convertedQuantity = quantity * fromUnit.ToBaseFactor / toUnit.ToBaseFactor;
+        decimal convertedQuantity = quantity * toUnit.ToBaseFactor / fromUnit.ToBaseFactor;
         return convertedQuantity;
     }
     public async Task<Result<decimal>> ConvertAsync(decimal quantity, Guid fromUnitId, Guid toUnitId, CancellationToken cancellationToken)

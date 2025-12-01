@@ -44,7 +44,6 @@ public sealed class RecipeDirection : Entity
     {
         var direction = new RecipeDirection(Guid.CreateVersion7(), recipeId, stepNumber, description, imageUrl, utcNow);
 
-        direction.Raise(new RecipeDirectionCreatedDomainEvent(direction.Id, recipeId));
         return direction;
     }
     public void Update(string description, DateTime utcNow)

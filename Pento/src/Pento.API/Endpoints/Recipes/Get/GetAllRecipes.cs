@@ -12,17 +12,21 @@ internal sealed class GetAllRecipes : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("recipes", async (
-    int pageNumber,
-    int pageSize,
-    DifficultyLevel? difficulty,
-    IQueryHandler<GetAllRecipesQuery, PagedList<RecipeResponse>> handler,
-    CancellationToken cancellationToken
-) =>
+            int pageNumber,
+            int pageSize,
+            DifficultyLevel? difficulty,
+            string? search,
+            string? sort,
+            IQueryHandler<GetAllRecipesQuery, PagedList<RecipeResponse>> handler,
+            CancellationToken cancellationToken
+        ) =>
         {
             var query = new GetAllRecipesQuery(
                 PageNumber: pageNumber,
                 PageSize: pageSize,
-                DifficultyLevel: difficulty
+                DifficultyLevel: difficulty,
+                Search: search,
+                Sort: sort
             );
 
             Result<PagedList<RecipeResponse>> result = await handler.Handle(query, cancellationToken);
@@ -31,7 +35,10 @@ internal sealed class GetAllRecipes : IEndpoint
                 Results.Ok,
                 CustomResults.Problem
             );
+
         })
-        .WithTags(Tags.Recipes);
+            .WithTags(Tags.Recipes)
+            .WithDescription(" newest | oldest | title | title_desc");
+
     }
 }

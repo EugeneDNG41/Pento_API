@@ -62,7 +62,6 @@ public sealed class RecipeIngredient : Entity
             notes,
             utcNow);
 
-        ingredient.Raise(new RecipeIngredientCreatedDomainEvent(ingredient.Id, recipeId));
 
         return ingredient;
     }
