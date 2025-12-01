@@ -9,7 +9,7 @@ internal sealed class UpdateSubscription : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("subscriptions/{subscriptionId:guid}", async (
+        app.MapPatch("admin/subscriptions/{subscriptionId:guid}", async (
             Guid subscriptionId,
             Request request,
             ICommandHandler<UpdateSubscriptionCommand> handler,
@@ -21,7 +21,7 @@ internal sealed class UpdateSubscription : IEndpoint
                 request.Description,
                 request.IsActive), cancellationToken);
             return result.Match(() => Results.NoContent(), CustomResults.Problem);
-        }).WithTags(Tags.Subscriptions);
+        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageSubscriptions);
     }
     internal sealed class Request
     {

@@ -10,7 +10,7 @@ internal sealed class GetCurrentMilestones : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("users/me/milestones", async (
+        app.MapGet("users/milestones", async (
             string? searchTerm,
             bool? isAchieved,
             UserMilestoneSortBy? sortBy,            

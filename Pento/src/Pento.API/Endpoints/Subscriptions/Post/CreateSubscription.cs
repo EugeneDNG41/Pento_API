@@ -9,7 +9,7 @@ internal sealed class CreateSubscription : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("subscriptions", async (
+        app.MapPost("admin/subscriptions", async (
             Request request,
             ICommandHandler<CreateSubscriptionCommand, Guid> handler,
             CancellationToken cancellationToken) =>
@@ -17,7 +17,7 @@ internal sealed class CreateSubscription : IEndpoint
             Result<Guid> result = await handler.Handle(new CreateSubscriptionCommand(request.Name, request.Description, request.IsActive), cancellationToken);
             return result
             .Match(id => Results.CreatedAtRoute(RouteNames.GetSubscriptionById, new { subscriptionId = id }, id), CustomResults.Problem);
-        }).WithTags(Tags.Subscriptions);
+        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageSubscriptions);
     }
     internal sealed class Request
     {

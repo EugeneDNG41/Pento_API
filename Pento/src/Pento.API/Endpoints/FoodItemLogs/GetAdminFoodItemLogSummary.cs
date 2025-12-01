@@ -5,26 +5,30 @@ using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.FoodItemLogs;
 
-internal sealed class GetFoodItemLogSummary : IEndpoint
+internal sealed class GetAdminFoodItemLogSummary : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("food-item-logs/summary", async (
+        app.MapGet("admin/food-item-logs/summary", async (
+            Guid? householdId,
             DateTime? fromDate,
             DateTime? toDate,
             Guid? weightUnitId,
             Guid? volumeUnitId,
-            IQueryHandler<GetFoodItemLogSummaryQuery, FoodSummary> handler,
+            bool? isDeleted,
+            IQueryHandler<GetAdminFoodItemLogSummaryQuery, FoodSummary> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<FoodSummary> result = await handler.Handle(new GetFoodItemLogSummaryQuery(
+            Result<FoodSummary> result = await handler.Handle(new GetAdminFoodItemLogSummaryQuery(
+                householdId,
                 fromDate?.ToUniversalTime(),
                 toDate?.ToUniversalTime(),
                 weightUnitId,
-                volumeUnitId), cancellationToken);
+                volumeUnitId,
+                isDeleted), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .WithTags(Tags.FoodItemLogs)
-        .RequireAuthorization();
+        .WithTags(Tags.Admin)
+        .RequireAuthorization(Permissions.ManageHouseholds);
     }
 }
