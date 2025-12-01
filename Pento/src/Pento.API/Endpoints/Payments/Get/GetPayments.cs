@@ -27,8 +27,8 @@ internal sealed class GetPayments : IEndpoint
                 searchText,
                 fromAmount,
                 toAmount,
-                fromDate,
-                toDate,
+                fromDate?.ToUniversalTime(),
+                toDate?.ToUniversalTime(),
                 status,
                 pageNumber,
                 pageSize);

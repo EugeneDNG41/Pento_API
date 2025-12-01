@@ -1,14 +1,8 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Pento.Application.Abstractions.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
 
 namespace Pento.Infrastructure.Repositories;
 
@@ -49,7 +43,23 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
         return await Table.CountAsync(predicate, cancellationToken);
     }
+    public async Task<int> CountDistinctAsync(Expression<Func<T, object>>? keySelector, Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
+    {
+        IQueryable<T> query = Table;
+        if (predicate != null)
+        {
+            query = query.Where(predicate).OrderDescending();
+        }
+        if (keySelector != null)
+        {
+            return await query.Select(keySelector).Distinct().CountAsync(cancellationToken);
+        }
+        else
+        {
+            return await query.Distinct().CountAsync(cancellationToken);
+        }
 
+    }
     public virtual void Add(T entity)
     {
         _context.Add(entity);

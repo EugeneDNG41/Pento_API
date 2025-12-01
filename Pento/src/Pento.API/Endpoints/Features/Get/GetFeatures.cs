@@ -16,6 +16,6 @@ internal sealed class GetFeatures : IEndpoint
         {
             Result<IReadOnlyList<FeatureResponse>> result = await handler.Handle(new GetFeaturesQuery(searchText), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Features);
+        }).RequireAuthorization(Permissions.ManageSubscriptions).WithTags(Tags.Admin);
     }
 }

@@ -27,12 +27,7 @@
   <ItemGroup>
     <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
-    <Folder Include="UserMiletones\" />
-    <Folder Include="UserActivities\" />
-    <Folder Include="UserActivities\GetUserActivities\" />
-    <Folder Include="UserMiletones\GetUserMilestones\" />
-    <Folder Include="UserActivities\GetCurrentActivities\" />
-    <Folder Include="UserMiletones\GetCurrentMilestones\" />
+    <Folder Include="UserMilestones\GetUserMilestones\" />
   </ItemGroup>
 
 </Project>

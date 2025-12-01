@@ -15,12 +15,14 @@ internal sealed class GetActivitiesQueryHandler(ISqlConnectionFactory sqlConnect
             SELECT 
                 code AS ActivityCode,
                 name AS Name,
+                type AS Type,
                 description AS Description
             FROM activities
             WHERE (@SearchText IS NULL OR name ILIKE '%' || @SearchText ||  '%' OR description ILIKE '%' || @SearchText || '%' OR code ILIKE '%' || @SearchText || '%')
+                AND (@Type IS NULL OR type = @Type)
             ORDER BY name;
         ";
-        CommandDefinition command = new(sql, new { query.SearchText}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { query.SearchText, Type = query.Type.ToString()}, cancellationToken: cancellationToken);
         IEnumerable<ActivityResponse> activities = await connection.QueryAsync<ActivityResponse>(command);
         return activities.ToList();
     }

@@ -11,7 +11,7 @@ using Pento.Domain.UserMilestones;
 namespace Pento.Infrastructure.DomainServices;
 internal sealed class MilestoneService(
     IDateTimeProvider dateTimeProvider, //need notification service later
-    IGenericRepository<UserActivity> userActivityRepository,
+    IActivityService activityService,
     IGenericRepository<Milestone> milestoneRepository,
     IGenericRepository<MilestoneRequirement> milestoneRequirementRepository,
     IGenericRepository<UserMilestone> userMilestoneRepository,   
@@ -51,13 +51,12 @@ internal sealed class MilestoneService(
                 DateTime? fromDate = requirement.WithinDays.HasValue
                     ? dateTimeProvider.UtcNow.AddDays(-requirement.WithinDays.Value)
                     : null;
-                int activityCount = await userActivityRepository.CountAsync(
-                    ua => ua.UserId == userActivity.UserId &&
-                    ua.ActivityCode == requirement.ActivityCode &&
-                    fromDate == null ||
-                    ua.PerformedOn >= fromDate,
-                    cancellationToken);
-                if (activityCount < requirement.Quota)
+                Result<int> countResult = await activityService.CountActivityAsync(userActivity.UserId, userActivity.ActivityCode, fromDate, cancellationToken);
+                if (countResult.IsFailure)
+                {
+                    return Result.Failure(countResult.Error);
+                }
+                if (countResult.Value < requirement.Quota)
                 {
                     requirementsMet = false;
                 }

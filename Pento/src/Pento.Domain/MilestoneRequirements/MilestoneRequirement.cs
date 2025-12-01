@@ -1,4 +1,5 @@
 ﻿using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 
 namespace Pento.Domain.MilestoneRequirements;
 

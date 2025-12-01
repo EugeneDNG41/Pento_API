@@ -23,4 +23,5 @@ public interface IGenericRepository<T> where T : class
     void AddRange(IEnumerable<T> entities);
     void UpdateRange(IEnumerable<T> entities);
     void RemoveRange(IEnumerable<T> entities);
+    Task<int> CountDistinctAsync(Expression<Func<T, object>>? keySelector, Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
 }
