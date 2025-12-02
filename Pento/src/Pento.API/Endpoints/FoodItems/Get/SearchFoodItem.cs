@@ -13,7 +13,7 @@ internal sealed class SearchFoodItemGet : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("food-items/search", async(
+        app.MapGet("food-items", async(
             Guid? foodReferenceId,
             string? searchText,
             FoodGroup? foodGroup,
@@ -23,6 +23,8 @@ internal sealed class SearchFoodItemGet : IEndpoint
             DateOnly? expirationDateBefore,
             IQueryHandler <SearchFoodItemQuery, PagedList<FoodItemPreview>> handler,
             CancellationToken cancellationToken,
+            FoodItemPreviewSortBy sortBy = FoodItemPreviewSortBy.Default,
+            SortOrder sortOrder = SortOrder.ASC,
             int pageNumber = 1,
             int pageSize = 10) =>
         {
@@ -35,6 +37,8 @@ internal sealed class SearchFoodItemGet : IEndpoint
                     toQuantity,
                     expirationDateAfter,
                     expirationDateBefore,
+                    sortBy,
+                    sortOrder,
                     pageNumber,
                     pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);

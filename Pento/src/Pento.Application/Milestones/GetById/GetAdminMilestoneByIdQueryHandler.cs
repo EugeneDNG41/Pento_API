@@ -7,9 +7,9 @@ using Pento.Domain.Milestones;
 
 namespace Pento.Application.Milestones.GetById;
 
-internal sealed class GetMilestoneByIdQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetMilestoneByIdQuery, MilestoneDetailResponse>
+internal sealed class GetAdminMilestoneByIdQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetAdminMilestoneByIdQuery, AdminMilestoneDetailResponse>
 {
-    public async Task<Result<MilestoneDetailResponse>> Handle(GetMilestoneByIdQuery query, CancellationToken cancellationToken)
+    public async Task<Result<AdminMilestoneDetailResponse>> Handle(GetAdminMilestoneByIdQuery query, CancellationToken cancellationToken)
     {
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
@@ -19,9 +19,11 @@ internal sealed class GetMilestoneByIdQueryHandler(ISqlConnectionFactory sqlConn
                 id,
                 name,
                 description,
-                is_active AS IsActive
+                is_active AS IsActive,
+                (SELECT COUNT(*) FROM user_milestones um WHERE um.milestone_id = m.id) AS EarnedCount,
+                is_deleted AS IsDeleted
             FROM milestones
-            WHERE id = @Id AND is_deleted is false;
+            WHERE id = @Id;
 
             SELECT
                 id,
@@ -37,16 +39,16 @@ internal sealed class GetMilestoneByIdQueryHandler(ISqlConnectionFactory sqlConn
                 AS TimeFrame
             FROM milestone_requirements
             JOIN activities a ON milestone_requirements.activity_code = a.code
-            WHERE milestone_id = @Id AND is_deleted is false;
+            WHERE milestone_id = @Id;
             ";
         CommandDefinition command = new(sql, new { query.Id }, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
-        MilestoneResponse? milestone = await multi.ReadSingleOrDefaultAsync<MilestoneResponse>();
+        AdminMilestoneResponse? milestone = await multi.ReadSingleOrDefaultAsync<AdminMilestoneResponse>();
         if (milestone == null)
         {
-            return Result.Failure<MilestoneDetailResponse>(MilestoneErrors.NotFound);
+            return Result.Failure<AdminMilestoneDetailResponse>(MilestoneErrors.NotFound);
         }
-        IReadOnlyList<MilestoneRequirementResponse> requirements = (await multi.ReadAsync<MilestoneRequirementResponse>()).ToList();
-        return new MilestoneDetailResponse(milestone, requirements);
+        IReadOnlyList<AdminMilestoneRequirementResponse> requirements = (await multi.ReadAsync<AdminMilestoneRequirementResponse>()).ToList();
+        return new AdminMilestoneDetailResponse(milestone, requirements);
     }
 }

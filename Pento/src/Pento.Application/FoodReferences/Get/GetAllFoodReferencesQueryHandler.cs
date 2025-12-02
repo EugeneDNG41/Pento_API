@@ -27,8 +27,8 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            filters.Add("(levenshtein(name, @Search) <= 2 OR name ILIKE '%' || @Search || '%')");
-            parameters.Add("Search", request.Search);
+            filters.Add("(levenshtein(name, @GetAll) <= 2 OR name ILIKE '%' || @GetAll || '%')");
+            parameters.Add("GetAll", request.Search);
         }
 
         string whereClause = filters.Count > 0

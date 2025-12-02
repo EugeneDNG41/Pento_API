@@ -32,6 +32,6 @@ internal sealed class SearchFoodItemLog : IEndpoint
         })
         .WithTags(Tags.FoodItemLogs)
         .RequireAuthorization()
-        .WithDescription("Search food item logs");
+        .WithDescription("GetAll food item logs");
     }
 }

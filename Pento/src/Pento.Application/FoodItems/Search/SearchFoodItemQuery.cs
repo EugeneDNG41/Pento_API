@@ -13,5 +13,15 @@ public sealed record SearchFoodItemQuery(
     decimal? ToQuantity,
     DateOnly? ExpirationDateAfter,
     DateOnly? ExpirationDateBefore,
+    FoodItemPreviewSortBy SortBy,
+    SortOrder SortOrder,
     int PageNumber,
     int PageSize) : IQuery<PagedList<FoodItemPreview>>;
+public enum FoodItemPreviewSortBy
+{
+    Default,
+    Name,
+    FoodGroup,
+    Quantity,
+    ExpirationDate
+}

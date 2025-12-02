@@ -1,4 +1,4 @@
-﻿using Pento.Application.Users.Search;
+﻿using Pento.Application.Users.GetAll;
 
 namespace Pento.Application.FoodItemLogs.GetById;
 

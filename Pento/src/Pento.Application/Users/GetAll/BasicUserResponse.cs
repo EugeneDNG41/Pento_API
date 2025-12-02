@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Users.Search;
+﻿namespace Pento.Application.Users.GetAll;
 
 public sealed record BasicUserResponse(
     Guid UserId,

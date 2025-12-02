@@ -1,4 +1,4 @@
-﻿using Pento.Application.Users.Search;
+﻿using Pento.Application.Users.GetAll;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Storages;
 

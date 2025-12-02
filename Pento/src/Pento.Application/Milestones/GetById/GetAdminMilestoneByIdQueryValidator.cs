@@ -2,9 +2,9 @@
 
 namespace Pento.Application.Milestones.GetById;
 
-internal sealed class GetMilestoneByIdQueryValidator : AbstractValidator<GetMilestoneByIdQuery>
+internal sealed class GetAdminMilestoneByIdQueryValidator : AbstractValidator<GetAdminMilestoneByIdQuery>
 {
-    public GetMilestoneByIdQueryValidator()
+    public GetAdminMilestoneByIdQueryValidator()
     {
         RuleFor(x => x.Id)
             .NotEmpty().WithMessage("Milestone Id is required.");

@@ -9,13 +9,13 @@ internal sealed class GetMilestoneById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("milestones/milestones/{requirementId:guid}", async (
+        app.MapGet("admin/milestones/{milestoneId:guid}", async (
             Guid milestoneId,
-            IQueryHandler<GetMilestoneByIdQuery, MilestoneDetailResponse> handler,
+            IQueryHandler<GetAdminMilestoneByIdQuery, AdminMilestoneDetailResponse> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<MilestoneDetailResponse> result = await handler.Handle(new GetMilestoneByIdQuery(milestoneId), cancellationToken);
+            Result<AdminMilestoneDetailResponse> result = await handler.Handle(new GetAdminMilestoneByIdQuery(milestoneId), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Milestones).WithName(RouteNames.GetMilestoneById);
+        }).WithTags(Tags.Admin).WithName(RouteNames.GetMilestoneById).RequireAuthorization(Permissions.ManageMilestones);
     }
 }

@@ -21,6 +21,5 @@ internal sealed class MilestoneRequirementConfiguration : IEntityTypeConfigurati
             .WithMany()
             .HasForeignKey(mr => mr.ActivityCode)
             .OnDelete(DeleteBehavior.Cascade);
-        builder.HasQueryFilter(mr => !mr.IsDeleted);
     }
 }

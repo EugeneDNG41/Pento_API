@@ -19,9 +19,9 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
             UserMilestoneSortBy.Name => "2",
             UserMilestoneSortBy.AchievedOn => "3",
             UserMilestoneSortBy.Progress => "4",
-            _ => "1"
+            UserMilestoneSortBy.Default or _ => "1"
         };
-        string orderClause = $"ORDER BY {orderBy} {query.SortOrder.ToString()}";
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>
         {
             "m.is_deleted IS false"
@@ -84,10 +84,7 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
               FROM milestone_requirements mr
               LEFT JOIN LATERAL (
                 SELECT
-                  CASE
-                    WHEN a.type = @StateActivity THEN COUNT(DISTINCT ua2.entity_id)
-                    ELSE COUNT(*) 
-                  END AS req_count
+                  COUNT(*) AS req_count
                 FROM user_activities ua2
                 JOIN activities a
                   ON a.code = ua2.activity_code
@@ -97,13 +94,12 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
                         mr.within_days IS NULL
                         OR ua2.performed_on >= (current_timestamp - (mr.within_days::text || ' days')::interval)
                       )
-	            GROUP BY a.type
               ) sub ON true
               WHERE mr.milestone_id = m.id
               ) agg ON true
             {whereClause}
             {orderClause}
-            OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
+            LIMIT @PageSize OFFSET @Offset;
             ";
         CommandDefinition command = new(
             sql, parameters,

@@ -26,8 +26,8 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            filters.Add("(title ILIKE @Search OR description ILIKE @Search)");
-            parameters.Add("Search", $"%{request.Search}%");
+            filters.Add("(title ILIKE @GetAll OR description ILIKE @GetAll)");
+            parameters.Add("GetAll", $"%{request.Search}%");
         }
 
         filters.Add("is_deleted = false");

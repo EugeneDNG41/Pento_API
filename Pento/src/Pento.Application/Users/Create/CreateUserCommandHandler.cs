@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.ThirdPartyServices.Identity;
 using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Application.Users.Get;
-using Pento.Application.Users.Search;
+using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 

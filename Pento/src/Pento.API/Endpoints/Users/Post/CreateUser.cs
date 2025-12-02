@@ -2,7 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Create;
 using Pento.Application.Users.Get;
-using Pento.Application.Users.Search;
+using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Post;

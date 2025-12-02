@@ -11,20 +11,26 @@ internal sealed class GetMilestones : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("milestones", async (
+        app.MapGet("admin/milestones", async (
             string? searchText,
             bool? isActive,
-            IQueryHandler<GetMilestonesQuery, PagedList<MilestoneResponse>> handler,
+            bool? isDeleted,            
+            IQueryHandler<GetAdminMilestonesQuery, PagedList<AdminMilestoneResponse>> handler,           
             CancellationToken cancellationToken,
+            GetAdminMilestoneSortBy sortBy = GetAdminMilestoneSortBy.Id,
+            SortOrder order = SortOrder.ASC,
             int pageNumber = 1,
             int pageSize = 10) =>
         {
-            Result<PagedList<MilestoneResponse>> result = await handler.Handle(new GetMilestonesQuery(
+            Result<PagedList<AdminMilestoneResponse>> result = await handler.Handle(new GetAdminMilestonesQuery(
                 searchText,
                 isActive,
+                isDeleted,
+                sortBy,
+                order,
                 pageNumber,
                 pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Milestones);
+        }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageMilestones);
     }
 }

@@ -16,10 +16,10 @@ internal sealed class GetCurrentMilestones : IEndpoint
     {
         app.MapGet("users/milestones", async (
             string? searchTerm,
-            bool? isAchieved,
-            UserMilestoneSortBy? sortBy,            
+            bool? isAchieved,                       
             IQueryHandler<GetCurrentMilestonesQuery, PagedList<CurrentUserMilestonesResponse>> handler,
             CancellationToken cancellationToken,
+            UserMilestoneSortBy sortBy = UserMilestoneSortBy.Default,
             SortOrder sortOrder = SortOrder.ASC,
             int pageNumber = 1,
             int pageSize = 10) =>

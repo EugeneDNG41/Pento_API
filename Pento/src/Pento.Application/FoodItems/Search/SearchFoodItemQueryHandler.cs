@@ -1,13 +1,10 @@
 ﻿using System.Data.Common;
 using Dapper;
-using FluentValidation;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
-using Pento.Application.FoodReferences.Get;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 
@@ -26,6 +23,15 @@ internal sealed class SearchFoodItemQueryHandler(
             return Result.Failure<PagedList<FoodItemPreview>>(HouseholdErrors.NotInAnyHouseHold);
         }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
+        string orderBy = query.SortBy switch
+        {
+            FoodItemPreviewSortBy.Name => "2",
+            FoodItemPreviewSortBy.FoodGroup => "3",
+            FoodItemPreviewSortBy.Quantity => "5",
+            FoodItemPreviewSortBy.ExpirationDate => "7",
+            FoodItemPreviewSortBy.Default or _ => "1"
+        };
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>
         {
             "fi.is_deleted IS FALSE",
@@ -87,7 +93,7 @@ internal sealed class SearchFoodItemQueryHandler(
             LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
             LEFT JOIN units u ON fi.unit_id = u.id
             {whereClause}
-            ORDER BY name
+            {orderClause}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
          """;
 

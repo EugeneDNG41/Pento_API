@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.UserMilestones.GetCurrentMilestones;
+namespace Pento.Application.Milestones.GetAll;
 
-internal sealed class GetCurrentMilestonesQueryValidator : AbstractValidator<GetCurrentMilestonesQuery>
+internal sealed class GetAdminMilestonesQueryValidator : AbstractValidator<GetAdminMilestonesQuery>
 {
-    public GetCurrentMilestonesQueryValidator()
+    public GetAdminMilestonesQueryValidator()
     {
         RuleFor(x => x.PageNumber)
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");
@@ -12,9 +12,9 @@ internal sealed class GetCurrentMilestonesQueryValidator : AbstractValidator<Get
             .GreaterThan(0).WithMessage("Page size must be greater than 0.");
         RuleFor(x => x.SortBy)
             .IsInEnum()
-            .WithMessage("Sort By must be a valid enum value.");
+            .WithMessage("Invalid sort by value.");
         RuleFor(x => x.SortOrder)
             .IsInEnum()
-            .WithMessage("Sort Order must be a valid enum value.");
+            .WithMessage("Invalid sort order value.");
     }
 }

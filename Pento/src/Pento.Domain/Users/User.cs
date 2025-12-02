@@ -21,7 +21,6 @@ public sealed class User : Entity
     public string LastName { get; private set; }
     public string IdentityId { get; private set; }
     public DateTime CreatedAt { get; private set; }
-    public DateTime? UpdatedAt { get; private set; }
 
     public IReadOnlyCollection<Role> Roles => _roles.ToList();
 

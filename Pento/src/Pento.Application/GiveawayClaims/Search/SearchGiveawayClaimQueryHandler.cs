@@ -35,8 +35,8 @@ internal sealed class SearchGiveawayClaimQueryHandler(
 
         if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
-            filters.Add("(gc.message ILIKE @Search OR fr.name ILIKE @Search)");
-            parameters.Add("Search", $"%{query.SearchText}%");
+            filters.Add("(gc.message ILIKE @GetAll OR fr.name ILIKE @GetAll)");
+            parameters.Add("GetAll", $"%{query.SearchText}%");
         }
 
         string whereClause = filters.Count > 0
