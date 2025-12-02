@@ -25,7 +25,6 @@ internal sealed class GetUserActivitiesQueryHandler(ISqlConnectionFactory sqlCon
               AND (@FromDate IS NULL OR ua.performed_on >= @FromDate)
               AND (@ToDate IS NULL OR ua.performed_on <= @ToDate)
               AND (@UserId IS NULL OR ua.UserId = @UserId)
-              AND (@ActivityType IS NULL OR a.type = @ActivityType)
             ORDER BY ua.performed_on DESC
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             SELECT COUNT(*)
@@ -35,7 +34,6 @@ internal sealed class GetUserActivitiesQueryHandler(ISqlConnectionFactory sqlCon
               AND (@FromDate IS NULL OR ua.performed_on >= @FromDate)
               AND (@ToDate IS NULL OR ua.performed_on <= @ToDate)
               AND (@UserId IS NULL OR ua.UserId = @UserId)
-              AND (@ActivityType IS NULL OR a.type = @ActivityType)
             ";
         CommandDefinition command = new(
             sql,
@@ -45,7 +43,6 @@ internal sealed class GetUserActivitiesQueryHandler(ISqlConnectionFactory sqlCon
                 query.FromDate,
                 query.ToDate,
                 query.UserId,
-                ActivityType = query.ActivityType.ToString(),
                 Offset = (query.PageNumber - 1) * query.PageSize,
                 query.PageSize
             },

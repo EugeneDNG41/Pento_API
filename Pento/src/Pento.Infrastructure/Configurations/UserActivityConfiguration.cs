@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Activities;
+using Pento.Domain.Households;
 using Pento.Domain.UserActivities;
 
 namespace Pento.Infrastructure.Configurations;
@@ -15,6 +16,10 @@ internal sealed class UserActivityConfiguration : IEntityTypeConfiguration<UserA
         builder.HasOne<Activity>()
             .WithMany()
             .HasForeignKey(ua => ua.ActivityCode)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Household>()
+            .WithMany()
+            .HasForeignKey(ua => ua.HouseholdId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

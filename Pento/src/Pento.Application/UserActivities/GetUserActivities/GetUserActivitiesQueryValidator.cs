@@ -13,8 +13,5 @@ internal sealed class GetUserActivitiesQueryValidator : AbstractValidator<GetUse
         RuleFor(x => x.FromDate)
             .LessThanOrEqualTo(x => x.ToDate).When(x => x.FromDate.HasValue && x.ToDate.HasValue)
             .WithMessage("From date must be less than or equal to To date.");
-        RuleFor(x => x.ActivityType)
-            .IsInEnum().When(x => x.ActivityType.HasValue)
-            .WithMessage("Invalid activity type.");
     }
 }

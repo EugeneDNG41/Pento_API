@@ -10,5 +10,8 @@ internal sealed class GetCurrentMilestonesQueryValidator : AbstractValidator<Get
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");
         RuleFor(x => x.PageSize)
             .GreaterThan(0).WithMessage("Page size must be greater than 0.");
+        RuleFor(x => x.SortBy)
+            .IsInEnum().When(x => x.SortBy.HasValue)
+            .WithMessage("Sort By must be a valid enum value.");
     }
 }

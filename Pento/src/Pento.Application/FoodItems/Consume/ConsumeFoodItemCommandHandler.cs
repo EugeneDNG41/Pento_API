@@ -10,7 +10,6 @@ using Pento.Domain.FoodItems;
 namespace Pento.Application.FoodItems.Consume;
 
 internal sealed class ConsumeFoodItemCommandHandler(
-    IActivityService activityService,
     IConverterService converter,
     IUserContext userContext,
     IGenericRepository<FoodItem> foodItemRepository,
@@ -47,10 +46,6 @@ internal sealed class ConsumeFoodItemCommandHandler(
         }
         foodItem.Consume(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
         foodItemRepository.Update(foodItem);
-        await activityService.RecordActivityAsync(
-            userContext.UserId,
-            ActivityCode.FOOD_ITEM_CONSUME.ToString(),
-            cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

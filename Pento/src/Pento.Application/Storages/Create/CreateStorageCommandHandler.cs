@@ -14,7 +14,6 @@ namespace Pento.Application.Storages.Create;
 
 internal sealed class CreateStorageCommandHandler(
     IUserContext userContext,
-    IActivityService activityService,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Household> householdReposiry,
@@ -44,10 +43,6 @@ internal sealed class CreateStorageCommandHandler(
             householdId.Value,
             null);
         compartmentRepository.Add(compartment);
-        await activityService.RecordActivityAsync(
-             userContext.UserId,
-             ActivityCode.STORAGE_CREATE.ToString(),
-             cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return storage.Id;
     }

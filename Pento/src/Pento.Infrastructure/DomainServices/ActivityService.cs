@@ -13,14 +13,14 @@ internal sealed class ActivityService(
     IGenericRepository<Activity> activityRepostiory,
     IGenericRepository<UserActivity> userActivityRepository) : IActivityService
 {
-    public async Task<Result<UserActivity>> RecordActivityAsync(Guid userId, string activityCode, CancellationToken cancellationToken, Guid? entityId = null)
+    public async Task<Result<UserActivity>> RecordActivityAsync(Guid userId, Guid? householdId, string activityCode, Guid? entityId, CancellationToken cancellationToken)
     {
         Activity? activity = (await activityRepostiory.FindAsync(a => a.Code == activityCode, cancellationToken)).SingleOrDefault();
         if (activity is null)
         {
             return Result.Failure<UserActivity>(ActivityErrors.NotFound);
         }
-        var userActivity = UserActivity.Create(userId, activity.Code, dateTimeProvider.UtcNow, entityId);
+        var userActivity = UserActivity.Create(userId, householdId, activity.Code, dateTimeProvider.UtcNow, entityId);
         userActivityRepository.Add(userActivity);
         return userActivity;
     }
@@ -36,12 +36,8 @@ internal sealed class ActivityService(
             ua.ActivityCode == activityCode &&
             fromDate == null ||
             ua.PerformedOn >= fromDate;
-        int activityCount = activity.Type switch
-        {
-            ActivityType.Action => await userActivityRepository.CountAsync(predicate, cancellationToken),
-            ActivityType.State => await userActivityRepository.CountDistinctAsync(ua => ua.EntityId, predicate, cancellationToken),
-            _ => 0
-        };
+        int activityCount = await userActivityRepository.CountAsync(predicate, cancellationToken);
+
         return activityCount;
     }
 }

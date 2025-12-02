@@ -4,4 +4,4 @@ using Pento.Domain.Activities;
 
 namespace Pento.Application.Activities.GetAll;
 
-public sealed record GetActivitiesQuery(string? SearchText, ActivityType? Type) : IQuery<IReadOnlyList<ActivityResponse>>;
+public sealed record GetActivitiesQuery(string? SearchText) : IQuery<IReadOnlyList<ActivityResponse>>;

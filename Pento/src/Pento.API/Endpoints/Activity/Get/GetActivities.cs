@@ -12,11 +12,10 @@ internal sealed class GetActivities : IEndpoint
     {
         app.MapGet("admin/activities", async (
             string? searchText,
-            ActivityType? type,
             IQueryHandler<GetActivitiesQuery, IReadOnlyList<ActivityResponse>> handler,
             CancellationToken cancellationToken) =>
         {
-            Result<IReadOnlyList<ActivityResponse>> result = await handler.Handle(new GetActivitiesQuery(searchText, type), cancellationToken);
+            Result<IReadOnlyList<ActivityResponse>> result = await handler.Handle(new GetActivitiesQuery(searchText), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).RequireAuthorization(Permissions.ManageMilestones).WithTags(Tags.Admin);
     }

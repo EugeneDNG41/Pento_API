@@ -15,6 +15,6 @@ public static class FoodItemErrors
         Error.Problem("FoodItems.NotSameType", "Food items are not of the same type for merging");
     public static readonly Error InvalidMeasurementUnit =
         Error.Problem("FoodItems.InvalidMeasurementUnit", "The specified measurement unit is not valid for this food item");
-    public static readonly Error VersionMismatch =
-        Error.Conflict("FoodItems.VersionMismatch", "The food item has been modified by another process");
+    public static readonly Error HasPendingReservation =
+        Error.Conflict("FoodItems.HasPendingReservation", "The food item has pending reservations and cannot be deleted"); //business rule
 }

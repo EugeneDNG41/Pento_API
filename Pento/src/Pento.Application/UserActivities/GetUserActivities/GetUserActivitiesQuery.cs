@@ -4,4 +4,4 @@ using Pento.Domain.Activities;
 
 namespace Pento.Application.UserActivities.GetUserActivities;
 
-public sealed record GetUserActivitiesQuery(Guid? UserId, string? SearchTerm, ActivityType? ActivityType, DateTime? FromDate, DateTime? ToDate, int PageNumber, int PageSize) : IQuery<PagedList<UserActivityResponse>>;
+public sealed record GetUserActivitiesQuery(Guid? UserId, string? SearchTerm, DateTime? FromDate, DateTime? ToDate, int PageNumber, int PageSize) : IQuery<PagedList<UserActivityResponse>>;
