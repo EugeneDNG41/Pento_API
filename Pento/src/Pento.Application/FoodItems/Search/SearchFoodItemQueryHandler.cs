@@ -68,28 +68,28 @@ internal sealed class SearchFoodItemQueryHandler(
         }
         if (query.FromQuantity.HasValue)
         {
-            andFilters.Add("quantity >= @FromQuantity");
+            andFilters.Add("fi.quantity >= @FromQuantity");
             parameters.Add("FromQuantity", query.FromQuantity.Value);
         }
         if (query.ToQuantity.HasValue)
         {
-            andFilters.Add("quantity <= @ToQuantity");
+            andFilters.Add("fi.quantity <= @ToQuantity");
             parameters.Add("ToQuantity", query.ToQuantity.Value);
         }
         if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
-            andFilters.Add("name ILIKE @SearchText");
+            andFilters.Add("fi.name ILIKE @SearchText");
             parameters.Add("SearchText", $"%{query.SearchText}%");
         }
         if (query.ExpirationDateAfter.HasValue)
         {
-            andFilters.Add("expiration_date > @ExpirationDateAfter"); // use >= for inclusive
+            andFilters.Add("fi.expiration_date > @ExpirationDateAfter"); // use >= for inclusive
             parameters.Add("ExpirationDateAfter", query.ExpirationDateAfter.Value);
         }
 
         if (query.ExpirationDateBefore.HasValue)
         {
-            andFilters.Add("expiration_date < @ExpirationDateBefore"); // use <= for inclusive
+            andFilters.Add("fi.expiration_date < @ExpirationDateBefore"); // use <= for inclusive
             parameters.Add("ExpirationDateBefore", query.ExpirationDateBefore.Value);
         }
         string? andFilterClause = andFilters.Count > 0 ? string.Join(" AND ", andFilters) : null;
