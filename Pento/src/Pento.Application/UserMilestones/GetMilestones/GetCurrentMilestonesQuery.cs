@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 
-namespace Pento.Application.UserMilestones.GetCurrentMilestones;
+namespace Pento.Application.UserMilestones.GetMilestones;
 
 public sealed record GetCurrentMilestonesQuery(string? SearchTerm, bool? IsAchieved, UserMilestoneSortBy SortBy, SortOrder SortOrder, int PageNumber, int PageSize) : IQuery<PagedList<CurrentUserMilestonesResponse>>;
 public enum UserMilestoneSortBy

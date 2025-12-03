@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.UserMilestones.GetCurrentMilestones;
+namespace Pento.Application.UserMilestones.GetMilestones;
 
 internal sealed class GetCurrentMilestonesQueryValidator : AbstractValidator<GetCurrentMilestonesQuery>
 {

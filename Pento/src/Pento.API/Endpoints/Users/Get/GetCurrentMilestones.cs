@@ -5,7 +5,7 @@ using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 using Pento.Application.FoodItemLogs.GetSummary;
-using Pento.Application.UserMilestones.GetCurrentMilestones;
+using Pento.Application.UserMilestones.GetMilestones;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Users.Get;

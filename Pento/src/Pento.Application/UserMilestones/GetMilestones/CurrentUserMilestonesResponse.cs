@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.UserMilestones.GetCurrentMilestones;
+﻿namespace Pento.Application.UserMilestones.GetMilestones;
 
 public sealed record CurrentUserMilestonesResponse(
     Guid MilestoneId,
