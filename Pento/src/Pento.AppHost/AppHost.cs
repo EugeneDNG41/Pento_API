@@ -88,7 +88,17 @@ IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiK
 IResourceBuilder<ParameterResource> payosClientId = builder.AddParameter("PayosClientId", secret: true);
 IResourceBuilder<ParameterResource> payosApiKey = builder.AddParameter("PayosApiKey", secret: true);
 IResourceBuilder<ParameterResource> payosChecksumKey = builder.AddParameter("PayosChecksumKey", secret: true);
-IResourceBuilder<ParameterResource> firebaseJson = builder.AddParameter("FirebaseJson", secret: true);
+IResourceBuilder<ParameterResource> googleType = builder.AddParameter("GoogleType");
+IResourceBuilder<ParameterResource> googleProjectId = builder.AddParameter("GoogleProjectId");
+IResourceBuilder<ParameterResource> googlePrivateKeyId = builder.AddParameter("GooglePrivateKeyId");
+IResourceBuilder<ParameterResource> googlePrivateKey = builder.AddParameter("GooglePrivateKey", secret: true);
+IResourceBuilder<ParameterResource> googleClientEmail = builder.AddParameter("GoogleClientEmail");
+IResourceBuilder<ParameterResource> googleClientId = builder.AddParameter("GoogleClientId");
+IResourceBuilder<ParameterResource> googleAuthUri = builder.AddParameter("GoogleAuthUri");
+IResourceBuilder<ParameterResource> googleTokenUri = builder.AddParameter("GoogleTokenUri");
+IResourceBuilder<ParameterResource> googleAuthProviderCertUrl = builder.AddParameter("GoogleAuthProviderX509CertUrl");
+IResourceBuilder<ParameterResource> googleClientCertUrl = builder.AddParameter("GoogleClientX509CertUrl");
+IResourceBuilder<ParameterResource> googleUniverseDomain = builder.AddParameter("GoogleUniverseDomain");
 
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
@@ -104,7 +114,17 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("PayOS__ClientId", payosClientId)
     .WithEnvironment("PayOS__ApiKey", payosApiKey)
     .WithEnvironment("PayOS__ChecksumKey", payosChecksumKey)
-    .WithEnvironment("Firebase__Json", firebaseJson)
+    .WithEnvironment("Google__Type", googleType)
+    .WithEnvironment("Google__ProjectId", googleProjectId)
+    .WithEnvironment("Google__PrivateKeyId", googlePrivateKeyId)
+    .WithEnvironment("Google__PrivateKey", googlePrivateKey)
+    .WithEnvironment("Google__ClientEmail", googleClientEmail)
+    .WithEnvironment("Google__ClientId", googleClientId)
+    .WithEnvironment("Google__AuthUri", googleAuthUri)
+    .WithEnvironment("Google__TokenUri", googleTokenUri)
+    .WithEnvironment("Google__AuthProviderX509CertUrl", googleAuthProviderCertUrl)
+    .WithEnvironment("Google__ClientX509CertUrl", googleClientCertUrl)
+    .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)        
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)
