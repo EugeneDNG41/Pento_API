@@ -61,7 +61,6 @@ jobs:
           AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
           AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
           AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
-          AZURE_FIREBASE_JSON: ${{ secrets.AZURE_FIREBASE_JSON }}
 
 
       - name: Deploy Application
@@ -79,6 +78,5 @@ jobs:
           AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
           AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
           AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
-          AZURE_FIREBASE_JSON: ${{ secrets.AZURE_FIREBASE_JSON }}
 
         

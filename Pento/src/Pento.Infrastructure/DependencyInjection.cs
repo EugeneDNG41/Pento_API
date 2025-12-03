@@ -74,13 +74,7 @@ public static class DependencyInjection
         AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-        string json = configuration["Firebase:Json"]?? throw new InvalidOperationException("Google section is missing or invalid");
-        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(json);
-        var firebaseApp = FirebaseApp.Create(new AppOptions()
-        {
-            Credential = cred.ToGoogleCredential()
-        });
-        services.AddSingleton(firebaseApp);
+
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
