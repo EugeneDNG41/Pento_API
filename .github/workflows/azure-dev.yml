@@ -72,7 +72,7 @@ jobs:
           AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
           AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
           AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
-          AZURE_GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATEKEY }}
+          AZURE_GOOGLE_PRIVATE_KEY: ${{ secrets.AZURE_GOOGLE_PRIVATE_KEY }}
 
 
 
@@ -91,6 +91,6 @@ jobs:
           AZURE_PAYOS_CLIENT_ID: ${{ secrets.AZURE_PAYOS_CLIENT_ID }}
           AZURE_PAYOS_API_KEY: ${{ secrets.AZURE_PAYOS_API_KEY }}
           AZURE_PAYOS_CHECKSUM_KEY: ${{ secrets.AZURE_PAYOS_CHECKSUM_KEY }}
-          AZURE_GOOGLE_PRIVATE_KEY: ${{ secrets.GOOGLE_PRIVATEKEY }}
+          AZURE_GOOGLE_PRIVATE_KEY: ${{ secrets.AZURE_GOOGLE_PRIVATE_KEY }}
 
         
