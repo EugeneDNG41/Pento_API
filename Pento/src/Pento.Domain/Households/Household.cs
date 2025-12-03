@@ -46,4 +46,14 @@ public sealed class Household : Entity
         InviteCode = null;
         InviteCodeExpirationUtc = null;
     }
+    public new void Delete()
+    {
+        base.Delete();
+        Raise(new HouseholdDeletedDomainEvent(Id));
+
+    }
+}
+public sealed class HouseholdDeletedDomainEvent(Guid householdId) : DomainEvent
+{
+    public Guid HouseholdId { get; } = householdId;
 }

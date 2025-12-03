@@ -17,8 +17,8 @@ internal sealed class GetActivitiesQueryHandler(ISqlConnectionFactory sqlConnect
                 name AS Name,
                 description AS Description
             FROM activities
-            WHERE (@SearchText IS NULL OR name ILIKE '%' || @SearchText ||  '%' OR description ILIKE '%' || @SearchText || '%' OR code ILIKE '%' || @SearchText || '%')
-                AND (@Type IS NULL OR type = @Type)
+            WHERE @SearchText IS NULL OR name ILIKE '%' || @SearchText ||  '%' OR description ILIKE '%' || @SearchText || '%' OR code ILIKE '%' || @SearchText || '%'
+  
             ORDER BY name;
         ";
         CommandDefinition command = new(sql, new { query.SearchText}, cancellationToken: cancellationToken);

@@ -15,8 +15,8 @@ internal sealed class GetAdminMilestonesQueryHandler(ISqlConnectionFactory sqlCo
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         string orderBy = query.SortBy switch
         {
-            GetAdminMilestoneSortBy.Name => "2",
-            GetAdminMilestoneSortBy.EarnedCount => "5",
+            GetAdminMilestoneSortBy.Name => "3",
+            GetAdminMilestoneSortBy.EarnedCount => "6",
             GetAdminMilestoneSortBy.Id or _ => "1"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
@@ -45,6 +45,7 @@ internal sealed class GetAdminMilestonesQueryHandler(ISqlConnectionFactory sqlCo
             {whereClause};
             SELECT
                 m.id,
+                m.icon_url AS Icon,
                 name,
                 description,
                 is_active AS IsActive,

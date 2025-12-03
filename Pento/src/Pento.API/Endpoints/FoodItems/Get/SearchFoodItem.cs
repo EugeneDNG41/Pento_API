@@ -16,7 +16,8 @@ internal sealed class SearchFoodItemGet : IEndpoint
         app.MapGet("food-items", async(
             Guid? foodReferenceId,
             string? searchText,
-            FoodGroup? foodGroup,
+            FoodGroup[]? foodGroup,
+            FoodItemStatus[]? status,
             decimal? fromQuantity,
             decimal? toQuantity,
             DateOnly? expirationDateAfter,
@@ -33,6 +34,7 @@ internal sealed class SearchFoodItemGet : IEndpoint
                     foodReferenceId,
                     searchText,
                     foodGroup,
+                    status,
                     fromQuantity,
                     toQuantity,
                     expirationDateAfter,

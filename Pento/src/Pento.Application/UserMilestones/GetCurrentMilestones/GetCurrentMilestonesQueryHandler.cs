@@ -16,9 +16,9 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
 
         string orderBy = query.SortBy switch
         {
-            UserMilestoneSortBy.Name => "2",
-            UserMilestoneSortBy.AchievedOn => "3",
-            UserMilestoneSortBy.Progress => "4",
+            UserMilestoneSortBy.Name => "3",
+            UserMilestoneSortBy.AchievedOn => "4",
+            UserMilestoneSortBy.Progress => "5",
             UserMilestoneSortBy.Default or _ => "1"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
@@ -58,6 +58,7 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
             {whereClause};
             SELECT
               m.id  AS MileStoneId,
+              m.icon_url AS Icon,
               m.name,
               um.achieved_on AS AchievedOn,
               CASE

@@ -8,7 +8,8 @@ namespace Pento.Application.FoodItems.Search;
 public sealed record SearchFoodItemQuery(
     Guid? FoodReferenceId,
     string? SearchText,
-    FoodGroup? FoodGroup,
+    FoodGroup[]? FoodGroup,
+    FoodItemStatus[]? Status,
     decimal? FromQuantity,
     decimal? ToQuantity,
     DateOnly? ExpirationDateAfter,
@@ -24,4 +25,10 @@ public enum FoodItemPreviewSortBy
     FoodGroup,
     Quantity,
     ExpirationDate
+}
+public enum FoodItemStatus
+{
+    Fresh,
+    Expiring,
+    Expired
 }

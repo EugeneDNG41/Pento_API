@@ -64,15 +64,4 @@ internal sealed class GetCurrentHouseholdQueryHandler(
         }
         return response;
     }
-    internal sealed record HouseholdMembersFlatResult(
-        Guid HouseholdId,
-        string HouseholdName,
-        string? InviteCode,
-        DateTime? InviteCodeExpirationUtc,
-        Guid UserId,
-        string Email,
-        string FirstName,
-        string LastName,
-        Uri? AvatarUrl,
-        string Roles);
 }
