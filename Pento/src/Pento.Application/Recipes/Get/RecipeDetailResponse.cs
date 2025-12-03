@@ -9,7 +9,7 @@ public sealed class RecipeDetailResponse
     public string? Description { get; init; }
     public int PrepTimeMinutes { get; init; }
     public int CookTimeMinutes { get; init; }
-    public int TotalTimeMinutes { get; init; }
+    public int TotalTimes { get; init; }
     public string? Notes { get; init; }
     public int? Servings { get; init; }
     public string? DifficultyLevel { get; init; }

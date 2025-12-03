@@ -34,6 +34,7 @@ public sealed class Notification : Entity
         Type = type;
         DataJson = dataJson;
         Status = NotificationStatus.Pending;
+        SentOnUtc = DateTime.UtcNow;
 
     }
 
@@ -60,13 +61,5 @@ public sealed class Notification : Entity
         SentOnUtc = DateTime.UtcNow;
     }
 
-    public void MarkFailed()
-    {
-        Status = NotificationStatus.Failed;
-    }
 
-    public void MarkRead()
-    {
-        ReadOnUtc = DateTime.UtcNow;
-    }
 }

@@ -88,6 +88,7 @@ IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiK
 IResourceBuilder<ParameterResource> payosClientId = builder.AddParameter("PayosClientId", secret: true);
 IResourceBuilder<ParameterResource> payosApiKey = builder.AddParameter("PayosApiKey", secret: true);
 IResourceBuilder<ParameterResource> payosChecksumKey = builder.AddParameter("PayosChecksumKey", secret: true);
+IResourceBuilder<ParameterResource> firebaseJson = builder.AddParameter("FirebaseAdminJson", secret: true);
 
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
@@ -103,6 +104,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("PayOS__ClientId", payosClientId)
     .WithEnvironment("PayOS__ApiKey", payosApiKey)
     .WithEnvironment("PayOS__ChecksumKey", payosChecksumKey)
+    .WithEnvironment("Firebase__Json", firebaseJson)
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)

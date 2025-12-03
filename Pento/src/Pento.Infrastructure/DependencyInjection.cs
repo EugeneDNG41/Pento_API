@@ -1,6 +1,10 @@
 ﻿using System.Text.Json.Serialization;
 using Dapper;
+using FirebaseAdmin;
 using GenerativeAI;
+using Google.Apis.AndroidPublisher.v3;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -20,6 +24,7 @@ using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.File;
 using Pento.Application.Abstractions.ThirdPartyServices.Barcode;
 using Pento.Application.Abstractions.ThirdPartyServices.Email;
+using Pento.Application.Abstractions.ThirdPartyServices.Firebase;
 using Pento.Application.Abstractions.ThirdPartyServices.Identity;
 using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
 using Pento.Application.Abstractions.UtilityServices.Caching;
@@ -37,6 +42,7 @@ using Pento.Infrastructure.File;
 using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Pento.Infrastructure.ThirdPartyServices.Email;
+using Pento.Infrastructure.ThirdPartyServices.Firebase;
 using Pento.Infrastructure.ThirdPartyServices.Identity;
 using Pento.Infrastructure.ThirdPartyServices.OpenFoodFacts;
 using Pento.Infrastructure.ThirdPartyServices.PayOS;
@@ -68,7 +74,13 @@ public static class DependencyInjection
         AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-
+        string json = configuration.GetRequiredSection("FIREBASE_ADMIN_JSON").Get<string>() ?? throw new InvalidOperationException("Google section is missing or invalid");
+        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(json);
+        var firebaseApp = FirebaseApp.Create(new AppOptions()
+        {
+            Credential = cred.ToGoogleCredential()
+        });
+        services.AddSingleton(firebaseApp);
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
@@ -119,7 +131,7 @@ public static class DependencyInjection
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
         services.AddScoped<IPixabayImageService,PixabayImageService>();
         services.AddScoped<IVisionService, VisionService>();
-
+        services.AddSingleton<INotificationSender, FcmNotificationSender>();
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)

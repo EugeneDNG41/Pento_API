@@ -12,6 +12,8 @@
 
   <ItemGroup>
     <PackageReference Include="Aspire.Hosting" Version="13.0.1" />
+	  <PackageReference Include="Google.Apis.Auth" Version="1.73.0" />
+	  <PackageReference Include="Google.Apis.Core" Version="1.73.0" />  
     <PackageReference Include="Aspire.Hosting.AppHost" Version="13.0.1" />
     <PackageReference Include="Aspire.Hosting.Azure.AppContainers" Version="13.0.1" />
     <PackageReference Include="Aspire.Hosting.Azure.KeyVault" Version="13.0.1" />
