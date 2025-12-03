@@ -16,7 +16,11 @@
     <PackageReference Include="Aspire.StackExchange.Redis.DistributedCaching" Version="13.0.1" />
     <PackageReference Include="CsvHelper" Version="33.1.0" />
     <PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+    <PackageReference Include="FirebaseAdmin" Version="3.4.0" />
     <PackageReference Include="FluentEmail.MailKit" Version="3.0.2" />
+    <PackageReference Include="Google.Apis.AndroidPublisher.v3" Version="1.72.0.3975" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.73.0" />
+    <PackageReference Include="Google.Apis.Core" Version="1.73.0" />
     <PackageReference Include="Google_GenerativeAI" Version="3.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.11" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.11" />

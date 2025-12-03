@@ -13,7 +13,7 @@ internal sealed class SearchGiveawayClaimsEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("giveawayclaims/search", async (
+        app.MapGet("giveawayclaims", async (
             Guid? giveawayPostId,
             ClaimStatus? status,
             string? searchText,
