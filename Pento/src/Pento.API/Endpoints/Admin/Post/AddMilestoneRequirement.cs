@@ -28,6 +28,6 @@ internal sealed class AddMilestoneRequirement : IEndpoint
     {
         public string ActivityCode { get; init; }
         public int Quota { get; init; }
-        public int WithinDays { get; init; }
+        public int? WithinDays { get; init; }
     }
 }
