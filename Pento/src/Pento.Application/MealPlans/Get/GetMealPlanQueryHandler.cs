@@ -79,6 +79,7 @@ internal sealed class GetMealPlanQueryHandler(
         const string sqlFoodItems = """
             SELECT
                 fir.food_item_id,
+                fir.id              AS reservation_id,
                 fi.name            AS food_item_name,
                 fr.name            AS food_reference_name,
                 fr.food_group      AS food_group,
@@ -101,6 +102,7 @@ internal sealed class GetMealPlanQueryHandler(
         var foodItems = fiRows
             .Select(r => new MealPlanFoodItemInfo(
                 Id: r.food_item_id,
+                reservationId: r.reservation_id,
                 Name: r.food_item_name,
                 FoodReferenceName: r.food_reference_name,
                 FoodGroup: r.food_group,

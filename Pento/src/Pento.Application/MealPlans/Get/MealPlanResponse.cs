@@ -25,6 +25,8 @@ internal sealed class MealPlanFoodItemRow
     public Guid MealPlanId { get; set; }
     public Guid FoodItemId { get; set; }
     public Guid FoodReferenceId { get; set; }
+    public Guid FoodReservationId { get; set; }
+
     public string FoodItemName { get; set; } = null!;
     public string FoodReferenceName { get; set; } = null!;
     public string FoodGroup { get; set; } = null!;

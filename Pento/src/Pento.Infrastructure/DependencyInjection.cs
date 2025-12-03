@@ -43,6 +43,7 @@ using Pento.Infrastructure.Outbox;
 using Pento.Infrastructure.Repositories;
 using Pento.Infrastructure.ThirdPartyServices.Email;
 using Pento.Infrastructure.ThirdPartyServices.Firebase;
+using Pento.Infrastructure.ThirdPartyServices.Google;
 using Pento.Infrastructure.ThirdPartyServices.Identity;
 using Pento.Infrastructure.ThirdPartyServices.OpenFoodFacts;
 using Pento.Infrastructure.ThirdPartyServices.PayOS;
@@ -74,7 +75,17 @@ public static class DependencyInjection
         AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-
+        GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
+                .Get<GoogleOptions>()
+                ?? throw new InvalidOperationException("Google section is missing or invalid");
+        string jsonOptions = Newtonsoft.Json.JsonConvert.SerializeObject(googleOptions);
+#pragma warning disable S1481 // Unused local variables should be removed
+        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(jsonOptions);
+        var firebaseApp = FirebaseApp.Create(new AppOptions()
+        {
+            Credential = cred.ToGoogleCredential()
+        });
+        services.AddSingleton(firebaseApp);
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();

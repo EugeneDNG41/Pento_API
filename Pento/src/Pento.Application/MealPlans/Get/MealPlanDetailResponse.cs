@@ -33,6 +33,7 @@ public sealed record MealPlanRecipeInfo(
 
 public sealed record MealPlanFoodItemInfo(
     Guid Id,
+    Guid reservationId,
     string Name,
     string FoodReferenceName,
     string FoodGroup,

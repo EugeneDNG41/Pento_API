@@ -125,6 +125,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 fir.meal_plan_id          AS MealPlanId,
                 fi.id                     AS FoodItemId,
                 fr.id                     AS FoodReferenceId,
+                fir.id                     AS FoodReservationId,
                 fi.name                   AS FoodItemName,
                 fr.name                   AS FoodReferenceName,
                 fr.food_group             AS FoodGroup,
@@ -195,6 +196,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 .Where(fi => !ingredientFoodRefs.Contains(fi.FoodReferenceId))
                 .Select(fi => new MealPlanFoodItemInfo(
                     fi.FoodItemId,
+                    fi.FoodReservationId,
                     fi.FoodItemName,
                     fi.FoodReferenceName,
                     fi.FoodGroup,
