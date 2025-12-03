@@ -12,5 +12,9 @@ public static class DeviceTokenErrors
        "DeviceToken.NotFound",
        "The device token was not found."
    );
+    public static readonly Error DuplicateToken = Error.Conflict(
+       "DeviceToken.DuplicateToken",
+       "The same device token already exists for this user."
+        );
 
 }

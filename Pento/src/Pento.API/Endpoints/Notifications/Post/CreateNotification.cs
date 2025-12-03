@@ -32,6 +32,7 @@ internal sealed class CreateNotification : IEndpoint
         })
         .WithTags(Tags.Notifications)
         .RequireAuthorization();
+
     }
 
     internal sealed class Request

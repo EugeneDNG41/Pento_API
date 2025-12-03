@@ -24,7 +24,7 @@ internal sealed class CancelMealPlanReservation : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.Reservations)
+        .WithTags(Tags.MealPlans)
         .RequireAuthorization();
         app.MapPatch("meal-plans/{mealPlanId:guid}/recipes/{recipeId:guid}/cancel", async (
           Guid mealPlanId,
@@ -44,5 +44,23 @@ internal sealed class CancelMealPlanReservation : IEndpoint
         })
       .WithTags(Tags.MealPlans)
       .RequireAuthorization();
+
+        app.MapPatch("meal-plans/{mealPlanId:guid}/cancel", async (
+            Guid mealPlanId,
+            ICommandHandler<CancelMealPlanCommand, Guid> handler,
+            CancellationToken ct
+        ) =>
+                {
+                    var cmd = new CancelMealPlanCommand(mealPlanId);
+                    Result<Guid> result = await handler.Handle(cmd, ct);
+
+                    return result.Match(
+                        Results.Ok,
+                        CustomResults.Problem
+                    );
+                })
+        .WithTags(Tags.MealPlans)
+        .RequireAuthorization();
+
     }
 }

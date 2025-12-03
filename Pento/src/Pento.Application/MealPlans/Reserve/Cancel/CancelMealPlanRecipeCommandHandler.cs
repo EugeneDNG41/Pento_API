@@ -46,61 +46,61 @@ internal sealed class CancelMealPlanRecipeCommandHandler(
             return Result.Failure<Guid>(MealPlanErrors.RecipeNotInMealPlan);
         }
 
-        IEnumerable<RecipeIngredient> ingredients = await ingredientRepo.FindAsync(
+        var ingredients = (await ingredientRepo.FindAsync(
             x => x.RecipeId == command.RecipeId,
-            cancellationToken
-        );
+            cancellationToken)).ToList();
 
         if (!ingredients.Any())
         {
             return Result.Failure<Guid>(RecipeErrors.NoIngredients);
         }
 
-        var foodRefIds = ingredients.Select(i => i.FoodRefId).ToList();
+        var foodRefIds = ingredients.Select(i => i.FoodRefId).ToHashSet();
 
-        IEnumerable<FoodItem> foodItems = await foodItemRepo.FindAsync(
+        var foodItems = (await foodItemRepo.FindAsync(
             x => x.HouseholdId == householdId.Value &&
                  foodRefIds.Contains(x.FoodReferenceId),
-            cancellationToken
-        );
+            cancellationToken)).ToList();
 
         if (!foodItems.Any())
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
 
-        var foodItemIds = foodItems.Select(f => f.Id).ToList();
+        var foodItemIds = foodItems.Select(f => f.Id).ToHashSet();
 
-        IEnumerable<FoodItemMealPlanReservation> reservations = await reservationRepo.FindAsync(
+        var reservations = (await reservationRepo.FindAsync(
             x => x.MealPlanId == command.MealPlanId &&
                  foodItemIds.Contains(x.FoodItemId),
-            cancellationToken
-        );
+            cancellationToken)).ToList();
 
         if (!reservations.Any())
         {
             return Result.Failure<Guid>(FoodItemReservationErrors.NotFound);
         }
 
-        foreach (FoodItemMealPlanReservation reservation in reservations.OfType<FoodItemMealPlanReservation>())
+        if (reservations.Count != ingredients.Count)
         {
-            if (reservation.Status != ReservationStatus.Pending)
+            return Result.Failure<Guid>(FoodItemReservationErrors.MismatchWithIngredients);
+        }
+
+        foreach (FoodItemMealPlanReservation? r in reservations)
+        {
+            if (r.Status != ReservationStatus.Pending)
             {
                 return Result.Failure<Guid>(FoodItemReservationErrors.InvalidState);
             }
 
-            FoodItem? foodItem = foodItems.First(fi => fi.Id == reservation.FoodItemId);
-            foodItem.AdjustQuantity(
-                foodItem.Quantity + reservation.Quantity,
-                userContext.UserId
-            );
+            FoodItem foodItem = foodItems.Single(fi => fi.Id == r.FoodItemId);
 
-            reservation.MarkAsCancelled();
+            foodItem.AdjustQuantity(foodItem.Quantity + r.Quantity, userContext.UserId);
+
+            r.MarkAsCancelled();
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
         return command.RecipeId;
     }
 }
+
 
