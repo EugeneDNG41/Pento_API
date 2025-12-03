@@ -27,20 +27,21 @@ internal sealed class GetAdminMilestoneByIdQueryHandler(ISqlConnectionFactory sq
             WHERE id = @Id;
 
             SELECT
-                id,
-                a.name AS Activity,
-                quota,
+                mr.id,
+                a.name AS ActivityName,
+                a.description AS ActivityDescription,
+                mr.quota,
                 CASE
-                    WHEN within_days IS NULL THEN 'Unlimited'
-                    ELSE CONCAT('Within', within_days::text, ' Day',
+                    WHEN mr.within_days IS NULL THEN 'Unlimited'
+                    ELSE CONCAT('Within', mr.within_days::text, ' Day',
                         CASE 
-                            WHEN COALESCE(within_days,0) = 1 THEN '' ELSE 's' 
+                            WHEN COALESCE(mr.within_days,0) = 1 THEN '' ELSE 's' 
                         END)
                 END
                 AS TimeFrame
-            FROM milestone_requirements
-            JOIN activities a ON milestone_requirements.activity_code = a.code
-            WHERE milestone_id = @Id;
+            FROM milestone_requirements mr
+            JOIN activities a ON mr.activity_code = a.code
+            WHERE mr.milestone_id = @Id;
             ";
         CommandDefinition command = new(sql, new { query.Id }, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);

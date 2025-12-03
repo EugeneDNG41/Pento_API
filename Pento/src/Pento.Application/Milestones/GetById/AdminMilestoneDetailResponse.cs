@@ -14,8 +14,9 @@ public sealed record AdminMilestoneResponse
 }
 public sealed record AdminMilestoneRequirementResponse
 {
-    public string Id { get; init; }
-    public string Activity { get; init; }
+    public Guid Id { get; init; }
+    public string ActivityName { get; init; }
+    public string ActivityDescription { get; init; }
     public int Quota { get; init; }
     public string TimeFrame { get; init; }
 }

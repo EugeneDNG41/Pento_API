@@ -51,7 +51,7 @@ internal sealed class MilestoneService(
                 DateTime? fromDate = requirement.WithinDays.HasValue
                     ? dateTimeProvider.UtcNow.AddDays(-requirement.WithinDays.Value)
                     : null;
-                Result<int> countResult = await activityService.CountActivityAsync(userActivity.UserId, userActivity.ActivityCode, fromDate, cancellationToken);
+                Result<int> countResult = await activityService.CountActivityAsync(userActivity.UserId, requirement.ActivityCode, fromDate, cancellationToken);
                 if (countResult.IsFailure)
                 {
                     return Result.Failure(countResult.Error);
