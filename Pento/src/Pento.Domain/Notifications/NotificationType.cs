@@ -12,6 +12,8 @@ public enum NotificationType
     FoodReservation = 3,
     MealPlanReminder = 4,
     GiveawayPost = 5,
-    GiveawayClaim = 6
+    GiveawayClaim = 6,
+    Subscription = 7
+
 }
 
