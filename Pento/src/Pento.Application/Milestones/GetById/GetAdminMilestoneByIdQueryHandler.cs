@@ -17,12 +17,13 @@ internal sealed class GetAdminMilestoneByIdQueryHandler(ISqlConnectionFactory sq
             @"
             SELECT
                 id,
+                icon_url AS Icon,
                 name,
                 description,
                 is_active AS IsActive,
                 (SELECT COUNT(*) FROM user_milestones um WHERE um.milestone_id = m.id) AS EarnedCount,
                 is_deleted AS IsDeleted
-            FROM milestones
+            FROM milestones m
             WHERE id = @Id;
 
             SELECT
@@ -31,7 +32,7 @@ internal sealed class GetAdminMilestoneByIdQueryHandler(ISqlConnectionFactory sq
                 quota,
                 CASE
                     WHEN within_days IS NULL THEN 'Unlimited'
-                    ELSE CONCAT('Within', within_days::text, ' ', time_frame_unit,
+                    ELSE CONCAT('Within', within_days::text, ' Day',
                         CASE 
                             WHEN COALESCE(within_days,0) = 1 THEN '' ELSE 's' 
                         END)

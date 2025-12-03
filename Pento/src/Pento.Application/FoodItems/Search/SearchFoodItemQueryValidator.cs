@@ -15,6 +15,12 @@ internal sealed class SearchFoodItemQueryValidator : AbstractValidator<SearchFoo
             .WithMessage("From quantity must be less than or equal to To quantity.");
         RuleFor(x => x).Must(x => x.ExpirationDateAfter <= x.ExpirationDateBefore).When(x => x.ExpirationDateAfter is not null && x.ExpirationDateBefore is not null)
             .WithMessage("Expiration date after must be less than or equal to Expiration date before.");
+        RuleForEach(x => x.FoodGroup)
+            .IsInEnum().When(x => x.FoodGroup is not null)
+            .WithMessage("Invalid food group value.");
+        RuleForEach(x => x.Status)
+            .IsInEnum().When(x => x.Status is not null)
+            .WithMessage("Invalid food item status value.");
         RuleFor(x => x.PageNumber)
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");
         RuleFor(x => x.PageSize)

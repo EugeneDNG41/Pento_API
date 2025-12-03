@@ -18,7 +18,7 @@ internal sealed class ConverterService(
         {
             return quantity;
         }
-        decimal convertedQuantity = quantity * toUnit.ToBaseFactor / fromUnit.ToBaseFactor;
+        decimal convertedQuantity = quantity * fromUnit.ToBaseFactor / toUnit.ToBaseFactor;
         return convertedQuantity;
     }
     public async Task<Result<decimal>> ConvertAsync(decimal quantity, Guid fromUnitId, Guid toUnitId, CancellationToken cancellationToken)
@@ -60,55 +60,34 @@ internal sealed class ConverterService(
         DateOnly currentExpiry
     )
     {
-        // Get "today" in UTC. All calculations are date-based.
         DateOnly today = dateTimeProvider.Today;
 
-        // --- 1. Handle Trivial/Edge Cases ---
-
-        // If the storage type isn't changing, the expiry date doesn't change.
         if (oldType == newType)
         {
             return currentExpiry;
         }
 
-        // --- 2. Get Shelf Life Data ---
-
-        // Get the total shelf life (in days) for the old and new types.
         double totalDaysOld = GetShelfLifeDays(oldType, foodRef);
         double totalDaysNew = GetShelfLifeDays(newType, foodRef);
 
-        // If the new storage type is not applicable (e.g., moving ice cream
-        // to the pantry), its shelf life is 0. It expires immediately.
         if (totalDaysNew <= 0)
         {
             return today;
         }
 
-        // If the old storage type was not applicable (e.g., pantry for ice cream),
-        // we can't calculate a "fraction" of its life. We must assume the new
-        // expiry is just today + the new shelf life.
         if (totalDaysOld <= 0)
         {
             return today.AddDays((int)totalDaysNew);
         }
 
-        // --- 3. Calculate Remaining Fraction ---
-
-        // Calculate how many days of life were remaining in the *old* storage.
         int remainingDaysOld = currentExpiry.DayNumber - today.DayNumber;
 
-        // Calculate the "fraction" of life remaining.
         double remainingFraction = (double)remainingDaysOld / totalDaysOld;
 
-        // --- 4. Apply Fraction to New Shelf Life ---
-
-        // Apply that same fraction to the *new* storage type's total shelf life.
         double newRemainingDays = totalDaysNew * remainingFraction;
 
-        // Round to the nearest whole day.
         int newRemainingDaysRounded = (int)Math.Round(newRemainingDays);
 
-        // The new expiry date is today + the new remaining days.
         DateOnly newExpiryDate = today.AddDays(newRemainingDaysRounded);
 
         return newExpiryDate;

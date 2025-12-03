@@ -160,8 +160,9 @@ public static class DependencyInjection
     public static WebApplicationBuilder AddAuthenticationAndAuthorization(this WebApplicationBuilder builder)
     {
         builder.Services.AddScoped<IPermissionService, PermissionService>();
-        KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak").Get<KeycloakOptions>() ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
-
+        KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak")
+            .Get<KeycloakOptions>() 
+            ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
         builder.Services.AddOptions<KeycloakOptions>()
             .Bind(builder.Configuration.GetSection("Keycloak"))
             .PostConfigure(options =>

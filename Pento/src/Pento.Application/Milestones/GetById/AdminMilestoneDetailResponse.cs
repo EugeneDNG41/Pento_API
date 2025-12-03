@@ -5,6 +5,7 @@ public sealed record AdminMilestoneDetailResponse(AdminMilestoneResponse Milesto
 public sealed record AdminMilestoneResponse
 {
     public Guid Id { get; init; }
+    public Uri? Icon { get; init; }
     public string Name { get; init; }
     public string Description { get; init; }
     public bool IsActive { get; init; }

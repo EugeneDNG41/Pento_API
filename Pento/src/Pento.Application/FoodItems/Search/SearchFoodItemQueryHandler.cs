@@ -32,54 +32,78 @@ internal sealed class SearchFoodItemQueryHandler(
             FoodItemPreviewSortBy.Default or _ => "1"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
-        var filters = new List<string>
+        var andFilters = new List<string>
         {
             "fi.is_deleted IS FALSE",
         };
+        var orFoodGroupFilters = new List<string>();
+        var orStatusFilters = new List<string>();
         var parameters = new DynamicParameters();
         if (query.FoodReferenceId  != null)
         {
-            filters.Add("fi.food_reference_id = @FoodReferenceId");
+            andFilters.Add("fi.food_reference_id = @FoodReferenceId");
             parameters.Add("FoodReferenceId", query.FoodReferenceId);
         }
-        if (query.FoodGroup.HasValue)
+        if (query.FoodGroup != null && query.FoodGroup.Length > 0)
         {
-            filters.Add("food_group = @FoodGroup");
-            parameters.Add("FoodGroup", query.FoodGroup.ToString());
+            foreach (FoodGroup item in query.FoodGroup)
+            {
+                int index = query.FoodGroup.ToList().IndexOf(item);
+                orFoodGroupFilters.Add($"fr.food_group = @FoodGroup{index}");
+                parameters.Add($"FoodGroup{index}", item.ToString());
+            }
         }
-        // Quantity range
+        if (query.Status != null && query.Status.Length > 0)
+        {
+            foreach (FoodItemStatus status in query.Status)
+            {
+                orStatusFilters.Add(status switch
+                {
+                    FoodItemStatus.Expired => "fi.expiration_date < CURRENT_DATE",
+                    FoodItemStatus.Expiring => "fi.expiration_date >= CURRENT_DATE AND fi.expiration_date <= CURRENT_DATE + INTERVAL '3 days'",
+                    FoodItemStatus.Fresh => "fi.expiration_date > CURRENT_DATE + INTERVAL '3 days'",
+                    _ => ""
+                });
+            }
+        }
         if (query.FromQuantity.HasValue)
         {
-            filters.Add("quantity >= @FromQuantity");
+            andFilters.Add("quantity >= @FromQuantity");
             parameters.Add("FromQuantity", query.FromQuantity.Value);
         }
-
         if (query.ToQuantity.HasValue)
         {
-            filters.Add("quantity <= @ToQuantity");
+            andFilters.Add("quantity <= @ToQuantity");
             parameters.Add("ToQuantity", query.ToQuantity.Value);
         }
         if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
-            filters.Add("name ILIKE @SearchText");
+            andFilters.Add("name ILIKE @SearchText");
             parameters.Add("SearchText", $"%{query.SearchText}%");
         }
         if (query.ExpirationDateAfter.HasValue)
         {
-            filters.Add("expiration_date > @ExpirationDateAfter"); // use >= for inclusive
+            andFilters.Add("expiration_date > @ExpirationDateAfter"); // use >= for inclusive
             parameters.Add("ExpirationDateAfter", query.ExpirationDateAfter.Value);
         }
 
         if (query.ExpirationDateBefore.HasValue)
         {
-            filters.Add("expiration_date < @ExpirationDateBefore"); // use <= for inclusive
+            andFilters.Add("expiration_date < @ExpirationDateBefore"); // use <= for inclusive
             parameters.Add("ExpirationDateBefore", query.ExpirationDateBefore.Value);
         }
-        string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
+        string? andFilterClause = andFilters.Count > 0 ? string.Join(" AND ", andFilters) : null;
+        string? orFoodGroupFilterClause = orFoodGroupFilters.Count > 0 ? "(" + string.Join(" OR ", orFoodGroupFilters) + ")" : null;
+        string? orStatusFilterClause = orStatusFilters.Count > 0 ? "(" + string.Join(" OR ", orStatusFilters) + ")" : null;
+
+        string whereClause = andFilterClause != null || orFoodGroupFilterClause != null || orStatusFilterClause != null
+            ? "WHERE " + string.Join(" AND ", new[] { andFilterClause,  orFoodGroupFilterClause, orStatusFilterClause }.Where(c => c != null))
+            : string.Empty;
 
         string sql = $"""
             SELECT COUNT(*) 
                 FROM food_items fi
+                LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
                 {whereClause};
             SELECT
                 fi.id AS {nameof(FoodItemPreviewRow.Id)},

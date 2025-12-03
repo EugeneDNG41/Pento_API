@@ -4,6 +4,7 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.File;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItems;
 
 namespace Pento.Infrastructure.File;
 public sealed class BlobService : IBlobService
@@ -78,6 +79,10 @@ public sealed class BlobService : IBlobService
     {
         try
         {
+            if (!filePath.Contains(".blob.core.windows.net"))
+            {
+                return Result.Success();
+            }
             BlobContainerClient container = _blobServiceClient.GetBlobContainerClient($"{domain.ToLower(CultureInfo.InvariantCulture)}-{fileTypeCategory}");
             BlobClient blob = container.GetBlobClient(filePath);
             await blob.DeleteIfExistsAsync(cancellationToken: cancellationToken);

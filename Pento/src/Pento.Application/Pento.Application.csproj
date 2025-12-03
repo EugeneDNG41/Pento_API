@@ -25,7 +25,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Households\Delete\" />
     <Folder Include="Households\Get\" />
   </ItemGroup>
 

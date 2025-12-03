@@ -33,4 +33,7 @@ public static class HouseholdErrors
     public static readonly Error CannotAssignRolesSelf = Error.Problem(
         "User.CannotAssignRolesSelf",
         "You cannot set your own roles");
+    public static readonly Error HasActiveUsers = Error.Conflict(
+        "Household.HasActiveUsers",
+        "Cannot delete household with active users.");
 }

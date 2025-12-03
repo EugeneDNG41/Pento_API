@@ -1,4 +1,7 @@
-﻿namespace Pento.Application.Households.GetCurrent;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
+
+namespace Pento.Application.Households.GetCurrent;
 
 public sealed class HouseholdResponse
 {
@@ -12,9 +15,19 @@ public sealed class HouseholdMemberResponse
 {
     public Guid UserId { get; init; }
     public string Email { get; init; }
-
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string? AvatarUrl { get; init; }
     public string Roles { get; init; } 
 }
+public sealed class HouseholdPreview
+{
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public string? InviteCode { get; init; }
+    public DateTime? InviteCodeExpirationUtc { get; init; }
+    public bool IsDeleted { get; init; }
+    public int Members { get; init; }
+    
+}
+public sealed record GetHouseholdsQuery(string? SearchTerm, bool? IsDeleted, int? FromMember, int? ToMember, int PageNumber, int PageSize) : IQuery<PagedList<HouseholdPreview>>;
