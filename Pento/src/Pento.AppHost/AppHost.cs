@@ -88,7 +88,7 @@ IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiK
 IResourceBuilder<ParameterResource> payosClientId = builder.AddParameter("PayosClientId", secret: true);
 IResourceBuilder<ParameterResource> payosApiKey = builder.AddParameter("PayosApiKey", secret: true);
 IResourceBuilder<ParameterResource> payosChecksumKey = builder.AddParameter("PayosChecksumKey", secret: true);
-IResourceBuilder<ParameterResource> firebaseJson = builder.AddParameter("FirebaseAdminJson", secret: true);
+IResourceBuilder<ParameterResource> firebaseJson = builder.AddParameter("FirebaseJson", secret: true);
 
 IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_API>("pento-api")
     .WithExternalHttpEndpoints()
