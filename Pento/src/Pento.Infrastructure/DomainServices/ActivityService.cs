@@ -24,20 +24,43 @@ internal sealed class ActivityService(
         userActivityRepository.Add(userActivity);
         return userActivity;
     }
-    public async Task<Result<int>> CountActivityAsync(Guid userId, string activityCode, DateTime? fromDate, CancellationToken cancellationToken)
+    public async Task<Result<int>> CountActivityAsync(Guid userId, string activityCode, CancellationToken cancellationToken)
     {
         Activity? activity = (await activityRepostiory.FindAsync(a => a.Code == activityCode, cancellationToken)).SingleOrDefault();
         if (activity is null)
         {
             return Result.Failure<int>(ActivityErrors.NotFound);
         }
-        Expression<Func<UserActivity, bool>> predicate = 
-            ua => ua.UserId == userId && 
-            ua.ActivityCode == activityCode &&
-            fromDate == null ||
-            ua.PerformedOn >= fromDate;
-        int activityCount = await userActivityRepository.CountAsync(predicate, cancellationToken);
+        Expression<Func<UserActivity, bool>> predicate =
+            ua => ua.UserId == userId &&
+            ua.ActivityCode == activityCode;
+        return await userActivityRepository.CountAsync(predicate, cancellationToken);
 
-        return activityCount;
+    }
+    public async Task<Result<int>> CountMostWithinTimeAsync(Guid userId, string activityCode, TimeSpan withinTime,  CancellationToken cancellationToken)
+    {
+        Expression<Func<UserActivity, bool>> predicate =
+            ua => ua.UserId == userId &&
+            ua.ActivityCode == activityCode;
+        var activityTimestamps = (await userActivityRepository.FindAsync(predicate, cancellationToken)).Select(ua => ua.PerformedOn).OrderBy(dt => dt).ToList();
+
+        int maxCount = 0;
+        int right = 0;
+        for (int left = 0; left < activityTimestamps.Count; left++)
+        {
+            DateTime leftTime = activityTimestamps[left];
+
+            while (right < activityTimestamps.Count && activityTimestamps[right] <= leftTime + withinTime)
+            {
+                right++;
+            }
+
+            int countInWindow = right - left;
+            if (countInWindow > maxCount)
+            {
+                maxCount = countInWindow;
+            }
+        }
+        return maxCount;
     }
 }

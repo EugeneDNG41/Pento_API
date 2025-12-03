@@ -71,7 +71,6 @@ public sealed class FoodItem : Entity
         foodItem.Raise(new FoodItemAddedDomainEvent(foodItem.Id, quantity, unitId, addedBy));
         return foodItem;
     }
-
     public void AdjustQuantity(decimal newQuantity, Guid userId)
     {
         Raise(new FoodItemQuantityAdjustedDomainEvent(Id, newQuantity - Quantity, UnitId, userId));

@@ -68,8 +68,7 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
                        LEAST(
                          100,
                          FLOOR( (agg.total_achieved::numeric / agg.total_quota::numeric) * 100 )
-                       )
-         
+                       )        
               END AS progress
             FROM milestones m
             LEFT JOIN user_milestones um
@@ -84,18 +83,26 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
                      ) )                                 AS total_achieved
               FROM milestone_requirements mr
               LEFT JOIN LATERAL (
-                SELECT
-                  COUNT(*) AS req_count
-                FROM user_activities ua2
-                JOIN activities a
-                  ON a.code = ua2.activity_code
-                WHERE ua2.user_id = @UserId
-                  AND ua2.activity_code = mr.activity_code
-                  AND (
-                        mr.within_days IS NULL
-                        OR ua2.performed_on >= (current_timestamp - (mr.within_days::text || ' days')::interval)
-                      )
-              ) sub ON true
+              SELECT
+                CASE
+                  WHEN mr.within_days IS NULL THEN
+                    (SELECT COUNT(*)
+                     FROM user_activities ua_all
+                     WHERE ua_all.user_id = @UserId
+                       AND ua_all.activity_code = mr.activity_code)
+                  ELSE
+	  	            (SELECT MAX(cnt) AS max_count
+			            FROM (
+			              SELECT COUNT(*) OVER (
+			                ORDER BY performed_on
+			                RANGE BETWEEN CURRENT ROW AND (CONCAT(mr.within_days::text,  ' days'))::interval FOLLOWING
+			              ) AS cnt
+			              FROM user_activities
+			              WHERE user_id = @UserId
+			                AND activity_code = mr.activity_code
+			            ) t)
+                END AS req_count
+            ) sub ON true
               WHERE mr.milestone_id = m.id
               ) agg ON true
             {whereClause}

@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using System.Threading;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.UtilityServices.Clock;
 using Pento.Domain.Abstractions;
@@ -18,7 +19,7 @@ internal sealed class MilestoneService(
     IUnitOfWork unitOfWork)
     : IMilestoneService
 {
-    public async Task<Result> CheckMilestoneAsync(UserActivity userActivity, CancellationToken cancellationToken)
+    public async Task<Result> CheckMilestoneAfterActivityAsync(UserActivity userActivity, CancellationToken cancellationToken)
     {
 
         IEnumerable<MilestoneRequirement> relatedRequirements = await milestoneRequirementRepository.FindAsync(
@@ -48,10 +49,9 @@ internal sealed class MilestoneService(
             bool requirementsMet = true;
             foreach (MilestoneRequirement requirement in requirementsForMilestone)
             {
-                DateTime? fromDate = requirement.WithinDays.HasValue
-                    ? dateTimeProvider.UtcNow.AddDays(-requirement.WithinDays.Value)
-                    : null;
-                Result<int> countResult = await activityService.CountActivityAsync(userActivity.UserId, requirement.ActivityCode, fromDate, cancellationToken);
+                Result<int> countResult = requirement.WithinDays.HasValue ? 
+                    await activityService.CountMostWithinTimeAsync(userActivity.UserId, requirement.ActivityCode, TimeSpan.FromDays(requirement.WithinDays.Value), cancellationToken) :
+                    await activityService.CountActivityAsync(userActivity.UserId, requirement.ActivityCode, cancellationToken); // replace with count against quota
                 if (countResult.IsFailure)
                 {
                     return Result.Failure(countResult.Error);
@@ -71,7 +71,7 @@ internal sealed class MilestoneService(
     }
     public async Task<Result> CheckMilestoneWithSaveChangesAsync(UserActivity userActivity, CancellationToken cancellationToken)
     {
-        Result result = await CheckMilestoneAsync(userActivity, cancellationToken);
+        Result result = await CheckMilestoneAfterActivityAsync(userActivity, cancellationToken);
         if (result.IsSuccess)
         {
             await unitOfWork.SaveChangesAsync(cancellationToken);          

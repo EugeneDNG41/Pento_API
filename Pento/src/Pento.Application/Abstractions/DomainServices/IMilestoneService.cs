@@ -5,6 +5,6 @@ namespace Pento.Application.Abstractions.DomainServices;
 
 public interface IMilestoneService
 {
-    Task<Result> CheckMilestoneAsync(UserActivity userActivity, CancellationToken cancellationToken);
+    Task<Result> CheckMilestoneAfterActivityAsync(UserActivity userActivity, CancellationToken cancellationToken);
     Task<Result> CheckMilestoneWithSaveChangesAsync(UserActivity userActivity, CancellationToken cancellationToken);
 }
