@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Features;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Infrastructure.Configurations;

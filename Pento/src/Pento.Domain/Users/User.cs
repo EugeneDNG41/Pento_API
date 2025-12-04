@@ -54,7 +54,11 @@ public sealed class User : Entity
     }
     public void SetHouseholdId(Guid? householdId)
     {
-        HouseholdId = householdId;
+        if (HouseholdId.HasValue && HouseholdId != householdId)
+        {
+            Raise(new UserLeftHouseholdDomainEvent(HouseholdId.Value));
+            HouseholdId = householdId;
+        }
     }
     public void JoinHousehold(Guid householdId)
     {

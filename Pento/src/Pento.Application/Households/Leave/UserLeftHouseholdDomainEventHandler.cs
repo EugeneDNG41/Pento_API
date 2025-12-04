@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
@@ -12,7 +13,10 @@ using Pento.Domain.Users;
 
 namespace Pento.Application.Households.Leave;
 
-internal sealed class UserLeftHouseholdDomainEventHandler(IGenericRepository<User> repository, IUnitOfWork unitOfWork) : DomainEventHandler<UserLeftHouseholdDomainEvent>
+internal sealed class UserLeftHouseholdDomainEventHandler(
+    IGenericRepository<Household> householdRepository,
+    IGenericRepository<User> repository, 
+    IUnitOfWork unitOfWork) : DomainEventHandler<UserLeftHouseholdDomainEvent>
 {
     public override async Task Handle(UserLeftHouseholdDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
@@ -26,6 +30,18 @@ internal sealed class UserLeftHouseholdDomainEventHandler(IGenericRepository<Use
                 repository.Update(firstUser);
                 await unitOfWork.SaveChangesAsync(cancellationToken);
             }
+        }
+        else if (!users.Any())
+        {
+            Household? household = await householdRepository.GetByIdAsync(domainEvent.HouseholdId, cancellationToken);
+            if (household == null)
+            {
+                throw new PentoException(nameof(UserLeftHouseholdDomainEventHandler), HouseholdErrors.NotFound);
+            }
+            household.Delete();
+            householdRepository.Update(household);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return;
         }
     }
 }
