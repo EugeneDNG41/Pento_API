@@ -14,5 +14,11 @@ public interface INotificationSender
         string mealPlanName,
         DateOnly startAt,
         CancellationToken ct);
+    Task SendFoodExpiringSoonAsync(
+        string deviceToken,
+        Guid foodItemId,
+        string name,
+        int hoursLeft,
+        CancellationToken ct);
 }
 
