@@ -21,9 +21,11 @@ public sealed class Compartment : Entity
     public Guid StorageId { get; private set; }
     public Guid HouseholdId { get; private set; }
     public string? Notes { get; private set; }
-    public static Compartment Create(string name, Guid storageId, Guid householdId, string? notes)
+    public static Compartment Create(string name, Guid storageId, Guid householdId, string? notes, Guid userId)
     {
-        return new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
+        var compartment = new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
+        compartment.Raise(new CompartmentCreatedDomainEvent(compartment.Id, userId));
+        return compartment;
     }
     public void UpdateName(string name)
     {
@@ -33,4 +35,9 @@ public sealed class Compartment : Entity
     {
         Notes = notes;
     }
+}
+public sealed class CompartmentCreatedDomainEvent(Guid compartmentId, Guid userId) : DomainEvent
+{
+    public Guid CompartmentId { get; } = compartmentId;
+    public Guid UserId { get; } = userId;
 }

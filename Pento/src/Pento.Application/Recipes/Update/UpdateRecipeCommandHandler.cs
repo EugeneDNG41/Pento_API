@@ -45,12 +45,6 @@ internal sealed class UpdateRecipeCommandHandler : ICommandHandler<UpdateRecipeC
 
         recipe.ChangeVisibility(request.IsPublic, _dateTimeProvider.UtcNow);
 
-        if (request.CreatedBy.HasValue)
-        {
-            System.Reflection.PropertyInfo? createdByField = recipe.GetType().GetProperty(nameof(recipe.CreatedBy));
-            createdByField?.SetValue(recipe, request.CreatedBy);
-        }
-
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

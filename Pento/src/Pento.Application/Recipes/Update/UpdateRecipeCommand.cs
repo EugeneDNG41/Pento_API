@@ -17,6 +17,5 @@ public sealed record UpdateRecipeCommand(
     int? Servings,
     DifficultyLevel? DifficultyLevel,
     Uri? ImageUrl,
-    Guid? CreatedBy,
     bool IsPublic
 ) : ICommand;

@@ -35,13 +35,13 @@ internal sealed class CreateStorageCommandHandler(
             command.Name,
             householdId.Value,
             command.Type,
-            command.Notes);
+            command.Notes, userContext.UserId);
         storageRepository.Add(storage);
         var compartment = Compartment.Create(
             "Default",
             storage.Id,
             householdId.Value,
-            null);
+            null, userContext.UserId);
         compartmentRepository.Add(compartment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return storage.Id;

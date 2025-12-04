@@ -21,7 +21,6 @@ internal sealed class CreateRecipe : IEndpoint
                 request.Servings,
                 request.DifficultyLevel,
                 request.ImageUrl is not null ? new Uri(request.ImageUrl) : null,
-                request.CreatedBy,
                 request.IsPublic
             );
 
@@ -45,7 +44,6 @@ internal sealed class CreateRecipe : IEndpoint
         public int? Servings { get; init; }
         public DifficultyLevel? DifficultyLevel { get; init; }
         public string? ImageUrl { get; init; } 
-        public Guid? CreatedBy { get; init; }
         public bool IsPublic { get; init; }
     }
 }

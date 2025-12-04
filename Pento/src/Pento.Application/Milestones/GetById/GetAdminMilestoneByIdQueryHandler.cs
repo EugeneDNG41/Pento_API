@@ -33,7 +33,7 @@ internal sealed class GetAdminMilestoneByIdQueryHandler(ISqlConnectionFactory sq
                 mr.quota,
                 CASE
                     WHEN mr.within_days IS NULL THEN 'Unlimited'
-                    ELSE CONCAT('Within', mr.within_days::text, ' Day',
+                    ELSE CONCAT('Within ', mr.within_days::text, ' Day',
                         CASE 
                             WHEN COALESCE(mr.within_days,0) = 1 THEN '' ELSE 's' 
                         END)

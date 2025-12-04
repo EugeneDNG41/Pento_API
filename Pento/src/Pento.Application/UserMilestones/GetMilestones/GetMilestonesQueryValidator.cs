@@ -2,9 +2,9 @@
 
 namespace Pento.Application.UserMilestones.GetMilestones;
 
-internal sealed class GetCurrentMilestonesQueryValidator : AbstractValidator<GetCurrentMilestonesQuery>
+internal sealed class GetMilestonesQueryValidator : AbstractValidator<GetMilestonesQuery>
 {
-    public GetCurrentMilestonesQueryValidator()
+    public GetMilestonesQueryValidator()
     {
         RuleFor(x => x.PageNumber)
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");

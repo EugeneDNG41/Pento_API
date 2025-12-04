@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Recipes;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
@@ -68,5 +69,9 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
             .HasColumnName("updated_on_utc")
             .IsRequired();
         builder.HasQueryFilter(x => !x.IsDeleted);
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(r => r.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

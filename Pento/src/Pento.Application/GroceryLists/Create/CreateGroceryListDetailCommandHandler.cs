@@ -36,14 +36,12 @@ internal sealed class CreateGroceryListDetailCommandHandler(
         }
 
         DateTime utcNow = dateTimeProvider.UtcNow;
-        var listId = Guid.CreateVersion7();
 
-        var groceryList = new GroceryList(
-            id: listId,
+        var groceryList = GroceryList.Create(
             householdId: householdId.Value,
             name: request.Name,
             createdBy: userContext.UserId,
-            createdOnUtc: utcNow
+            createdOnUtc: utcNow, userContext.UserId
         );
 
         groceryListRepository.Add(groceryList);
@@ -57,7 +55,7 @@ internal sealed class CreateGroceryListDetailCommandHandler(
 
             var groceryItem = new GroceryListItem(
                 id: Guid.CreateVersion7(),
-                listId: listId,
+                listId: groceryList.Id,
                 foodRefId: item.FoodRefId ?? Guid.Empty,
                 quantity: item.Quantity,
                 addedBy: userContext.UserId,
@@ -73,7 +71,7 @@ internal sealed class CreateGroceryListDetailCommandHandler(
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return listId;
+        return groceryList.Id;
     }
 }
 

@@ -96,8 +96,8 @@ internal sealed class CreateMealPlanReservationCommandHandler(
             foodItemId: foodItem.Id,
             householdId: householdId.Value,
             reservationDateUtc: dateTimeProvider.UtcNow,
-            quantity: qtyInItemUnit,
-            unitId: foodItem.UnitId,
+            quantity: command.Quantity,
+            unitId: command.UnitId,
             mealPlanId: mealPlan.Id
         );
 

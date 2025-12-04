@@ -21,7 +21,7 @@ public sealed class Recipe: Entity
         int? servings,
         DifficultyLevel? difficultyLevel,
         Uri? imageUrl,
-        Guid? createdBy,
+        Guid createdBy,
         bool isPublic,
         DateTime createdOnUtc)
         : base(id)
@@ -57,7 +57,7 @@ public sealed class Recipe: Entity
 
     public Uri? ImageUrl { get; private set; }
 
-    public Guid? CreatedBy { get; private set; }
+    public Guid CreatedBy { get; private set; }
 
     public TimeRequirement RecipeTime { get; private set; } 
     public bool IsPublic { get; private set; }
@@ -75,7 +75,7 @@ public sealed class Recipe: Entity
     int? servings,
     DifficultyLevel? difficultyLevel,
     Uri? imageUrl,
-    Guid? createdBy,
+    Guid createdBy,
     bool isPublic,
     DateTime utcNow)
     {
@@ -92,7 +92,7 @@ public sealed class Recipe: Entity
             isPublic,
             utcNow);
 
-
+        recipe.Raise(new RecipeCreatedDomainEvent(recipe.Id, recipe.CreatedBy));
         return recipe;
     }
     public void UpdateDetails(

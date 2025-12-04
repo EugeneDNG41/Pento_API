@@ -21,14 +21,16 @@ public sealed class Storage : Entity
     public Guid HouseholdId { get; private set; }
     public StorageType Type { get; private set; }
     public string? Notes { get; private set; }
-    public static Storage Create(string name, Guid householdId, StorageType type, string? notes)
+    public static Storage Create(string name, Guid householdId, StorageType type, string? notes, Guid userId)
     {
-        return new Storage(
+        var storage = new Storage(
             Guid.CreateVersion7(),
             name,
             householdId,
             type,
             notes);
+        storage.Raise(new StorageCreatedDomainEvent(storage.Id, userId));
+        return storage;
     }
     public void UpdateName(string name)
     {

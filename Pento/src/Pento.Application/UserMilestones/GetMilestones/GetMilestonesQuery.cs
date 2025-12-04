@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Pagination;
 
 namespace Pento.Application.UserMilestones.GetMilestones;
 
-public sealed record GetCurrentMilestonesQuery(string? SearchTerm, bool? IsAchieved, UserMilestoneSortBy SortBy, SortOrder SortOrder, int PageNumber, int PageSize) : IQuery<PagedList<CurrentUserMilestonesResponse>>;
+public sealed record GetMilestonesQuery(string? SearchTerm, bool? IsAchieved, UserMilestoneSortBy SortBy, SortOrder SortOrder, int PageNumber, int PageSize) : IQuery<PagedList<UserMilestonePreviewResponse>>;
 public enum UserMilestoneSortBy
 {
     Default = 1,

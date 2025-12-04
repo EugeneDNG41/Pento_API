@@ -79,7 +79,6 @@ public static class DependencyInjection
                 .Get<GoogleOptions>()
                 ?? throw new InvalidOperationException("Google section is missing or invalid");
         string jsonOptions = Newtonsoft.Json.JsonConvert.SerializeObject(googleOptions);
-#pragma warning disable S1481 // Unused local variables should be removed
         ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(jsonOptions);
         var firebaseApp = FirebaseApp.Create(new AppOptions()
         {

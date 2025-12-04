@@ -19,10 +19,11 @@ public sealed class Household : Entity
     {
         Name = name;
     }
-    public static Household Create(string name)
+    public static Household Create(string name, Guid userId)
     {
         var household = new Household(name);
         household.GenerateInviteCode();
+        household.Raise(new HouseholdCreatedDomainEvent(household.Id, userId));
         return household;
     }
     public void SetInviteCodeExpiration(DateTime? expirationUtc)
@@ -56,4 +57,9 @@ public sealed class Household : Entity
 public sealed class HouseholdDeletedDomainEvent(Guid householdId) : DomainEvent
 {
     public Guid HouseholdId { get; } = householdId;
+}
+public sealed class HouseholdCreatedDomainEvent(Guid householdId, Guid userId) : DomainEvent
+{
+    public Guid HouseholdId { get; } = householdId;
+    public Guid UserId { get; } = userId;
 }

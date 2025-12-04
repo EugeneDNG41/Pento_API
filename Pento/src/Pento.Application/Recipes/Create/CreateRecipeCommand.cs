@@ -16,6 +16,5 @@ public sealed record CreateRecipeCommand(
     int? Servings,
     DifficultyLevel? DifficultyLevel,
     Uri? ImageUrl,
-    Guid? CreatedBy,
     bool IsPublic
 ) : ICommand<Guid>;

@@ -65,7 +65,7 @@ public sealed class MealPlan : Entity
             createdBy,
             utcNow);
 
-        meal.Raise(new MealPlanCreatedDomainEvent(meal.Id));
+        meal.Raise(new MealPlanCreatedDomainEvent(meal.Id, createdBy));
         return meal;
     }
 

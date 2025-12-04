@@ -36,4 +36,28 @@ public sealed class GroceryList : Entity
         Name = name;
         UpdatedOnUtc = updatedOnUtc;
     }
+    public static GroceryList Create(
+       Guid householdId,
+       string name,
+       Guid createdBy,
+       DateTime createdOnUtc,
+       Guid userId)
+    {
+        var groceryList = new GroceryList
+        {
+            Id = Guid.CreateVersion7(),
+            HouseholdId = householdId,
+            Name = name,
+            CreatedBy = createdBy,
+            CreatedOnUtc = createdOnUtc,
+            UpdatedOnUtc = createdOnUtc
+        };
+        groceryList.Raise(new GroceryListCreatedDomainEvent(groceryList.Id, userId));
+        return groceryList;
+    }
+}
+public sealed class GroceryListCreatedDomainEvent(Guid groceryListId, Guid userId) : DomainEvent
+{
+    public Guid GroceryListId { get; } = groceryListId;
+    public Guid UserId { get; } = userId;
 }

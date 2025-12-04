@@ -48,20 +48,20 @@ internal sealed class CreateHouseholdCommandHandler(
             }
         }
         //new household
-        var household = Household.Create(command.Name);
+        var household = Household.Create(command.Name, userContext.UserId);
         householdRepository.Add(household);
 
         currentUser.SetHouseholdId(household.Id);       
         currentUser.SetRoles([householdHeadRole]);
         userRepository.Update(currentUser);
 
-        var pantry = Storage.Create("Default Pantry", household.Id, StorageType.Pantry, null);
-        var fridge = Storage.Create("Default Fridge", household.Id, StorageType.Fridge, null);
-        var freezer = Storage.Create("Default Freezer", household.Id, StorageType.Freezer, null);
+        var pantry = Storage.Create("Default Pantry", household.Id, StorageType.Pantry, null, userContext.UserId);
+        var fridge = Storage.Create("Default Fridge", household.Id, StorageType.Fridge, null, userContext.UserId);
+        var freezer = Storage.Create("Default Freezer", household.Id, StorageType.Freezer, null, userContext.UserId);
         storageRepository.AddRange([pantry, fridge, freezer]);
-        var pantryCompartment = Compartment.Create("Default Pantry Compartment", pantry.Id, household.Id, null);
-        var fridgeCompartment = Compartment.Create("Default Fridge Compartment", fridge.Id, household.Id, null);
-        var freezerCompartment = Compartment.Create("Default Freezer Compartment", freezer.Id, household.Id, null);
+        var pantryCompartment = Compartment.Create("Default Pantry Compartment", pantry.Id, household.Id, null, userContext.UserId);
+        var fridgeCompartment = Compartment.Create("Default Fridge Compartment", fridge.Id, household.Id, null, userContext.UserId);
+        var freezerCompartment = Compartment.Create("Default Freezer Compartment", freezer.Id, household.Id, null, userContext.UserId);
         compartmentRepository.AddRange([pantryCompartment, fridgeCompartment, freezerCompartment]);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;

@@ -34,12 +34,11 @@ internal sealed class CreateGroceryListCommandHandler(
 
         DateTime utcNow = dateTimeProvider.UtcNow;
 
-        var groceryList = new GroceryList(
-            id: Guid.CreateVersion7(),
+        var groceryList = GroceryList.Create(
             householdId: householdId.Value,
             name: command.Name,
             createdBy: userContext.UserId,
-            createdOnUtc: utcNow
+            createdOnUtc: utcNow, userContext.UserId
         );
 
         groceryListRepository.Add(groceryList);

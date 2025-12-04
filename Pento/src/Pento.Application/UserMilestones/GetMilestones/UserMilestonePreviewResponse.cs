@@ -1,6 +1,6 @@
 ﻿namespace Pento.Application.UserMilestones.GetMilestones;
 
-public sealed record CurrentUserMilestonesResponse(
+public sealed record UserMilestonePreviewResponse(
     Guid MilestoneId,
     Uri? Icon,
     string Name,

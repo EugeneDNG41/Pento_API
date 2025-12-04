@@ -29,7 +29,8 @@ internal sealed class CreateCompartmentCommandHandler(
             command.Name,
             command.StorageId,
             householdId.Value,
-            command.Notes
+            command.Notes,
+            userContext.UserId
         );
         compartmentRepository.Add(compartment);
         await unitOfWork.SaveChangesAsync(cancellationToken);

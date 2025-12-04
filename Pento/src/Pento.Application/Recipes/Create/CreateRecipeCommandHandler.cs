@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -10,6 +11,7 @@ using Pento.Domain.Recipes;
 
 namespace Pento.Application.Recipes.Create;
 internal sealed class CreateRecipeCommandHandler(
+    IUserContext userContext,
     IGenericRepository<Recipe> recipeRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateRecipeCommand, Guid>
@@ -28,7 +30,7 @@ internal sealed class CreateRecipeCommandHandler(
             request.Servings,
             request.DifficultyLevel,
             request.ImageUrl,
-            request.CreatedBy,
+            userContext.UserId,
             request.IsPublic,
             DateTime.UtcNow
         );

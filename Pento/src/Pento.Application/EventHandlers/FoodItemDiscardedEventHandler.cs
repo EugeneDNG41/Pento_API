@@ -1,15 +1,20 @@
 ﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Units;
+using Pento.Domain.UserActivities;
 
 namespace Pento.Application.EventHandlers;
 
 internal sealed class FoodItemDiscardedEventHandler(
+    IActivityService activityService,
+    IMilestoneService milestoneService,
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Unit> unitRepository,
     IGenericRepository<FoodItemLog> logRepository,
@@ -39,6 +44,21 @@ internal sealed class FoodItemDiscardedEventHandler(
             domainEvent.Quantity,
             unit.Id);
         logRepository.Add(log);
+        Result<UserActivity> discardResult = await activityService.RecordActivityAsync(
+            domainEvent.UserId,
+            foodItem.HouseholdId,
+            ActivityCode.FOOD_ITEM_DISCARD.ToString(),
+            foodItem.Id,
+            cancellationToken);
+        if (discardResult.IsFailure)
+        {
+            throw new PentoException(nameof(GroceryListCreatedEventHandler), discardResult.Error);
+        }
+        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(discardResult.Value, cancellationToken);
+        if (milestoneCheckResult.IsFailure)
+        {
+            throw new PentoException(nameof(GroceryListCreatedEventHandler), milestoneCheckResult.Error);
+        }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

@@ -5,10 +5,12 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
+using Pento.Application.Abstractions.UtilityServices.Converter;
 
 namespace Pento.Application.Recipes.Reserve;
 
 internal sealed class CancelRecipeReservationCommandHandler(
+    IConverterService converterService,
     IGenericRepository<FoodItemRecipeReservation> reservationRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IUserContext userContext,
@@ -46,8 +48,21 @@ internal sealed class CancelRecipeReservationCommandHandler(
         {
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
-
-        foodItem.CancelReservation(reservation.Quantity, reservation.Id);
+        decimal qtyInItemUnit = reservation.Quantity;
+        if (foodItem.UnitId != reservation.UnitId)
+        {
+            Result<decimal> conversionResult = await converterService.ConvertAsync(
+                reservation.Quantity,
+                reservation.UnitId,
+                foodItem.UnitId,
+                cancellationToken);
+            if (conversionResult.IsFailure)
+            {
+                return Result.Failure<Guid>(FoodItemErrors.InvalidMeasurementUnit);
+            }
+            qtyInItemUnit = conversionResult.Value;
+        }
+        foodItem.CancelReservation(qtyInItemUnit, reservation.Id);
 
         reservation.MarkAsCancelled();
 

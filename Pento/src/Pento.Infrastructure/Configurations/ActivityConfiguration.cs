@@ -16,7 +16,19 @@ internal sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
         builder.Property(a => a.Description).HasMaxLength(500);
         builder.HasData(
             Activity.CreateStorage,
+            Activity.CreateCompartment,
             Activity.ConsumeFoodItem,
-            Activity.CreateHousehold);
+            Activity.IntakeFoodItem,
+            Activity.DiscardFoodItem,
+            Activity.CreateRecipe,
+            Activity.CookRecipe,
+            Activity.CookOtherRecipe,
+            Activity.CreateMealPlan,
+            Activity.FulfillMealPlan,
+            Activity.CancelMealPlan,
+            Activity.CreateGroceryList,
+            Activity.CreateHousehold,
+            Activity.JoinHousehold,
+            Activity.HouseholdMemberJoined);
     }
 }

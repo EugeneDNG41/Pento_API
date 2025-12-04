@@ -9,9 +9,9 @@ using Pento.Domain.Abstractions;
 
 namespace Pento.Application.UserMilestones.GetMilestones;
 
-internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext, ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetCurrentMilestonesQuery, PagedList<CurrentUserMilestonesResponse>>
+internal sealed class GetMilestonesQueryHandler(IUserContext userContext, ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetMilestonesQuery, PagedList<UserMilestonePreviewResponse>>
 {
-    public async Task<Result<PagedList<CurrentUserMilestonesResponse>>> Handle(GetCurrentMilestonesQuery query, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<UserMilestonePreviewResponse>>> Handle(GetMilestonesQuery query, CancellationToken cancellationToken)
     {
 
         string orderBy = query.SortBy switch
@@ -24,7 +24,8 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>
         {
-            "m.is_deleted IS false"
+            "m.is_deleted IS false",
+            "m.is_active IS true"
         };
         var parameters = new DynamicParameters();
         parameters.Add("UserId", userContext.UserId);
@@ -114,7 +115,7 @@ internal sealed class GetCurrentMilestonesQueryHandler(IUserContext userContext,
             cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         int totalCount = await multi.ReadFirstAsync<int>();
-        var milestones = (await multi.ReadAsync<CurrentUserMilestonesResponse>()).ToList();
-        return PagedList<CurrentUserMilestonesResponse>.Create(milestones, totalCount, query.PageNumber, query.PageSize);
+        var milestones = (await multi.ReadAsync<UserMilestonePreviewResponse>()).ToList();
+        return PagedList<UserMilestonePreviewResponse>.Create(milestones, totalCount, query.PageNumber, query.PageSize);
     }
 }
