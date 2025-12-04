@@ -54,13 +54,13 @@ public sealed class User : Entity
     }
     public void SetHouseholdId(Guid? householdId)
     {
-        if (householdId.HasValue)
-        {
-            Raise(new UserHouseholdJoinedDomainEvent(Id, householdId.Value));
-        }
         HouseholdId = householdId;
     }
-
+    public void JoinHousehold(Guid householdId)
+    {
+        HouseholdId = householdId;
+        Raise(new UserHouseholdJoinedDomainEvent(Id, householdId));
+    }
     public void SetAvatarUrl(Uri? avatarUrl)
     {
         AvatarUrl = avatarUrl;

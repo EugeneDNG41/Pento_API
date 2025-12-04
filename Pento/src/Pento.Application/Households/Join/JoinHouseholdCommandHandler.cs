@@ -62,7 +62,7 @@ internal sealed class JoinHouseholdCommandHandler(
             }
         }
         
-        currentUser.SetHouseholdId(household.Id);        
+        currentUser.JoinHousehold(household.Id);        
         currentUser.SetRoles([errandRunnerRole]);
 
         userRepository.Update(currentUser);
