@@ -121,27 +121,37 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
             );
 
             -- FoodItem reservations
-            SELECT
-                fir.meal_plan_id          AS MealPlanId,
-                fi.id                     AS FoodItemId,
-                fr.id                     AS FoodReferenceId,
-                fir.id                     AS FoodReservationId,
-                fi.name                   AS FoodItemName,
-                fr.name                   AS FoodReferenceName,
-                fr.food_group             AS FoodGroup,
-                fr.image_url              AS FoodImageUrl,
-                fir.quantity               AS Quantity,
-                u.abbreviation            AS UnitAbbreviation,
-                fi.expiration_date        AS ExpirationDate
-            FROM food_item_reservations fir
-            JOIN food_items fi ON fir.food_item_id = fi.id
-            JOIN food_references fr ON fi.food_reference_id = fr.id
-            JOIN units u ON fir.unit_id = u.id
-            WHERE fir.meal_plan_id IN (
-                SELECT id FROM meal_plans {whereClause}
-                {orderBy}
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
-            );
+                SELECT
+                    fir.meal_plan_id          AS MealPlanId,
+                    fi.id                     AS FoodItemId,
+                    fr.id                     AS FoodReferenceId,
+                    fir.id                     AS FoodReservationId,
+                    fi.name                   AS FoodItemName,
+                    fr.name                   AS FoodReferenceName,
+                    fr.food_group             AS FoodGroup,
+                    fr.image_url              AS FoodImageUrl,
+                    fir.quantity               AS Quantity,
+                    u.abbreviation            AS UnitAbbreviation,
+                    fi.expiration_date        AS ExpirationDate,
+                    CASE 
+                        WHEN ri.food_ref_id IS NOT NULL THEN TRUE
+                        ELSE FALSE
+                    END AS IsIngredientItem
+                FROM food_item_reservations fir
+                JOIN food_items fi ON fir.food_item_id = fi.id
+                JOIN food_references fr ON fi.food_reference_id = fr.id
+                JOIN units u ON fir.unit_id = u.id
+                LEFT JOIN recipe_ingredients ri 
+                    ON ri.recipe_id IN (
+                        SELECT recipe_id FROM meal_plan_recipes mpr2 WHERE mpr2.meal_plan_id = fir.meal_plan_id
+                    )
+                    AND ri.food_ref_id = fr.id
+                WHERE fir.meal_plan_id IN (
+                    SELECT id FROM meal_plans {whereClause}
+                    {orderBy}
+                    OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
+                );
+
         ";
 
         SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
@@ -150,7 +160,6 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
         var mealPlans = (await multi.ReadAsync<MealPlanRow>()).ToList();
 
         var recipeRows = (await multi.ReadAsync()).ToList();
-        var ingredientRows = (await multi.ReadAsync()).ToList();
 
         var foodItemRows = (await multi.ReadAsync<MealPlanFoodItemRow>()).ToList();
         var recipeLookup = recipeRows
@@ -167,12 +176,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 )).ToList()
             );
 
-        var ingredientRefLookup = ingredientRows
-            .GroupBy(r => (Guid)r.meal_plan_id)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(r => (Guid)r.food_ref_id).ToHashSet()
-            );
+
 
         var foodItemLookup = foodItemRows
             .GroupBy(f => f.MealPlanId)
@@ -186,14 +190,12 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
             recipeLookup.TryGetValue(mp.Id, out List<MealPlanRecipeInfo>? recipes);
             recipes ??= new List<MealPlanRecipeInfo>();
 
-            ingredientRefLookup.TryGetValue(mp.Id, out HashSet<Guid>? ingredientFoodRefs);
-            ingredientFoodRefs ??= new HashSet<Guid>();
             MealType mealtype = Enum.Parse<MealType>(mp.MealType);
             foodItemLookup.TryGetValue(mp.Id, out List<MealPlanFoodItemRow>? allFoodItems);
             allFoodItems ??= new List<MealPlanFoodItemRow>();
 
             var directFoodItems = allFoodItems
-                .Where(fi => !ingredientFoodRefs.Contains(fi.FoodReferenceId))
+            .Where(fi => !fi.IsIngredientItem)
                 .Select(fi => new MealPlanFoodItemInfo(
                     fi.FoodItemId,
                     fi.FoodReservationId,

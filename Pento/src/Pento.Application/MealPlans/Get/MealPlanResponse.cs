@@ -34,6 +34,8 @@ internal sealed class MealPlanFoodItemRow
     public decimal Quantity { get; set; }
     public string UnitAbbreviation { get; set; } = null!;
     public DateTime? ExpirationDate { get; set; }
+    public bool IsIngredientItem { get; set; }
+
 }
 public sealed class MealPlanRow
 {
