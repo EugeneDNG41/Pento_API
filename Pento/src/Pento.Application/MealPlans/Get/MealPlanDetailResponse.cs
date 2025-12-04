@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Recipes.Get;
+using Pento.Domain.FoodItemReservations;
 
 namespace Pento.Application.MealPlans.Get;
 
@@ -33,14 +34,16 @@ public sealed record MealPlanRecipeInfo(
 
 public sealed record MealPlanFoodItemInfo(
     Guid Id,
-    Guid reservationId,
+    Guid ReservationId,
     string Name,
     string FoodReferenceName,
     string FoodGroup,
     Uri? ImageUrl,
-    decimal Quantity,         
+    decimal Quantity,
     string UnitAbbreviation,
+    ReservationStatus Status,
     DateOnly ExpirationDate
 );
+
 
 

@@ -86,6 +86,7 @@ internal sealed class GetMealPlanQueryHandler(
                 fr.image_url       AS food_image_url,
                 fi.quantity,
                 u.abbreviation     AS unit_abbreviation,
+                fir.status         AS status,
                 fi.expiration_date
             FROM food_item_reservations fir
             JOIN food_items fi         ON fir.food_item_id = fi.id
@@ -102,13 +103,14 @@ internal sealed class GetMealPlanQueryHandler(
         var foodItems = fiRows
             .Select(r => new MealPlanFoodItemInfo(
                 Id: r.food_item_id,
-                reservationId: r.reservation_id,
+                ReservationId: r.reservation_id,
                 Name: r.food_item_name,
                 FoodReferenceName: r.food_reference_name,
                 FoodGroup: r.food_group,
                 ImageUrl: r.food_image_url is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
                 Quantity: (decimal)r.quantity, 
                 UnitAbbreviation: r.unit_abbreviation,
+                Status: r.status,
                 ExpirationDate: r.expiration_date is DateTime dt
                     ? DateOnly.FromDateTime(dt)
                     : default
