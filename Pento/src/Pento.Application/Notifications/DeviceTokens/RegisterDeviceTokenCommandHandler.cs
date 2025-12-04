@@ -26,11 +26,13 @@ internal sealed class RegisterDeviceTokenCommandHandler(
            x => x.UserId == userId && x.Token==request.Token,
            cancellationToken
 );
-        DeviceToken? duplicate = duplitokens.FirstOrDefault();
 
-        if (duplicate is not null)
+        if (duplitokens.Any())
         {
-            return Result.Failure<string>(DeviceTokenErrors.DuplicateToken);
+            foreach (DeviceToken dt in duplitokens)
+            {
+                deviceTokenRepository.Remove(dt);
+            }
         }
 
         IEnumerable<DeviceToken>? tokens = await deviceTokenRepository.FindAsync(
