@@ -18,7 +18,8 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
             .AddTrigger(configure =>
                 configure
                     .ForJob(expirationTracker)
-                    .WithCronSchedule("0 0 0/12 ? * * *")// Every 12 hours 
+                    .WithSimpleSchedule(schedule =>
+                        schedule.WithIntervalInHours(1).RepeatForever())
                     .Build());
         options
             .AddJob<ProcessLimitResetJob>(configure => configure.WithIdentity(limitReset))

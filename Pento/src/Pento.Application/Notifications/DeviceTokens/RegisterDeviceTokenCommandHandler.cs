@@ -1,12 +1,11 @@
-﻿using Newtonsoft.Json.Linq;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Notifications.DeviceTokens;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DeviceTokens;
 
 namespace Pento.Application.Notifications.DeviceTokens;
-
 internal sealed class RegisterDeviceTokenCommandHandler(
     IUserContext userContext,
     IGenericRepository<DeviceToken> deviceTokenRepository,
@@ -22,22 +21,20 @@ internal sealed class RegisterDeviceTokenCommandHandler(
 
         Guid userId = userContext.UserId;
 
-        IEnumerable<DeviceToken>? duplitokens = await deviceTokenRepository.FindAsync(
-           x => x.UserId == userId && x.Token==request.Token,
-           cancellationToken
-);
-        DeviceToken? duplicate = duplitokens.FirstOrDefault();
+        DeviceToken? duplicate = (await deviceTokenRepository.FindAsync(
+            x => x.UserId == userId && x.Token == request.Token,
+            cancellationToken
+        )).FirstOrDefault();
 
         if (duplicate is not null)
         {
-            return Result.Failure<string>(DeviceTokenErrors.DuplicateToken);
+            return Result.Success(request.Token);
         }
 
-        IEnumerable<DeviceToken>? tokens = await deviceTokenRepository.FindAsync(
-           x => x.UserId == userId,
-           cancellationToken
-       );
-        DeviceToken? existing = tokens.FirstOrDefault();
+        DeviceToken? existing = (await deviceTokenRepository.FindAsync(
+            x => x.UserId == userId,
+            cancellationToken
+        )).FirstOrDefault();
 
         if (existing is null)
         {
