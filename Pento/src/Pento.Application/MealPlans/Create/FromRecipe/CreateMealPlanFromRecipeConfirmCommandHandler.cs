@@ -84,7 +84,9 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             {
                 FoodReference? foodRef = await foodRefRepo.GetByIdAsync(m.FoodRefId, cancellationToken);
                 string name = m.Name ?? foodRef?.Name ?? "Unknown ingredient";
-
+                Guid defaultUnitId = foodRef?.UnitType == UnitType.Weight
+                    ? UnitData.Gram.Id
+                    : UnitData.Each.Id;   
                 var foodItem = FoodItem.Create(
                     foodReferenceId: m.FoodRefId,
                     compartmentId: defaultCompartment.Id,
@@ -92,7 +94,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     name: name,
                     imageUrl: null,
                     quantity: m.RequiredQuantity,
-                    unitId: m.UnitId,
+                    unitId: defaultUnitId,
                     expirationDate: today,
                     notes: $"Auto-created from missing ingredient of recipe {recipe.Title}",
                     addedBy: userContext.UserId
@@ -162,8 +164,8 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 r.FoodItemId,
                 householdId.Value,
                 clock.UtcNow,
-                r.ReservedQuantity,
-                r.FoodItemUnitId,
+                r.IngredientQuantity,
+                r.IngredientUnitId,
                 mealPlan.Id
             );
 
@@ -223,6 +225,30 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 continue;
             }
 
+            if (ingredientUnit is null)
+            {
+                missing.Add(new MissingIngredientResult(
+                    ingredient.Id,
+                    ingredient.FoodRefId,
+                    name,
+                    ingredient.Quantity,
+                    ingredient.UnitId,
+                    "unknown unit"
+                ));
+                continue;
+            }
+            if (foodRef is not null && ingredientUnit.Type != foodRef.UnitType)
+            {
+                missing.Add(new MissingIngredientResult(
+                    ingredient.Id,
+                    ingredient.FoodRefId,
+                    name,
+                    ingredient.Quantity,
+                    ingredient.UnitId,
+                    $"Unit '{ingredientUnit.Abbreviation}' incompatible with food reference unit type '{foodRef.UnitType}'"
+                ));
+                continue;
+            }
             decimal requiredQty = ingredient.Quantity;
 
             if (ingredient.UnitId != foodItem.UnitId)
@@ -241,7 +267,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                         name,
                         ingredient.Quantity,
                         ingredient.UnitId,
-                        ingredientUnit?.Abbreviation ?? "un"
+                        ingredientUnit.Abbreviation ?? "un"
                     ));
                     continue;
                 }
@@ -257,7 +283,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     name,
                     ingredient.Quantity,
                     ingredient.UnitId,
-                    ingredientUnit?.Abbreviation ?? "un"
+                    ingredientUnit.Abbreviation ?? "un"
 
                 ));
                 continue;
@@ -270,7 +296,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                     name,
                     ingredient.Quantity,
                     ingredient.UnitId,
-                    ingredientUnit?.Abbreviation ?? "un"
+                    ingredientUnit.Abbreviation ?? "un"
                 ));
                 continue;
             }
@@ -282,7 +308,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 ingredient.Quantity,
                 ingredient.UnitId,
                 foodItem.UnitId,
-                ingredientUnit?.Abbreviation ?? "un",
+                ingredientUnit.Abbreviation ?? "un",
                 foodItemUnit.Abbreviation
 
             ));

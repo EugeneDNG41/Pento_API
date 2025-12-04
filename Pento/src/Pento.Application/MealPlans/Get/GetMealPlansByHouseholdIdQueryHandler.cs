@@ -108,17 +108,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
             );
 
-            -- Recipe ingredients (food_ref_ids)
-            SELECT
-                mpr.meal_plan_id,
-                ri.food_ref_id
-            FROM meal_plan_recipes mpr
-            JOIN recipe_ingredients ri ON mpr.recipe_id = ri.recipe_id
-            WHERE mpr.meal_plan_id IN (
-                SELECT id FROM meal_plans {whereClause}
-                {orderBy}
-                OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY
-            );
+     
 
             -- FoodItem reservations
                 SELECT
