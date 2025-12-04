@@ -35,10 +35,12 @@ internal sealed class SearchFoodItemQueryHandler(
         var andFilters = new List<string>
         {
             "fi.is_deleted IS FALSE",
+            "fi.household_id = @HouseholdId"
         };
         var orFoodGroupFilters = new List<string>();
         var orStatusFilters = new List<string>();
         var parameters = new DynamicParameters();
+        parameters.Add("HouseholdId", householdId);
         if (query.FoodReferenceId  != null)
         {
             andFilters.Add("fi.food_reference_id = @FoodReferenceId");
