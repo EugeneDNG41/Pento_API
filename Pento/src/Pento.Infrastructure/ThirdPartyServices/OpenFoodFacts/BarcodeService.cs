@@ -17,7 +17,7 @@ internal sealed class BarcodeService(GeminiModel model, IGenericRepository<FoodR
     {
         try
         {
-            string userAgent = UserAgentHelper.GetUserAgent("Pento", ".Net Platform", "1.0", null);
+            string userAgent = UserAgentHelper.GetUserAgent("Pento", "DotNet Platform", "2.0", null);
             var client = new Client(userAgent);
             GetProductResponse product = await client.GetProductAsync(barcode);
             if (product.Status == 0 || product.Product is null)
