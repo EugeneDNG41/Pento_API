@@ -61,7 +61,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @WeightType 
                          AND l.action = @IntakeAction 
-                    THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
+                    THEN l.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS IntakeByWeight,
 
@@ -69,7 +69,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @VolumeType 
                          AND l.action = @IntakeAction 
-                    THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
+                    THEN l.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS IntakeByVolume,
 
@@ -77,7 +77,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @WeightType 
                          AND l.action = @ConsumptionAction 
-                    THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
+                    THEN l.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS ConsumptionByWeight,
 
@@ -85,7 +85,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @VolumeType 
                          AND l.action = @ConsumptionAction 
-                    THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
+                    THEN l.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS ConsumptionByVolume,
 
@@ -93,7 +93,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @WeightType 
                          AND l.action = @DiscardAction 
-                    THEN l.quantity * u.to_base_factor / @WeightToBaseFactor
+                    THEN l.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS DiscardByWeight,
 
@@ -101,7 +101,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @VolumeType 
                          AND l.action = @DiscardAction 
-                    THEN l.quantity * u.to_base_factor / @VolumeToBaseFactor
+                    THEN l.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS DiscardByVolume
         FROM food_item_logs l
@@ -119,7 +119,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @WeightType
                         AND (f.expiration_date::date - current_date) > 3
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS FreshByWeight,
 
@@ -127,7 +127,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @VolumeType 
                         AND (f.expiration_date::date - current_date) > 3
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS FreshByVolume,
 
@@ -136,7 +136,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                     WHEN u.type = @WeightType 
                          AND (f.expiration_date::date - current_date) >= 0
         				 AND (f.expiration_date::date - current_date) <= 3
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS ExpiringByWeight,
 
@@ -145,7 +145,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                     WHEN u.type = @VolumeType  
                          AND (f.expiration_date::date - current_date) >= 0
         				 AND (f.expiration_date::date - current_date) <= 3 
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS ExpiringByVolume,
 
@@ -153,7 +153,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @WeightType
                          AND (f.expiration_date::date - current_date) < 0 
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @WeightToBaseFactor / u.to_base_factor
                 END
             ), 0) AS ExpiredByWeight,
 
@@ -161,7 +161,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
                 CASE 
                     WHEN u.type = @VolumeType 
                          AND (f.expiration_date::date - current_date) < 0
-                    THEN f.quantity * u.to_base_factor
+                    THEN f.quantity * @VolumeToBaseFactor  / u.to_base_factor
                 END
             ), 0) AS ExpiredByVolume
 
