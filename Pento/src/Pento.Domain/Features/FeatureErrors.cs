@@ -1,6 +1,6 @@
 ﻿using Pento.Domain.Abstractions;
 
-namespace Pento.Domain.Subscriptions;
+namespace Pento.Domain.Features;
 
 public static class FeatureErrors
 {

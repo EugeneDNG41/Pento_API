@@ -59,8 +59,7 @@ public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(
                 return events;
 
             }).ToList();
-        var outboxMessages = domainEvents.Select(domainEvent => new OutboxMessage(
-                Guid.NewGuid(),
+        var outboxMessages = domainEvents.Select(domainEvent => OutboxMessage.Create(
                 domainEvent.Timestamp,
                 domainEvent.GetType().AssemblyQualifiedName!,
                 JsonConvert.SerializeObject(domainEvent, JsonSerializerSettings)))

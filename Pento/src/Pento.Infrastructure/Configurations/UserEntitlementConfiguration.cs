@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Pento.Domain.Subscriptions;
+using Pento.Domain.Features;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.Users;
 using Pento.Domain.UserSubscriptions;

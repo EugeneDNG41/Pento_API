@@ -1,6 +1,6 @@
 ﻿using Pento.Domain.Shared;
 
-namespace Pento.Domain.Subscriptions;
+namespace Pento.Domain.Features;
 
 public sealed class Feature
 {

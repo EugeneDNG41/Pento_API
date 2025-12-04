@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Features;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.UserSubscriptions;

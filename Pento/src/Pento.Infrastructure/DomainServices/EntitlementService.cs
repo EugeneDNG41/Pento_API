@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.DomainServices;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Subscriptions;
+using Pento.Domain.Features;
 using Pento.Domain.UserEntitlements;
 
 namespace Pento.Infrastructure.DomainServices;

@@ -1,10 +1,12 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Microsoft.Extensions.Logging;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.ThirdPartyServices.Firebase;
 using Pento.Application.Abstractions.UtilityServices.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DeviceTokens;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Notifications;
+using Pento.Infrastructure.Outbox;
 using Quartz;
 
 namespace Pento.Infrastructure.ThirdPartyServices.Quartz;
@@ -15,7 +17,8 @@ internal sealed class ProcessExpirationDateTrackingJob(
     IGenericRepository<DeviceToken> deviceTokenRepository,
     IGenericRepository<Notification> notificationRepository,
     INotificationSender notificationSender,
-    IUnitOfWork unitOfWork
+    IUnitOfWork unitOfWork,
+    ILogger<ProcessExpirationDateTrackingJob> logger
 ) : IJob
 {
     private const int EXPIRE_SOON_HOURS = 72;
@@ -63,7 +66,7 @@ internal sealed class ProcessExpirationDateTrackingJob(
             {
                 continue;
             }
-
+            logger.LogInformation("Sending expiration notification for FoodItem {FoodItemId} to User {UserId}", foodItem.Id, foodItem.AddedBy);
             await notificationSender.SendFoodExpiringSoonAsync(
                 deviceToken,
                 foodItem.Id,
@@ -89,6 +92,7 @@ internal sealed class ProcessExpirationDateTrackingJob(
 
             noti.MarkSent();
             notificationRepository.Add(noti);
+            logger.LogInformation("Sent expiration notification for FoodItem {FoodItemId} to User {UserId}", foodItem.Id, foodItem.AddedBy);
         }
 
         await unitOfWork.SaveChangesAsync(context.CancellationToken);

@@ -1,8 +1,8 @@
 ﻿using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Features;
 using Pento.Domain.Shared;
-using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Features.Update;
 

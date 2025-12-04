@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using FluentValidation;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -14,14 +13,6 @@ using Pento.Domain.FoodItems;
 namespace Pento.Application.FoodItems.Delete;
 
 public sealed record DeleteFoodItemCommand(Guid FoodItemId) : ICommand;
-internal sealed class DeleteFoodItemCommandValidator : AbstractValidator<DeleteFoodItemCommand>
-{ 
-    public DeleteFoodItemCommandValidator()
-    {
-        RuleFor(x => x.FoodItemId)
-            .NotEmpty().WithMessage("Food Item Id is required.");
-    }
-}
 internal sealed class DeleteFoodItemCommandHandler(
     IUserContext userContext,
     IGenericRepository<FoodItem> foodItemRepository,

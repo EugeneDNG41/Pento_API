@@ -21,4 +21,12 @@ public sealed class OutboxMessage
     public DateTime? ProcessedOnUtc { get; init; }
 
     public string? Error { get; init; }
+    public static OutboxMessage Create(DateTime occurredOnUtc, string type, string content)
+    {
+        return new OutboxMessage(
+            id: Guid.CreateVersion7(),
+            occurredOnUtc: occurredOnUtc,
+            type: type,
+            content: content);
+    }
 }
