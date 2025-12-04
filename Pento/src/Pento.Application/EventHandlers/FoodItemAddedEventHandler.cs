@@ -114,12 +114,12 @@ internal sealed class HouseholdJoinedEventHandler(
     public async override Task Handle(UserHouseholdJoinedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
         Household? household = await householdRepository.GetByIdAsync(domainEvent.HouseholdId, cancellationToken);
-        if (household != null)
+        if (household == null)
         {
             throw new PentoException(nameof(HouseholdJoinedEventHandler), HouseholdErrors.NotFound);
         }
         User? user = await userRepository.GetByIdAsync(domainEvent.UserId, cancellationToken);
-        if (user != null)
+        if (user == null)
         {
             throw new PentoException(nameof(HouseholdJoinedEventHandler), UserErrors.NotFound);
         }
