@@ -18,7 +18,7 @@ internal sealed class ProcessExpirationDateTrackingJob(
     IUnitOfWork unitOfWork
 ) : IJob
 {
-    private const int EXPIRE_SOON_HOURS = 24;
+    private const int EXPIRE_SOON_HOURS = 72;
 
     public async Task Execute(IJobExecutionContext context)
     {
