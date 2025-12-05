@@ -63,8 +63,12 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
                 AND (@IsDeleted IS NULL OR s.is_deleted = @IsDeleted)
               AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
               AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
-            GROUP BY s.id, s.name, p.paid_at, p.currency
-            ORDER BY p.paid_at;
+            GROUP BY s.id, s.name, 
+                COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
+                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date),
+                p.currency
+            ORDER BY COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
+                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date);
         """;
         var parameters = new
         {
