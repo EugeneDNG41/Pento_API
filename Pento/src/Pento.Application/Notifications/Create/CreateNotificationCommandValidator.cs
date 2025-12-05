@@ -19,22 +19,8 @@ public sealed class CreateNotificationCommandValidator
         RuleFor(x => x.Type)
             .IsInEnum().WithMessage("Invalid notification type.");
 
-        RuleFor(x => x.DataJson)
-            .Must(BeValidJson)
-            .When(x => !string.IsNullOrWhiteSpace(x.DataJson))
-            .WithMessage("DataJson must be valid JSON.");
+        RuleFor(x => x.Payload)
+            .NotNull().WithMessage("Payload cannot be null.");
     }
 
-    private static bool BeValidJson(string? json)
-    {
-        try
-        {
-            Newtonsoft.Json.Linq.JToken.Parse(json!);
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
 }

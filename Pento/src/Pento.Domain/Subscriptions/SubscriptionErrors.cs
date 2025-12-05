@@ -18,10 +18,6 @@ public static class SubscriptionErrors
         Error.Conflict("Subscription.DuplicateSubscriptionPlan", "A subscription plan with the same price and duration already exists for this subscription."); //business rule
     public static readonly Error DuplicateSubscriptionFeature = 
         Error.Conflict("Subscription.DuplicateSubscriptionFeature", "This feature has already been added to the subscription."); //business rule
-    public static readonly Error CannotAddTimedPlanToSubscriptionWithLifetimeFeatures =
-        Error.Conflict("Subscription.TimedPlanToLifetimeFeature", "Cannot add a timed subscription plan to a subscription that has lifetime features."); //business rule
-    public static readonly Error CannotAddLifetimeFeatureToSubscriptionWithTimedPlans =
-        Error.Conflict("Subscription.LifetimeFeatureToTimedPlan", "Cannot add a lifetime feature to a subscription that has timed plans."); //business rule
     public static readonly Error InactiveSubscription =
         Error.Conflict("Subscription.InactiveSubscription", "Cannot purchase an inactive subscription.");
     public static readonly Error SubscriptionInUse =

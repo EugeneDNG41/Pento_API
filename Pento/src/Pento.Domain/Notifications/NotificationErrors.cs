@@ -12,4 +12,8 @@ public static class NotificationErrors
        code: "Notification.NotificationNotFound",
        description: "The specified notification was not found."
    );
+    public static readonly Error SendingFailed = Error.Failure(
+       code: "Notification.SendingFailed",
+       description: "Failed to send the notification."
+   );
 }

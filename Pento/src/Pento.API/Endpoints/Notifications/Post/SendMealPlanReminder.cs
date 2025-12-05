@@ -12,16 +12,16 @@ internal sealed class SendMealPlanReminder : IEndpoint
     {
         app.MapPost("notifications/mealplan/reminder", async (
             Request request,
-            ICommandHandler<SendMealPlanReminderCommand, Guid> handler,
+            ICommandHandler<SendMealPlanReminderCommand> handler,
             CancellationToken ct
         ) =>
         {
             var command = new SendMealPlanReminderCommand(request.MealPlanId);
 
-            Result<Guid> result = await handler.Handle(command, ct);
+            Result result = await handler.Handle(command, ct);
 
             return result.Match(
-                id => Results.Ok(new { Id = id, Message = "Meal plan reminder sent" }),
+                Results.NoContent,
                 CustomResults.Problem
             );
         })

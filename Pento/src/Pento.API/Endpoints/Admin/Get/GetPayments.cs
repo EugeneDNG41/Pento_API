@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Payments.GetAll;
+using Pento.Application.Payments.GetSummary;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 
@@ -41,6 +42,27 @@ internal sealed class GetPayments : IEndpoint
                 pageNumber,
                 pageSize);
             Result<AdminPaymentsResponse> result = await handler.Handle(query, cancellationToken);
+            return result.Match(Results.Ok, CustomResults.Problem);
+        }).WithTags(Tags.Admin);
+    }
+}
+
+internal sealed class GetSubscriptionsWithPaymentSummary : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapGet("admin/subscriptions/payment-summary", async (
+            Guid[]? subscriptionId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            bool? isActive,
+            bool? isDeleted,
+            TimeWindow? timeWindow,
+            IQueryHandler<GetSubscriptionsWithPaymentSummaryQuery, IReadOnlyList<SubscriptionWithPaymentSummary>> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var query = new GetSubscriptionsWithPaymentSummaryQuery(subscriptionId, fromDate, toDate, timeWindow, isActive, isDeleted);
+            Result<IReadOnlyList<SubscriptionWithPaymentSummary>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Admin);
     }

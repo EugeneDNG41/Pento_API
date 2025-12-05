@@ -33,32 +33,17 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
         builder.Property(n => n.Type)
             .HasColumnName("type")
             .IsRequired()
-            .HasConversion<int>();
+            .HasConversion<string>();
 
         builder.Property(n => n.DataJson)
             .HasColumnName("data_json")
             .HasColumnType("jsonb")  
             .IsRequired(false);
 
-        builder.Property(n => n.Status)
-            .HasColumnName("status")
-            .IsRequired()
-            .HasConversion<int>();
-
-        builder.Property(n => n.SentOnUtc)
-            .HasColumnName("sent_on_utc")
-            .IsRequired(false);
-
-        builder.Property(n => n.ReadOnUtc)
-            .HasColumnName("read_on_utc")
-            .IsRequired(false);
 
         builder.HasIndex(n => n.UserId)
             .HasDatabaseName("ix_notifications_user_id");
 
-        builder.HasIndex(n => n.Status)
-            .HasDatabaseName("ix_notifications_status");
-        builder.HasQueryFilter(x => !x.IsDeleted);
 
     }
 }

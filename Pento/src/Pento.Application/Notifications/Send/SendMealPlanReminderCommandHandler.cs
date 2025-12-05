@@ -7,66 +7,48 @@ using Pento.Domain.DeviceTokens;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Notifications;
+using Pento.Domain.Subscriptions;
+using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Application.Notifications.Send;
 internal sealed class SendMealPlanReminderCommandHandler(
     IGenericRepository<MealPlan> mealPlanRepo,
-    IGenericRepository<DeviceToken> deviceTokenRepo,
-    IGenericRepository<Notification> notificationRepo,
-    INotificationSender fcm,
-    IUserContext userContext,
-    IUnitOfWork unitOfWork)
-    : ICommandHandler<SendMealPlanReminderCommand, Guid>
+    INotificationService fcm,
+    IUserContext userContext)
+    : ICommandHandler<SendMealPlanReminderCommand>
 {
-    public async Task<Result<Guid>> Handle(
+    public async Task<Result> Handle(
         SendMealPlanReminderCommand command,
         CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
+            return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
         }
 
         MealPlan? mealPlan = await mealPlanRepo.GetByIdAsync(command.MealPlanId, cancellationToken);
         if (mealPlan is null)
         {
-            return Result.Failure<Guid>(MealPlanErrors.NotFound);
+            return Result.Failure(MealPlanErrors.NotFound);
         }
 
-        Guid userId = userContext.UserId;
-        DeviceToken? token = (await deviceTokenRepo.FindAsync(
-            x => x.UserId == userId, cancellationToken)).FirstOrDefault();
 
-        if (token is null || string.IsNullOrWhiteSpace(token.Token))
+        var payload = new Dictionary<string, string>
         {
-            return Result.Failure<Guid>(DeviceTokenErrors.NotFound);
-        }
+            { "mealPlanId", mealPlan.Id.ToString() },
+            { "mealPlanName", mealPlan.Name }
+        };
 
-        var notification = Notification.Create(
-            userId,
+        await fcm.SendToUserAsync(
+            userContext.UserId,
             "Meal plan reminder",
             $"{mealPlan.Name} is starting soon.",
             NotificationType.MealPlanReminder,
-            dataJson: Newtonsoft.Json.JsonConvert.SerializeObject(new
-            {
-                mealPlanId = mealPlan.Id,
-                mealPlanName = mealPlan.Name,
-                startAt = mealPlan.ScheduledDate
-            })
-        );
-
-        notificationRepo.Add(notification);
-
-        await fcm.SendMealPlanReminderAsync(
-            token.Token,
-            mealPlan.Id,
-            mealPlan.Name,
-            mealPlan.ScheduledDate,
+            payload,
             cancellationToken);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Result.Success(notification.Id);
+        return Result.Success();
     }
 }

@@ -5,10 +5,9 @@ using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.UpdatePlan;
-
+#pragma warning disable S125 
 internal sealed class UpdateSubscriptionPlanCommandHandler(
     IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
-    IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateSubscriptionPlanCommand>
 {
     public async Task<Result> Handle(UpdateSubscriptionPlanCommand command, CancellationToken cancellationToken)
@@ -25,15 +24,15 @@ internal sealed class UpdateSubscriptionPlanCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.DuplicateSubscriptionPlan);
         }
-        bool lifetimeFeatureExists = await subscriptionFeatureRepository
-            .AnyAsync(sf => sf.SubscriptionId == plan.SubscriptionId &&  sf.ResetPeriod == null, cancellationToken);
-        if (lifetimeFeatureExists && command.DurationInDays != null)
-        {
-            return Result.Failure<Guid>(SubscriptionErrors.CannotAddTimedPlanToSubscriptionWithLifetimeFeatures);
-        }
+        //bool lifetimeFeatureExists = await subscriptionFeatureRepository
+        //    .AnyAsync(sf => sf.SubscriptionId == plan.SubscriptionId &&  sf.ResetPeriod == null, cancellationToken);
+        //if (lifetimeFeatureExists && command.DurationInDays != null)
+        //{
+        //    return Result.Failure<Guid>(SubscriptionErrors.CannotAddTimedPlanToSubscriptionWithLifetimeFeatures);
+        //}
         bool lifetimePlanExists = await subscriptionPlanRepository
             .AnyAsync(sp => sp.Id != plan.Id && sp.SubscriptionId == plan.SubscriptionId && sp.DurationInDays == null, cancellationToken);
-        if (lifetimeFeatureExists || lifetimePlanExists)
+        if (lifetimePlanExists)
         {
             return Result.Failure<Guid>(SubscriptionErrors.NoMoreThanOneLifetimePlan);
         }

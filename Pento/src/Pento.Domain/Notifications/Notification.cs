@@ -13,9 +13,8 @@ public sealed class Notification : Entity
     public string Body { get; private set; }
     public NotificationType Type { get; private set; }
     public string? DataJson { get; private set; }
-    public NotificationStatus Status { get; private set; }
-    public DateTime? SentOnUtc { get; private set; }
-    public DateTime? ReadOnUtc { get; private set; }
+    public DateTime SentOn { get; private set; }
+    public DateTime? ReadOn { get; private set; }
 
     private Notification() { }
 
@@ -25,7 +24,9 @@ public sealed class Notification : Entity
         string title,
         string body,
         NotificationType type,
-        string? dataJson)
+        string? dataJson,
+        DateTime sentOn
+        )
         : base(id)
     {
         UserId = userId;
@@ -33,8 +34,7 @@ public sealed class Notification : Entity
         Body = body;
         Type = type;
         DataJson = dataJson;
-        Status = NotificationStatus.Pending;
-        SentOnUtc = DateTime.UtcNow;
+        SentOn = sentOn;
 
     }
 
@@ -43,23 +43,17 @@ public sealed class Notification : Entity
         string title,
         string body,
         NotificationType type,
+        DateTime sentOn,
         string? dataJson = null)
     {
         return new Notification(
-            Guid.NewGuid(),
+            Guid.CreateVersion7(),
             userId,
             title,
             body,
             type,
-            dataJson
+            dataJson,
+            sentOn
         );
     }
-
-    public void MarkSent()
-    {
-        Status = NotificationStatus.Sent;
-        SentOnUtc = DateTime.UtcNow;
-    }
-
-
 }

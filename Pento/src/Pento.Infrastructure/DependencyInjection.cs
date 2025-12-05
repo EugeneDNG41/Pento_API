@@ -135,7 +135,7 @@ public static class DependencyInjection
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
         services.AddScoped<IPixabayImageService,PixabayImageService>();
         services.AddScoped<IVisionService, VisionService>();
-        services.AddSingleton<INotificationSender, FcmNotificationSender>();
+        services.AddSingleton<INotificationService, FcmNotificationService>();
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)

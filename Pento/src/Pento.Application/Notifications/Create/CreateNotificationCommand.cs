@@ -11,6 +11,6 @@ public sealed record CreateNotificationCommand(
     string Title,
     string Body,
     NotificationType Type,
-    string? DataJson
-) : ICommand<Guid>;
+    Dictionary<string, string>? Payload
+) : ICommand;
 
