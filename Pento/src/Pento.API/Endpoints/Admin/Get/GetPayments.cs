@@ -66,3 +66,21 @@ internal sealed class GetSubscriptionsWithPaymentSummary : IEndpoint
         }).WithTags(Tags.Admin);
     }
 }
+internal sealed class GetSubscriptionWithPlanPaymentSummaryById : IEndpoint
+{
+    public void MapEndpoint(IEndpointRouteBuilder app)
+    {
+        app.MapGet("admin/subscriptions/{subscriptionId:guid}/payment-summary", async (
+            Guid subscriptionId,
+            DateOnly? fromDate,
+            DateOnly? toDate,
+            TimeWindow? timeWindow,
+            IQueryHandler<GetSubscriptionWithPlanPaymentSummaryByIdQuery, SubscriptionWithPlanPaymentSummary> handler,
+            CancellationToken cancellationToken) =>
+        {
+            var query = new GetSubscriptionWithPlanPaymentSummaryByIdQuery(subscriptionId, fromDate, toDate, timeWindow);
+            Result<SubscriptionWithPlanPaymentSummary> result = await handler.Handle(query, cancellationToken);
+            return result.Match(Results.Ok, CustomResults.Problem);
+        }).WithTags(Tags.Admin);
+    }
+}

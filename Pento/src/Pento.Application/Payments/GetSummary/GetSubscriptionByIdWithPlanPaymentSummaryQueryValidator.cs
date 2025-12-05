@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Payments.GetSummary;
 
-internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator : AbstractValidator<GetSubscriptionByIdWithPlanPaymentSummaryQuery>
+internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator : AbstractValidator<GetSubscriptionWithPlanPaymentSummaryByIdQuery>
 {
     public GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator()
     {
