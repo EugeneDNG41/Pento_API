@@ -6,6 +6,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 
@@ -115,6 +116,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                     fir.meal_plan_id          AS MealPlanId,
                     fi.id                     AS FoodItemId,
                     fr.id                     AS FoodReferenceId,
+                    ri.recipe_id              AS RecipeId,
                     fir.id                     AS FoodReservationId,
                     fi.name                   AS FoodItemName,
                     fr.name                   AS FoodReferenceName,
@@ -163,7 +165,8 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                         (string?)r.description,
                         r.image_url is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
                         (int?)r.servings,
-                        (string?)r.difficulty_level
+                        (string?)r.difficulty_level,
+                        ReservationStatus.Pending
                 )).ToList()
             );
 
@@ -175,10 +178,34 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                 g => g.Key,
                 g => g.ToList()
             );
+        var recipeReservationLookup = foodItemRows
+            .Where(f => f.IsIngredientItem && f.RecipeId != null)
+            .GroupBy(f => f.RecipeId!.Value)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(x => x.Status).ToList()
+            );
+
 
         var list = mealPlans.Select(mp =>
         {
-            recipeLookup.TryGetValue(mp.Id, out List<MealPlanRecipeInfo>? recipes);
+            recipeLookup.TryGetValue(mp.Id, out List<MealPlanRecipeInfo>? recipeInfos);
+            recipeInfos ??= new List<MealPlanRecipeInfo>();
+
+            var recipes = recipeInfos
+                .Select(r =>
+                {
+                    ReservationStatus recipeStatus = ReservationStatus.Pending;
+
+                    if (recipeReservationLookup.TryGetValue(r.Id, out List<ReservationStatus>? statuses) &&
+                        statuses.All(s => s == ReservationStatus.Fulfilled))
+                    {
+                        recipeStatus = ReservationStatus.Fulfilled;
+                    }
+
+                    return r with { RecipeStatus = recipeStatus };
+                })
+                .ToList();
             recipes ??= new List<MealPlanRecipeInfo>();
 
             MealType mealtype = Enum.Parse<MealType>(mp.MealType);
