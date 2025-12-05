@@ -20,14 +20,4 @@ public sealed class HouseholdMemberResponse
     public string? AvatarUrl { get; init; }
     public string Roles { get; init; } 
 }
-public sealed class HouseholdPreview
-{
-    public Guid Id { get; init; }
-    public string Name { get; init; }
-    public string? InviteCode { get; init; }
-    public DateTime? InviteCodeExpirationUtc { get; init; }
-    public bool IsDeleted { get; init; }
-    public int Members { get; init; }
-    
-}
-public sealed record GetHouseholdsQuery(string? SearchTerm, bool? IsDeleted, int? FromMember, int? ToMember, int PageNumber, int PageSize) : IQuery<PagedList<HouseholdPreview>>;
+

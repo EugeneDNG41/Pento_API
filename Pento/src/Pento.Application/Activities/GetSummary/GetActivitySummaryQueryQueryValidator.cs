@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Payments.GetSummary;
+namespace Pento.Application.Activities.GetSummary;
 
-internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator : AbstractValidator<GetSubscriptionWithPlanPaymentSummaryByIdQuery>
+internal sealed class GetActivitySummaryQueryQueryValidator : AbstractValidator<GetActivitySummaryQuery>
 {
-    public GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator()
+    public GetActivitySummaryQueryQueryValidator()
     {
         RuleFor(x => x.FromDate)
             .LessThanOrEqualTo(x => x.ToDate)

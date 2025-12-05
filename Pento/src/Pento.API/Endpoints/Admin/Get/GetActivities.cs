@@ -22,14 +22,3 @@ internal sealed class GetActivities : IEndpoint
         }).RequireAuthorization(Permissions.ManageMilestones).WithTags(Tags.Admin);
     }
 }
-internal sealed class TestJsonToString : IEndpoint
-{
-    public void MapEndpoint(IEndpointRouteBuilder app)
-    {
-        app.MapGet("test/json-to-string", (
-            IOptions<PayOSCustomOptions> options) =>
-        {
-            return Results.Ok(options.Value.ToString());
-        }).WithTags(Tags.Activities);
-    }
-}
