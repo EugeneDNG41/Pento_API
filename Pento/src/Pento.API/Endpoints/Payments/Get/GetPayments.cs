@@ -17,7 +17,9 @@ internal sealed class GetPayments : IEndpoint
             long? toAmount,
             DateTime? fromDate,
             DateTime? toDate,
-            PaymentStatus? status,            
+            PaymentStatus? status,
+            GetPaymentsSortBy? sortBy,
+            SortOrder? sortOrder,
             IQueryHandler<GetPaymentsQuery, PagedList<PaymentPreview>> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
@@ -30,6 +32,8 @@ internal sealed class GetPayments : IEndpoint
                 fromDate?.ToUniversalTime(),
                 toDate?.ToUniversalTime(),
                 status,
+                sortBy,
+                sortOrder ?? SortOrder.ASC,
                 pageNumber,
                 pageSize);
             Result<PagedList<PaymentPreview>> result = await handler.Handle(query, cancellationToken);

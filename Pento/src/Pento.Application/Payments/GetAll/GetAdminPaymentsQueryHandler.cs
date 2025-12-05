@@ -12,6 +12,16 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
     public async Task<Result<AdminPaymentsResponse>> Handle(GetAdminPaymentsQuery query, CancellationToken cancellationToken)
     {
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
+        string orderBy = query.SortBy switch
+        {
+            GetAdminPaymentsSortBy.OrderCode => "order_code",
+            GetAdminPaymentsSortBy.Description => "description",
+            GetAdminPaymentsSortBy.AmountDue => "amount_due",
+            GetAdminPaymentsSortBy.AmountPaid => "amount_paid",
+            GetAdminPaymentsSortBy.CreatedAt => "created_at",
+            _ => "id"
+        };
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>();
         var parameters = new DynamicParameters();
         if (query.UserId.HasValue) 
@@ -74,13 +84,14 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
                 id AS PaymentId,
                 order_code AS OrderCode,
                 description AS Description,
-                CONCAT(amount_due::text, ' ', currency) AS Amount,
+                CONCAT(amount_due::text, ' ', currency) AS AmountDue,
+                CONCAT(amount_paid::text, ' ', currency) AS AmountPaid,
                 status AS Status,
                 created_at AS CreatedAt,
                 is_deleted AS IsDeleted
             FROM payments
             {whereClause}
-            ORDER BY created_at DESC
+            {orderClause}
             OFFSET @Offset ROWS 
             FETCH NEXT @PageSize ROWS ONLY;          
          """;

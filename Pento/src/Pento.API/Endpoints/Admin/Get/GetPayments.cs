@@ -1,5 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Payments.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
@@ -18,6 +19,8 @@ internal sealed class GetPayments : IEndpoint
             DateTime? fromDate,
             DateTime? toDate,
             PaymentStatus? status,
+            GetAdminPaymentsSortBy? sortBy,
+            SortOrder? sortOrder,
             bool? isDeleted,
             IQueryHandler<GetAdminPaymentsQuery, AdminPaymentsResponse> handler,
             CancellationToken cancellationToken,
@@ -32,6 +35,8 @@ internal sealed class GetPayments : IEndpoint
                 fromDate?.ToUniversalTime(),
                 toDate?.ToUniversalTime(),
                 status,
+                sortBy,
+                sortOrder ?? SortOrder.ASC,
                 isDeleted,
                 pageNumber,
                 pageSize);

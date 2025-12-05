@@ -1,4 +1,5 @@
 ﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Pagination;
 using Pento.Domain.Payments;
 
 namespace Pento.Application.Payments.GetAll;
@@ -11,10 +12,16 @@ public sealed record GetAdminPaymentsQuery(
     DateTime? FromDate,
     DateTime? ToDate,
     PaymentStatus? Status,
+    GetAdminPaymentsSortBy? SortBy,
+    SortOrder SortOrder,
     bool? IsDeleted,
     int PageNumber,
     int PageSize) : IQuery<AdminPaymentsResponse>;
-public enum Period
+public enum GetAdminPaymentsSortBy
 {
-    Daily, Weekly, Monthly, Quarterly, Yearly, All
+    OrderCode,
+    Description,
+    AmountDue,
+    AmountPaid,
+    CreatedAt
 }

@@ -11,6 +11,15 @@ public sealed record GetPaymentsQuery(
     DateTime? FromDate,
     DateTime? ToDate,
     PaymentStatus? Status,
+    GetPaymentsSortBy? SortBy,
+    SortOrder SortOrder,
     int PageNumber,
     int PageSize) : IQuery<PagedList<PaymentPreview>>;
-
+public enum GetPaymentsSortBy
+{
+    OrderCode,
+    Description,
+    AmountDue,
+    AmountPaid,
+    CreatedAt
+}

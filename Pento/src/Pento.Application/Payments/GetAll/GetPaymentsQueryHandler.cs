@@ -11,9 +11,19 @@ namespace Pento.Application.Payments.GetAll;
 
 internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetPaymentsQuery, PagedList<PaymentPreview>>
 {
-    public async Task<Result<PagedList<PaymentPreview>>> Handle(GetPaymentsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<PaymentPreview>>> Handle(GetPaymentsQuery query, CancellationToken cancellationToken)
     {
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
+        string orderBy = query.SortBy switch
+        {
+            GetPaymentsSortBy.OrderCode => "order_code",
+            GetPaymentsSortBy.Description => "description",
+            GetPaymentsSortBy.AmountDue => "amount_due",
+            GetPaymentsSortBy.AmountPaid => "amount_paid",
+            GetPaymentsSortBy.CreatedAt => "created_at",
+            _ => "id"
+        };
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>
         {
             "is_deleted IS FALSE",
@@ -21,35 +31,35 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
         };
         var parameters = new DynamicParameters();
         parameters.Add("UserId", userContext.UserId);
-        if (!string.IsNullOrWhiteSpace(request.SearchText))
+        if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
             filters.Add("description ILIKE @SearchText");
-            parameters.Add("SearchText", $"%{request.SearchText}%");
+            parameters.Add("SearchText", $"%{query.SearchText}%");
         }
-        if (request.FromAmount.HasValue)
+        if (query.FromAmount.HasValue)
         {
             filters.Add("amount_due >= @FromAmount");
-            parameters.Add("FromAmount", request.FromAmount.Value);
+            parameters.Add("FromAmount", query.FromAmount.Value);
         }
-        if (request.ToAmount.HasValue)
+        if (query.ToAmount.HasValue)
         {
             filters.Add("amount_due <= @ToAmount");
-            parameters.Add("ToAmount", request.ToAmount.Value);
+            parameters.Add("ToAmount", query.ToAmount.Value);
         }
-        if (request.FromDate.HasValue)
+        if (query.FromDate.HasValue)
         {
             filters.Add("created_at >= @FromDate");
-            parameters.Add("FromDate", request.FromDate.Value);
+            parameters.Add("FromDate", query.FromDate.Value);
         }
-        if (request.ToDate.HasValue)
+        if (query.ToDate.HasValue)
         {
             filters.Add("created_at <= @ToDate");
-            parameters.Add("ToDate", request.ToDate.Value);
+            parameters.Add("ToDate", query.ToDate.Value);
         }
-        if (request.Status.HasValue)
+        if (query.Status.HasValue)
         {
             filters.Add("status = @Status");
-            parameters.Add("Status", request.Status.Value.ToString());
+            parameters.Add("Status", query.Status.Value.ToString());
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
         
@@ -60,22 +70,23 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
                 id AS PaymentId,
                 order_code AS OrderCode,
                 description AS Description,
-                CONCAT(amount_due::text, ' ', currency) AS Amount,
+                CONCAT(amount_due::text, ' ', currency) AS AmountDue,
+                CONCAT(amount_paid::text, ' ', currency) AS AmountPaid,
                 status AS Status,
                 created_at AS CreatedAt
             FROM payments
             {whereClause}
-            ORDER BY created_at DESC
+            {orderClause}
             OFFSET @Offset ROWS 
             FETCH NEXT @PageSize ROWS ONLY;          
          """;
-        parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
-        parameters.Add("PageSize", request.PageSize);
+        parameters.Add("Offset", (query.PageNumber - 1) * query.PageSize);
+        parameters.Add("PageSize", query.PageSize);
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         int totalCount = await multi.ReadFirstAsync<int>();
         IEnumerable<PaymentPreview> items = await multi.ReadAsync<PaymentPreview>();
-        var pagedList = PagedList<PaymentPreview>.Create(items, totalCount, request.PageNumber, request.PageSize);
+        var pagedList = PagedList<PaymentPreview>.Create(items, totalCount, query.PageNumber, query.PageSize);
         return pagedList;
     }
 }
