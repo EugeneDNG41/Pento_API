@@ -100,9 +100,25 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             }
 
             await uow.SaveChangesAsync(cancellationToken);
+            reservation = await BuildReservationAsync(
+            ingredients,
+            householdId.Value,
+            cancellationToken
+                );
 
+                    if (reservation.IsFailure)
+                    {
+                        return Result.Failure<MealPlanAutoReserveResult>(reservation.Error);
+                    }
+
+                    reserved = reservation.Value.Item1;
+                    missing = reservation.Value.Item2;
+
+                }
+        if (missing.Count > 0)
+        {
+             return Result.Failure<MealPlanAutoReserveResult>(MealPlanErrors.CouldNotReserveAllIngredients);
         }
-
         MealPlan? mealPlan = (await mealPlanRepo.FindAsync(
             x => x.HouseholdId == householdId.Value &&
                  x.ScheduledDate == cmd.ScheduledDate &&
@@ -152,6 +168,8 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
         }
 
         await uow.SaveChangesAsync(cancellationToken);
+
+
 
         return Result.Success(
             new MealPlanAutoReserveResult(mealPlan.Id, reserved, missing)
