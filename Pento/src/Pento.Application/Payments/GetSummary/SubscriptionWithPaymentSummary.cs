@@ -16,7 +16,6 @@ public enum TimeWindow
     Yearly
 }
 public sealed record GetSubscriptionsWithPaymentSummaryQuery(
-    Guid[]? SubscriptionId, 
     DateOnly? FromDate, 
     DateOnly? ToDate,
     TimeWindow? TimeWindow,
@@ -62,7 +61,6 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
             WHERE p.status = 'Paid'
                 AND (@IsActive IS NULL OR s.is_active = @IsActive)
                 AND (@IsDeleted IS NULL OR s.is_deleted = @IsDeleted)
-              AND  (@SubscriptionIds IS NULL OR s.id = ANY(@SubscriptionIds))
               AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
               AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
             GROUP BY s.id, s.name, p.paid_at, p.currency
@@ -72,7 +70,6 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
         {
             dateTrunc,
             dateInterval,
-            SubscriptionIds = query.SubscriptionId,
             query.FromDate,
             query.ToDate,
             query.IsActive,

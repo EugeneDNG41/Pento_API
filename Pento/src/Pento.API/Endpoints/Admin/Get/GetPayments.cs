@@ -52,7 +52,6 @@ internal sealed class GetSubscriptionsWithPaymentSummary : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("admin/subscriptions/payment-summary", async (
-            Guid[]? subscriptionId,
             DateOnly? fromDate,
             DateOnly? toDate,
             bool? isActive,
@@ -61,7 +60,7 @@ internal sealed class GetSubscriptionsWithPaymentSummary : IEndpoint
             IQueryHandler<GetSubscriptionsWithPaymentSummaryQuery, IReadOnlyList<SubscriptionWithPaymentSummary>> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetSubscriptionsWithPaymentSummaryQuery(subscriptionId, fromDate, toDate, timeWindow, isActive, isDeleted);
+            var query = new GetSubscriptionsWithPaymentSummaryQuery(fromDate, toDate, timeWindow, isActive, isDeleted);
             Result<IReadOnlyList<SubscriptionWithPaymentSummary>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Admin);
