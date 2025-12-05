@@ -15,7 +15,7 @@ public sealed record SubscriptionPlanPayment2
 }
 public sealed record PaymentByDate2
 {
-    public DateOnly Timestamp { get; init; }
+    public DateTime Timestamp { get; init; }
     public long Amount { get; init; }
     public string Currency { get; init; }
 }
