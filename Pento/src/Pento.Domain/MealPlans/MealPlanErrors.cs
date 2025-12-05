@@ -53,4 +53,8 @@ public static class MealPlanErrors
     public static readonly Error RecipeNotInMealPlan = Error.NotFound(
         "MealPlan.RecipeNotInMealPlan",
         "The recipe is not part of the specified meal plan.");
+    public static readonly Error CouldNotReserveAllIngredients = Error.Problem(
+        "MealPlan.CouldNotReserveAllIngredients",
+        "Could not reserve all ingredients for the meal plan."
+    );
 }

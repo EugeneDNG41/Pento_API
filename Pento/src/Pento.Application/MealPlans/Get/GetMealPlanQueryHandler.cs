@@ -6,6 +6,7 @@ using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Get;
@@ -72,7 +73,8 @@ internal sealed class GetMealPlanQueryHandler(
                 Description: r.description,
                 ImageUrl: r.image_url is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
                 Servings: (int?)r.servings,
-                DifficultyLevel: r.difficulty_level
+                DifficultyLevel: r.difficulty_level,
+                RecipeStatus: r.recipe_status
             ))
             .ToList();
 

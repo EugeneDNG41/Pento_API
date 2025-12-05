@@ -40,7 +40,7 @@ internal sealed class AcceptGiveawayClaimCommandHandler(
 
         if (post.Status is GiveawayStatus.Cancelled
             or GiveawayStatus.Expired
-            or GiveawayStatus.Claimed)
+            or GiveawayStatus.Fulfilled)
         {
             return Result.Failure<Guid>(GiveawayClaimErrors.PostNotAcceptable);
         }
@@ -52,7 +52,7 @@ internal sealed class AcceptGiveawayClaimCommandHandler(
 
         claim.UpdateStatus(ClaimStatus.Accepted);
 
-        post.UpdateStatus(GiveawayStatus.Claimed, clock.UtcNow);
+        post.UpdateStatus(GiveawayStatus.Fulfilled, clock.UtcNow);
 
         IEnumerable<GiveawayClaim> otherClaims = await claimRepo.FindAsync(
             x => x.GiveawayPostId == post.Id

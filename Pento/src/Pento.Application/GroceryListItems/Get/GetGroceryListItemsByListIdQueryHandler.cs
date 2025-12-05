@@ -34,7 +34,9 @@ internal sealed class GetGroceryListItemsByListIdQueryHandler(
                 fr.food_group AS FoodGroup,
                 fr.typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,
                 fr.typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
-                fr.typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer
+                fr.typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer,
+                fr.name AS FoodName,
+                fr.image_url AS FoodImageUri
 
             FROM grocery_list_items gli
             LEFT JOIN food_references fr ON fr.id = gli.food_ref_id
@@ -47,12 +49,6 @@ internal sealed class GetGroceryListItemsByListIdQueryHandler(
             sql, new { request.ListId }
         )).ToList();
 
-        if (items.Count == 0)
-        {
-            return Result.Failure<IReadOnlyList<GroceryListItemResponse>>(
-                GroceryListItemErrors.NotFound
-            );
-        }
 
         return items;
     }

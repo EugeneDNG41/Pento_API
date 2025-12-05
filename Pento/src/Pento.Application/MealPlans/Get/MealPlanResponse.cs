@@ -37,6 +37,8 @@ internal sealed class MealPlanFoodItemRow
     public ReservationStatus Status { get; set; }
     public DateTime? ExpirationDate { get; set; }
     public bool IsIngredientItem { get; set; }
+    public Guid? RecipeId { get; set; }
+
 
 }
 public sealed class MealPlanRow

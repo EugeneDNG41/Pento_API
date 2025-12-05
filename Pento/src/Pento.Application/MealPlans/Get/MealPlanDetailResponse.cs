@@ -29,7 +29,8 @@ public sealed record MealPlanRecipeInfo(
     string? Description,
     Uri? ImageUrl,
     int? Servings,
-    string? DifficultyLevel
+    string? DifficultyLevel,
+    ReservationStatus RecipeStatus
 );
 
 public sealed record MealPlanFoodItemInfo(

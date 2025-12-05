@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure;
@@ -11,9 +12,11 @@ using Pento.Infrastructure;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251205082534_Trade")]
+    partial class Trade
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -2180,47 +2183,24 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("subscription_plans", (string)null);
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItem", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.Trade", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid>("FoodItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("food_item_id");
-
-                    b.Property<string>("From")
+                    b.Property<string>("Address")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("from");
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("address");
 
-                    b.Property<int>("Quantity")
-                        .HasColumnType("integer")
-                        .HasColumnName("quantity");
-
-                    b.Property<Guid>("UnitId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("unit_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_trade_items");
-
-                    b.ToTable("trade_items", (string)null);
-
-                    b.HasDiscriminator<string>("From");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeOffer", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
+                    b.Property<string>("ContactInfo")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("contact_info");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -2236,8 +2216,7 @@ namespace Pento.Infrastructure.Migrations
 
                     b.Property<string>("PickupOption")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasColumnName("pickup_option");
 
                     b.Property<DateTime>("StartDate")
@@ -2246,8 +2225,7 @@ namespace Pento.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
                     b.Property<DateTime?>("UpdatedOn")
@@ -2259,6 +2237,30 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnName("user_id");
 
                     b.HasKey("Id")
+                        .HasName("pk_trades");
+
+                    b.ToTable("trades", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Trades.TradeOffer", b =>
+                {
+                    b.Property<Guid>("TradeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("trade_id");
+
+                    b.Property<Guid>("FoodItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_item_id");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.HasKey("TradeId", "FoodItemId")
                         .HasName("pk_trade_offers");
 
                     b.ToTable("trade_offers", (string)null);
@@ -2281,13 +2283,12 @@ namespace Pento.Infrastructure.Migrations
 
                     b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
+                        .HasColumnType("text")
                         .HasColumnName("status");
 
-                    b.Property<Guid>("TradeOfferId")
+                    b.Property<Guid>("TradeId")
                         .HasColumnType("uuid")
-                        .HasColumnName("trade_offer_id");
+                        .HasColumnName("trade_id");
 
                     b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("timestamp with time zone")
@@ -2300,89 +2301,31 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_trade_requests");
 
-                    b.HasIndex("TradeOfferId")
-                        .HasDatabaseName("ix_trade_requests_trade_offer_id");
-
                     b.ToTable("trade_requests", (string)null);
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSession", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.TradeWant", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<Guid>("TradeId")
                         .HasColumnType("uuid")
-                        .HasColumnName("id");
+                        .HasColumnName("trade_id");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<DateTime>("StartedOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("started_on");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)")
-                        .HasColumnName("status");
-
-                    b.Property<Guid>("TradeOfferId")
+                    b.Property<Guid>("FoodReferenceId")
                         .HasColumnType("uuid")
-                        .HasColumnName("trade_offer_id");
+                        .HasColumnName("food_reference_id");
 
-                    b.Property<Guid>("TradeRequestId")
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid>("UnitId")
                         .HasColumnType("uuid")
-                        .HasColumnName("trade_request_id");
+                        .HasColumnName("unit_id");
 
-                    b.HasKey("Id")
-                        .HasName("pk_trade_sessions");
+                    b.HasKey("TradeId", "FoodReferenceId")
+                        .HasName("pk_trade_wants");
 
-                    b.HasIndex("TradeOfferId")
-                        .HasDatabaseName("ix_trade_sessions_trade_offer_id");
-
-                    b.HasIndex("TradeRequestId")
-                        .HasDatabaseName("ix_trade_sessions_trade_request_id");
-
-                    b.ToTable("trade_sessions", (string)null);
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionMessage", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("MessageText")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("character varying(2000)")
-                        .HasColumnName("message_text");
-
-                    b.Property<Guid>("SenderUserId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("sender_user_id");
-
-                    b.Property<DateTime>("SentOn")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("sent_on");
-
-                    b.Property<Guid>("TradeSessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trade_session_id");
-
-                    b.HasKey("Id")
-                        .HasName("pk_trade_session_messages");
-
-                    b.HasIndex("TradeSessionId")
-                        .HasDatabaseName("ix_trade_session_messages_trade_session_id");
-
-                    b.ToTable("trade_session_messages", (string)null);
+                    b.ToTable("trade_wants", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Units.Unit", b =>
@@ -3293,54 +3236,6 @@ namespace Pento.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Recipe");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>
-                {
-                    b.HasBaseType("Pento.Domain.Trades.TradeItem");
-
-                    b.Property<Guid>("OfferId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("offer_id");
-
-                    b.HasIndex("OfferId")
-                        .HasDatabaseName("ix_trade_items_offer_id");
-
-                    b.ToTable("trade_items", (string)null);
-
-                    b.HasDiscriminator().HasValue("Offer");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemRequest", b =>
-                {
-                    b.HasBaseType("Pento.Domain.Trades.TradeItem");
-
-                    b.Property<Guid>("RequestId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("request_id");
-
-                    b.HasIndex("RequestId")
-                        .HasDatabaseName("ix_trade_items_request_id");
-
-                    b.ToTable("trade_items", (string)null);
-
-                    b.HasDiscriminator().HasValue("Request");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemSession", b =>
-                {
-                    b.HasBaseType("Pento.Domain.Trades.TradeItem");
-
-                    b.Property<Guid>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
-
-                    b.HasIndex("SessionId")
-                        .HasDatabaseName("ix_trade_items_session_id");
-
-                    b.ToTable("trade_items", (string)null);
-
-                    b.HasDiscriminator().HasValue("Session");
-                });
-
             modelBuilder.Entity("Pento.Domain.BlogPosts.BlogPost", b =>
                 {
                     b.HasOne("Pento.Domain.Users.User", null)
@@ -3704,41 +3599,24 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_subscription_plans_subscriptions_subscription_id");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeRequest", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.TradeOffer", b =>
                 {
-                    b.HasOne("Pento.Domain.Trades.TradeOffer", null)
+                    b.HasOne("Pento.Domain.Trades.Trade", null)
                         .WithMany()
-                        .HasForeignKey("TradeOfferId")
+                        .HasForeignKey("TradeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_trade_requests_trade_offers_trade_offer_id");
+                        .HasConstraintName("fk_trade_offers_trades_trade_id");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSession", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.TradeWant", b =>
                 {
-                    b.HasOne("Pento.Domain.Trades.TradeOffer", null)
+                    b.HasOne("Pento.Domain.Trades.Trade", null)
                         .WithMany()
-                        .HasForeignKey("TradeOfferId")
+                        .HasForeignKey("TradeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_trade_sessions_trade_offers_trade_offer_id");
-
-                    b.HasOne("Pento.Domain.Trades.TradeRequest", null)
-                        .WithMany()
-                        .HasForeignKey("TradeRequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_sessions_trade_requests_trade_request_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionMessage", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeSession", null)
-                        .WithMany()
-                        .HasForeignKey("TradeSessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_session_messages_trade_sessions_trade_session_id");
+                        .HasConstraintName("fk_trade_wants_trades_trade_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserActivities.UserActivity", b =>
@@ -3887,36 +3765,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_food_item_reservations_recipe_recipe_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeOffer", null)
-                        .WithMany()
-                        .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_items_trade_offer_offer_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemRequest", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeRequest", null)
-                        .WithMany()
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_items_trade_request_request_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemSession", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeSession", null)
-                        .WithMany()
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_items_trade_session_session_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>

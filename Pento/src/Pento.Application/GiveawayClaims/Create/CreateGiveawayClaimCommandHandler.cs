@@ -30,7 +30,7 @@ internal sealed class CreateGiveawayClaimCommandHandler(
         {
             return Result.Failure<Guid>(GiveawayClaimErrors.CannotClaimOwnPost);
         }
-        if (post.Status == GiveawayStatus.Claimed)
+        if (post.Status == GiveawayStatus.Fulfilled)
         {
             return Result.Failure<Guid>(GiveawayClaimErrors.PostAlreadyClaimed);
         }

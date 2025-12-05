@@ -14,5 +14,7 @@ public sealed record GroceryListItemResponse(
     string FoodGroup,
     int TypicalShelfLifeDays_Pantry,
     int TypicalShelfLifeDays_Fridge,
-    int TypicalShelfLifeDays_Freezer
+    int TypicalShelfLifeDays_Freezer,
+    string FoodName,
+    Uri? FoodImageUri
 );
