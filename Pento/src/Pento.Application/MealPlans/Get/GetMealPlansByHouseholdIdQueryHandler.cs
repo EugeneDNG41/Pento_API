@@ -122,6 +122,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                     fr.image_url              AS FoodImageUrl,
                     fir.quantity               AS Quantity,
                     u.abbreviation            AS UnitAbbreviation,
+                    fir.status                 AS Status,
                     fi.expiration_date        AS ExpirationDate,
                     CASE 
                         WHEN ri.food_ref_id IS NOT NULL THEN TRUE
@@ -195,6 +196,7 @@ internal sealed class GetMealPlansByHouseholdIdQueryHandler(
                     fi.FoodImageUrl is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
                     fi.Quantity,
                     fi.UnitAbbreviation,
+                    fi.Status,
                     fi.ExpirationDate is DateTime dt ? DateOnly.FromDateTime(dt) : default
                 ))
                 .ToList();

@@ -53,16 +53,17 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             x => x.RecipeId == cmd.RecipeId,
             cancellationToken)).ToList();
 
-        (List<ReservationResult> reserved, List<MissingIngredientResult> missing) = await BuildReservationAsync(
+        Result<(List<ReservationResult>, List<MissingIngredientResult>)> reservation  = await BuildReservationAsync(
             ingredients,
             householdId.Value,
-            foodItemRepo,
-            foodRefRepo,
-            unitRepo,
-            converter,
             cancellationToken
         );
-
+        if (reservation.IsFailure)
+        {
+            return Result.Failure<MealPlanAutoReserveResult>(reservation.Error);
+        }
+        List<ReservationResult> reserved = reservation.Value.Item1;
+        List<MissingIngredientResult> missing = reservation.Value.Item2;
         if (missing.Count > 0)
         {
             IEnumerable<Compartment> compartments = await compartmentRepo.FindAsync(
@@ -82,19 +83,14 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
 
             foreach (MissingIngredientResult m in missing)
             {
-                FoodReference? foodRef = await foodRefRepo.GetByIdAsync(m.FoodRefId, cancellationToken);
-                string name = m.Name ?? foodRef?.Name ?? "Unknown ingredient";
-                Guid defaultUnitId = foodRef?.UnitType == UnitType.Weight
-                    ? UnitData.Gram.Id
-                    : UnitData.Each.Id;   
                 var foodItem = FoodItem.Create(
                     foodReferenceId: m.FoodRefId,
                     compartmentId: defaultCompartment.Id,
                     householdId: householdId.Value,
-                    name: name,
+                    name: m.Name,
                     imageUrl: null,
                     quantity: m.RequiredQuantity,
-                    unitId: defaultUnitId,
+                    unitId: m.UnitId,
                     expirationDate: today,
                     notes: $"Auto-created from missing ingredient of recipe {recipe.Title}",
                     addedBy: userContext.UserId
@@ -105,24 +101,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
 
             await uow.SaveChangesAsync(cancellationToken);
 
-            (reserved, missing) = await BuildReservationAsync(
-                ingredients,
-                householdId.Value,
-                foodItemRepo,
-                foodRefRepo,
-                unitRepo,
-                converter,
-                cancellationToken
-            );
         }
-
-        if (missing.Count > 0)
-        {
-            return Result.Failure<MealPlanAutoReserveResult>(
-                Error.Failure("STILL_MISSING", "Some ingredients are still missing after auto-adding.")
-            );
-        }
-
 
         MealPlan? mealPlan = (await mealPlanRepo.FindAsync(
             x => x.HouseholdId == householdId.Value &&
@@ -180,14 +159,9 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
     }
 
 
-    private static async Task<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)> BuildReservationAsync(
+    private async Task<Result<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>> BuildReservationAsync(
         List<RecipeIngredient> ingredients,
         Guid householdId,
-        IGenericRepository<FoodItem> foodItemRepo,
-        IGenericRepository<FoodReference> foodRefRepo,
-        IGenericRepository<Unit> unitRepo,
-
-        IConverterService converter,
         CancellationToken cancellationToken)
     {
         var reserved = new List<ReservationResult>();
@@ -197,8 +171,10 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
         {
             FoodReference? foodRef = await foodRefRepo.GetByIdAsync(ingredient.FoodRefId, cancellationToken);
 
-            string name =  foodRef?.Name
-                         ?? "Unknown ingredient";
+            if (foodRef is null)
+            {
+                return Result.Failure<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>(FoodReferenceErrors.NotFound);
+            }
 
             FoodItem? foodItem = (await foodItemRepo.FindAsync(
                 x => x.HouseholdId == householdId &&
@@ -206,6 +182,10 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 cancellationToken)).FirstOrDefault();
 
             Unit? ingredientUnit = await unitRepo.GetByIdAsync(ingredient.UnitId, cancellationToken);
+            if (ingredientUnit is null)
+            {
+                return Result.Failure<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>(UnitErrors.NotFound);
+            }
             Unit? foodItemUnit = null;
             if (foodItem is not null)
             {
@@ -217,37 +197,16 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 missing.Add(new MissingIngredientResult(
                     ingredient.Id,
                     ingredient.FoodRefId,
-                    name,
+                    foodRef.Name,
                     ingredient.Quantity,
                     ingredient.UnitId,
-                    ingredientUnit?.Abbreviation ?? "un"
+                    ingredientUnit.Abbreviation
                 ));
                 continue;
             }
-
-            if (ingredientUnit is null)
+            if (ingredientUnit.Type != foodRef.UnitType)
             {
-                missing.Add(new MissingIngredientResult(
-                    ingredient.Id,
-                    ingredient.FoodRefId,
-                    name,
-                    ingredient.Quantity,
-                    ingredient.UnitId,
-                    "unknown unit"
-                ));
-                continue;
-            }
-            if (foodRef is not null && ingredientUnit.Type != foodRef.UnitType)
-            {
-                missing.Add(new MissingIngredientResult(
-                    ingredient.Id,
-                    ingredient.FoodRefId,
-                    name,
-                    ingredient.Quantity,
-                    ingredient.UnitId,
-                    $"Unit '{ingredientUnit.Abbreviation}' incompatible with food reference unit type '{foodRef.UnitType}'"
-                ));
-                continue;
+                return Result.Failure<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>(UnitErrors.InvalidConversion);
             }
             decimal requiredQty = ingredient.Quantity;
 
@@ -261,15 +220,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
 
                 if (converted.IsFailure)
                 {
-                    missing.Add(new MissingIngredientResult(
-                        ingredient.Id,
-                        ingredient.FoodRefId,
-                        name,
-                        ingredient.Quantity,
-                        ingredient.UnitId,
-                        ingredientUnit.Abbreviation ?? "un"
-                    ));
-                    continue;
+                    return Result.Failure<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>(converted.Error);
                 }
 
                 requiredQty = converted.Value;
@@ -280,10 +231,10 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 missing.Add(new MissingIngredientResult(
                     ingredient.Id,
                     ingredient.FoodRefId,
-                    name,
+                    foodRef.Name,
                     ingredient.Quantity,
                     ingredient.UnitId,
-                    ingredientUnit.Abbreviation ?? "un"
+                    ingredientUnit.Abbreviation
 
                 ));
                 continue;
@@ -293,10 +244,10 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 missing.Add(new MissingIngredientResult(
                     ingredient.Id,
                     ingredient.FoodRefId,
-                    name,
+                    foodRef.Name,
                     ingredient.Quantity,
                     ingredient.UnitId,
-                    ingredientUnit.Abbreviation ?? "un"
+                    ingredientUnit.Abbreviation
                 ));
                 continue;
             }
@@ -308,7 +259,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 ingredient.Quantity,
                 ingredient.UnitId,
                 foodItem.UnitId,
-                ingredientUnit.Abbreviation ?? "un",
+                ingredientUnit.Abbreviation,
                 foodItemUnit.Abbreviation
 
             ));

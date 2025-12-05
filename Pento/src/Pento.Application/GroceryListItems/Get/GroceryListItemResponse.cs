@@ -10,5 +10,9 @@ public sealed record GroceryListItemResponse(
     string? Notes,
     string Priority,
     Guid AddedBy,
-    DateTime CreatedOnUtc
+    DateTime CreatedOnUtc,
+    string FoodGroup,
+    int TypicalShelfLifeDays_Pantry,
+    int TypicalShelfLifeDays_Fridge,
+    int TypicalShelfLifeDays_Freezer
 );

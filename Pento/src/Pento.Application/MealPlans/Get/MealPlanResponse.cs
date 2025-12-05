@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Get;
@@ -33,6 +34,7 @@ internal sealed class MealPlanFoodItemRow
     public string? FoodImageUrl { get; set; }
     public decimal Quantity { get; set; }
     public string UnitAbbreviation { get; set; } = null!;
+    public ReservationStatus Status { get; set; }
     public DateTime? ExpirationDate { get; set; }
     public bool IsIngredientItem { get; set; }
 

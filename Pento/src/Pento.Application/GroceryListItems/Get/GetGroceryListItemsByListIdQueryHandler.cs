@@ -18,34 +18,43 @@ internal sealed class GetGroceryListItemsByListIdQueryHandler(
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =
-            $"""
+            """
             SELECT
-                id AS {nameof(GroceryListItemResponse.Id)},
-                list_id AS {nameof(GroceryListItemResponse.ListId)},
-                food_ref_id AS {nameof(GroceryListItemResponse.FoodRefId)},
-                custom_name AS {nameof(GroceryListItemResponse.CustomName)},
-                quantity AS {nameof(GroceryListItemResponse.Quantity)},
-                unit_id AS {nameof(GroceryListItemResponse.UnitId)},
-                notes AS {nameof(GroceryListItemResponse.Notes)},
-                priority AS {nameof(GroceryListItemResponse.Priority)},
-                added_by AS {nameof(GroceryListItemResponse.AddedBy)},
-                created_on_utc AS {nameof(GroceryListItemResponse.CreatedOnUtc)}
-            FROM grocery_list_items
-            WHERE list_id = @ListId
-            ORDER BY created_on_utc DESC
+                gli.id AS Id,
+                gli.list_id AS ListId,
+                gli.food_ref_id AS FoodRefId,
+                gli.custom_name AS CustomName,
+                gli.quantity AS Quantity,
+                gli.unit_id AS UnitId,
+                gli.notes AS Notes,
+                gli.priority AS Priority,
+                gli.added_by AS AddedBy,
+                gli.created_on_utc AS CreatedOnUtc,
+
+                fr.food_group AS FoodGroup,
+                fr.typical_shelf_life_days_pantry AS TypicalShelfLifeDays_Pantry,
+                fr.typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
+                fr.typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer
+
+            FROM grocery_list_items gli
+            LEFT JOIN food_references fr ON fr.id = gli.food_ref_id
+
+            WHERE gli.list_id = @ListId
+            ORDER BY gli.created_on_utc DESC
             """;
 
-        var groceryListItems = (await connection.QueryAsync<GroceryListItemResponse>(
+        var items = (await connection.QueryAsync<GroceryListItemResponse>(
             sql, new { request.ListId }
         )).ToList();
 
-        if (groceryListItems.Count == 0)
+        if (items.Count == 0)
         {
             return Result.Failure<IReadOnlyList<GroceryListItemResponse>>(
                 GroceryListItemErrors.NotFound
             );
         }
 
-        return groceryListItems;
+        return items;
     }
 }
+

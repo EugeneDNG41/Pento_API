@@ -48,7 +48,7 @@ internal sealed class ProcessExpirationDateTrackingJob(
                     n.DataJson != null &&
                     n.DataJson.Contains(foodItem.Id.ToString()) &&
                     n.SentOnUtc != null &&
-                    n.SentOnUtc > now.AddHours(-24),
+                    n.SentOnUtc > now.AddHours(-1),
                 context.CancellationToken))
                 .FirstOrDefault();
 
