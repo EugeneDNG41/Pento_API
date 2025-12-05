@@ -36,8 +36,8 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
             JOIN payments p ON p.subscription_plan_id = sp.id
             WHERE p.status = 'Paid'
                 AND s.id = @SubscriptionId
-              AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
-              AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
+              AND (@FromDate::date IS NULL OR p.paid_at::date >= @FromDate::date)
+              AND (@ToDate::date IS NULL OR p.paid_at::date <= @ToDate::date)
             GROUP BY s.id, s.name, sp.id, p.paid_at, p.amount_paid, p.currency
             ORDER BY p.paid_at;
          """;
