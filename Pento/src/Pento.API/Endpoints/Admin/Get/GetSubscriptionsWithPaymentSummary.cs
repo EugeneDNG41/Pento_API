@@ -2,7 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
 using Pento.Application.Payments.GetSummary;
-using Pento.Application.Payments.GetSummaryById;
+using Pento.Application.Subscriptions.GetSummary;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Admin.Get;

@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Pagination;
-using Pento.Application.Payments.GetSummary;
+using Pento.Application.Subscriptions.GetSummaryById;
 
 namespace Pento.Application.Payments.GetSummaryById;
 

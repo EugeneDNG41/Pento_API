@@ -1,6 +1,7 @@
 ﻿using Pento.Application.Payments.GetSummaryById;
+using Pento.Application.Subscriptions.GetSummary;
 
-namespace Pento.Application.Payments.GetSummary;
+namespace Pento.Application.Subscriptions.GetSummaryById;
 
 public sealed record SubscriptionWithPlanPaymentSummary
 {
