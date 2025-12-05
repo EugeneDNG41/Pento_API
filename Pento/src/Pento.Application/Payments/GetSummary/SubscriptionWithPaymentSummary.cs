@@ -50,16 +50,10 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
             SELECT
                 s.id AS SubscriptionId,
                 s.name AS Name,
-                CASE 
-                    WHEN @FromDate IS NULL
-                    THEN date_trunc(@dateTrunc, p.paid_at)::date
-                    ELSE @FromDate
-                END AS FromDate,
-                CASE 
-                    WHEN @ToDate IS NULL
-                    THEN (date_trunc(@dateTrunc, p.paid_at) + interval @dateInterval - interval '1 Day')::date
-                    ELSE @ToDate
-                END AS ToDate,
+ 
+                COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date) AS FromDate,
+                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date
+                ) AS ToDate,
                 COALESCE(SUM(p.amount_paid), 0) AS Amount,
                 p.currency AS Currency
             FROM subscriptions s
@@ -69,8 +63,8 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
                 AND (@IsActive IS NULL OR s.is_active = @IsActive)
                 AND (@IsDeleted IS NULL OR s.is_deleted = @IsDeleted)
               AND  (@SubscriptionIds IS NULL OR s.id = ANY(@SubscriptionIds))
-              AND (@FromDate IS NULL OR p.date >= @FromDate)
-              AND (@ToDate IS NULL OR p.date <= @ToDate)
+              AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
+              AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
             GROUP BY s.id, s.name, p.paid_at, p.currency
             ORDER BY p.paid_at;
         """;
@@ -101,7 +95,7 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
                 return sub;
             },
             parameters,
-            splitOn: "Date"
+            splitOn: "FromDate"
         );
         return results.ToList();
     }

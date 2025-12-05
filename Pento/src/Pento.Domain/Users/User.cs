@@ -59,6 +59,7 @@ public sealed class User : Entity
             Raise(new UserLeftHouseholdDomainEvent(HouseholdId.Value));
             HouseholdId = householdId;
         }
+        HouseholdId = householdId;
     }
     public void JoinHousehold(Guid householdId)
     {

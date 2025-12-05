@@ -13,15 +13,31 @@ using Notification = Pento.Domain.Notifications.Notification;
 
 namespace Pento.Infrastructure.ThirdPartyServices.Firebase;
 
-public sealed class FcmNotificationService(
-    FirebaseMessaging firebaseMessaging,
-    IDateTimeProvider dateTimeProvider,
-    IGenericRepository<DeviceToken> deviceTokenRepository,
-    IGenericRepository<Notification> notificationRepository,
-    IGenericRepository<User> userRepository,
-    IGenericRepository<Household> householdRepository,
-    IUnitOfWork unitOfWork) : INotificationService
+public sealed class FcmNotificationService : INotificationService
 {
+    private readonly FirebaseMessaging firebaseMessaging;
+    private readonly IDateTimeProvider dateTimeProvider;
+    private readonly IGenericRepository<DeviceToken> deviceTokenRepository;
+    private readonly IGenericRepository<Notification> notificationRepository;
+    private readonly IGenericRepository<User> userRepository;
+    private readonly IGenericRepository<Household> householdRepository;
+    private readonly IUnitOfWork unitOfWork;
+    public FcmNotificationService(
+        IDateTimeProvider dateTimeProvider,
+        IGenericRepository<DeviceToken> deviceTokenRepository,
+        IGenericRepository<Notification> notificationRepository,
+        IGenericRepository<User> userRepository,
+        IGenericRepository<Household> householdRepository,
+        IUnitOfWork unitOfWork)
+    {
+        firebaseMessaging = FirebaseMessaging.DefaultInstance;
+        this.dateTimeProvider = dateTimeProvider;
+        this.deviceTokenRepository = deviceTokenRepository;
+        this.notificationRepository = notificationRepository;
+        this.userRepository = userRepository;
+        this.householdRepository = householdRepository;
+        this.unitOfWork = unitOfWork;
+    }
     private async Task<Result> SendAsync(string deviceToken, string title, string body, Dictionary<string, string> data, CancellationToken cancellationToken)
     {
         try

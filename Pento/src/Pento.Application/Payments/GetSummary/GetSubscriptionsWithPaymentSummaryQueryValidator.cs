@@ -6,9 +6,6 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryValidator : Abstrac
 {
     public GetSubscriptionsWithPaymentSummaryQueryValidator()
     {
-        RuleFor(x => x.SubscriptionId)
-            .Must(ids => ids == null || ids.Length > 0)
-            .WithMessage("If provided, Subscription Id must contain at least one Id.");
         RuleFor(x => x.FromDate)          
             .LessThanOrEqualTo(x => x.ToDate)
             .When(x => x.FromDate.HasValue && x.ToDate.HasValue)
