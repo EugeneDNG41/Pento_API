@@ -5,6 +5,7 @@ using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 
 using Pento.Domain.Abstractions;
+using Pento.Domain.Subscriptions;
 using static Pento.Application.Payments.GetSummary.GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler;
 
 namespace Pento.Application.Payments.GetSummary;
@@ -142,7 +143,7 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler(ISql
                                      WHEN COALESCE(sp.duration_in_days,0) = 1 THEN '' ELSE 's' 
                                  END)
                          END
-                         AS duration
+                         AS duration,
                 COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date) AS FromDate,
                 COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date
                 ) AS ToDate,
@@ -159,8 +160,7 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler(ISql
                 COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
                 COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date),
                 p.currency
-            ORDER BY COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid
-            _at)::date), 
+            ORDER BY COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
                 COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date);
          """;
         var parameters = new
@@ -200,6 +200,10 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler(ISql
             },
             splitOn: "SubscriptionPlanId,FromDate"
         );
+        if (result == null)
+        {
+            return Result.Failure<SubscriptionWithPlanPaymentSummary>(SubscriptionErrors.SubscriptionNotFound);
+        }
         return result;
 
     }
