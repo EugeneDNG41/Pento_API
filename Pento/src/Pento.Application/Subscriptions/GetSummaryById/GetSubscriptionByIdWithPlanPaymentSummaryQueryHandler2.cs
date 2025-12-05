@@ -38,7 +38,7 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
                 AND s.id = @SubscriptionId
               AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
               AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
-            GROUP BY s.id, s.name, sp.id, p.paid_at, p.currency
+            GROUP BY s.id, s.name, sp.id, p.paid_at, p.amount_paid, p.currency
             ORDER BY p.paid_at;
          """;
         var parameters = new
