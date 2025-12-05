@@ -49,12 +49,6 @@ internal sealed class GetGroceryListItemsByListIdQueryHandler(
             sql, new { request.ListId }
         )).ToList();
 
-        if (items.Count == 0)
-        {
-            return Result.Failure<IReadOnlyList<GroceryListItemResponse>>(
-                GroceryListItemErrors.NotFound
-            );
-        }
 
         return items;
     }

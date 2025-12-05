@@ -58,7 +58,7 @@ internal sealed class CompleteGiveawayClaimCommandHandler(
             return Result.Failure<Guid>(GiveawayClaimErrors.NotAccepted);
         }
 
-        if (post.Status != GiveawayStatus.Claimed)
+        if (post.Status != GiveawayStatus.Fulfilled)
         {
             return Result.Failure<Guid>(GiveawayPostErrors.PostNotInClaimedState);
         }
@@ -81,7 +81,7 @@ internal sealed class CompleteGiveawayClaimCommandHandler(
             userId
         );
 
-        post.UpdateStatus(GiveawayStatus.Claimed, clock.UtcNow);
+        post.UpdateStatus(GiveawayStatus.Fulfilled, clock.UtcNow);
 
         await uow.SaveChangesAsync(cancellationToken);
 

@@ -31,7 +31,7 @@ internal sealed class DeleteGiveawayPostCommandHandler(
             return Result.Failure<Guid>(GiveawayPostErrors.NotFound);
         }
 
-        if (post.Status is GiveawayStatus.Claimed or GiveawayStatus.Expired)
+        if (post.Status is GiveawayStatus.Fulfilled or GiveawayStatus.Expired)
         {
             return Result.Failure<Guid>(GiveawayPostErrors.CannotDelete);
         }

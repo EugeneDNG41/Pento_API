@@ -23,7 +23,7 @@ internal sealed class UpdateGiveawayPostCommandHandler(
             return Result.Failure<Guid>(GiveawayPostErrors.NotFound);
         }
 
-        if (post.Status == GiveawayStatus.Claimed)
+        if (post.Status == GiveawayStatus.Fulfilled)
         {
             return Result.Failure<Guid>(GiveawayPostErrors.AlreadyClaimed);
         }
