@@ -70,9 +70,9 @@ internal sealed class GetActivitySummaryQueryHandler(ISqlConnectionFactory sqlCo
         {
             dateTrunc,
             dateInterval,
-            codes = query.Codes?.FirstOrDefault() == null ? null : query.Codes,
-            userIds = query.UserIds?.FirstOrDefault() == null ? null : query.UserIds,
-            householdIds = query.HouseholdIds?.FirstOrDefault() == null ? null : query.HouseholdIds,
+            codes = string.IsNullOrEmpty(query.Codes?.FirstOrDefault()) ? null : query.Codes,
+            userIds = query.UserIds?.FirstOrDefault() == Guid.Empty ? null : query.UserIds,
+            householdIds = query.HouseholdIds?.FirstOrDefault() == Guid.Empty ? null : query.HouseholdIds,
             query.FromDate,
             query.ToDate
         };
