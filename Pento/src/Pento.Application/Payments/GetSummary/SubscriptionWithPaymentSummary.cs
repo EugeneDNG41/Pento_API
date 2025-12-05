@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Linq;
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
@@ -49,7 +50,6 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
             SELECT
                 s.id AS SubscriptionId,
                 s.name AS Name,
- 
                 COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date) AS FromDate,
                 COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date
                 ) AS ToDate,
@@ -75,26 +75,30 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
             query.IsActive,
             query.IsDeleted
         };
+        var command = new CommandDefinition(
+            commandText: sql,
+            parameters: parameters,
+            cancellationToken: cancellationToken
+        );
         var lookup = new Dictionary<Guid, SubscriptionWithPaymentSummary>();
-        IEnumerable<SubscriptionWithPaymentSummary> results = await connection.QueryAsync<SubscriptionWithPaymentSummary, PaymentByDate, SubscriptionWithPaymentSummary>(
-            sql,
+        await connection.QueryAsync<SubscriptionWithPaymentSummary, PaymentByDate, SubscriptionWithPaymentSummary>(
+            command: command,
             (subscription, payment) =>
             {
-                if (!lookup.TryGetValue(subscription.SubscriptionId, out SubscriptionWithPaymentSummary? sub))
+                if (lookup.TryGetValue(subscription.SubscriptionId, out SubscriptionWithPaymentSummary existingSub))
                 {
-                    sub = subscription;
-                    lookup.Add(sub.SubscriptionId, sub);
+                    subscription = existingSub;
                 }
-                if (payment != null)
+                else
                 {
-                    sub.Payments.Add(payment);
+                    lookup.Add(subscription.SubscriptionId, subscription);
                 }
-                return sub;
+                subscription.Payments.Add(payment);
+                return subscription;
             },
-            parameters,
             splitOn: "FromDate"
         );
-        return results.ToList();
+        return lookup.Values.ToList();
     }
 }
 
