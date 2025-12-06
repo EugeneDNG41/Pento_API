@@ -12,7 +12,5 @@ internal sealed class CreateMilestoneCommandValidator : AbstractValidator<Create
         RuleFor(x => x.Description)
             .NotEmpty().WithMessage("Description is required.")
             .MaximumLength(500).WithMessage("Milestone description must not exceed 500 characters.");
-        RuleFor(x => x.IsActive)
-            .NotNull().WithMessage("Is Active is required.");
     }
 }

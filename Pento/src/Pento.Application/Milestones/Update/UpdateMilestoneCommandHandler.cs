@@ -25,7 +25,18 @@ internal sealed class UpdateMilestoneCommandHandler(
                 return Result.Failure(MilestoneErrors.NameTaken);
             }
         }
-        milestone.UpdateDetails(command.Name, command.Description, command.IsActive);
+        milestone.UpdateDetails(command.Name, command.Description);
+        if (command.IsActive.HasValue)
+        {
+            if (command.IsActive.Value)
+            {
+                milestone.Enable();
+            }
+            else
+            {
+                milestone.Disable();
+            }
+        }
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

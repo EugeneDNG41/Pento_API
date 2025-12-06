@@ -17,7 +17,7 @@ internal sealed class CreateMilestoneCommandHandler(
         {
             return Result.Failure<Guid>(MilestoneErrors.NameTaken);
         }
-        var milestone = Milestone.Create(command.Name, command.Description, null, command.IsActive);
+        var milestone = Milestone.Create(command.Name, command.Description, null);
         milestoneRepository.Add(milestone);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return milestone.Id;

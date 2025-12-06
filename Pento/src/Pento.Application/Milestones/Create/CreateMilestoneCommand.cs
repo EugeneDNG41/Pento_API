@@ -2,4 +2,4 @@
 
 namespace Pento.Application.Milestones.Create;
 
-public sealed record CreateMilestoneCommand(string Name, string Description, bool IsActive) : ICommand<Guid>;
+public sealed record CreateMilestoneCommand(string Name, string Description) : ICommand<Guid>;

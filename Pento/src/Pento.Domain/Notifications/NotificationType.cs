@@ -13,7 +13,8 @@ public enum NotificationType
     MealPlanReminder = 4,
     GiveawayPost = 5,
     GiveawayClaim = 6,
-    Subscription = 7
+    Subscription = 7,
+    Milestone = 8
 
 }
 

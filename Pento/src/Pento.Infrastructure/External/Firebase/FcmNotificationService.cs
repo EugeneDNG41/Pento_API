@@ -113,4 +113,19 @@ public sealed class FcmNotificationService : INotificationService
         }       
         return Result.Success();
     }
+    public async Task<Result> SendUserMilestoneAchievedAsync(
+        Guid userId,
+        Guid milestoneId,
+        string milestoneName,
+        CancellationToken cancellationToken)
+    {
+        string title = "Milestone Achieved!";
+        string body = $"Congratulations! You have achieved a new milestone: {milestoneName}.";
+        var payload = new Dictionary<string, string>()
+        {
+            {  "milestoneId", milestoneId.ToString()  },
+            { "milestoneName", milestoneName }
+        };
+        return await SendToUserAsync(userId, title, body, NotificationType.Milestone, payload, cancellationToken);
+    }
 }

@@ -16,8 +16,7 @@ internal sealed class CreateMilestone : IEndpoint
         {
             Result<Guid> result = await handler.Handle(new CreateMilestoneCommand(
                 request.Name,
-                request.Description,
-                request.IsActive), cancellationToken);
+                request.Description), cancellationToken);
             return result
             .Match(id => Results.CreatedAtRoute(RouteNames.GetMilestoneById, new { milestoneId = id }, id), CustomResults.Problem);
         }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageMilestones);
@@ -26,6 +25,5 @@ internal sealed class CreateMilestone : IEndpoint
     {
         public string Name { get; init; }
         public string Description { get; init; }
-        public bool IsActive { get; init; }
     }
 }

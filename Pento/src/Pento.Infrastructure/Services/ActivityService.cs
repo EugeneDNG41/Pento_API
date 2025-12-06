@@ -37,7 +37,7 @@ internal sealed class ActivityService(
         return await userActivityRepository.CountAsync(predicate, cancellationToken);
 
     }
-    public async Task<Result<int>> CountMostWithinTimeAsync(Guid userId, string activityCode, TimeSpan withinTime,  CancellationToken cancellationToken)
+    public async Task<Result<int>> CountMostWithinTimeAsync(Guid userId, string activityCode, TimeSpan withinTime, CancellationToken cancellationToken)
     {
         Expression<Func<UserActivity, bool>> predicate =
             ua => ua.UserId == userId &&

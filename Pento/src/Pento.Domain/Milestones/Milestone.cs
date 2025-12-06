@@ -17,11 +17,11 @@ public sealed class Milestone : Entity
     public string Description { get; private set; }
     public Uri? IconUrl { get; private set; }
     public bool IsActive { get; private set; }
-    public static Milestone Create(string name, string description, Uri? iconUrl, bool isActive = true)
+    public static Milestone Create(string name, string description, Uri? iconUrl, bool isActive = false)
     {
         return new Milestone(Guid.CreateVersion7(), name, description, iconUrl, isActive);
     }
-    public void UpdateDetails(string? name, string? description, bool? isActive)
+    public void UpdateDetails(string? name, string? description)
     {
         if (!string.IsNullOrWhiteSpace(name))
         {
@@ -31,10 +31,6 @@ public sealed class Milestone : Entity
         {
             Description = description;
         }
-        if (isActive.HasValue && IsActive != isActive)
-        {
-            IsActive = isActive.Value;
-        }
     }
     public void UpdateIconUrl(Uri? iconUrl)
     {
@@ -42,5 +38,14 @@ public sealed class Milestone : Entity
         {
             IconUrl = iconUrl;
         }
+    }
+    public void Enable()
+    {
+        IsActive = true;
+        Raise(new MilestoneEnabledDomainEvent(Id));
+    }
+    public void Disable()
+    {
+        IsActive = false;
     }
 }
