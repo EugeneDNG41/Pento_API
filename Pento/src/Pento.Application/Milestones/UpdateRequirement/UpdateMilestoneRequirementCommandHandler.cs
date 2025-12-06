@@ -4,7 +4,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.MilestoneRequirements;
 using Pento.Domain.Milestones;
 
-namespace Pento.Application.Milestones.Create;
+namespace Pento.Application.Milestones.UpdateRequirement;
 
 internal sealed class UpdateMilestoneRequirementCommandHandler(
     IGenericRepository<MilestoneRequirement> milestoneRequirementRepository,

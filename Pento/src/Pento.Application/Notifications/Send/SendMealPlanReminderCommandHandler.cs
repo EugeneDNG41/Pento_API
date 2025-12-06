@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.ThirdPartyServices.Firebase;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DeviceTokens;
 using Pento.Domain.Households;

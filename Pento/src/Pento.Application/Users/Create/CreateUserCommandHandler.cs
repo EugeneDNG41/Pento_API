@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.ThirdPartyServices.Identity;
-using Pento.Application.Abstractions.UtilityServices.Clock;
+using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Users.Get;
 using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;

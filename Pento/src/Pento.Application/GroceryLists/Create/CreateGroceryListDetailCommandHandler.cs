@@ -5,7 +5,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.GroceryLists;
 using Pento.Domain.GroceryListItems;
 using Pento.Domain.GroceryListAssignees;
-using Pento.Application.Abstractions.UtilityServices.Clock;
+using Pento.Application.Abstractions.Utility.Clock;
 
 namespace Pento.Application.GroceryLists.Create;
 

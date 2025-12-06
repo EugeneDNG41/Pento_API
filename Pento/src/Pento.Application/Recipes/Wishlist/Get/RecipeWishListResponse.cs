@@ -1,6 +1,6 @@
 ﻿using Pento.Domain.Recipes;
 
-namespace Pento.Application.RecipeWishLists.GetAll;
+namespace Pento.Application.Recipes.Wishlist.Get;
 
 public sealed record RecipeWishListResponse(
     Guid WishListId,

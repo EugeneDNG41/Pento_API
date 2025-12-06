@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Pagination;
+﻿using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.FoodItems.Search;
 
 namespace Pento.Application.Compartments.Get;

@@ -4,7 +4,7 @@ using Dapper;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;

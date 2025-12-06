@@ -1,5 +1,5 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 
 namespace Pento.Application.Households.Get;
 

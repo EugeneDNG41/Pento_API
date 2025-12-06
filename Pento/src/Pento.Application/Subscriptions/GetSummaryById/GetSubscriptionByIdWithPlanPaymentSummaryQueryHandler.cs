@@ -2,13 +2,12 @@
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Subscriptions.GetSummary;
-using Pento.Application.Subscriptions.GetSummaryById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Subscriptions;
 
-namespace Pento.Application.Payments.GetSummaryById;
+namespace Pento.Application.Subscriptions.GetSummaryById;
 
 internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetSubscriptionWithPlanPaymentSummaryByIdQuery, SubscriptionWithPlanPaymentSummary>
 {

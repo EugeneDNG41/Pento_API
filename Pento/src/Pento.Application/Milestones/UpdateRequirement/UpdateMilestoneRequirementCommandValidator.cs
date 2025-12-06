@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Milestones.Create;
+namespace Pento.Application.Milestones.UpdateRequirement;
 
 internal sealed class UpdateMilestoneRequirementCommandValidator : AbstractValidator<UpdateMilestoneRequirementCommand>
 {

@@ -2,11 +2,10 @@
 using Dapper;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
-using Pento.Application.GiveawayClaims.Search;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Giveaways.Claims.Search;
+namespace Pento.Application.GiveawayClaims.Search;
 
 internal sealed class SearchGiveawayClaimQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory

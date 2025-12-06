@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.File;
+using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;

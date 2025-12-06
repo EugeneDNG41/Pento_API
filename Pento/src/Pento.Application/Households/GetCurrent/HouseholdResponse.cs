@@ -1,7 +1,4 @@
-﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
-
-namespace Pento.Application.Households.GetCurrent;
+﻿namespace Pento.Application.Households.GetCurrent;
 
 public sealed class HouseholdResponse
 {

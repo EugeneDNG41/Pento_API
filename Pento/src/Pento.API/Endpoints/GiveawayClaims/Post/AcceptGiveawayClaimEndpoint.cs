@@ -1,7 +1,7 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GiveawayClaims.Accept;
-using Pento.Application.Giveaways.Claims.Complete;
+using Pento.Application.GiveawayClaims.Complete;
 
 namespace Pento.API.Endpoints.GiveawayClaims.Post;
 

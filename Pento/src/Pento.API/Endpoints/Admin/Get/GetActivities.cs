@@ -1,10 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Activities.GetAll;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Activities;
-using Pento.Infrastructure.ThirdPartyServices.PayOS;
 
 namespace Pento.API.Endpoints.Activity.Get;
 

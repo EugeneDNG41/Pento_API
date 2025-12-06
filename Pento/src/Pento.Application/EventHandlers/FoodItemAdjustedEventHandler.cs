@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.DomainServices;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Activities;
 using Pento.Domain.FoodItemLogs;

@@ -1,8 +1,7 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
-using Pento.Application.Subscriptions.GetSummary;
+using Pento.Application.Abstractions.Utility.Pagination;
 
-namespace Pento.Application.Payments.GetSummary;
+namespace Pento.Application.Subscriptions.GetSummary;
 
 public sealed record GetSubscriptionsWithPaymentSummaryQuery(
     Guid[]? SubscriptionIds,

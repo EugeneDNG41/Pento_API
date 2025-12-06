@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Giveaways.Claims.Get;
+﻿namespace Pento.Application.GiveawayClaims.Get;
 
 public sealed record GiveawayClaimDetailResponse(
     Guid Id,

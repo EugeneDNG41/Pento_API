@@ -1,0 +1,174 @@
+﻿using Microsoft.Extensions.Options;
+using PayOS;
+using PayOS.Exceptions;
+using PayOS.Models.V2.PaymentRequests;
+using PayOS.Models.Webhooks;
+using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.External.PayOS;
+using Pento.Application.Abstractions.Utility.Clock;
+using Pento.Domain.Abstractions;
+using Pento.Domain.Payments;
+
+namespace Pento.Infrastructure.External.PayOS;
+
+internal sealed class PayOSService(
+    IOptions<PayOSCustomOptions> options, 
+    IDateTimeProvider dateTimeProvider,
+    IGenericRepository<Payment> paymentRepo,
+    IUnitOfWork unitOfWork) : IPayOSService
+{
+    public async Task<Result<PaymentStatus>> GetPaymentLinkStatus(string PaymentLinkId)
+    {
+        try
+        {
+            using var client = new PayOSClient(new PayOSOptions
+            {
+                ClientId = options.Value.ClientId,
+                ApiKey = options.Value.ApiKey,
+                ChecksumKey = options.Value.ChecksumKey
+            });
+
+            PaymentLink paymentLink = await client.PaymentRequests.GetAsync(PaymentLinkId);
+            return paymentLink.Status switch
+            {
+                PaymentLinkStatus.Pending => PaymentStatus.Pending,
+                PaymentLinkStatus.Paid or PaymentLinkStatus.Underpaid => PaymentStatus.Paid,
+                PaymentLinkStatus.Expired => PaymentStatus.Expired,
+                PaymentLinkStatus.Cancelled => PaymentStatus.Cancelled,
+                PaymentLinkStatus.Processing => PaymentStatus.Processing,
+                PaymentLinkStatus.Failed or _ => PaymentStatus.Failed
+            };
+        }
+        catch
+        {
+            return Result.Failure<PaymentStatus>(PaymentErrors.PaymentStatusRetrievalFailed);
+        }
+    }
+    public async Task<Result> CancelPaymentAsync(Payment payment, string? reason, CancellationToken cancellationToken)
+    {
+        try
+        {
+            if (!string.IsNullOrWhiteSpace(payment.PaymentLinkId))
+            {
+                using var client = new PayOSClient(new PayOSOptions
+                {
+                    ClientId = options.Value.ClientId,
+                    ApiKey = options.Value.ApiKey,
+                    ChecksumKey = options.Value.ChecksumKey
+                });
+                await client.PaymentRequests.CancelAsync(payment.PaymentLinkId, reason);
+            }
+            payment.MarkAsCancelled(reason, dateTimeProvider.UtcNow);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Success();
+        }
+        catch
+        {
+            return Result.Failure(PaymentErrors.PaymentCancellationFailed);
+        }
+    }
+    public async Task<Result<PaymentLinkResponse>> CreatePaymentAsync(Payment payment, CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var client = new PayOSClient(new PayOSOptions
+            {
+                ClientId = options.Value.ClientId,
+                ApiKey = options.Value.ApiKey,
+                ChecksumKey = options.Value.ChecksumKey
+            });
+            DateTime expiresAt = dateTimeProvider.UtcNow.AddMinutes(8); //actually roughly 10 minutes
+            var paymentRequest = new CreatePaymentLinkRequest
+            {
+                OrderCode = payment.OrderCode,
+                Amount = payment.AmountDue,
+                Description = payment.Description.Length > 25 ? payment.Description.Substring(0, 25) : payment.Description,
+                ReturnUrl = $"{options.Value.ReturnUrl}/{payment.Id}",
+                CancelUrl = $"{options.Value.CancelUrl}/{payment.Id}",
+                ExpiredAt = (long)expiresAt.Subtract(DateTime.UnixEpoch).TotalSeconds
+            };
+            CreatePaymentLinkResponse response = await client.PaymentRequests.CreateAsync(paymentRequest);
+            expiresAt = response.ExpiredAt is not null ? DateTimeOffset.FromUnixTimeSeconds(response.ExpiredAt.Value).UtcDateTime : expiresAt;
+            payment.UpdatePaymentLink(response.PaymentLinkId, response.Description, new Uri(response.CheckoutUrl), response.QrCode, expiresAt);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return new PaymentLinkResponse(payment.Id, new Uri(response.CheckoutUrl), response.QrCode);
+        }
+        catch
+        {
+            payment.MarkAsFailed();
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return Result.Failure<PaymentLinkResponse>(PaymentErrors.PaymentCreationFailed);
+        }
+
+    }
+    public async Task<Result> HandleWebhookAsync(Webhook webhook, CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var client = new PayOSClient(new PayOSOptions
+            {
+                ClientId = options.Value.ClientId,
+                ApiKey = options.Value.ApiKey,
+                ChecksumKey = options.Value.ChecksumKey
+            });
+
+            WebhookData data = await client.Webhooks.VerifyAsync(webhook);
+            if (data.PaymentLinkId == "124c33293c43417ab7879e14c8d9eb18" && data.AccountNumber == "12345678")
+            {
+                return Result.Success();
+            }
+            if (data.Code.Equals("00", StringComparison.Ordinal))
+            {
+                PaymentLink paymentLink = await client.PaymentRequests.GetAsync(data.PaymentLinkId);
+                Payment? payment = (await paymentRepo.FindAsync(p => p.PaymentLinkId == data.PaymentLinkId, cancellationToken)).SingleOrDefault();
+                if (payment is null)
+                {
+                    return Result.Failure(PaymentErrors.NotFound);
+                }
+                switch (paymentLink.Status)
+                {
+                    case PaymentLinkStatus.Paid:
+                    case PaymentLinkStatus.Underpaid:
+                        payment.MarkAsPaid(paymentLink.AmountPaid, dateTimeProvider.UtcNow);
+                        break;
+                    case PaymentLinkStatus.Cancelled:
+                        payment.MarkAsCancelled(paymentLink.CancellationReason, dateTimeProvider.UtcNow);
+                        break;
+                    case PaymentLinkStatus.Expired:
+                        payment.MarkAsExpired();
+                        break;
+                    case PaymentLinkStatus.Processing:
+                        payment.MarkAsProcessing();
+                        break;
+                    case PaymentLinkStatus.Failed:
+                        payment.MarkAsFailed();
+                        break;
+                }
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+            }           
+            return Result.Success();
+        }
+        catch (WebhookException)
+        {
+            return Result.Failure(PaymentErrors.InvalidWebhook);
+        }
+    }
+    public async Task<Result> ConfirmWebhookAsync()
+    {
+        try
+        {
+            using var client = new PayOSClient(new PayOSOptions
+            {
+                ClientId = options.Value.ClientId,
+                ApiKey = options.Value.ApiKey,
+                ChecksumKey = options.Value.ChecksumKey
+            });
+            await client.Webhooks.ConfirmAsync(options.Value.WebhookUrl);
+            return Result.Success();
+        }
+        catch (WebhookException)
+        {
+            return Result.Failure(PaymentErrors.WebhookConfirmationFailed);
+        }
+    }
+}

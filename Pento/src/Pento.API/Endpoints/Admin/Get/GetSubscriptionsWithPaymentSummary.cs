@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
-using Pento.Application.Payments.GetSummary;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Subscriptions.GetSummary;
 using Pento.Domain.Abstractions;
 

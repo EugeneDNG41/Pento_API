@@ -1,7 +1,7 @@
 ﻿
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.DomainServices;
+using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Subscriptions;
 

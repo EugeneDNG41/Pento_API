@@ -1,5 +1,5 @@
 ﻿using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.File;
+using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Milestones;

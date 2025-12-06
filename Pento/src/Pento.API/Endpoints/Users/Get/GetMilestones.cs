@@ -3,7 +3,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.FoodItemLogs.GetSummary;
 using Pento.Application.UserMilestones.GetMilestones;
 using Pento.Domain.Abstractions;

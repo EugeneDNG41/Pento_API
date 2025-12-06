@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Payments.GetSummary;
+namespace Pento.Application.Subscriptions.GetSummary;
 
 internal sealed class GetSubscriptionsWithPaymentSummaryQueryValidator : AbstractValidator<GetSubscriptionsWithPaymentSummaryQuery>
 {

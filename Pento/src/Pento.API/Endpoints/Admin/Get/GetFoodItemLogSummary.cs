@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.FoodItemLogs.GetSummary;
 using Pento.Application.Households.Get;
 using Pento.Domain.Abstractions;
