@@ -2,16 +2,28 @@
 using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
+using Pento.Domain.Roles;
 using Pento.Domain.UserEntitlements;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Services;
 internal sealed class EntitlementService(
+    IGenericRepository<User> userRepository,
     IGenericRepository<UserEntitlement> userEntitlementRepository,
     IGenericRepository<Feature> featureRepository,
     IUnitOfWork unitOfWork) : IEntitlementService
 {
     public async Task<Result> UseEntitlementAsync(Guid userId, string featureCode, CancellationToken cancellationToken)
     {
+        User? user = (await userRepository.FindIncludeAsync(u => u.Id == userId, u => u.Roles, cancellationToken)).SingleOrDefault();
+        if (user == null)
+        {               
+            return Result.Failure(UserErrors.NotFound);
+        }
+        if (user.Roles.Any(r => r.Type == RoleType.Administrative))
+        {
+            return Result.Success();
+        }
         IEnumerable<UserEntitlement> userEntitlements = await userEntitlementRepository.FindAsync(
             ue => ue.UserId == userId && 
             ue.FeatureCode == featureCode.ToString(),

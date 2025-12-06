@@ -6,6 +6,8 @@ using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 using Pento.Domain.Subscriptions;
+using Pento.Domain.UserSubscriptions;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Pento.Application.Payments.Create;
 
@@ -15,12 +17,13 @@ internal sealed class CreatePaymentCommandHandler(
     IPayOSService payOSService,
     IGenericRepository<Payment> paymentRepository,
     IGenericRepository<Subscription> subscriptionRepository,
+    IGenericRepository<UserSubscription> userSubscriptionRepository,
     IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<CreatePaymentCommand, PaymentLinkResponse>
 {
-    public async Task<Result<PaymentLinkResponse>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+    public async Task<Result<PaymentLinkResponse>> Handle(CreatePaymentCommand command, CancellationToken cancellationToken)
     {
-        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(request.SubscriptionPlanId, cancellationToken);
+        SubscriptionPlan? plan = await subscriptionPlanRepository.GetByIdAsync(command.SubscriptionPlanId, cancellationToken);
         if (plan == null)
         {
             return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.SubscriptionPlanNotFound);
@@ -37,6 +40,15 @@ internal sealed class CreatePaymentCommandHandler(
         if (subscription == null)
         {
             return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.SubscriptionNotFound);
+        }
+        bool hasSubscriptionLifeTime =
+            await userSubscriptionRepository.AnyAsync(us => us.UserId == userContext.UserId
+            && us.SubscriptionId == subscription.Id
+            && us.Status == SubscriptionStatus.Active
+            && us.EndDate == null, cancellationToken);
+        if (hasSubscriptionLifeTime)
+        {
+            return Result.Failure<PaymentLinkResponse>(SubscriptionErrors.CannotExtendLifetimeSubscription);
         }
         if (!subscription.IsActive)
         {

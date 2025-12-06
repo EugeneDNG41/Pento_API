@@ -1,6 +1,6 @@
 ﻿using Pento.Domain.Abstractions;
 
-namespace Pento.Domain.Users;
+namespace Pento.Domain.Users.Events;
 
 public sealed class UserHouseholdJoinedDomainEvent(Guid userId, Guid householdId) : DomainEvent
 {

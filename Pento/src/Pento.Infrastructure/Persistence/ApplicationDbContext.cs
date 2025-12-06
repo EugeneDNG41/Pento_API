@@ -49,7 +49,7 @@ public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(
     private void AddDomainEventsAsOutboxMessages()
     {
         var domainEvents = ChangeTracker
-            .Entries<Entity>()
+            .Entries<BaseEntity>()
             .Select(entry => entry.Entity)
             .SelectMany(entity =>
             {

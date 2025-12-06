@@ -1,11 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
 
 namespace Pento.Application.UserActivities.GetCurrentActivities;
 
-public sealed record GetCurrentActivitiesQuery(string? SearchTerm, DateTime? FromDate, DateTime? ToDate, int PageNumber, int PageSize) : IQuery<PagedList<CurrentUserActivityResponse>>;
+public sealed record GetCurrentActivitiesQuery(
+    string[]? ActivityCodes,
+    string? SearchTerm,
+    DateTime? FromDate, 
+    DateTime? ToDate,
+    GetUserActivitiesSortBy? SortBy,
+    SortOrder? SortOrder,
+    int PageNumber, 
+    int PageSize) : IQuery<PagedList<CurrentUserActivityResponse>>;
+public enum GetUserActivitiesSortBy
+{
+    Name,
+    Description,
+    PerformedOn
+}

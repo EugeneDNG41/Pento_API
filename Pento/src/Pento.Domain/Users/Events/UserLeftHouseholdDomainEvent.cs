@@ -1,8 +1,6 @@
-﻿
+﻿using Pento.Domain.Abstractions;
 
-using Pento.Domain.Abstractions;
-
-namespace Pento.Domain.Users;
+namespace Pento.Domain.Users.Events;
 
 public sealed class UserLeftHouseholdDomainEvent(Guid householdId) : DomainEvent
 {

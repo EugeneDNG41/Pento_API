@@ -3,11 +3,12 @@ using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Get;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Users;
+using Pento.Domain.Users.Events;
 
-namespace Pento.Application.Users.Register;
+namespace Pento.Application.EventHandlers;
 
-internal sealed class UserRegisteredDomainEventHandler(IIdentityProviderService identityProviderService)
+internal sealed class UserRegisteredEventHandler(
+    IIdentityProviderService identityProviderService)
     : DomainEventHandler<UserRegisteredDomainEvent>
 {
     public override async Task Handle(
