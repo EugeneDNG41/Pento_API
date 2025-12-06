@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
+﻿using Pento.Application.Abstractions.External.Firebase;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.FoodItems;
 using Quartz;
 
