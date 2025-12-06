@@ -194,10 +194,16 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                 return Result.Failure<(List<ReservationResult> Reserved, List<MissingIngredientResult> Missing)>(FoodReferenceErrors.NotFound);
             }
 
-            FoodItem? foodItem = (await foodItemRepo.FindAsync(
+            var foodItems = (await foodItemRepo.FindAsync(
                 x => x.HouseholdId == householdId &&
-                     x.FoodReferenceId == ingredient.FoodRefId,
-                cancellationToken)).FirstOrDefault();
+                     x.FoodReferenceId == ingredient.FoodRefId &&
+                     x.Quantity > 0,
+                cancellationToken)).ToList();
+
+                    FoodItem? foodItem = foodItems
+                        .OrderByDescending(x => x.Quantity)
+                        .FirstOrDefault();
+
 
             Unit? ingredientUnit = await unitRepo.GetByIdAsync(ingredient.UnitId, cancellationToken);
             if (ingredientUnit is null)
