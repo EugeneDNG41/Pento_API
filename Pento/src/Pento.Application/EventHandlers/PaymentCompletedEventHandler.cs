@@ -9,12 +9,16 @@ using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.Users;
 using Pento.Domain.UserSubscriptions;
+using Pento.Application.Abstractions.External.Firebase;
+using Pento.Domain.Notifications;
 
 namespace Pento.Application.EventHandlers;
 
 internal sealed class PaymentCompletedEventHandler(
     IDateTimeProvider dateTimeProvider,
+    INotificationService notificationService,
     ISubscriptionService subscriptionService,
+    IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IGenericRepository<Payment> paymentRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
@@ -35,9 +39,22 @@ internal sealed class PaymentCompletedEventHandler(
         {
             throw new PentoException(nameof(PaymentCompletedEventHandler), SubscriptionErrors.SubscriptionPlanNotFound);
         }
+        Subscription? subscription = await subscriptionRepository.GetByIdAsync(plan.SubscriptionId, cancellationToken);
+        if (subscription == null)
+        {
+            throw new PentoException(nameof(PaymentCompletedEventHandler), SubscriptionErrors.SubscriptionNotFound);
+        }
         UserSubscription? userSubscription = (await userSubscriptionRepository.FindAsync(
             us => us.SubscriptionId == plan.SubscriptionId && us.UserId == payment.UserId, 
             cancellationToken)).SingleOrDefault();
+        var payload = new Dictionary<string, string>
+        {
+            { "subscriptionId", plan.SubscriptionId.ToString() },
+            { "subscriptionPlanId", plan.Id.ToString() },
+            { "paymentId", payment.Id.ToString() }
+        };
+        string title = "Subscription ";
+        string body = $"Your {subscription.Name} subscription has been .";
         if (userSubscription == null)
         {
             var newUserSubscription = UserSubscription.Create(
@@ -47,11 +64,15 @@ internal sealed class PaymentCompletedEventHandler(
                 plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Add(newUserSubscription);
             userSubscription = newUserSubscription;
+            title += "Activated";
+            body += "activated";
         } 
         else
         {
             userSubscription.Renew(plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
             userSubscriptionRepository.Update(userSubscription);
+            title += "Renewed";
+            body += "renewed";
         }
         Result activationResult = await subscriptionService.ActivateAsync(
             userSubscription,
@@ -62,6 +83,17 @@ internal sealed class PaymentCompletedEventHandler(
                 nameof(PaymentCompletedEventHandler),
                 activationResult.Error);
         }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        Result notificationResult = await notificationService.SendToUserAsync(
+            payment.UserId,
+            title,
+            body,
+            NotificationType.Subscription,
+            payload,
+            cancellationToken);
+        if (notificationResult.IsFailure)
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            throw new PentoException(nameof(PaymentCompletedEventHandler), notificationResult.Error);
+        }
     }
 }

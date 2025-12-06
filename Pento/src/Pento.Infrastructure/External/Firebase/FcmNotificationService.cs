@@ -87,10 +87,7 @@ public sealed class FcmNotificationService : INotificationService
                 JsonConvert.SerializeObject(payload));
             notificationRepository.Add(notification);
         }
-        if (deviceTokens.Any())
-        {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
     public async Task<Result> SendToHouseholdAsync(

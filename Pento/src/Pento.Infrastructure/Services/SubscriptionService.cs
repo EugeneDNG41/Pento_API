@@ -6,6 +6,7 @@ using Pento.Domain.Features;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.UserSubscriptions;
+using Pento.Application.Abstractions.External.Firebase;
 
 namespace Pento.Infrastructure.Services;
 
