@@ -54,4 +54,5 @@ internal sealed class Tags
 
     internal const string Reservations = "Reservations";
     internal const string Notifications = "Notifications";
+    internal const string Trades = "Trades";
 }

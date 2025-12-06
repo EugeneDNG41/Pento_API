@@ -10,7 +10,7 @@ internal sealed class GetDonationReservationsEndpoint : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("donation-reservations", async (
+        app.MapGet("trade-reservations", async (
             Guid? giveawayPostId,
             Guid? foodReferenceId,
             ReservationStatus? status,
@@ -35,7 +35,7 @@ internal sealed class GetDonationReservationsEndpoint : IEndpoint
 
             return result.Match(Results.Ok, CustomResults.Problem);
         })
-        .WithTags(Tags.Reservations)
+        .WithTags(Tags.Trades)
         .RequireAuthorization();
     }
 }
