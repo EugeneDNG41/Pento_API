@@ -1,9 +1,7 @@
-﻿using Pento.Domain.Users;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.RecipeIngredients.Get;
 using Pento.Domain.Abstractions;
-using Pento.Infrastructure.Authentication;
-using Pento.Application.Abstractions.Messaging;
 namespace Pento.API.Endpoints.RecipeIngredients.Get;
 
 internal sealed class GetRecipeIngredientbyId : IEndpoint

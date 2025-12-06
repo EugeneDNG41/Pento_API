@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.UtilityServices.Converter;
+using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;

@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
@@ -6,12 +6,11 @@ using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.AddFeature;
-
+#pragma warning disable S125
 internal sealed class AddSubscriptionFeatureCommandHandler(
     IGenericRepository<Feature> featureRepository,
     IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
-    IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<AddSubscriptionFeatureCommand, Guid>
 {
     public async Task<Result<Guid>> Handle(AddSubscriptionFeatureCommand command, CancellationToken cancellationToken)
@@ -34,12 +33,12 @@ internal sealed class AddSubscriptionFeatureCommandHandler(
         {
             return Result.Failure<Guid>(SubscriptionErrors.DuplicateSubscriptionFeature);
         }
-        bool hasTimedPlans = await subscriptionPlanRepository
-            .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && sp.DurationInDays != null, cancellationToken);
-        if (hasTimedPlans && command.ResetPeriod == null)
-        {
-            return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
-        }
+        //bool hasTimedPlans = await subscriptionPlanRepository
+        //    .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && sp.DurationInDays != null, cancellationToken);
+        //if (hasTimedPlans && command.ResetPeriod == null)
+        //{
+        //    return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
+        //}
         var subscriptionFeature = SubscriptionFeature.Create(
             command.SubscriptionId,
             feature.Code,

@@ -1,9 +1,8 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
-using Pento.Application.GiveawayClaims.Search;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.GiveawayClaims;
 
-namespace Pento.Application.Giveaways.Claims.Search;
+namespace Pento.Application.GiveawayClaims.Search;
 
 public sealed record SearchGiveawayClaimQuery(
     Guid? GiveawayPostId,

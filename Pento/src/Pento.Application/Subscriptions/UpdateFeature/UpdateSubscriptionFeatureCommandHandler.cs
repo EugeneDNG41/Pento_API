@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
@@ -6,11 +6,10 @@ using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.UpdateFeature;
-
+#pragma warning disable S125 
 internal sealed class UpdateSubscriptionFeatureCommandHandler(
     IGenericRepository<Feature> featureRepository,
     IGenericRepository<SubscriptionFeature> subscriptionFeatureRepository,
-    IGenericRepository<SubscriptionPlan> subscriptionPlanRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateSubscriptionFeatureCommand>
 {
     public async Task<Result> Handle(UpdateSubscriptionFeatureCommand command, CancellationToken cancellationToken)
@@ -36,12 +35,12 @@ internal sealed class UpdateSubscriptionFeatureCommandHandler(
                 return Result.Failure(SubscriptionErrors.DuplicateSubscriptionFeature);
             }
         }      
-        bool hasTimedPlans = await subscriptionPlanRepository
-            .AnyAsync(sp => sp.SubscriptionId == subscriptionFeature.SubscriptionId && sp.DurationInDays != null, cancellationToken);
-        if (hasTimedPlans && command.ResetPeriod == null)
-        {
-            return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
-        }
+        //bool hasTimedPlans = await subscriptionPlanRepository
+        //    .AnyAsync(sp => sp.SubscriptionId == subscriptionFeature.SubscriptionId && sp.DurationInDays != null, cancellationToken);
+        //if (hasTimedPlans && command.ResetPeriod == null)
+        //{
+        //    return Result.Failure<Guid>(SubscriptionErrors.CannotAddLifetimeFeatureToSubscriptionWithTimedPlans);
+        //}
         subscriptionFeature.UpdateDetails(command.FeatureCode, command.Quota, command.ResetPeriod);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

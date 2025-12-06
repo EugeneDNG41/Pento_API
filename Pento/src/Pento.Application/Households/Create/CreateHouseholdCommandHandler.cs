@@ -1,20 +1,18 @@
-﻿using System.Collections.Generic;
-using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.DomainServices;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Activities;
 using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Storages;
 using Pento.Domain.Users;
+using Pento.Application.Abstractions.Utility.Clock;
 
 namespace Pento.Application.Households.Create;
 
 internal sealed class CreateHouseholdCommandHandler(
+    IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
     IGenericRepository<Household> householdRepository, 
     IGenericRepository<User> userRepository,
@@ -48,7 +46,7 @@ internal sealed class CreateHouseholdCommandHandler(
             }
         }
         //new household
-        var household = Household.Create(command.Name, userContext.UserId);
+        var household = Household.Create(command.Name, dateTimeProvider.UtcNow, userContext.UserId);
         householdRepository.Add(household);
 
         currentUser.SetHouseholdId(household.Id);       

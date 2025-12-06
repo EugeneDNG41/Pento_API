@@ -2,7 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GiveawayClaims.Create;
 
-namespace Pento.API.Endpoints.Giveaways.Claims;
+namespace Pento.API.Endpoints.GiveawayClaims.Post;
 
 internal sealed class CreateGiveawayClaim : IEndpoint
 {

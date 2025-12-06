@@ -2,9 +2,7 @@
 using Dapper;
 using FirebaseAdmin;
 using GenerativeAI;
-using Google.Apis.AndroidPublisher.v3;
 using Google.Apis.Auth.OAuth2;
-using Google.Apis.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -19,39 +17,38 @@ using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.DomainServices;
-using Pento.Application.Abstractions.File;
-using Pento.Application.Abstractions.ThirdPartyServices.Barcode;
-using Pento.Application.Abstractions.ThirdPartyServices.Email;
-using Pento.Application.Abstractions.ThirdPartyServices.Firebase;
-using Pento.Application.Abstractions.ThirdPartyServices.Identity;
-using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
-using Pento.Application.Abstractions.UtilityServices.Caching;
-using Pento.Application.Abstractions.UtilityServices.Clock;
-using Pento.Application.Abstractions.UtilityServices.Converter;
-using Pento.Application.Abstractions.Vision;
-using Pento.Domain.Abstractions;
-using Pento.Infrastructure.AI;
+using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.External.Barcode;
+using Pento.Application.Abstractions.External.Email;
+using Pento.Application.Abstractions.External.File;
+using Pento.Application.Abstractions.External.Firebase;
+using Pento.Application.Abstractions.External.Identity;
+using Pento.Application.Abstractions.External.PayOS;
+using Pento.Application.Abstractions.External.Vision;
+using Pento.Application.Abstractions.Services;
+using Pento.Application.Abstractions.Utility.Caching;
+using Pento.Application.Abstractions.Utility.Clock;
+using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Configurations;
-using Pento.Infrastructure.Data;
-using Pento.Infrastructure.DomainServices;
-using Pento.Infrastructure.File;
-using Pento.Infrastructure.Outbox;
-using Pento.Infrastructure.Repositories;
-using Pento.Infrastructure.ThirdPartyServices.Email;
-using Pento.Infrastructure.ThirdPartyServices.Firebase;
-using Pento.Infrastructure.ThirdPartyServices.Google;
-using Pento.Infrastructure.ThirdPartyServices.Identity;
-using Pento.Infrastructure.ThirdPartyServices.OpenFoodFacts;
-using Pento.Infrastructure.ThirdPartyServices.PayOS;
-using Pento.Infrastructure.ThirdPartyServices.Quartz;
-using Pento.Infrastructure.UtilityServices.Caching;
-using Pento.Infrastructure.UtilityServices.Clock;
-using Pento.Infrastructure.UtilityServices.Converter;
-using Pento.Infrastructure.Vision;
+using Pento.Infrastructure.Persistence;
+using Pento.Infrastructure.Persistence.TypeHandlers;
+using Pento.Infrastructure.External.AI;
+using Pento.Infrastructure.External.Email;
+using Pento.Infrastructure.External.File;
+using Pento.Infrastructure.External.Firebase;
+using Pento.Infrastructure.External.Google;
+using Pento.Infrastructure.External.Identity;
+using Pento.Infrastructure.External.OpenFoodFacts;
+using Pento.Infrastructure.External.PayOS;
+using Pento.Infrastructure.External.Quartz;
+using Pento.Infrastructure.External.Vision;
+using Pento.Infrastructure.Services;
+using Pento.Infrastructure.Utility.Caching;
+using Pento.Infrastructure.Utility.Clock;
+using Pento.Infrastructure.Utility.Converter;
+using Pento.Infrastructure.Utility.Outbox;
 using Quartz;
 using ZiggyCreatures.Caching.Fusion;
 using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
@@ -75,16 +72,7 @@ public static class DependencyInjection
         AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-        GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
-                .Get<GoogleOptions>()
-                ?? throw new InvalidOperationException("Google section is missing or invalid");
-        string jsonOptions = Newtonsoft.Json.JsonConvert.SerializeObject(googleOptions);
-        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(jsonOptions);
-        var firebaseApp = FirebaseApp.Create(new AppOptions()
-        {
-            Credential = cred.ToGoogleCredential()
-        });
-        services.AddSingleton(firebaseApp);
+        
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
@@ -100,7 +88,16 @@ public static class DependencyInjection
 
             return model;
         });
-
+        GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
+                .Get<GoogleOptions>()
+                ?? throw new InvalidOperationException("Google section is missing or invalid");
+        string jsonOptions = Newtonsoft.Json.JsonConvert.SerializeObject(googleOptions);
+        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(jsonOptions);
+        var firebaseApp = FirebaseApp.Create(new AppOptions()
+        {
+            Credential = cred.ToGoogleCredential()
+        });
+        services.AddSingleton(firebaseApp);
         services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))
             .ValidateDataAnnotations()
@@ -135,7 +132,7 @@ public static class DependencyInjection
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
         services.AddScoped<IPixabayImageService,PixabayImageService>();
         services.AddScoped<IVisionService, VisionService>();
-        services.AddSingleton<INotificationSender, FcmNotificationSender>();
+        services.AddScoped<INotificationService, FcmNotificationService>();
     }
 
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)

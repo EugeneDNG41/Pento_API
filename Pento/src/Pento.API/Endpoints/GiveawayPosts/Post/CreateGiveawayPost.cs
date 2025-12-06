@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.GiveawayPosts.Create;
 using Pento.Domain.GiveawayPosts;
 
-namespace Pento.API.Endpoints.Giveaways.Post;
+namespace Pento.API.Endpoints.GiveawayPosts.Post;
 
 internal sealed class CreateGiveawayPost : IEndpoint
 {

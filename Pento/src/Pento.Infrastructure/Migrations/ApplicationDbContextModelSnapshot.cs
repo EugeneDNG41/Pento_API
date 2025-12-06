@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using Pento.Infrastructure;
+using Pento.Infrastructure.Persistence;
 
 #nullable disable
 
@@ -306,8 +306,9 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<int>("Platform")
-                        .HasColumnType("integer")
+                    b.Property<string>("Platform")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("platform");
 
                     b.Property<string>("Token")
@@ -418,17 +419,9 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Code = "STORAGE_SLOT",
-                            DefaultQuota = 5,
-                            Description = "Total storage slots for pantry management.",
-                            Name = "Storage Slot"
-                        },
-                        new
-                        {
-                            Code = "MEAL_PLAN_SLOT",
-                            DefaultQuota = 5,
-                            Description = "Total meal plan slot for scheduling and tracking meals.",
-                            Name = "Meal Plan Slot"
+                            Code = "GROCERY_MAP",
+                            Description = "Show grocery options nearby on google map.",
+                            Name = "Grocery Map"
                         });
                 });
 
@@ -1022,6 +1015,10 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<DateTime>("CreatedOn")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_on");
+
                     b.Property<string>("InviteCode")
                         .HasMaxLength(15)
                         .HasColumnType("character varying(15)")
@@ -1235,17 +1232,13 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<DateTime?>("ReadOnUtc")
+                    b.Property<DateTime?>("ReadOn")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("read_on_utc");
+                        .HasColumnName("read_on");
 
-                    b.Property<DateTime?>("SentOnUtc")
+                    b.Property<DateTime>("SentOn")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("sent_on_utc");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnName("sent_on");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -1253,8 +1246,9 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("title");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("integer")
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text")
                         .HasColumnName("type");
 
                     b.Property<Guid>("UserId")
@@ -1263,9 +1257,6 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_notifications");
-
-                    b.HasIndex("Status")
-                        .HasDatabaseName("ix_notifications_status");
 
                     b.HasIndex("UserId")
                         .HasDatabaseName("ix_notifications_user_id");
@@ -2710,7 +2701,7 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("Pento.Infrastructure.Outbox.OutboxMessage", b =>
+            modelBuilder.Entity("Pento.Infrastructure.Utility.Outbox.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

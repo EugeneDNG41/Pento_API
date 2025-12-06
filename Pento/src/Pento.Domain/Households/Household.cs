@@ -13,15 +13,17 @@ public sealed class Household : Entity
     public string Name { get; private set; }
     public string? InviteCode { get; private set; }
     public DateTime? InviteCodeExpirationUtc { get; private set; }
+    public DateTime CreatedOn { get; private set; }
 
     private Household() { }
-    public Household(string name)
+    public Household(Guid id, string name, DateTime createdOn) : base(id)
     {
         Name = name;
+        CreatedOn = createdOn;
     }
-    public static Household Create(string name, Guid userId)
+    public static Household Create(string name, DateTime createdOn, Guid userId)
     {
-        var household = new Household(name);
+        var household = new Household(Guid.CreateVersion7(), name, createdOn);
         household.GenerateInviteCode();
         household.Raise(new HouseholdCreatedDomainEvent(household.Id, userId));
         return household;

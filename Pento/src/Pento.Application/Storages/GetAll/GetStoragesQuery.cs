@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Pento.Application.Abstractions.Authorization;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.MealPlans.Get;
 using Pento.Application.Users.GetUserRoles;
 using Pento.Domain.MealPlans;

@@ -2,9 +2,9 @@
 using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.FoodItems.Search;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;

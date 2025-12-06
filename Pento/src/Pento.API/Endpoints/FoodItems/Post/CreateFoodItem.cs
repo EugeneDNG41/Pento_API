@@ -1,5 +1,4 @@
-﻿using GenerativeAI.Core;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.Create;
 using Pento.Domain.Abstractions;

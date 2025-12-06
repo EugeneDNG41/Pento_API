@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.Abstractions;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Users;
+using Pento.Domain.Users.Events;
 
 namespace Pento.Application.Households.Leave;
 

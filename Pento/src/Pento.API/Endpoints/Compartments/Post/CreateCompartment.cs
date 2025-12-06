@@ -4,7 +4,7 @@ using Pento.Application.Compartments.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
 
-namespace Pento.API.Endpoints.Compartments.Delete;
+namespace Pento.API.Endpoints.Compartments.Post;
 
 internal sealed class CreateCompartment : IEndpoint
 {

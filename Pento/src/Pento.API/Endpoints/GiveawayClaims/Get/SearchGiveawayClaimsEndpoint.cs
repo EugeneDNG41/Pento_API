@@ -1,13 +1,11 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.GiveawayClaims.Get;
 using Pento.Application.GiveawayClaims.Search;
-using Pento.Application.Giveaways.Claims.Get;
-using Pento.Application.Giveaways.Claims.Search;
 using Pento.Domain.GiveawayClaims;
 
-namespace Pento.API.Endpoints.Giveaways.Claims;
+namespace Pento.API.Endpoints.GiveawayClaims.Get;
 
 internal sealed class SearchGiveawayClaimsEndpoint : IEndpoint
 {

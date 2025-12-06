@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Giveaways.Claims.Complete;
+namespace Pento.Application.GiveawayClaims.Complete;
 
 public sealed class CompleteGiveawayClaimCommandValidator
     : AbstractValidator<CompleteGiveawayClaimCommand>

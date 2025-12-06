@@ -21,8 +21,7 @@ internal sealed class FeatureConfiguration : IEntityTypeConfiguration<Feature>
             Feature.OCR,
             Feature.ImageRecognition,
             Feature.AIChef,
-            Feature.StorageSlot,
-            Feature.MealPlanSlot
+            Feature.GroceryMap
         );
     }
 }

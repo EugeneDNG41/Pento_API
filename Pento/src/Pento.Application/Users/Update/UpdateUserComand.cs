@@ -2,4 +2,4 @@
 
 namespace Pento.Application.Users.Update;
 
-public sealed record UpdateUserCommand(Guid UserId, string FirstName, string LastName) : ICommand;
+public sealed record UpdateUserCommand(string FirstName, string LastName) : ICommand;

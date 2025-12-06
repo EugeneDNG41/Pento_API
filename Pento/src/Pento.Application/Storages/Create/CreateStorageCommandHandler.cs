@@ -1,10 +1,8 @@
 ﻿
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
-using Pento.Application.Abstractions.DomainServices;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Activities;
 using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Storages;

@@ -15,12 +15,6 @@ public static class UnitData
         toBaseFactor: 1m,
         type: UnitType.Weight);
 
-    public static readonly Unit Milligram = Unit.Create(
-        name: "Milligram",
-        abbreviation: "mg",
-        toBaseFactor: 0.001m, 
-        type: UnitType.Weight);
-
     public static readonly Unit Kilogram = Unit.Create(
         name: "Kilogram",
         abbreviation: "kg",
@@ -108,11 +102,6 @@ public static class UnitData
         toBaseFactor: 1m, // baseline: 1 serving = 1 unit of consumption
         type: UnitType.Count);
 
-    public static readonly Unit Each = Unit.Create(
-        name: "Each",
-        abbreviation: "ea",
-        toBaseFactor: 1m, // synonym for "piece" — 1 each = 1 piece
-        type: UnitType.Count);
 
     public static readonly Unit Pair = Unit.Create(
         name: "Pair",
@@ -126,9 +115,4 @@ public static class UnitData
         toBaseFactor: 12m, // 1 dozen = 12 pieces
         type: UnitType.Count);
 
-    public static readonly Unit Gross = Unit.Create(
-        name: "Gross",
-        abbreviation: "gross",
-        toBaseFactor: 144m, // 1 gross = 12 dozen = 144 pieces
-        type: UnitType.Count);
 }

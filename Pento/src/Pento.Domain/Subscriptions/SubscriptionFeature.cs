@@ -23,7 +23,11 @@ public sealed class SubscriptionFeature : Entity
     public int? Quota { get; private set; }
     public TimeUnit? ResetPeriod { get; private set; }
     public static SubscriptionFeature Create(Guid subscriptionId, string featureId, int? quota = null, TimeUnit? resetPeriod = null)
-        => new(Guid.CreateVersion7(), subscriptionId, featureId, quota, resetPeriod);
+    {
+        var subscriptionFeature = new SubscriptionFeature(Guid.NewGuid(), subscriptionId, featureId, quota, resetPeriod);
+        subscriptionFeature.Raise(new SubscriptionFeatureAddedOrUpdatedDomainEvent(subscriptionFeature.Id));
+        return subscriptionFeature;
+    }
     public void UpdateDetails(string? featureCode, int? quota, TimeUnit? resetPeriod)
     {
         if (!string.IsNullOrEmpty(featureCode) && FeatureCode != featureCode)
@@ -37,6 +41,11 @@ public sealed class SubscriptionFeature : Entity
         if (ResetPeriod != resetPeriod)
         {
             ResetPeriod = resetPeriod;
-        } 
+        }
+        Raise(new SubscriptionFeatureAddedOrUpdatedDomainEvent(Id));
     }
+}
+public sealed class SubscriptionFeatureAddedOrUpdatedDomainEvent(Guid subscriptionFeatureId) : DomainEvent
+{
+    public Guid SubscriptionFeatureId { get; } = subscriptionFeatureId;
 }

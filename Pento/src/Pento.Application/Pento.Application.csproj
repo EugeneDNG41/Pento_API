@@ -23,9 +23,5 @@
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
 
   </ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="Households\Get\" />
-  </ItemGroup>
 
 </Project>

@@ -1,6 +1,6 @@
 ﻿using PayOS.Models.Webhooks;
 using Pento.API.Extensions;
-using Pento.Application.Abstractions.ThirdPartyServices.PayOS;
+using Pento.Application.Abstractions.External.PayOS;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Payments.Post;

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Pento.Infrastructure.ThirdPartyServices.Identity;
+using Pento.Infrastructure.External.Identity;
 
 namespace Pento.API.Extensions;
 

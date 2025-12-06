@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
-using Quartz.Impl.AdoJobStore.Common;
 
 namespace Pento.API.Extensions;
 

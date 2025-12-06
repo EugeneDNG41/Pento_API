@@ -4,7 +4,7 @@ using Pento.Application.Compartments.Update;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Roles;
 
-namespace Pento.API.Endpoints.Compartments.Delete;
+namespace Pento.API.Endpoints.Compartments.Put;
 
 internal sealed class UpdateCompartment : IEndpoint
 {

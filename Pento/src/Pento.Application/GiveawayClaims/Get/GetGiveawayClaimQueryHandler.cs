@@ -1,11 +1,10 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.GiveawayClaims.Get;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Giveaways.Claims.Get;
+namespace Pento.Application.GiveawayClaims.Get;
 
 internal sealed class GetGiveawayClaimByIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory

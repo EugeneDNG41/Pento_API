@@ -1,13 +1,12 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Recipes.Wishlist.Add;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.RecipeWishLists;
 using Pento.Domain.Users;
 
-namespace Pento.Application.RecipeWishLists.Add;
+namespace Pento.Application.Recipes.Wishlist.Add;
 
 internal sealed class AddRecipeToWishListCommandHandler(
     IGenericRepository<RecipeWishList> repository,

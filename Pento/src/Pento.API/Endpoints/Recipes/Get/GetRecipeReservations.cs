@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Get;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.RecipeReservations.Get;
+namespace Pento.API.Endpoints.Recipes.Get;
 
 internal sealed class GetRecipeReservations : IEndpoint
 {

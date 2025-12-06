@@ -4,7 +4,7 @@ using Pento.Application.Notifications.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Notifications;
 
-namespace Pento.API.Endpoints.Notifications;
+namespace Pento.API.Endpoints.Notifications.Post;
 
 internal sealed class CreateNotification : IEndpoint
 {
@@ -12,7 +12,7 @@ internal sealed class CreateNotification : IEndpoint
     {
         app.MapPost("notifications/send", async (
             Request request,
-            ICommandHandler<CreateNotificationCommand, Guid> handler,
+            ICommandHandler<CreateNotificationCommand> handler,
             CancellationToken cancellationToken
         ) =>
         {
@@ -20,15 +20,12 @@ internal sealed class CreateNotification : IEndpoint
                 request.Title,
                 request.Body,
                 request.Type,
-                request.DataJson
+                request.Payload
             );
 
-            Result<Guid> result = await handler.Handle(command, cancellationToken);
+            Result result = await handler.Handle(command, cancellationToken);
 
-            return result.Match(
-                id => Results.Ok(new { Id = id, Message = "Notification sent" }),
-                CustomResults.Problem
-            );
+            return result.Match(Results.NoContent, CustomResults.Problem);
         })
         .WithTags(Tags.Notifications)
         .RequireAuthorization();
@@ -40,6 +37,6 @@ internal sealed class CreateNotification : IEndpoint
         public string Title { get; init; } = string.Empty;
         public string Body { get; init; } = string.Empty;
         public NotificationType Type { get; init; } = NotificationType.General;
-        public string? DataJson { get; init; }
+        public Dictionary<string, string>? Payload { get; init; }
     }
 }

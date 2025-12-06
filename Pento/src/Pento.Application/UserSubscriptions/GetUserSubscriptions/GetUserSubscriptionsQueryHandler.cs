@@ -2,7 +2,7 @@
 
 using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.UserSubscriptions.GetCurrentSubscriptions;
 using Pento.Domain.Abstractions;

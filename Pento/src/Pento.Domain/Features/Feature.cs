@@ -1,8 +1,9 @@
-﻿using Pento.Domain.Shared;
+﻿using Pento.Domain.Abstractions;
+using Pento.Domain.Shared;
 
 namespace Pento.Domain.Features;
 
-public sealed class Feature
+public sealed class Feature : BaseEntity
 {
     public static readonly Feature OCR = new(
         FeatureCode.OCR.ToString(),
@@ -24,19 +25,11 @@ public sealed class Feature
         "Generate personalized recipes.",
         null, null
     );
-
-    public static readonly Feature StorageSlot = new(
-        FeatureCode.STORAGE_SLOT.ToString(),
-        "Storage Slot",
-        "Total storage slots for pantry management.",
-        5, null
-    );
-
-    public static readonly Feature MealPlanSlot = new(
-        FeatureCode.MEAL_PLAN_SLOT.ToString(),
-        "Meal Plan Slot",
-        "Total meal plan slot for scheduling and tracking meals.",
-        5, null
+    public static readonly Feature GroceryMap = new(
+        FeatureCode.GROCERY_MAP.ToString(),
+        "Grocery Map",
+        "Show grocery options nearby on google map.",
+        null, null
     );
     public Feature(string code, string name, string description, int? defaultQuota, TimeUnit? defaultResetPeriod)
     {
@@ -48,7 +41,7 @@ public sealed class Feature
     }
 
     private Feature() { }
-    public string Code { get; private set; } //business rule
+    public string Code { get; private set; }
     public string Name { get; private set; }
     public string Description {  get; private set; }
     public int? DefaultQuota{ get; private set; }
@@ -72,6 +65,8 @@ public sealed class Feature
         {
             DefaultResetPeriod = defaultResetPeriod;
         }
+        Raise(new FeatureUpdatedDomainEvent(Code));
+        
     }
 }
 public enum FeatureCode
@@ -79,6 +74,5 @@ public enum FeatureCode
     OCR,
     IMAGE_RECOGNITION,
     AI_CHEF,
-    STORAGE_SLOT,
-    MEAL_PLAN_SLOT
+    GROCERY_MAP
 }

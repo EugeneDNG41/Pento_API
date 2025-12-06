@@ -1,6 +1,6 @@
 ﻿using Azure.AI.Vision.ImageAnalysis;
 using Pento.API.Endpoints;
-using Pento.Application.Abstractions.Vision;
+using Pento.Application.Abstractions.External.Vision;
 
 namespace Pento.API.Endpoints.Visions.Post;
 

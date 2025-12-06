@@ -1,13 +1,14 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Households.GetCurrent;
+
 
 internal sealed class GetCurrentHouseholdQueryHandler(
     IUserContext userContext,
@@ -41,7 +42,7 @@ internal sealed class GetCurrentHouseholdQueryHandler(
                 WHERE h.id = @HouseholdId
                 GROUP BY u.id, h.id;
             """;
-        
+
         CommandDefinition command = new(sql, new { HouseholdId = householdId }, cancellationToken: cancellationToken);
         var householdDict = new Dictionary<Guid, HouseholdResponse>();
         await connection.QueryAsync<HouseholdResponse, HouseholdMemberResponse, HouseholdResponse>(
@@ -50,7 +51,8 @@ internal sealed class GetCurrentHouseholdQueryHandler(
                 if (householdDict.TryGetValue(household.Id, out HouseholdResponse existingHousehold))
                 {
                     household = existingHousehold;
-                } else
+                }
+                else
                 {
                     householdDict.Add(household.Id, household);
                 }
@@ -65,3 +67,4 @@ internal sealed class GetCurrentHouseholdQueryHandler(
         return response;
     }
 }
+

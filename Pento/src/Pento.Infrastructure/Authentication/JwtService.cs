@@ -3,9 +3,9 @@ using System.Net.Http.Json;
 using FluentEmail.Core;
 using Microsoft.Extensions.Options;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.ThirdPartyServices.Identity;
+using Pento.Application.Abstractions.External.Identity;
 using Pento.Domain.Abstractions;
-using Pento.Infrastructure.ThirdPartyServices.Identity;
+using Pento.Infrastructure.External.Identity;
 
 namespace Pento.Infrastructure.Authentication;
 
