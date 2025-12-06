@@ -4,7 +4,7 @@ using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.GiveawayPosts.Search;
 using Pento.Domain.GiveawayPosts;
 
-namespace Pento.API.Endpoints.Giveaways.Get;
+namespace Pento.API.Endpoints.GiveawayPosts.Get;
 
 internal sealed class SearchGiveawayPostsEndpoint : IEndpoint
 {

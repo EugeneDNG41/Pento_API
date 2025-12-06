@@ -4,7 +4,7 @@ using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Activities.GetSummary;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Activity.Get;
+namespace Pento.API.Endpoints.Admin.Get;
 
 internal sealed class GetActivitySummary : IEndpoint
 {

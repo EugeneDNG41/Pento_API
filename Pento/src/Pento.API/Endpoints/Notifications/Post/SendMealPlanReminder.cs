@@ -4,7 +4,7 @@ using Pento.Application.Notifications.Send;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Notifications;
 
-namespace Pento.API.Endpoints.Notifications;
+namespace Pento.API.Endpoints.Notifications.Post;
 
 internal sealed class SendMealPlanReminder : IEndpoint
 {

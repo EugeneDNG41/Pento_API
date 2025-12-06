@@ -5,7 +5,7 @@ using Pento.Application.GiveawayClaims.Get;
 using Pento.Application.GiveawayClaims.Search;
 using Pento.Domain.GiveawayClaims;
 
-namespace Pento.API.Endpoints.Giveaways.Claims;
+namespace Pento.API.Endpoints.GiveawayClaims.Get;
 
 internal sealed class SearchGiveawayClaimsEndpoint : IEndpoint
 {

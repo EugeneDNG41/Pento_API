@@ -3,7 +3,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlans.Reserve;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.MealPlanReservations.Get;
+namespace Pento.API.Endpoints.MealPlans.Get;
 
 internal sealed class GetMealPlanReservationById : IEndpoint
 {

@@ -4,7 +4,7 @@ using Pento.Application.Notifications.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Notifications;
 
-namespace Pento.API.Endpoints.Notifications;
+namespace Pento.API.Endpoints.Notifications.Post;
 
 internal sealed class CreateNotification : IEndpoint
 {
