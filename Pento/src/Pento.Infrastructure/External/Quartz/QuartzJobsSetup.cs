@@ -8,9 +8,10 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
     public void Configure(QuartzOptions options)
     {
         const string expirationTracker = nameof(ProcessExpirationDateTrackingJob);
-        const string limitReset = nameof(ProcessLimitResetJob);
+        const string entitlementReset = nameof(ProcessEntitlementResetJob);
         const string outbox = nameof(ProcessOutboxMessagesJob);
         const string paymentStatusTracker = nameof(ProcessPaymentStatusTrackingJob);
+        const string subscriptionTracker = nameof(ProcessSubscriptionTrackingJob);
 
 
         options
@@ -22,11 +23,18 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
                         schedule.WithIntervalInMinutes(30).RepeatForever())
                     .Build());
         options
-            .AddJob<ProcessLimitResetJob>(configure => configure.WithIdentity(limitReset))
+            .AddJob<ProcessEntitlementResetJob>(configure => configure.WithIdentity(entitlementReset))
             .AddTrigger(configure =>
                 configure
-                    .ForJob(limitReset)
+                    .ForJob(entitlementReset)
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(0, 0)) // Every day at midnight
+                    .Build());
+        options
+            .AddJob<ProcessSubscriptionTrackingJob>(configure => configure.WithIdentity(subscriptionTracker))
+            .AddTrigger(configure =>
+                configure
+                    .ForJob(subscriptionTracker)
+                    .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(6, 0)) // Every day at 4AM
                     .Build());
         options
             .AddJob<ProcessOutboxMessagesJob>(configure => configure.WithIdentity(outbox))

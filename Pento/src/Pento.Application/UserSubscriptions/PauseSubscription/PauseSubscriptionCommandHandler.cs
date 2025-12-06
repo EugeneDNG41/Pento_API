@@ -1,18 +1,22 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Notifications;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Application.UserSubscriptions.PauseSubscription;
 
 internal sealed class PauseSubscriptionCommandHandler(
+    INotificationService notificationService,
     IDateTimeProvider dateTimeProvider,
     ISubscriptionService subscriptionService,
     IUserContext userContext,
+    IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<PauseSubscriptionCommand>
 {
@@ -22,6 +26,11 @@ internal sealed class PauseSubscriptionCommandHandler(
         if (userSubscription == null)
         {
             return Result.Failure(SubscriptionErrors.UserSubscriptionNotFound);
+        }
+        Subscription? subscription = await subscriptionRepository.GetByIdAsync(userSubscription.SubscriptionId, cancellationToken);
+        if (subscription == null)
+        {
+            return Result.Failure(SubscriptionErrors.SubscriptionNotFound);
         }
         if (userSubscription.UserId != userContext.UserId)
         {
@@ -51,6 +60,20 @@ internal sealed class PauseSubscriptionCommandHandler(
             if (deactivationResult.IsFailure)
             {
                 return Result.Failure(deactivationResult.Error);
+            }
+            string title = "Subscription Paused";
+            string body = $"Your {subscription.Name} subscription has been put on hold.";
+            var payload = new Dictionary<string, string>
+            {
+                { "userSubscriptionId", userSubscription.Id.ToString() },
+                { "subscriptionId", subscription.Id.ToString() },
+                { "subscriptionName", subscription.Name  }
+            };
+            Result notificationResult = await notificationService
+                .SendToUserAsync(userSubscription.UserId, title, body, NotificationType.Subscription, payload, cancellationToken);
+            if (notificationResult.IsFailure)
+            {
+                await unitOfWork.SaveChangesAsync(cancellationToken); //since service won't call save changes
             }
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();

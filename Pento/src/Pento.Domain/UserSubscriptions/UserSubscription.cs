@@ -78,7 +78,7 @@ public sealed class UserSubscription : Entity
         Status = SubscriptionStatus.Expired;
     }
 
-    public void Extend(int durationInDays)
+    public void Adjust(int durationInDays)
     {
         if (EndDate.HasValue)
         {
