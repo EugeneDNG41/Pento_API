@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;

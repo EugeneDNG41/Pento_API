@@ -3,7 +3,7 @@ using PayOS;
 using PayOS.Exceptions;
 using PayOS.Models.V2.PaymentRequests;
 using PayOS.Models.Webhooks;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.PayOS;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;

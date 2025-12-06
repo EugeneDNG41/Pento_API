@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;

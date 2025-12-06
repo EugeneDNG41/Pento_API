@@ -3,7 +3,7 @@ using GenerativeAI;
 using GenerativeAI.Types;
 using OpenFoodFacts4Net.ApiClient;
 using OpenFoodFacts4Net.Json.Data;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Barcode;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;

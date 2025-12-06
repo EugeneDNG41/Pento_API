@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 
 
 namespace Pento.Infrastructure.Persistence;

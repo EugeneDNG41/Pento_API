@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using Npgsql;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 
 namespace Pento.Infrastructure.Persistence;
 

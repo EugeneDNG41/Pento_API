@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using FirebaseAdmin.Messaging;
 using Newtonsoft.Json;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;

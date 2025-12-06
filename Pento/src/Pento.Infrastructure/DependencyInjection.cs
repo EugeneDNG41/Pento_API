@@ -17,7 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Data;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Barcode;
 using Pento.Application.Abstractions.External.Email;
 using Pento.Application.Abstractions.External.File;

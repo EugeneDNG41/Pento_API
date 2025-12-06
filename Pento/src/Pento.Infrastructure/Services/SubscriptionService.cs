@@ -1,4 +1,4 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
