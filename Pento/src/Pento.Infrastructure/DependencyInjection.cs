@@ -29,7 +29,6 @@ using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Caching;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
-using Pento.Domain.Abstractions;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Configurations;
