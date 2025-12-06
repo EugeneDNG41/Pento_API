@@ -20,14 +20,7 @@ internal sealed class MilestoneService(
 {
     public async Task<Result> CheckUserMilestoneAsync(Guid userId, Milestone milestone, CancellationToken cancellationToken)
     {
-        if (milestone is null)
-        {
-            return Result.Failure(MilestoneErrors.NotFound);
-        }
-        if (!milestone.IsActive)
-        {
-            return Result.Success();
-        }
+        
         UserMilestone? userMilestone = (await userMilestoneRepository.FindAsync(
             um => um.UserId == userId && um.MilestoneId == milestone.Id,
             cancellationToken)).SingleOrDefault();
@@ -73,6 +66,10 @@ internal sealed class MilestoneService(
             if (milestone == null)
             {
                 return Result.Failure(MilestoneErrors.NotFound);
+            }
+            if (!milestone.IsActive)
+            {
+                continue;
             }
             Result result = await CheckUserMilestoneAsync(userActivity.UserId, milestone, cancellationToken);
             if (result.IsFailure)

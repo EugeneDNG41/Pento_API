@@ -2,7 +2,7 @@
 
 namespace Pento.Domain.Milestones;
 
-public sealed class MilestoneEnabledDomainEvent(Guid milestoneId) : DomainEvent
+public sealed class MilestoneEnabledOrUpdatedDomainEvent(Guid milestoneId) : DomainEvent
 {
     public Guid MilestoneId { get; } = milestoneId;
 }

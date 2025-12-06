@@ -25,7 +25,6 @@ public abstract class FoodItemReservation : Entity
         ReservationFor = reservationFor;
     }
     protected FoodItemReservation() { }
-
     public Guid FoodItemId { get; private set; }
     public Guid HouseholdId { get; private set; }
     public DateTime ReservationDateUtc { get; private set; }
@@ -106,8 +105,6 @@ public abstract class FoodItemReservation : Entity
     decimal quantity,
     Guid unitId,
     Guid userId);
-
-
 
 }
 public enum ReservationStatus
