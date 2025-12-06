@@ -2,8 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.RecipeDirections.Get;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Users;
-using Pento.Infrastructure.Authentication;
 
 namespace Pento.API.Endpoints.RecipeDirections.Get;
 

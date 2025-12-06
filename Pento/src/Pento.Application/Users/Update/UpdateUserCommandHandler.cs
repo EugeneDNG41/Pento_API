@@ -1,16 +1,19 @@
-﻿using Pento.Application.Abstractions.Data;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Users.Update;
 
-internal sealed class UpdateUserCommandHandler(IGenericRepository<User> repository, IUnitOfWork unitOfWork)
+internal sealed class UpdateUserCommandHandler(
+    IUserContext userContext,
+    IGenericRepository<User> repository, IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateUserCommand>
 {
     public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        User? user = await repository.GetByIdAsync(request.UserId, cancellationToken);
+        User? user = await repository.GetByIdAsync(userContext.UserId, cancellationToken);
         if (user is null)
         {
             return Result.Failure(UserErrors.NotFound);

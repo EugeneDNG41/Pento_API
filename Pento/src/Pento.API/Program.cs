@@ -1,6 +1,4 @@
 using System.Reflection;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpLogging;
 using Pento.API;
 using Pento.API.Extensions;

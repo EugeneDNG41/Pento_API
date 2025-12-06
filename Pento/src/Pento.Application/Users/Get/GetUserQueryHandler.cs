@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Dapper;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
@@ -9,6 +10,7 @@ using Pento.Domain.UserSubscriptions;
 namespace Pento.Application.Users.Get;
 
 internal sealed class GetUserQueryHandler(
+    IUserContext userContext,
     ISqlConnectionFactory dbConnectionFactory)
     : IQueryHandler<GetUserQuery, UserResponse>
 {
@@ -48,7 +50,7 @@ internal sealed class GetUserQueryHandler(
                 INNER JOIN subscriptions s ON s.id = us.subscription_id
                 WHERE us.user_id = @UserId AND (us.end_date IS NULL OR us.end_date > CURRENT_DATE) AND us.Status = @Status;
              """;
-        CommandDefinition command = new(sql, new {query.UserId, Status = SubscriptionStatus.Active.ToString()}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new {userContext.UserId, Status = SubscriptionStatus.Active.ToString()}, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         UserResponseRow? userRow = await multi.ReadSingleOrDefaultAsync<UserResponseRow>();
         if (userRow is null)

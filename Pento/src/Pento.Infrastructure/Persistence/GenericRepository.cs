@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Pento.Application.Abstractions.Data;
 
 
-namespace Pento.Infrastructure.Data;
+namespace Pento.Infrastructure.Persistence;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pento.Application.Abstractions.External.File;
-using Pento.Infrastructure.Data;
+using Pento.Infrastructure.Persistence;
 
 namespace Pento.Infrastructure.External.AI;
 internal sealed class ImagenFoodImageGenerator(HttpClient http, IConfiguration config, ApplicationDbContext db)

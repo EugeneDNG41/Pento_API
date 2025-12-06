@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pento.Domain.Units;
-using Pento.Infrastructure.Data;
+using Pento.Infrastructure.Persistence;
 
 namespace Pento.API.Extensions;
 
@@ -17,7 +17,6 @@ internal static class MigrationExtensions
         {
             dbContext.Units.AddRange(UnitData.Gram,
             UnitData.Kilogram,
-            UnitData.Milligram,
             UnitData.Ounce,
             UnitData.Pound,
 
@@ -33,7 +32,6 @@ internal static class MigrationExtensions
 
             UnitData.Serving,
             UnitData.Piece,
-            UnitData.Each,
             UnitData.Pair,
             UnitData.Dozen);
             dbContext.SaveChanges();

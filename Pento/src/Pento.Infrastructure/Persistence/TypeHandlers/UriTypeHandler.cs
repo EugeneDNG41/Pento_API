@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 
-namespace Pento.Infrastructure.Data.TypeHandlers;
+namespace Pento.Infrastructure.Persistence.TypeHandlers;
 public class UriTypeHandler : SqlMapper.TypeHandler<Uri?>
 {
     public override void SetValue(IDbDataParameter parameter, Uri? value)

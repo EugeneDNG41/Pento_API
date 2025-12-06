@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 
-namespace Pento.Infrastructure.Data.TypeHandlers;
+namespace Pento.Infrastructure.Persistence.TypeHandlers;
 
 internal sealed class GenericArrayHandler<T> : SqlMapper.TypeHandler<T[]>
 {

@@ -3,7 +3,7 @@ using System.Data.Common;
 using Npgsql;
 using Pento.Application.Abstractions.Data;
 
-namespace Pento.Infrastructure.Data;
+namespace Pento.Infrastructure.Persistence;
 
 internal sealed class SqlConnectionFactory(NpgsqlDataSource dataSource) : ISqlConnectionFactory
 {

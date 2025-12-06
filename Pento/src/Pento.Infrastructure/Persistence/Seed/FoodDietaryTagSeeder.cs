@@ -4,9 +4,9 @@ using System.Linq;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
-using Pento.Infrastructure.Data;
+using Pento.Infrastructure.Persistence;
 
-namespace Pento.Infrastructure.Data.Seed;
+namespace Pento.Infrastructure.Persistence.Seed;
 
 public static class FoodDietaryTagSeeder
 {

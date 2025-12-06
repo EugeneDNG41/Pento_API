@@ -8,7 +8,7 @@ using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 using Pento.Infrastructure.Utility.Outbox;
 
-namespace Pento.Infrastructure.Data;
+namespace Pento.Infrastructure.Persistence;
 
 public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(options), IUnitOfWork
 {
