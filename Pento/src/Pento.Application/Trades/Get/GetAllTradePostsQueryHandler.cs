@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
-using Pento.Application.Abstractions.Data;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Abstractions.Pagination;
+using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Trades.Get;

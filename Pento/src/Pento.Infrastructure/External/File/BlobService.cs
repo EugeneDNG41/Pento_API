@@ -4,7 +4,6 @@ using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.External.File;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems;
 
 namespace Pento.Infrastructure.External.File;
 public sealed class BlobService : IBlobService
