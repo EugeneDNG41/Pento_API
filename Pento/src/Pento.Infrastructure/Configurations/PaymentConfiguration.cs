@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Payments;
-using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.Users;
 

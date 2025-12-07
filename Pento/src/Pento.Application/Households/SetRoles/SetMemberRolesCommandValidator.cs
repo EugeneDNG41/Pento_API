@@ -4,7 +4,7 @@ namespace Pento.Application.Households.SetRoles;
 
 internal sealed class SetMemberRolesCommandValidator : AbstractValidator<SetMemberRolesCommand>
 {
-    
+
     public SetMemberRolesCommandValidator()
     {
         RuleFor(x => x.MemberId).NotEmpty();

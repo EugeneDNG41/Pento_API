@@ -1,9 +1,8 @@
-﻿using System.Formats.Asn1;
-using System.Globalization;
+﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
@@ -11,7 +10,7 @@ using Pento.Domain.Units;
 namespace Pento.Application.FoodReferences.Import;
 
 internal sealed class ImportFoodReferencesCommandHandler(
-    IGenericRepository <FoodReference> foodReferenceRepository,
+    IGenericRepository<FoodReference> foodReferenceRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<ImportFoodReferencesCommand, int>
 {
@@ -61,7 +60,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 typicalShelfLifeDaysPantry: 0,
                 typicalShelfLifeDaysFridge: 0,
                 typicalShelfLifeDaysFreezer: 0,
-                addedBy:null,
+                addedBy: null,
                 imageUrl: null,
                 unitType: UnitData.Gram.Type,
                 utcNow: DateTime.UtcNow
@@ -109,7 +108,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
     {
         public int FdcId { get; set; } = default!;
         public string Description { get; set; } = string.Empty;
-        public int? FoodCategoryId { get; set; }= null!;
+        public int? FoodCategoryId { get; set; } = null!;
     }
 
     private sealed class FoodCsvMap : ClassMap<FoodCsv>

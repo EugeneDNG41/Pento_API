@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeIngredients;
 
 namespace Pento.Application.RecipeIngredients.Get;
+
 internal sealed class GetRecipeIngredientQueryHandler(ISqlConnectionFactory sqlConnectionFactory, IGenericRepository<RecipeIngredient> RecipeIngredientRepository)
     : IQueryHandler<GetRecipeIngredientQuery, RecipeIngredientResponse>
 {

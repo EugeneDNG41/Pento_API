@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 
 namespace Pento.API.Extensions;
 

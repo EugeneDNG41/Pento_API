@@ -1,5 +1,4 @@
-﻿using System;
-namespace Pento.Application.Abstractions.Messaging;
+﻿namespace Pento.Application.Abstractions.Messaging;
 
 public interface ICommand;
 

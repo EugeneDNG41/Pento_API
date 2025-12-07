@@ -1,9 +1,7 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.RecipeIngredients.Get;
 using Pento.Application.RecipeIngredients.GetAll;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.RecipeIngredients.Get;
 

@@ -1,10 +1,8 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
-using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
 
@@ -48,7 +46,7 @@ internal sealed class CreateMealPlanCommandHandler(
         {
             return Result.Failure<Guid>(MealPlanErrors.DuplicateName);
         }
-    
+
 
         DateTime utcNow = DateTime.UtcNow;
 

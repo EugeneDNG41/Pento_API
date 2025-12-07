@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
@@ -36,10 +36,10 @@ internal sealed class GetUserRolesQueryHandler(ISqlConnectionFactory dbConnectio
             return Result.Failure<UserRolesResponse>(UserErrors.IdentityNotFound(request.IdentityId));
         }
         HashSet<string> roles = string.IsNullOrEmpty(permission.Roles) ?
-            new HashSet<string>(StringComparer.OrdinalIgnoreCase) : 
+            new HashSet<string>(StringComparer.OrdinalIgnoreCase) :
             permission.Roles.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToHashSet(StringComparer.OrdinalIgnoreCase);
         return new UserRolesResponse(
-            permission.UserId, 
+            permission.UserId,
             permission.HouseholdId,
             roles);
     }

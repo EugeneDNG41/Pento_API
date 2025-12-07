@@ -17,7 +17,6 @@ using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Barcode;
 using Pento.Application.Abstractions.External.Email;
 using Pento.Application.Abstractions.External.File;
@@ -25,6 +24,7 @@ using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.External.PayOS;
 using Pento.Application.Abstractions.External.Vision;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Caching;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -32,8 +32,6 @@ using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Infrastructure.Authentication;
 using Pento.Infrastructure.Authorization;
 using Pento.Infrastructure.Configurations;
-using Pento.Infrastructure.Persistence;
-using Pento.Infrastructure.Persistence.TypeHandlers;
 using Pento.Infrastructure.External.AI;
 using Pento.Infrastructure.External.Email;
 using Pento.Infrastructure.External.File;
@@ -44,6 +42,8 @@ using Pento.Infrastructure.External.OpenFoodFacts;
 using Pento.Infrastructure.External.PayOS;
 using Pento.Infrastructure.External.Quartz;
 using Pento.Infrastructure.External.Vision;
+using Pento.Infrastructure.Persistence;
+using Pento.Infrastructure.Persistence.TypeHandlers;
 using Pento.Infrastructure.Services;
 using Pento.Infrastructure.Utility.Caching;
 using Pento.Infrastructure.Utility.Clock;
@@ -72,7 +72,7 @@ public static class DependencyInjection
         AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-        
+
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
@@ -113,7 +113,7 @@ public static class DependencyInjection
         {
             options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
         });
-        
+
         services.AddScoped<IUnitOfWork>(sp => sp.GetRequiredService<ApplicationDbContext>());
 
         NpgsqlDataSource npgsqlDataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
@@ -124,13 +124,13 @@ public static class DependencyInjection
         SqlMapper.AddTypeHandler(new GenericArrayHandler<string>());
         SqlMapper.AddTypeHandler(new UriTypeHandler());
         services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-        
+
 
         services.AddScoped<IFoodAiEnricher, GeminiFoodAiEnricher>();
         services.AddScoped<IFoodImageGenerator, ImagenFoodImageGenerator>();
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
-        services.AddScoped<IPixabayImageService,PixabayImageService>();
+        services.AddScoped<IPixabayImageService, PixabayImageService>();
         services.AddScoped<IVisionService, VisionService>();
         services.AddScoped<INotificationService, FcmNotificationService>();
     }
@@ -163,9 +163,9 @@ public static class DependencyInjection
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {
-        
+
 #pragma warning disable S125 // Sections of code should not be commented out
-                            //builder.AddSeqEndpoint("seq");
+        //builder.AddSeqEndpoint("seq");
         builder.AddAzureBlobServiceClient("blobs");
         return builder;
 #pragma warning restore S125 // Sections of code should not be commented out
@@ -174,7 +174,7 @@ public static class DependencyInjection
     {
         builder.Services.AddScoped<IPermissionService, PermissionService>();
         KeycloakOptions keycloakOptions = builder.Configuration.GetRequiredSection("Keycloak")
-            .Get<KeycloakOptions>() 
+            .Get<KeycloakOptions>()
             ?? throw new InvalidOperationException("Keycloak section is missing or invalid");
         builder.Services.AddOptions<KeycloakOptions>()
             .Bind(builder.Configuration.GetSection("Keycloak"))
@@ -204,7 +204,7 @@ public static class DependencyInjection
         {
             httpClient.BaseAddress = new Uri($"{keycloakAuthority}/realms/pento/protocol/openid-connect/");
         });
-        
+
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
         {
@@ -214,9 +214,9 @@ public static class DependencyInjection
             }
             opt.MapInboundClaims = false;
             opt.Authority = keycloakAuthority;
-            opt.Audience = keycloakOptions.ClientId;         
+            opt.Audience = keycloakOptions.ClientId;
             opt.TokenValidationParameters.ValidIssuer = $"{keycloakAuthority}/realms/pento";
-            opt.MetadataAddress = $"{keycloakAuthority}/realms/pento/.well-known/openid-configuration";      
+            opt.MetadataAddress = $"{keycloakAuthority}/realms/pento/.well-known/openid-configuration";
         });
 
         builder.Services.AddHttpContextAccessor();

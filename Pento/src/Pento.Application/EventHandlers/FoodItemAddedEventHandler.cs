@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
@@ -8,12 +7,8 @@ using Pento.Domain.Activities;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.Households;
-using Pento.Domain.Milestones;
 using Pento.Domain.Units;
 using Pento.Domain.UserActivities;
-using Pento.Domain.UserMilestones;
-using Pento.Domain.Users;
 
 namespace Pento.Application.EventHandlers;
 
@@ -63,38 +58,6 @@ internal sealed class FoodItemAddedEventHandler(
         if (milestoneCheckResult.IsFailure)
         {
             throw new PentoException(nameof(GroceryListCreatedEventHandler), milestoneCheckResult.Error);
-        }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-}
-internal sealed class MilestoneEnabledEventHandler(
-    IMilestoneService milestoneService,
-    IGenericRepository<Milestone> milestoneRepository,
-    IGenericRepository<UserMilestone> userMilestoneRepository,
-    IGenericRepository<User> userRepository,
-
-    IUnitOfWork unitOfWork) : DomainEventHandler<MilestoneEnabledDomainEvent>
-{
-    public async override Task Handle(MilestoneEnabledDomainEvent domainEvent, CancellationToken cancellationToken = default)
-    {
-        Milestone? milestone = await milestoneRepository.GetByIdAsync(domainEvent.MilestoneId, cancellationToken);
-        if (milestone == null)
-        {
-            throw new PentoException(nameof(MilestoneEnabledEventHandler), MilestoneErrors.NotFound);
-        }
-        var alreadyEarnedUserIds = (await userMilestoneRepository.FindAsync(
-            um => um.MilestoneId == milestone.Id,
-            cancellationToken)).Select(um => um.UserId).ToHashSet();
-        var notEarnedUserIds = (await userRepository.FindAsync(
-            u => !alreadyEarnedUserIds.Contains(u.Id),
-            cancellationToken)).Select(u => u.Id).ToHashSet();
-        foreach (Guid userId in notEarnedUserIds)
-        {
-            Result checkResult = await milestoneService.CheckUserMilestoneAsync(userId, milestone, cancellationToken);
-            if (checkResult.IsFailure)
-            {
-                throw new PentoException(nameof(MilestoneEnabledEventHandler), checkResult.Error);
-            }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

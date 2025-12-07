@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
@@ -10,7 +10,7 @@ using Pento.Domain.Households;
 namespace Pento.Application.FoodItemLogs.Search;
 
 internal sealed class SearchFoodItemQueryHandler(
-    IUserContext userContext, 
+    IUserContext userContext,
     ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<SearchFoodItemLogQuery, PagedList<FoodItemLogPreview>>
 {
     public async Task<Result<PagedList<FoodItemLogPreview>>> Handle(SearchFoodItemLogQuery query, CancellationToken cancellationToken)

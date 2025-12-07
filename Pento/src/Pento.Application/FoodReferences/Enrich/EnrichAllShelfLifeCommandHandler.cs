@@ -1,6 +1,6 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.External.File;
+﻿using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -16,8 +16,8 @@ internal sealed class EnrichAllShelfLifeCommandHandler(
 {
     public async Task<Result> Handle(EnrichAllShelfLifeCommand command, CancellationToken cancellationToken)
     {
-        IEnumerable<FoodReference> foodReferences = await foodReferenceRepository.FindAsync(fr => 
-        fr.TypicalShelfLifeDays_Freezer == 0 && 
+        IEnumerable<FoodReference> foodReferences = await foodReferenceRepository.FindAsync(fr =>
+        fr.TypicalShelfLifeDays_Freezer == 0 &&
         fr.TypicalShelfLifeDays_Fridge == 0 &&
         fr.TypicalShelfLifeDays_Pantry == 0, cancellationToken);
         foreach (FoodReference foodReference in foodReferences)

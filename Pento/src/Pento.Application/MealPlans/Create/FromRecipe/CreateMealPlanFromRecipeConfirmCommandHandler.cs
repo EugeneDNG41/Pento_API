@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
@@ -53,7 +53,7 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             x => x.RecipeId == cmd.RecipeId,
             cancellationToken)).ToList();
 
-        Result<(List<ReservationResult>, List<MissingIngredientResult>)> reservation  = await BuildReservationAsync(
+        Result<(List<ReservationResult>, List<MissingIngredientResult>)> reservation = await BuildReservationAsync(
             ingredients,
             householdId.Value,
             cancellationToken
@@ -106,18 +106,18 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
             cancellationToken
                 );
 
-                    if (reservation.IsFailure)
-                    {
-                        return Result.Failure<MealPlanAutoReserveResult>(reservation.Error);
-                    }
+            if (reservation.IsFailure)
+            {
+                return Result.Failure<MealPlanAutoReserveResult>(reservation.Error);
+            }
 
-                    reserved = reservation.Value.Item1;
-                    missing = reservation.Value.Item2;
+            reserved = reservation.Value.Item1;
+            missing = reservation.Value.Item2;
 
-                }
+        }
         if (missing.Count > 0)
         {
-             return Result.Failure<MealPlanAutoReserveResult>(MealPlanErrors.CouldNotReserveAllIngredients);
+            return Result.Failure<MealPlanAutoReserveResult>(MealPlanErrors.CouldNotReserveAllIngredients);
         }
         MealPlan? mealPlan = (await mealPlanRepo.FindAsync(
             x => x.HouseholdId == householdId.Value &&
@@ -206,9 +206,9 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
                      x.Quantity > 0,
                 cancellationToken)).ToList();
 
-                    FoodItem? foodItem = foodItems
-                        .OrderByDescending(x => x.Quantity)
-                        .FirstOrDefault();
+            FoodItem? foodItem = foodItems
+                .OrderByDescending(x => x.Quantity)
+                .FirstOrDefault();
 
 
             Unit? ingredientUnit = await unitRepo.GetByIdAsync(ingredient.UnitId, cancellationToken);

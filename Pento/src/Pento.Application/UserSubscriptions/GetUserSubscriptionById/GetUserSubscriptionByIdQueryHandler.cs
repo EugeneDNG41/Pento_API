@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.UserSubscriptions.GetCurrentSubscriptionById;
 using Pento.Application.UserSubscriptions.GetCurrentSubscriptions;
 using Pento.Domain.Abstractions;
@@ -58,7 +58,7 @@ internal sealed class GetUserSubscriptionByIdQueryHandler(ISqlConnectionFactory 
             LEFT JOIN features f ON ue.feature_code = f.code
             WHERE ue.user_subscription_id = @UserSubscriptionId;
             ";
-        CommandDefinition command = new(sql, new { query.UserSubscriptionId}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { query.UserSubscriptionId }, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         UserSubscriptionResponse? subscription = await multi.ReadSingleOrDefaultAsync<UserSubscriptionResponse>();
         if (subscription is null)

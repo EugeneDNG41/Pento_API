@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Pento.Application.MealPlans.Create;
+
 public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMealPlanCommand>
 {
     public CreateMealPlanCommandValidator()

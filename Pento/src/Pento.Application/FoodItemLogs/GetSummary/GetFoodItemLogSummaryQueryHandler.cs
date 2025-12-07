@@ -2,11 +2,10 @@
 using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemLogs;
-using Pento.Domain.FoodItemReservations;
 using Pento.Domain.Households;
 using Pento.Domain.Units;
 
@@ -40,7 +39,7 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
         }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
-        var parameters = new DynamicParameters();       
+        var parameters = new DynamicParameters();
         parameters.Add("HouseholdId", householdId.Value, DbType.Guid);
         parameters.Add("FromUtc", query.FromUtc);
         parameters.Add("ToUtc", query.ToUtc);

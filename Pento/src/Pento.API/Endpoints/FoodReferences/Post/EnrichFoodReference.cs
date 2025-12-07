@@ -32,7 +32,7 @@ internal sealed class EnrichFoodReference : IEndpoint
                     }),
                     error => CustomResults.Problem(error)
                 );
-            })
+        })
             .WithTags(Tags.FoodReferences);
     }
 }

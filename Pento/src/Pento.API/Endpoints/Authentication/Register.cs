@@ -12,8 +12,8 @@ internal sealed class Register : IEndpoint
     {
         app.MapPost("auth/register", async (
             HttpContext context,
-            Request request, 
-            ICommandHandler<RegisterUserCommand, AuthToken> handler, 
+            Request request,
+            ICommandHandler<RegisterUserCommand, AuthToken> handler,
             CancellationToken cancellationToken) =>
         {
             Result<AuthToken> result = await handler.Handle(new RegisterUserCommand(
@@ -21,7 +21,7 @@ internal sealed class Register : IEndpoint
                 request.Password,
                 request.FirstName,
                 request.LastName), cancellationToken);
-            
+
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .AllowAnonymous()

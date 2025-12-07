@@ -10,7 +10,7 @@ namespace Pento.Application.Households.Leave;
 
 internal sealed class UserLeftHouseholdDomainEventHandler(
     IGenericRepository<Household> householdRepository,
-    IGenericRepository<User> repository, 
+    IGenericRepository<User> repository,
     IUnitOfWork unitOfWork) : DomainEventHandler<UserLeftHouseholdDomainEvent>
 {
     public override async Task Handle(UserLeftHouseholdDomainEvent domainEvent, CancellationToken cancellationToken = default)

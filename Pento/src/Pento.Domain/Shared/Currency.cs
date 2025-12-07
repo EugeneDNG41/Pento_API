@@ -1,6 +1,4 @@
-﻿using Pento.Domain.Abstractions;
-
-namespace Pento.Domain.Shared;
+﻿namespace Pento.Domain.Shared;
 
 public enum Currency
 {

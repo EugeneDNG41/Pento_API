@@ -25,7 +25,7 @@ public sealed record FoodItemLogBasicResponse
     public DateOnly Date { get; init; }
     public FoodItemLogAction Action { get; init; }
     public decimal Quantity { get; init; }
-    public string UnitAbbreviation { get; init; }  
+    public string UnitAbbreviation { get; init; }
 }
 public sealed record GetFoodItemLogBasicSummaryQuery(
     DateOnly? FromUtc,

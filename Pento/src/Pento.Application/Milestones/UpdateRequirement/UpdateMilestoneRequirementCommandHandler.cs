@@ -1,5 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.MilestoneRequirements;
 using Pento.Domain.Milestones;
@@ -20,14 +20,14 @@ internal sealed class UpdateMilestoneRequirementCommandHandler(
         if (command.ActivityCode != null && milestoneRequirement.ActivityCode != command.ActivityCode)
         {
             bool requirementExists = await milestoneRequirementRepository
-                .AnyAsync(mr => mr.Id != command.Id 
-                && mr.MilestoneId == milestoneRequirement.MilestoneId 
+                .AnyAsync(mr => mr.Id != command.Id
+                && mr.MilestoneId == milestoneRequirement.MilestoneId
                 && mr.ActivityCode == command.ActivityCode, cancellationToken);
             if (requirementExists)
             {
                 return Result.Failure(MilestoneErrors.DuplicateRequirement);
             }
-        }        
+        }
         milestoneRequirement.UpdateDetails(command.ActivityCode, command.Quota, command.WithinDays);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

@@ -1,17 +1,14 @@
-﻿using System.ComponentModel;
-using System.Data.Common;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.FoodItems.Search;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
-using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
-using Pento.Domain.Units;
 
 namespace Pento.Application.Compartments.Get;
 
@@ -77,7 +74,7 @@ internal sealed class GetCompartmentByIdQueryHandler(
         parameters.Add("PageSize", query.PageSize);
 
         SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
-        CompartmentResponse? compartment =  await multi.ReadFirstOrDefaultAsync<CompartmentResponse>();
+        CompartmentResponse? compartment = await multi.ReadFirstOrDefaultAsync<CompartmentResponse>();
         if (compartment is null)
         {
             return Result.Failure<CompartmentWithFoodItemPreviewResponse>(CompartmentErrors.NotFound);
@@ -102,7 +99,7 @@ internal sealed class GetCompartmentByIdQueryHandler(
 
         var response = new CompartmentWithFoodItemPreviewResponse(
             compartment.Id, compartment.StorageId, compartment.HouseholdId, compartment.Name, compartment.Notes, pagedResponse);
-        
+
         return response;
     }
 }

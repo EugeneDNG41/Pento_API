@@ -3,8 +3,8 @@
 using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.UserSubscriptions.GetCurrentSubscriptions;
@@ -56,12 +56,14 @@ internal sealed class GetCurrentSubscriptionsQueryHandler(
                 AND us.user_id = @UserId
                 AND us.is_deleted IS FALSE
             ";
-        CommandDefinition command = new(sql, new { 
-            query.SearchText, 
-            Status = query.Status.HasValue ? query.Status.ToString() : null , 
+        CommandDefinition command = new(sql, new
+        {
+            query.SearchText,
+            Status = query.Status.HasValue ? query.Status.ToString() : null,
             query.FromDuration,
             query.ToDuration,
-            userContext.UserId}, cancellationToken: cancellationToken);
+            userContext.UserId
+        }, cancellationToken: cancellationToken);
         IEnumerable<UserSubscriptionResponse> userSubscriptions = await connection.QueryAsync<UserSubscriptionResponse>(command);
         return userSubscriptions.AsList();
     }

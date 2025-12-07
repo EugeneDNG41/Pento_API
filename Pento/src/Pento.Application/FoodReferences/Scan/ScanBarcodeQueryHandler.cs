@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Barcode;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.FoodReferences.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -35,7 +35,8 @@ internal sealed class ScanBarcodeQueryHandler(IBarcodeService barcodeService, IS
             """;
         CommandDefinition command = new(sql, new { request.Barcode }, cancellationToken: cancellationToken);
         FoodReferenceResponse? existingFoodReference = await connection.QueryFirstOrDefaultAsync<FoodReferenceResponse>(command);
-        if (existingFoodReference != null) {
+        if (existingFoodReference != null)
+        {
             return existingFoodReference;
         }
         Result<FoodReference> result = await barcodeService.FetchProductAsync(request.Barcode, cancellationToken);

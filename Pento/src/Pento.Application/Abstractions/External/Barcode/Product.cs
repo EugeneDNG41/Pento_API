@@ -1,6 +1,5 @@
 ﻿
 using Newtonsoft.Json;
-using System;
 
 namespace Pento.Application.Abstractions.External.Barcode;
 

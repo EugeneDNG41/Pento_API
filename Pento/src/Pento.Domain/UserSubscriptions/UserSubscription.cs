@@ -1,4 +1,5 @@
 ﻿using Pento.Domain.Abstractions;
+using Pento.Domain.UserSubscriptions.Events;
 
 
 namespace Pento.Domain.UserSubscriptions;
@@ -22,7 +23,7 @@ public sealed class UserSubscription : Entity
     }
     public Guid UserId { get; private set; }
     public Guid SubscriptionId { get; private set; }
-    public SubscriptionStatus Status { get; private set; }   
+    public SubscriptionStatus Status { get; private set; }
     public DateOnly StartDate { get; private set; }
     public DateOnly? EndDate { get; private set; }
     public DateOnly? PausedDate { get; private set; }
@@ -34,11 +35,11 @@ public sealed class UserSubscription : Entity
         Guid subscriptionId,
         DateOnly startDate,
         DateOnly? endDate)
-    {  
-        var userSubscription =  new UserSubscription(Guid.CreateVersion7(), userId, subscriptionId, SubscriptionStatus.Active, startDate, endDate);
+    {
+        var userSubscription = new UserSubscription(Guid.CreateVersion7(), userId, subscriptionId, SubscriptionStatus.Active, startDate, endDate);
         return userSubscription;
     }
-       
+
     public void Renew(DateOnly? newEndDate)
     {
         Status = SubscriptionStatus.Active; //business rule: renewing a subscription always sets it to Active
@@ -51,6 +52,7 @@ public sealed class UserSubscription : Entity
         {
             EndDate = newEndDate;
         }
+        Raise(new UserSubscriptionRenewedDomainEvent(Id));
     }
     public void Pause(DateOnly pausedDate)
     {
@@ -58,13 +60,15 @@ public sealed class UserSubscription : Entity
         PausedDate = pausedDate;
         EndDate = null;
         RemainingDaysAfterPause = EndDate.HasValue ? EndDate.Value.DayNumber - pausedDate.DayNumber : null;
+        Raise(new UserSubscriptionPausedDomainEvent(Id));
     }
     public void Resume(DateOnly resumedDate)
     {
         Status = SubscriptionStatus.Active;
-        EndDate = RemainingDaysAfterPause.HasValue? resumedDate.AddDays(RemainingDaysAfterPause.Value) : null;
+        EndDate = RemainingDaysAfterPause.HasValue ? resumedDate.AddDays(RemainingDaysAfterPause.Value) : null;
         PausedDate = null;
         RemainingDaysAfterPause = null;
+        Raise(new UserSubscriptionResumedDomainEvent(Id));
     }
     public void Cancel(DateOnly cancelledDate, string? cancellationReason)
     {
@@ -72,10 +76,13 @@ public sealed class UserSubscription : Entity
         CancelledDate = cancelledDate;
         CancellationReason = cancellationReason;
         EndDate = cancelledDate;
+        Raise(new UserSubscriptionCancelledDomainEvent(Id));
     }
     public void Expire()
     {
         Status = SubscriptionStatus.Expired;
+        Raise(new UserSubscriptionExpiredDomainEvent(Id));
+
     }
 
     public void Adjust(int durationInDays)
@@ -83,10 +90,12 @@ public sealed class UserSubscription : Entity
         if (EndDate.HasValue)
         {
             EndDate = EndDate.Value.AddDays(durationInDays);
+            Raise(new UserSubscriptionAdjustedDomainEvent(Id, durationInDays));
         }
-        if (RemainingDaysAfterPause.HasValue)
+        else if (RemainingDaysAfterPause.HasValue)
         {
             RemainingDaysAfterPause += durationInDays;
+            Raise(new UserSubscriptionAdjustedDomainEvent(Id, durationInDays));
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
@@ -24,7 +24,7 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>();
         var parameters = new DynamicParameters();
-        if (query.UserId.HasValue) 
+        if (query.UserId.HasValue)
         {
             filters.Add("user_id = @UserId");
             parameters.Add("UserId", query.UserId);
@@ -101,15 +101,15 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         AdminPaymentSummary? summary = await multi.ReadFirstOrDefaultAsync<AdminPaymentSummary>();
         summary ??= new AdminPaymentSummary
-            {
-                TotalDue = "0",
-                TotalPaid = "0",
-                Pending = 0,
-                Paid = 0,
-                Failed = 0,
-                Cancelled = 0,
-                Expired = 0
-            };
+        {
+            TotalDue = "0",
+            TotalPaid = "0",
+            Pending = 0,
+            Paid = 0,
+            Failed = 0,
+            Cancelled = 0,
+            Expired = 0
+        };
         int totalCount = await multi.ReadFirstAsync<int>();
         IEnumerable<AdminPaymentPreview> items = await multi.ReadAsync<AdminPaymentPreview>();
         var pagedList = PagedList<AdminPaymentPreview>.Create(items, totalCount, query.PageNumber, query.PageSize);

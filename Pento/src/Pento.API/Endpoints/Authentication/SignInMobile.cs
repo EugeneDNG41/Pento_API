@@ -12,8 +12,8 @@ internal sealed class SignInMobile : IEndpoint
     {
         app.MapPost("auth/mobile-sign-in", async (
             HttpContext context,
-            Request request, 
-            ICommandHandler<MobileSignInCommand, AuthToken> handler, 
+            Request request,
+            ICommandHandler<MobileSignInCommand, AuthToken> handler,
             CancellationToken cancellationToken) =>
         {
             Result<AuthToken> result = await handler.Handle(new MobileSignInCommand(

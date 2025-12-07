@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.Units.Get;
 
-namespace Pento.Application.Units.Get;
 public sealed record UnitResponse(
     Guid Id,
     string Name,

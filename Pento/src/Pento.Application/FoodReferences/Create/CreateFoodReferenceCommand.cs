@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 
 namespace Pento.Application.FoodReferences.Create;
+
 public sealed record CreateFoodReferenceCommand(
     string Name,
     FoodGroup FoodGroup,

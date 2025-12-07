@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 
 namespace Pento.Application.Recipes.Delete;
+
 internal sealed class DeleteRecipeCommandHandler : ICommandHandler<DeleteRecipeCommand>
 {
     private readonly IGenericRepository<Recipe> _recipeRepository;

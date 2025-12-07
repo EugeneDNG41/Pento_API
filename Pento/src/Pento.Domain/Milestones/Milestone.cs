@@ -1,5 +1,4 @@
 ﻿using Pento.Domain.Abstractions;
-using Pento.Domain.Shared;
 
 namespace Pento.Domain.Milestones;
 
@@ -42,7 +41,7 @@ public sealed class Milestone : Entity
     public void Enable()
     {
         IsActive = true;
-        Raise(new MilestoneEnabledDomainEvent(Id));
+        Raise(new MilestoneEnabledOrUpdatedDomainEvent(Id));
     }
     public void Disable()
     {

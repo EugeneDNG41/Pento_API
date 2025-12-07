@@ -5,6 +5,6 @@ namespace Pento.Application.UserSubscriptions.GetCurrentSubscriptions;
 
 public sealed record GetCurrentSubscriptionsQuery(
     string? SearchText,
-    SubscriptionStatus? Status, 
-    int? FromDuration, 
+    SubscriptionStatus? Status,
+    int? FromDuration,
     int? ToDuration) : IQuery<IReadOnlyList<UserSubscriptionResponse>>;

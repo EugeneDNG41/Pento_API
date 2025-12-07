@@ -9,5 +9,5 @@ public sealed record GetAllRecipesQuery(
     int PageSize = 10,
     DifficultyLevel? DifficultyLevel = null,
     string? Search = null,
-    string? Sort = "newest" 
+    string? Sort = "newest"
 ) : IQuery<PagedList<RecipeResponse>>;

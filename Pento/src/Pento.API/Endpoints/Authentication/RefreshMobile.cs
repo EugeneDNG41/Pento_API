@@ -19,7 +19,7 @@ internal sealed class RefreshMobile : IEndpoint
             Result<AuthToken> result = await handler.Handle(
                 new RefreshTokenCommand(request.RefreshToken),
                 cancellationToken);
-            
+
             return result.Match(Results.Ok, CustomResults.Problem);
         }).AllowAnonymous().WithTags(Tags.Authentication).WithSummary("Refresh user authentication token");
     }

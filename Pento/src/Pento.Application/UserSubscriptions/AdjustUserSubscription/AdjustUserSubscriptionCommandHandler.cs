@@ -1,17 +1,13 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
-using Pento.Application.Abstractions.External.Firebase;
-using System.Globalization;
-using Pento.Domain.Notifications;
 
 namespace Pento.Application.UserSubscriptions.AdjustUserSubscription;
 
 internal sealed class AdjustUserSubscriptionCommandHandler(
-    INotificationService notificationService,
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
@@ -41,7 +37,7 @@ internal sealed class AdjustUserSubscriptionCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.CannotExtendLifetimeSubscription);
         }
-        else if (userSubscription.EndDate.HasValue && userSubscription.EndDate.Value.AddDays(command.DurationInDays) <= dateTimeProvider.Today 
+        else if (userSubscription.EndDate.HasValue && userSubscription.EndDate.Value.AddDays(command.DurationInDays) <= dateTimeProvider.Today
             || userSubscription.RemainingDaysAfterPause.HasValue && userSubscription.RemainingDaysAfterPause.Value + command.DurationInDays <= 0)
         {
             return Result.Failure(SubscriptionErrors.CannotReduceBelowRemainingDay);
@@ -51,28 +47,7 @@ internal sealed class AdjustUserSubscriptionCommandHandler(
             userSubscription.Adjust(command.DurationInDays);
         }
         userSubscriptionRepository.Update(userSubscription);
-
-        string title = "Subscription Adjusted";
-        string adjustmentType = command.DurationInDays > 0 ? "extended" : "reduced";
-        string body = $"Your subscription '{subscription.Name}' has been {adjustmentType} by {Math.Abs(command.DurationInDays)} day(s).";
-        var payload = new Dictionary<string, string>
-        {
-            { "UserSubscriptionId", userSubscription.Id.ToString() },
-            { "SubscriptionId", subscription.Id.ToString() },
-            { "SubscriptionName", subscription.Name  },
-            { "AdjustmentInDays", command.DurationInDays.ToString(CultureInfo.InvariantCulture) },
-        };
-        Result notificationResult = await notificationService.SendToUserAsync(
-            userSubscription.UserId,
-            title,
-            body,
-            NotificationType.Subscription,
-            payload,
-            cancellationToken);
-        if (notificationResult.IsFailure)
-        {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }       
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }

@@ -1,19 +1,15 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Exceptions;
-using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Notifications;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Application.UserSubscriptions.CancelSubscription;
 
 internal sealed class CancelSubscriptionCommandHandler(
-    INotificationService notificationService,
     ISubscriptionService subscriptionService,
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
@@ -55,20 +51,8 @@ internal sealed class CancelSubscriptionCommandHandler(
             {
                 return Result.Failure(deactivationResult.Error);
             }
-            string title = "Subscription Cancelled";
-            string body = $"Your {subscription.Name} subscription has been cancelled.";
-            var payload = new Dictionary<string, string>
-            {
-                { "userSubscriptionId", userSubscription.Id.ToString() },
-                { "subscriptionId", subscription.Id.ToString() },
-                { "subscriptionName", subscription.Name  }
-            };
-            Result notificationResult = await notificationService
-                .SendToUserAsync(userSubscription.UserId, title, body, NotificationType.Subscription, payload, cancellationToken);
-            if (notificationResult.IsFailure)
-            {
-                await unitOfWork.SaveChangesAsync(cancellationToken); //since service won't call save changes
-            }
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
             return Result.Success();
         }
     }

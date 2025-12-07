@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.GroceryLists;
@@ -14,7 +14,7 @@ internal sealed class UpdateGroceryListCommandHandler(
     IDateTimeProvider dateTimeProvider
 ) : ICommandHandler<UpdateGroceryListCommand, Guid>
 {
-    public async Task<Result<Guid>>Handle(UpdateGroceryListCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(UpdateGroceryListCommand command, CancellationToken cancellationToken)
     {
         GroceryList? list = await groceryListRepository.GetByIdAsync(command.Id, cancellationToken);
         if (list is null)
@@ -24,7 +24,7 @@ internal sealed class UpdateGroceryListCommandHandler(
 
         if (list.HouseholdId != userContext.HouseholdId)
         {
-            return Result.Failure <Guid>(GroceryListErrors.ForbiddenAccess);
+            return Result.Failure<Guid>(GroceryListErrors.ForbiddenAccess);
         }
 
         bool nameExists = await groceryListRepository.AnyAsync(
@@ -35,7 +35,7 @@ internal sealed class UpdateGroceryListCommandHandler(
 
         if (nameExists)
         {
-            return Result.Failure <Guid>(GroceryListErrors.DuplicateName);
+            return Result.Failure<Guid>(GroceryListErrors.DuplicateName);
         }
 
         if (!string.Equals(list.Name, command.Name, StringComparison.Ordinal))

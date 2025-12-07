@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.FoodReferences.Get;
 
-namespace Pento.Application.FoodReferences.Get;
 public sealed record FoodReferenceResponse(
     Guid Id,
     string Name,
-    string FoodGroup,              
+    string FoodGroup,
     int TypicalShelfLifeDays_Pantry,
     int TypicalShelfLifeDays_Fridge,
     int TypicalShelfLifeDays_Freezer,

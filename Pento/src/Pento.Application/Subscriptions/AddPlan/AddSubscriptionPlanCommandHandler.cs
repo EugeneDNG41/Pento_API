@@ -1,5 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Subscriptions;
 
@@ -31,9 +31,9 @@ internal sealed class AddSubscriptionPlanCommandHandler(
             return Result.Failure<Guid>(SubscriptionErrors.NoMoreThanOneLifetimePlan);
         }
         bool duplicatePlan = await subscriptionPlanRepository
-            .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId && 
-            sp.Amount == command.Amount && 
-            sp.Currency == command.Currency && 
+            .AnyAsync(sp => sp.SubscriptionId == command.SubscriptionId &&
+            sp.Amount == command.Amount &&
+            sp.Currency == command.Currency &&
             sp.DurationInDays == command.DurationInDays, cancellationToken);
         if (duplicatePlan)
         {

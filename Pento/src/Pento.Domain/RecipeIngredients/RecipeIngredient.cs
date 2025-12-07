@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeIngredients.Events;
 
 namespace Pento.Domain.RecipeIngredients;
+
 public sealed class RecipeIngredient : Entity
 {
     public RecipeIngredient(

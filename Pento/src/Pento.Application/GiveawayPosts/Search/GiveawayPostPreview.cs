@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.GiveawayPosts.Search;
 
-namespace Pento.Application.GiveawayPosts.Search;
 public sealed record GiveawayPostPreviewRow
 {
     public Guid Id { get; init; }

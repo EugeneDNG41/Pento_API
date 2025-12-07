@@ -28,7 +28,7 @@ internal sealed class DeviceTokenConfiguration : IEntityTypeConfiguration<Device
         builder.Property(dt => dt.Platform)
             .HasColumnName("platform")
             .IsRequired()
-            .HasConversion<string>();   
+            .HasConversion<string>();
 
         builder.HasIndex(dt => dt.UserId)
             .HasDatabaseName("ix_device_tokens_user_id");

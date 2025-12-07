@@ -10,7 +10,7 @@ namespace Pento.Application.Users.RefreshToken;
 internal sealed class RefreshTokenCommandHandler(IJwtService jwtService) : ICommandHandler<RefreshTokenCommand, AuthToken>
 {
     public async Task<Result<AuthToken>> Handle(
-        RefreshTokenCommand command, 
+        RefreshTokenCommand command,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))

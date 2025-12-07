@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
@@ -25,7 +25,7 @@ public sealed record ActivityCountByDate
     public DateOnly FromDate { get; init; }
     public DateOnly ToDate { get; init; }
     public int Count { get; init; }
-    
+
 }
 internal sealed class GetActivitySummaryQueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetActivitySummaryQuery, IReadOnlyList<ActivitySummary>>
 {

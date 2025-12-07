@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Compartments.Create;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Compartments.Post;
 
@@ -26,7 +25,7 @@ internal sealed class CreateCompartment : IEndpoint
     }
     internal sealed class Request
     {
-        public string Name { get; init; }     
+        public string Name { get; init; }
         public string? Notes { get; init; }
     }
 }

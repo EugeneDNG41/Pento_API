@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Security.Cryptography;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Domain.Households;
@@ -55,13 +50,4 @@ public sealed class Household : Entity
         Raise(new HouseholdDeletedDomainEvent(Id));
 
     }
-}
-public sealed class HouseholdDeletedDomainEvent(Guid householdId) : DomainEvent
-{
-    public Guid HouseholdId { get; } = householdId;
-}
-public sealed class HouseholdCreatedDomainEvent(Guid householdId, Guid userId) : DomainEvent
-{
-    public Guid HouseholdId { get; } = householdId;
-    public Guid UserId { get; } = userId;
 }

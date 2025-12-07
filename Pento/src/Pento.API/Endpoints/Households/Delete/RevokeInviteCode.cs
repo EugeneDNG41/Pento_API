@@ -1,11 +1,7 @@
 ﻿using Pento.API.Extensions;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Households.RemoveMember;
 using Pento.Application.Households.RevokeInvite;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Households;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Households.Delete;
 

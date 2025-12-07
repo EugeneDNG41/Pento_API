@@ -14,8 +14,8 @@ internal sealed class GetMilestones : IEndpoint
         app.MapGet("admin/milestones", async (
             string? searchText,
             bool? isActive,
-            bool? isDeleted,            
-            IQueryHandler<GetAdminMilestonesQuery, PagedList<AdminMilestoneResponse>> handler,           
+            bool? isDeleted,
+            IQueryHandler<GetAdminMilestonesQuery, PagedList<AdminMilestoneResponse>> handler,
             CancellationToken cancellationToken,
             GetAdminMilestoneSortBy sortBy = GetAdminMilestoneSortBy.Id,
             SortOrder order = SortOrder.ASC,

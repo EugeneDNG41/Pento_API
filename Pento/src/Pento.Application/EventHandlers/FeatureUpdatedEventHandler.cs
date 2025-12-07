@@ -37,14 +37,14 @@ internal sealed class FeatureUpdatedEventHandler( //business logic to update use
             {
                 if (feature.DefaultQuota == null && feature.DefaultResetPeriod == null)
                 {
-                    userEntitlementRepository.Remove(userEntitlement); 
+                    userEntitlementRepository.Remove(userEntitlement);
                 }
                 else
                 {
                     userEntitlement.UpdateEntitlement(
                         feature.DefaultQuota,
                         feature.DefaultResetPeriod);
-                }               
+                }
             }
             userEntitlementRepository.UpdateRange(userEntitlements);
             await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Pento.Domain.Abstractions;
 
-
-namespace Pento.Domain.Abstractions;
 public abstract class BaseEntity
 {
     private readonly List<IDomainEvent> _domainEvents = [];

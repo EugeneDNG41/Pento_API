@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.FoodItemReservations;
+﻿using Pento.Domain.FoodItemReservations;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Reserve;
+
 public sealed record MealPlanReservationDetailResponse(
     MealPlanReservationInfo Reservation,
     FoodItemInfo FoodItem,

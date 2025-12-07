@@ -3,6 +3,7 @@ using Pento.Infrastructure.Utility.Outbox;
 using Quartz;
 
 namespace Pento.Infrastructure.External.Quartz;
+
 internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : IConfigureOptions<QuartzOptions>
 {
     public void Configure(QuartzOptions options)

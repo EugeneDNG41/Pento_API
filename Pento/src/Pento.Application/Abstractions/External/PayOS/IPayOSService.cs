@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PayOS.Models.V2.PaymentRequests;
-using PayOS.Models.Webhooks;
+﻿using PayOS.Models.Webhooks;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 
 namespace Pento.Application.Abstractions.External.PayOS;
+
 public interface IPayOSService
 {
     Task<Result> CancelPaymentAsync(Payment payment, string? reason, CancellationToken cancellationToken);

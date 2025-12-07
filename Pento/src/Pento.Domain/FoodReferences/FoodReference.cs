@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences.Events;
 using Pento.Domain.Units;
 
@@ -40,7 +34,7 @@ public sealed class FoodReference : Entity
         TypicalShelfLifeDays_Pantry = typicalShelfLifeDaysPantry ?? 0;
         TypicalShelfLifeDays_Fridge = typicalShelfLifeDaysFridge ?? 0;
         TypicalShelfLifeDays_Freezer = typicalShelfLifeDaysFreezer ?? 0;
-        AddedBy= addedBy;
+        AddedBy = addedBy;
         ImageUrl = imageUrl;
         UnitType = unitType;
         CreatedOnUtc = createdOnUtc;

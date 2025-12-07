@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Compartments.GetAll;
 using Pento.Application.Storages.GetAll;
@@ -13,7 +13,7 @@ namespace Pento.Application.Storages.GetById;
 
 internal sealed class GetStorageByIdQueryHandler(
     IUserContext userContext,
-    ISqlConnectionFactory sqlConnectionFactory) 
+    ISqlConnectionFactory sqlConnectionFactory)
     : IQueryHandler<GetStorageByIdQuery, StorageDetailResponse>
 {
     public async Task<Result<StorageDetailResponse>> Handle(

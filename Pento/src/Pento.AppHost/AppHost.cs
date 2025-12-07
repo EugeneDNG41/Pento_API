@@ -1,4 +1,3 @@
-using Aspire.Hosting;
 using Aspire.Hosting.Azure;
 using Azure.Provisioning;
 using Azure.Provisioning.PostgreSql;
@@ -124,7 +123,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Google__TokenUri", googleTokenUri)
     .WithEnvironment("Google__AuthProviderX509CertUrl", googleAuthProviderCertUrl)
     .WithEnvironment("Google__ClientX509CertUrl", googleClientCertUrl)
-    .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)        
+    .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)

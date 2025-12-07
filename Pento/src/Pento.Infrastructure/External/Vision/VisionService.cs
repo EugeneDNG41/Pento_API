@@ -1,5 +1,5 @@
-﻿using Azure.AI.Vision.ImageAnalysis;
-using Azure;
+﻿using Azure;
+using Azure.AI.Vision.ImageAnalysis;
 using Microsoft.Extensions.Configuration;
 using Pento.Application.Abstractions.External.Vision;
 
@@ -57,8 +57,8 @@ public class VisionService : IVisionService
         ArgumentNullException.ThrowIfNull(imageUrl);
 
         VisualFeatures features =
-            VisualFeatures.Read |       
-            VisualFeatures.Caption;    
+            VisualFeatures.Read |
+            VisualFeatures.Caption;
 
         var options = new ImageAnalysisOptions
         {

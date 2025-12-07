@@ -3,6 +3,6 @@
 namespace Pento.Application.Storages.GetById;
 
 public sealed record GetStorageByIdQuery(
-    Guid StorageId, 
+    Guid StorageId,
     int PageNumber,
     int PageSize) : IQuery<StorageDetailResponse>;

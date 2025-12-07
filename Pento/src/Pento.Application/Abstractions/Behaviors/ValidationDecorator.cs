@@ -1,6 +1,4 @@
-﻿
-using System.Reflection;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;

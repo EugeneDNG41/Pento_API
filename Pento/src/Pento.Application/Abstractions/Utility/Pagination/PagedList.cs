@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pento.Application.Abstractions.Utility.Pagination;
+﻿namespace Pento.Application.Abstractions.Utility.Pagination;
 
 public sealed class PagedList<T>
 {
@@ -14,7 +8,7 @@ public sealed class PagedList<T>
     public int TotalCount { get; init; }
     public bool HasPrevious => CurrentPage > 1;
     public bool HasNext => CurrentPage < TotalPages;
-    public IReadOnlyList<T> Items {  get; init; }
+    public IReadOnlyList<T> Items { get; init; }
     public PagedList(List<T> items, int count, int pageNumber, int pageSize)
     {
         CurrentPage = pageNumber;

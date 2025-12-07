@@ -1,20 +1,19 @@
 ﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.Units;
-using Pento.Domain.Users;
 
 namespace Pento.Domain.FoodItems;
+
 public sealed class FoodItem : Entity
 {
     public FoodItem(
         Guid id,
-        Guid foodReferenceId, 
+        Guid foodReferenceId,
         Guid compartmentId,
         Guid householdId,
         string name,
         Uri? imageUrl,
-        decimal quantity, 
-        Guid unitId, 
+        decimal quantity,
+        Guid unitId,
         DateOnly expirationDate,
         string? notes,
         Guid addedBy)
@@ -40,7 +39,7 @@ public sealed class FoodItem : Entity
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }
     public DateOnly ExpirationDate { get; private set; }
-    public string? Notes { get; private set; } 
+    public string? Notes { get; private set; }
     public Guid AddedBy { get; private set; }
     public Guid? LastModifiedBy { get; private set; }
 
@@ -75,7 +74,7 @@ public sealed class FoodItem : Entity
     {
         Raise(new FoodItemQuantityAdjustedDomainEvent(Id, newQuantity - Quantity, UnitId, userId));
         Quantity = newQuantity;
-        LastModifiedBy = userId;      
+        LastModifiedBy = userId;
     }
     public void Consume(decimal qtyInItemUnit, decimal qtyInRequestUnit, Guid unitId, Guid userId)
     {

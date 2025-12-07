@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
+﻿using System.Net.Http.Json;
 using System.Text.Json;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pento.Application.Abstractions.External.File;
 using Pento.Infrastructure.Persistence;
 
 namespace Pento.Infrastructure.External.AI;
+
 internal sealed class ImagenFoodImageGenerator(HttpClient http, IConfiguration config, ApplicationDbContext db)
     : IFoodImageGenerator
 {

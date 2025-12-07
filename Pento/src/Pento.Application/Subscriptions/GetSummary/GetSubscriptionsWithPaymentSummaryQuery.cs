@@ -5,8 +5,8 @@ namespace Pento.Application.Subscriptions.GetSummary;
 
 public sealed record GetSubscriptionsWithPaymentSummaryQuery(
     Guid[]? SubscriptionIds,
-    DateOnly? FromDate, 
+    DateOnly? FromDate,
     DateOnly? ToDate,
     TimeWindow? TimeWindow,
-    bool? IsActive, 
+    bool? IsActive,
     bool? IsDeleted) : IQuery<IReadOnlyList<SubscriptionWithPaymentSummary>>;

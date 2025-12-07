@@ -29,8 +29,8 @@ internal sealed class CreateMealPlanFromRecipe : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.MealPlans)          
-        .RequireAuthorization();           
+        .WithTags(Tags.MealPlans)
+        .RequireAuthorization();
     }
 
     internal sealed class Request

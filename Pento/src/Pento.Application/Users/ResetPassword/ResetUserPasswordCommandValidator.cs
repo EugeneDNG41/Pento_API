@@ -10,4 +10,4 @@ internal sealed class ResetUserPasswordCommandValidator : AbstractValidator<Rese
             .NotEmpty().WithMessage("Email is required.")
             .EmailAddress().WithMessage("Invalid email format.");
     }
-}   
+}

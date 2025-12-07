@@ -24,7 +24,7 @@ internal sealed class RegisterDeviceTokenEndpoint : IEndpoint
             Result<string> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
-                _ => Results.Ok(new {  request.Token }),
+                _ => Results.Ok(new { request.Token }),
                 CustomResults.Problem
             );
         })

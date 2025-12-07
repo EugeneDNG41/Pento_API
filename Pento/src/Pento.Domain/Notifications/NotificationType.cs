@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Domain.Notifications;
 
-namespace Pento.Domain.Notifications;
 public enum NotificationType
 {
     General = 1,
@@ -14,7 +9,7 @@ public enum NotificationType
     GiveawayPost = 5,
     GiveawayClaim = 6,
     Subscription = 7,
-    Milestone = 8
-
+    Milestone = 8,
+    Entitlement = 9
 }
 

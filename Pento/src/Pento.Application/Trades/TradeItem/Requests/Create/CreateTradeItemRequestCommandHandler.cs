@@ -118,8 +118,8 @@ internal sealed class CreateTradeItemRequestCommandHandler(
                 quantity: dto.Quantity,
                 unitId: dto.UnitId,
                 reservationStatus: ReservationStatus.Pending,
-                reservationFor: ReservationFor.Donation,   
-                giveAwayPostId: req.Id  
+                reservationFor: ReservationFor.Donation,
+                giveAwayPostId: req.Id
             );
 
             reservationRepo.Add(reservation);

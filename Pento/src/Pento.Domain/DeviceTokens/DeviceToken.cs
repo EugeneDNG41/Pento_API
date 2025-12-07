@@ -21,7 +21,7 @@ public sealed class DeviceToken : Entity
     public void UpdateToken(string token)
     {
         Token = token;
-    }       
+    }
 }
 
 public enum DevicePlatform

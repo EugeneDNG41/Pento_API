@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Features.GetAll;
@@ -27,7 +27,7 @@ internal sealed class GetFeaturesQueryHandler(ISqlConnectionFactory sqlConnectio
             WHERE (@SearchText IS NULL OR name ILIKE '%' || @SearchText ||  '%' OR description ILIKE '%' || @SearchText || '%' OR code ILIKE '%' || @SearchText || '%')
             ORDER BY name;
         ";
-        CommandDefinition command = new(sql, new { query.SearchText}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { query.SearchText }, cancellationToken: cancellationToken);
         IEnumerable<FeatureResponse> features = await connection.QueryAsync<FeatureResponse>(command);
         return features.ToList();
     }

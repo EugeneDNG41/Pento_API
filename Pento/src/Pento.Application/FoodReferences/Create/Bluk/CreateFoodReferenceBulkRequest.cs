@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.FoodReferences.Create.Bluk;
 
-namespace Pento.Application.FoodReferences.Create.Bluk;
 public sealed class CreateFoodReferenceBulkRequest
 {
     public string Name { get; init; } = string.Empty;

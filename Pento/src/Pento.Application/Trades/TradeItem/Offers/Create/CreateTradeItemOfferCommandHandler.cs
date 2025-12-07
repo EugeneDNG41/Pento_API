@@ -116,7 +116,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
                 unitId: dto.UnitId,
                 reservationStatus: ReservationStatus.Pending,
                 reservationFor: ReservationFor.Donation,
-                giveAwayPostId: offer.Id  
+                giveAwayPostId: offer.Id
             );
 
             reservationRepository.Add(reservation);

@@ -41,14 +41,14 @@ public class Payment : Entity
     public string? ProviderDescription { get; private set; }
     public long AmountDue { get; private set; }
     public long AmountPaid { get; private set; }
-    public Currency Currency {  get; private set; }
+    public Currency Currency { get; private set; }
     public PaymentStatus Status { get; private set; }
     public Uri? CheckoutUrl { get; private set; }
     public string? QrCode { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? ExpiresAt { get; private set; }
     public DateTime? PaidAt { get; private set; }
-    public DateTime? CancelledAt { get; private set; }   
+    public DateTime? CancelledAt { get; private set; }
     public string? CancellationReason { get; private set; }
 
     public static Payment Create(

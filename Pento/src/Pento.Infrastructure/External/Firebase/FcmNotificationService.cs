@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using FirebaseAdmin.Messaging;
+﻿using FirebaseAdmin.Messaging;
 using Newtonsoft.Json;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.Firebase;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DeviceTokens;
@@ -53,7 +52,7 @@ public sealed class FcmNotificationService : INotificationService
                 Data = data
             };
             await firebaseMessaging.SendAsync(message, cancellationToken);
-        } 
+        }
         catch (FirebaseMessagingException)
         {
             return Result.Failure(NotificationErrors.SendingFailed);
@@ -110,7 +109,7 @@ public sealed class FcmNotificationService : INotificationService
                     return result;
                 }
             }
-        }       
+        }
         return Result.Success();
     }
     public async Task<Result> SendUserMilestoneAchievedAsync(

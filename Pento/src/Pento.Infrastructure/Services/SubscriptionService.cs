@@ -1,12 +1,10 @@
 ﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserEntitlements;
 using Pento.Domain.UserSubscriptions;
-using Pento.Application.Abstractions.External.Firebase;
 
 namespace Pento.Infrastructure.Services;
 

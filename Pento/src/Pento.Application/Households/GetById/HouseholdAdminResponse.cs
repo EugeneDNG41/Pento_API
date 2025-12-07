@@ -8,7 +8,7 @@ public sealed class HouseholdAdminResponse
     public DateTime? InviteCodeExpirationUtc { get; init; }
     public bool IsDeleted { get; init; }
     public List<HouseholdMemberAdminResponse> Members { get; init; } = new();
-    
+
 }
 public sealed class HouseholdMemberAdminResponse
 {

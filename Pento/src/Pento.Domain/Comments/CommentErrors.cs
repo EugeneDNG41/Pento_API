@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pento.Domain.Comments;
+﻿namespace Pento.Domain.Comments;
 
 public static class CommentErrors
 {

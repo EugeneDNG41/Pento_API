@@ -1,7 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Create;
-using Pento.Application.Users.Get;
 using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
 
@@ -13,8 +12,8 @@ internal sealed class CreateUser : IEndpoint
     {
         app.MapPost("admin/users", async (
             HttpContext context,
-            Request request, 
-            ICommandHandler<CreateUserCommand, BasicUserResponse> handler, 
+            Request request,
+            ICommandHandler<CreateUserCommand, BasicUserResponse> handler,
             CancellationToken cancellationToken) =>
         {
             Result<BasicUserResponse> result = await handler.Handle(new CreateUserCommand(
@@ -22,7 +21,7 @@ internal sealed class CreateUser : IEndpoint
                 request.Password,
                 request.FirstName,
                 request.LastName), cancellationToken);
-            
+
             return result.Match(Results.Ok, CustomResults.Problem);
         })
         .RequireAuthorization(Permissions.ManageUsers)

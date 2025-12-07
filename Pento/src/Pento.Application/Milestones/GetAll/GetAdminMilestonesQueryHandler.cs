@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Milestones.GetById;
 using Pento.Domain.Abstractions;
@@ -27,7 +27,8 @@ internal sealed class GetAdminMilestonesQueryHandler(ISqlConnectionFactory sqlCo
             filters.Add("is_active = @IsActive");
             parameters.Add("IsActive", query.IsActive.Value);
         }
-        if (query.IsDeleted.HasValue) {
+        if (query.IsDeleted.HasValue)
+        {
             filters.Add("is_deleted = @IsDeleted");
             parameters.Add("IsDeleted", query.IsDeleted.Value);
         }

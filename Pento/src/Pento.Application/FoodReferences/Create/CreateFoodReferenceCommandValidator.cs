@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Pento.Application.FoodReferences.Create;
+
 internal sealed class CreateFoodReferenceCommandValidator : AbstractValidator<CreateFoodReferenceCommand>
 {
     public CreateFoodReferenceCommandValidator()

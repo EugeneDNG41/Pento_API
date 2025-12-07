@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Pento.Application.Abstractions.Persistence;
+﻿using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 
 
 namespace Pento.Application.FoodReferences.GenerateImage;
+
 internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
     IGenericRepository<FoodReference> foodRepo,
     IPixabayImageService pixabayService,
@@ -26,7 +22,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
         int limit = Math.Clamp(request.Limit, 1, 50);
 
         var foods = (await foodRepo.FindAsync(
-            fr => fr.ImageUrl == null ,
+            fr => fr.ImageUrl == null,
             cancellationToken
         )).Take(limit).ToList();
 

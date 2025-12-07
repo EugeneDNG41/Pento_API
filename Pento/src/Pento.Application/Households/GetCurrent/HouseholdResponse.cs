@@ -15,6 +15,6 @@ public sealed class HouseholdMemberResponse
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string? AvatarUrl { get; init; }
-    public string Roles { get; init; } 
+    public string Roles { get; init; }
 }
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Pento.Application.Recipes.Get;
+﻿namespace Pento.Application.Recipes.Get;
 
 public sealed class RecipeDetailResponse
 {
@@ -28,7 +26,7 @@ public sealed class RecipeIngredientItem
     public Guid IngredientId { get; init; }
     public Guid FoodRefId { get; init; }
     public string FoodRefName { get; init; } = string.Empty;
-    public Uri ImageUrl {  get; init; }
+    public Uri ImageUrl { get; init; }
     public decimal Quantity { get; init; }
     public Guid UnitId { get; init; }
     public string UnitName { get; init; } = string.Empty;

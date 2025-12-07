@@ -1,10 +1,9 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.GroceryListAssignees;
 using Pento.Domain.GroceryLists;
-using Pento.Domain.Households;
 using Pento.Domain.Users;
 
 namespace Pento.Application.GroceryListAssignees.Create;
@@ -26,7 +25,7 @@ internal sealed class CreateGroceryListAssigneeCommandHandler(
         if (exists)
         {
             return Result.Failure<Guid>(GroceryListAssigneeErrors.DuplicateAssignment);
-        } 
+        }
 
         GroceryList? groceryList = await groceryListdRepository.GetByIdAsync(request.GroceryListId, cancellationToken);
         if (groceryList == null || groceryList.Id != request.GroceryListId)

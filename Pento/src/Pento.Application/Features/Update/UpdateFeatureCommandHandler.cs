@@ -1,8 +1,7 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
-using Pento.Domain.Shared;
 
 namespace Pento.Application.Features.Update;
 

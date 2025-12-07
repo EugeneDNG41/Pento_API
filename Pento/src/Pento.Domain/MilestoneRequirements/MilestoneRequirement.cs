@@ -1,9 +1,9 @@
 ﻿using Pento.Domain.Abstractions;
-using Pento.Domain.Activities;
+using Pento.Domain.Milestones;
 
 namespace Pento.Domain.MilestoneRequirements;
 
-public sealed class MilestoneRequirement
+public sealed class MilestoneRequirement : BaseEntity
 {
     private MilestoneRequirement() { }
     public MilestoneRequirement(Guid id, Guid milestoneId, string activityCode, int quota, int? withinDays)
@@ -42,6 +42,7 @@ public sealed class MilestoneRequirement
         {
             WithinDays = withinDays;
         }
+        Raise(new MilestoneEnabledOrUpdatedDomainEvent(MilestoneId));
     }
 
 }

@@ -14,7 +14,7 @@ public sealed class UpdateRecipeImageCommandValidator
         "image/gif"
     };
 
-    private const long MaxFileSizeBytes = 5 * 1024 * 1024; 
+    private const long MaxFileSizeBytes = 5 * 1024 * 1024;
 
     public UpdateRecipeImageCommandValidator()
     {

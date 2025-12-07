@@ -37,7 +37,7 @@ internal sealed class NotificationConfiguration : IEntityTypeConfiguration<Notif
 
         builder.Property(n => n.DataJson)
             .HasColumnName("data_json")
-            .HasColumnType("jsonb")  
+            .HasColumnType("jsonb")
             .IsRequired(false);
 
 

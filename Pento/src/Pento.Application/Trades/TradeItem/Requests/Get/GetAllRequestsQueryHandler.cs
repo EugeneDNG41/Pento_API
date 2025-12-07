@@ -46,7 +46,8 @@ internal sealed class GetTradeRequestsByOfferQueryHandler(ISqlConnectionFactory 
         );
 
         var grouped = rows
-            .GroupBy(r => new {
+            .GroupBy(r => new
+            {
                 r.RequestId,
                 r.UserId,
                 r.FirstName,

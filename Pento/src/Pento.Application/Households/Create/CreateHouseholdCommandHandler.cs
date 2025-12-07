@@ -1,20 +1,20 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Storages;
 using Pento.Domain.Users;
-using Pento.Application.Abstractions.Utility.Clock;
 
 namespace Pento.Application.Households.Create;
 
 internal sealed class CreateHouseholdCommandHandler(
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
-    IGenericRepository<Household> householdRepository, 
+    IGenericRepository<Household> householdRepository,
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
     IGenericRepository<Storage> storageRepository,
@@ -23,7 +23,7 @@ internal sealed class CreateHouseholdCommandHandler(
 {
     public async Task<Result<string>> Handle(CreateHouseholdCommand command, CancellationToken cancellationToken)
     {
-        User? currentUser = (await userRepository.FindIncludeAsync(u => u.Id == userContext.UserId, u => u.Roles, cancellationToken)).SingleOrDefault();        
+        User? currentUser = (await userRepository.FindIncludeAsync(u => u.Id == userContext.UserId, u => u.Roles, cancellationToken)).SingleOrDefault();
         if (currentUser is null)
         {
             return Result.Failure<string>(UserErrors.NotFound);
@@ -49,7 +49,7 @@ internal sealed class CreateHouseholdCommandHandler(
         var household = Household.Create(command.Name, dateTimeProvider.UtcNow, userContext.UserId);
         householdRepository.Add(household);
 
-        currentUser.SetHouseholdId(household.Id);       
+        currentUser.SetHouseholdId(household.Id);
         currentUser.SetRoles([householdHeadRole]);
         userRepository.Update(currentUser);
 

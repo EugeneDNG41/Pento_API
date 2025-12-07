@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.Recipes.Get;
 
-namespace Pento.Application.Recipes.Get;
 public sealed record RecipeResponse(
     Guid Id,
     string Title,

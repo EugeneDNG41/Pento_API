@@ -6,6 +6,7 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Infrastructure.External.File;
+
 public sealed class BlobService : IBlobService
 {
     private readonly BlobServiceClient _blobServiceClient;
@@ -137,12 +138,12 @@ public sealed class BlobService : IBlobService
                 "image/png" => ".png",
                 "image/webp" => ".webp",
                 "image/gif" => ".gif",
-                _ => Path.GetExtension(source) 
+                _ => Path.GetExtension(source)
             };
 
             if (string.IsNullOrWhiteSpace(extension))
             {
-                extension = ".jpg"; 
+                extension = ".jpg";
             }
 
             string fileName = $"{DateTime.UtcNow:yyyyMMdd_HHmmss}{Guid.NewGuid():N}{extension}";

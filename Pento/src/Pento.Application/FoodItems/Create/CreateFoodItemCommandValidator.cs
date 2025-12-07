@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Pento.Application.FoodItems.Create;
 
@@ -17,7 +12,7 @@ internal sealed class CreateFoodItemCommandValidator : AbstractValidator<CreateF
         RuleFor(x => x.CompartmentId).NotEmpty().WithMessage("Compartment Id is required.");
         RuleFor(x => x.Quantity).GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         RuleFor(x => x.ExpirationDate!.Value)
-                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))           
+                .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
                 .When(x => x.ExpirationDate.HasValue)
                 .WithMessage("Expiration date must not be in the past.");
     }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Pento.Domain.DietaryTags;
-
-namespace Pento.Domain.DietaryTags;
+﻿namespace Pento.Domain.DietaryTags;
 
 public static class DietaryTagData
 {

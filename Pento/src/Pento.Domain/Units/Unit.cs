@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.Units.Events;
 
 namespace Pento.Domain.Units;
+
 public sealed class Unit : Entity
 {
-    
+
     public Unit(
         Guid id,
         string name,

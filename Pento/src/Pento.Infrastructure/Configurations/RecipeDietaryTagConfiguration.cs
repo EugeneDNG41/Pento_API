@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.RecipeDietaryTags;
 
 namespace Pento.Infrastructure.Configurations;
+
 public sealed class RecipeDietaryTagConfiguration : IEntityTypeConfiguration<RecipeDietaryTag>
 {
     public void Configure(EntityTypeBuilder<RecipeDietaryTag> builder)

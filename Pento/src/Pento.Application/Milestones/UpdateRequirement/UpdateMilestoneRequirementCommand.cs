@@ -1,5 +1,4 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.Shared;
 
 namespace Pento.Application.Milestones.UpdateRequirement;
 

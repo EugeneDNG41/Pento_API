@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pento.Domain.Permissions;
+﻿namespace Pento.Domain.Permissions;
 
 public sealed class Permission
 {
@@ -56,7 +50,7 @@ public sealed class Permission
     public static readonly Permission UpdateGroceries = new("groceries:update", "Update Groceries", "Edit grocery lists and list items.");
     public static readonly Permission DeleteGroceries = new("groceries:delete", "Delete Groceries", "Delete grocery lists and/or list items.");
 
-    
+
 
     // Admin (system-wide scope)
     public static readonly Permission GetUsers = new("users:read", "View Users", "View user accounts and basic profile/usage data. Read-only.");

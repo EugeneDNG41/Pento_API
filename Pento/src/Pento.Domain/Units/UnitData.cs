@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Pento.Domain.Units;
+﻿namespace Pento.Domain.Units;
 
 public static class UnitData
 {
@@ -18,19 +12,19 @@ public static class UnitData
     public static readonly Unit Kilogram = Unit.Create(
         name: "Kilogram",
         abbreviation: "kg",
-        toBaseFactor: 1000m, 
+        toBaseFactor: 1000m,
         type: UnitType.Weight);
 
     public static readonly Unit Ounce = Unit.Create(
         name: "Ounce",
         abbreviation: "oz",
-        toBaseFactor: 28.3495m, 
+        toBaseFactor: 28.3495m,
         type: UnitType.Weight);
 
     public static readonly Unit Pound = Unit.Create(
         name: "Pound",
         abbreviation: "lb",
-        toBaseFactor: 453.592m, 
+        toBaseFactor: 453.592m,
         type: UnitType.Weight);
 
 
@@ -38,43 +32,43 @@ public static class UnitData
     public static readonly Unit Millilitre = Unit.Create(
         name: "Millilitre",
         abbreviation: "mL",
-        toBaseFactor: 1m, 
+        toBaseFactor: 1m,
         type: UnitType.Volume);
 
     public static readonly Unit Litre = Unit.Create(
         name: "Litre",
         abbreviation: "L",
-        toBaseFactor: 1000m, 
+        toBaseFactor: 1000m,
         type: UnitType.Volume);
 
     public static readonly Unit USFluidOunce = Unit.Create(
         name: "Fluid ounce (US)",
         abbreviation: "fl oz",
-        toBaseFactor: 29.574m, 
+        toBaseFactor: 29.574m,
         type: UnitType.Volume);
 
     public static readonly Unit USCup = Unit.Create(
         name: "Cup (US)",
         abbreviation: "cup (US)",
-        toBaseFactor: 240m, 
+        toBaseFactor: 240m,
         type: UnitType.Volume);
 
     public static readonly Unit USPint = Unit.Create(
         name: "Pint (US)",
         abbreviation: "pt",
-        toBaseFactor: 473.2m, 
+        toBaseFactor: 473.2m,
         type: UnitType.Volume);
 
     public static readonly Unit USQuart = Unit.Create(
         name: "Quart (US)",
         abbreviation: "qt",
-        toBaseFactor: 946.35m, 
+        toBaseFactor: 946.35m,
         type: UnitType.Volume);
 
     public static readonly Unit USGallon = Unit.Create(
         name: "Gallon (US)",
         abbreviation: "gal",
-        toBaseFactor: 3785.4m, 
+        toBaseFactor: 3785.4m,
         type: UnitType.Volume);
 
     public static readonly Unit TeaspoonUS = Unit.Create(

@@ -1,18 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
-using Pento.Domain.Recipes;
 
 namespace Pento.Infrastructure.Configurations;
+
 internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
 {
     public void Configure(EntityTypeBuilder<MealPlan> builder)
@@ -32,9 +24,9 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
 
 
 
-            builder.Property(mp => mp.MealType)
-                .IsRequired()
-                .HasConversion<string>(); 
+        builder.Property(mp => mp.MealType)
+            .IsRequired()
+            .HasConversion<string>();
 
         builder.Property(mp => mp.ScheduledDate)
             .HasColumnName("scheduled_date")

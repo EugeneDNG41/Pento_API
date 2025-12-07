@@ -1,9 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.FoodItems.GetById;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemLogs;
@@ -21,7 +20,7 @@ internal sealed class GetFoodItemLogByIdQueryHandler(IUserContext userContext, I
             return Result.Failure<FoodItemLogDetail>(HouseholdErrors.NotInAnyHouseHold);
         }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
-        
+
 
         const string sql = """
             SELECT

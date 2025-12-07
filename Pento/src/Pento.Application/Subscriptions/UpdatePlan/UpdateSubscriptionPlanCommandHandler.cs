@@ -1,7 +1,6 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.UpdatePlan;
@@ -36,7 +35,7 @@ internal sealed class UpdateSubscriptionPlanCommandHandler(
         {
             return Result.Failure<Guid>(SubscriptionErrors.NoMoreThanOneLifetimePlan);
         }
-        
+
         plan.UpdateDetails(command.Amount, command.Currency, command.DurationInDays);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

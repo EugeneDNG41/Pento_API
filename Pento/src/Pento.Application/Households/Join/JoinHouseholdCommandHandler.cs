@@ -1,7 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
@@ -11,7 +10,7 @@ namespace Pento.Application.Households.Join;
 
 internal sealed class JoinHouseholdCommandHandler(
     IUserContext userContext,
-    IGenericRepository<Household> householdRepository, 
+    IGenericRepository<Household> householdRepository,
     IGenericRepository<User> userRepository,
     IGenericRepository<Role> roleRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<JoinHouseholdCommand>
@@ -61,8 +60,8 @@ internal sealed class JoinHouseholdCommandHandler(
                 newHead.SetRoles([householdHeadRole]);
             }
         }
-        
-        currentUser.JoinHousehold(household.Id);        
+
+        currentUser.JoinHousehold(household.Id);
         currentUser.SetRoles([errandRunnerRole]);
 
         userRepository.Update(currentUser);

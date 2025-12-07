@@ -7,6 +7,6 @@ namespace Pento.Application.UserSubscriptions.GetUserSubscriptions;
 public sealed record GetUserSubscriptionsQuery(
     Guid UserId,
     string? SearchText,
-    SubscriptionStatus? Status, 
-    int? FromDuration, 
+    SubscriptionStatus? Status,
+    int? FromDuration,
     int? ToDuration) : IQuery<IReadOnlyList<UserSubscriptionResponse>>;

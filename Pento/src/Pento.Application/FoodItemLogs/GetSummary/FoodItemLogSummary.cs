@@ -14,7 +14,7 @@ public sealed record FoodItemLogSummary
     public decimal DiscardByWeight { get; init; }
     public decimal DiscardByVolume { get; init; }
 }
-public sealed record FoodItemSummary 
+public sealed record FoodItemSummary
 {
     public int TotalFoodItems { get; init; }
     public int FreshCount { get; init; }
@@ -27,7 +27,7 @@ public sealed record FoodItemSummary
     public decimal ExpiredByWeight { get; init; }
     public decimal ExpiredByVolume { get; init; }
 }
-public sealed record ReservationSummary 
+public sealed record ReservationSummary
 {
     public int TotalReservations { get; init; }
     public int PendingCount { get; init; }
@@ -36,7 +36,7 @@ public sealed record ReservationSummary
     public decimal PendingByWeight { get; init; }
     public decimal PendingByVolume { get; init; }
     public decimal FulfilledByWeight { get; init; }
-    public decimal FulfilledByVolume { get; init; }   
+    public decimal FulfilledByVolume { get; init; }
     public decimal CancelledByWeight { get; set; }
     public decimal CancelledByVolume { get; init; }
 }

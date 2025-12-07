@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Storages.Create;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 using Pento.Domain.Storages;
 
 namespace Pento.API.Endpoints.Storages.Post;

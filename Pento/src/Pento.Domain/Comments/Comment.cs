@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
-using Pento.Domain.Shared;
+﻿using Pento.Domain.Abstractions;
 
 namespace Pento.Domain.Comments;
-public class Comment:Entity
+
+public class Comment : Entity
 {
     public Comment(
        Guid id,
@@ -36,7 +31,7 @@ public class Comment:Entity
 
     public Guid UserId { get; private set; }
 
-    public string Content { get; private set; } 
+    public string Content { get; private set; }
 
     public bool IsActive { get; private set; }
 

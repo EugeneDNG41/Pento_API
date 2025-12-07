@@ -1,6 +1,10 @@
 ﻿using Azure.AI.Vision.ImageAnalysis;
-using Pento.API.Endpoints;
+using Pento.API.Extensions;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.External.Vision;
+using Pento.Application.Abstractions.Services;
+using Pento.Domain.Abstractions;
+using Pento.Domain.Features;
 
 namespace Pento.API.Endpoints.Visions.Post;
 
@@ -13,6 +17,8 @@ internal sealed class AnalyzeOcrEndpoint : IEndpoint
             IVisionService visionService,
             CancellationToken cancellationToken) =>
         {
+
+            
             if (!Uri.TryCreate(request.ImageUrl, UriKind.Absolute, out Uri? uri))
             {
                 return Results.BadRequest("Invalid image URL.");
@@ -40,7 +46,7 @@ internal sealed class AnalyzeOcrEndpoint : IEndpoint
 
             return Results.Ok(response);
         })
-        .WithTags("Vision");
+        .WithTags("Vision").RequireAuthorization();
     }
 
     internal sealed class Request

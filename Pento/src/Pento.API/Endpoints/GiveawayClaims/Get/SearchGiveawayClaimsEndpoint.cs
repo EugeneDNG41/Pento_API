@@ -15,7 +15,7 @@ internal sealed class SearchGiveawayClaimsEndpoint : IEndpoint
             Guid? giveawayPostId,
             ClaimStatus? status,
             string? searchText,
-            string? sortBy,  
+            string? sortBy,
             bool descending,
             int pageNumber,
             int pageSize,
