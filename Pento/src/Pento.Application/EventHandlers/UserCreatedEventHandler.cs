@@ -16,7 +16,7 @@ internal sealed class UserCreatedEventHandler(
         UserCreatedDomainEvent domainEvent,
         CancellationToken cancellationToken = default)
     {
-        IEnumerable<Feature> features = await featureRepository.GetAllAsync(cancellationToken);
+        IEnumerable<Feature> features = await featureRepository.FindAsync(f => f.DefaultQuota != null, cancellationToken);
         if (features.Any())
         {
             var entitlementList = new List<UserEntitlement>();
