@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Domain.Notifications;
 
 namespace Pento.Application.Notifications.Create;
 

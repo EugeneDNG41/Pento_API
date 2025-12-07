@@ -1,13 +1,7 @@
-﻿using System.Runtime.Serialization;
-using Microsoft.AspNetCore.Mvc;
-using Pento.API.Extensions;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Households.SetRoles;
-using Pento.Application.Households.Update;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Households;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Households.Put;
 

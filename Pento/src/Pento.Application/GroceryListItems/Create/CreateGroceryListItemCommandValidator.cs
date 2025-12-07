@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Domain.GroceryListItems;
 
 namespace Pento.Application.GroceryListItems.Create;
 

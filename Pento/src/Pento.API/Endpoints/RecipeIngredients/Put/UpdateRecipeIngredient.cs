@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.RecipeIngredients.Update;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 namespace Pento.API.Endpoints.RecipeIngredients.Put;
 
 internal sealed class UpdateRecipeIngredient : IEndpoint
@@ -21,11 +20,11 @@ internal sealed class UpdateRecipeIngredient : IEndpoint
         })
         .WithTags(Tags.RecipeIngredients);
     }
-internal sealed class Request
-{
-    public decimal Quantity { get; init; }
-    public string? Notes { get; init; }
-    public Guid UnitId { get; init; }
+    internal sealed class Request
+    {
+        public decimal Quantity { get; init; }
+        public string? Notes { get; init; }
+        public Guid UnitId { get; init; }
 
     }
 

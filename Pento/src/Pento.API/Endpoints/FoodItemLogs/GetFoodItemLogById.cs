@@ -1,6 +1,4 @@
-﻿using System.Threading;
-using Microsoft.AspNetCore.Routing;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItemLogs.GetById;
 using Pento.Domain.Abstractions;

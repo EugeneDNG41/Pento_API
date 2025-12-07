@@ -1,12 +1,11 @@
-﻿using Pento.Domain.Abstractions;
-using Pento.Domain.Shared;
+﻿using Pento.Domain.Shared;
 
 namespace Pento.Domain.UserEntitlements;
 
 public sealed class UserEntitlement
 {
     private UserEntitlement() { }
-    public UserEntitlement(Guid id,  Guid userId, Guid? userSubscription, string featureCode, int? quota = null, TimeUnit? resetPeriod = null)
+    public UserEntitlement(Guid id, Guid userId, Guid? userSubscription, string featureCode, int? quota = null, TimeUnit? resetPeriod = null)
     {
         Id = id;
         UserId = userId;

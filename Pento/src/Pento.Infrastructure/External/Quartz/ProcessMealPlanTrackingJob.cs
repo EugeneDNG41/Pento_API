@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Notifications;
-using Pento.Infrastructure.External.Firebase;
 using Quartz;
 
 namespace Pento.Infrastructure.External.Quartz;
+
 [DisallowConcurrentExecution]
 
 internal sealed class ProcessMealPlanTrackingJob(
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<MealPlan> mealplanRepository,
     INotificationService notificationService
-    
+
 ) : IJob
 {
     public async Task Execute(IJobExecutionContext context)

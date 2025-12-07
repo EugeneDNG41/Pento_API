@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Update;
 

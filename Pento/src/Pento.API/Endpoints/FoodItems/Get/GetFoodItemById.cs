@@ -10,8 +10,8 @@ internal sealed class GetFoodItemById : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("food-items/{id:guid}", async (
-            Guid id, 
-            IQueryHandler<GetFoodItemByIdQuery, FoodItemDetail> handler, 
+            Guid id,
+            IQueryHandler<GetFoodItemByIdQuery, FoodItemDetail> handler,
             CancellationToken cancellationToken) =>
         {
             var query = new GetFoodItemByIdQuery(id);

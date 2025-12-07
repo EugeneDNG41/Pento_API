@@ -1,5 +1,4 @@
 ﻿using Pento.Domain.Abstractions;
-using Pento.Domain.Shared;
 
 namespace Pento.Domain.Milestones;
 

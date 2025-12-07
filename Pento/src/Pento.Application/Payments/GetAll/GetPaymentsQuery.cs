@@ -5,9 +5,9 @@ using Pento.Domain.Payments;
 namespace Pento.Application.Payments.GetAll;
 
 public sealed record GetPaymentsQuery(
-    string? SearchText, 
-    long? FromAmount, 
-    long? ToAmount, 
+    string? SearchText,
+    long? FromAmount,
+    long? ToAmount,
     DateTime? FromDate,
     DateTime? ToDate,
     PaymentStatus? Status,

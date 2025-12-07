@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Roles;
@@ -10,7 +10,7 @@ namespace Pento.Application.Households.RemoveMember;
 
 internal sealed class RemoveHouseholdMemberCommandHandler(
     IUserContext userContext,
-    IGenericRepository<User> userRepository, 
+    IGenericRepository<User> userRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<RemoveHouseholdMemberCommand>
 {
     public async Task<Result> Handle(RemoveHouseholdMemberCommand command, CancellationToken cancellationToken)

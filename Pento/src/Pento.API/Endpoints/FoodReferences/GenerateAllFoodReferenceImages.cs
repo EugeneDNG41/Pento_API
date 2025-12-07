@@ -1,5 +1,4 @@
-﻿using Pento.API.Endpoints;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodReferences.GenerateImage;
 using Pento.Domain.Abstractions;

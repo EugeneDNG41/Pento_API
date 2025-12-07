@@ -1,5 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeDirections;
 
@@ -18,7 +18,7 @@ internal sealed class UpdateRecipeDirectionCommandHandler(
             return Result.Failure(RecipeDirectionErrors.NotFound);
         }
 
-        direction.Update(command.Description,DateTime.UtcNow);
+        direction.Update(command.Description, DateTime.UtcNow);
 
         recipeDirectionRepository.Update(direction);
         await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -8,8 +8,8 @@ public sealed record SearchGiveawayClaimQuery(
     Guid? GiveawayPostId,
     ClaimStatus? Status,
     string? SearchText,
-    string? SortBy,         
-    bool Descending,         
+    string? SortBy,
+    bool Descending,
     int PageNumber,
     int PageSize
 ) : IQuery<PagedList<GiveawayClaimPreview>>;

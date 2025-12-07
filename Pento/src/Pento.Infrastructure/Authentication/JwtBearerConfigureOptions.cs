@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
 namespace Pento.Infrastructure.Authentication;
+
 internal sealed class JwtBearerConfigureOptions(IConfiguration configuration)
     : IConfigureNamedOptions<JwtBearerOptions>
 {

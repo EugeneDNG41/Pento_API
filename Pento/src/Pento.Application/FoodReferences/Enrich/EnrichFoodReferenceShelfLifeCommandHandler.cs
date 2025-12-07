@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.External.File;
+﻿using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Enrich;
+
 internal sealed class EnrichFoodReferenceShelfLifeCommandHandler(
     IGenericRepository<FoodReference> foodReferenceRepository,
     IFoodAiEnricher foodAiEnricher,

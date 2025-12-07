@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Recipes.Update;

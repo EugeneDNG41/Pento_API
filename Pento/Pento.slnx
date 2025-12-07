@@ -11,4 +11,8 @@
     <Project Path="src/Pento.Infrastructure/Pento.Infrastructure.csproj" Id="af4c8064-59ee-4328-85df-c6adfb7fae32" />
     <Project Path="src/Pento.ServiceDefaults/Pento.ServiceDefaults.csproj" />
   </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/Pento.Application.UnitTests/Pento.Application.UnitTests.csproj" Id="82aed74d-66a0-498c-83c5-9dcd6c4ef99f" />
+    <Project Path="test/Pento.Domain.UnitTests/Pento.Domain.UnitTests.csproj" Id="a923b6a4-ebcb-4adc-8b8a-582b59b7e92e" />
+  </Folder>
 </Solution>

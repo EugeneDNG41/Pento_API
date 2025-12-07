@@ -3,7 +3,7 @@
 namespace Pento.Application.UserSubscriptions.GetCurrentSubscriptionById;
 
 public sealed record UserSubscriptionDetailResponse(
-    UserSubscriptionResponse Subscription, 
+    UserSubscriptionResponse Subscription,
     IReadOnlyList<UserEntitlementBySubscription> Entitlements);
 public sealed record UserEntitlementBySubscription
 {

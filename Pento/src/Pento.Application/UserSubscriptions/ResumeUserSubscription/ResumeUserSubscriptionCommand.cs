@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.UserSubscriptions.ResumeUserSubscription;
 

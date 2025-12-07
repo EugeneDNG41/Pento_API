@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Pento.Application.RecipeIngredients.GetAll;
 
-namespace Pento.Application.RecipeIngredients.GetAll;
 public sealed class RecipeWithIngredientsResponse
 {
     public Guid RecipeId { get; init; }

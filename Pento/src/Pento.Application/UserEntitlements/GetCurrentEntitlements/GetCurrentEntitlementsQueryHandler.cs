@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.UserEntitlements.GetCurrentEntitlements;
@@ -42,7 +42,7 @@ internal sealed class GetCurrentEntitlementsQueryHandler(IUserContext userContex
                     (@Available = FALSE AND (ue.quota IS NOT NULL AND ue.usage_count >= ue.quota))
                   );
             ";
-        CommandDefinition command = new(sql, new {userContext.UserId, query.SearchText, query.Available }, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { userContext.UserId, query.SearchText, query.Available }, cancellationToken: cancellationToken);
         List<UserEntitlementResponse> entitlements = (await connection.QueryAsync<UserEntitlementResponse>(command)).AsList();
         return entitlements;
     }

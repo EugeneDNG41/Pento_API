@@ -1,6 +1,6 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.External.File;
+﻿using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.Recipes;
@@ -8,7 +8,7 @@ using Pento.Domain.Recipes;
 namespace Pento.Application.RecipeDirections.Update;
 
 internal sealed class UpdateRecipeDirectionImageCommandHandler(
-    IGenericRepository <RecipeDirection> directionRepository,
+    IGenericRepository<RecipeDirection> directionRepository,
     IBlobService blobService,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<UpdateRecipeDirectionImageCommand, string>

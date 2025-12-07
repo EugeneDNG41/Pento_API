@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Get;
+
 internal sealed class GetFoodReferenceQueryHandler(ISqlConnectionFactory sqlConnectionFactory)
     : IQueryHandler<GetFoodReferenceQuery, FoodReferenceResponse>
 {

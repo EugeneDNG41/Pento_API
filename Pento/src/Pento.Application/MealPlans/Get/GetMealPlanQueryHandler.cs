@@ -1,12 +1,8 @@
-﻿using System;
-using System.Data.Common;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItemReservations;
 using Pento.Domain.MealPlans;
 
 namespace Pento.Application.MealPlans.Get;
@@ -110,7 +106,7 @@ internal sealed class GetMealPlanQueryHandler(
                 FoodReferenceName: r.food_reference_name,
                 FoodGroup: r.food_group,
                 ImageUrl: r.food_image_url is string img && !string.IsNullOrWhiteSpace(img) ? new Uri(img) : null,
-                Quantity: (decimal)r.quantity, 
+                Quantity: (decimal)r.quantity,
                 UnitAbbreviation: r.unit_abbreviation,
                 Status: r.status,
                 ExpirationDate: r.expiration_date is DateTime dt

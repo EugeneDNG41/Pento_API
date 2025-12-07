@@ -43,7 +43,7 @@ internal sealed class CreateRecipe : IEndpoint
         public string? Notes { get; init; }
         public int? Servings { get; init; }
         public DifficultyLevel? DifficultyLevel { get; init; }
-        public string? ImageUrl { get; init; } 
+        public string? ImageUrl { get; init; }
         public bool IsPublic { get; init; }
     }
 }

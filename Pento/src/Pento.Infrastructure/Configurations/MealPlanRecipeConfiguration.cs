@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.MealPlanRecipe;
-using Pento.Domain.MealPlans;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -17,10 +16,10 @@ public sealed class MealPlanRecipeConfiguration : IEntityTypeConfiguration<MealP
             .HasOne(x => x.MealPlan)
             .WithMany()
             .HasForeignKey(x => x.MealPlanId)
-            .OnDelete(DeleteBehavior.Cascade);   
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(x => x.MealPlanId)
-            .IsRequired();   
+            .IsRequired();
 
         builder.Property(x => x.RecipeId)
             .IsRequired();

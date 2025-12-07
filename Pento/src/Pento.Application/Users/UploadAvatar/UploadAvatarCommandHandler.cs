@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
@@ -9,8 +9,8 @@ namespace Pento.Application.Users.UploadAvatar;
 
 internal sealed class UploadAvatarCommandHandler(
     IUserContext userContext,
-    IBlobService blobService, 
-    IGenericRepository<User> userRepository, 
+    IBlobService blobService,
+    IGenericRepository<User> userRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<UploadAvatarCommand, Uri>
 {
     public async Task<Result<Uri>> Handle(UploadAvatarCommand command, CancellationToken cancellationToken)

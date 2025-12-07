@@ -1,5 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.External.PayOS;
+﻿using Pento.Application.Abstractions.External.PayOS;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
@@ -43,6 +43,6 @@ internal sealed class ProcessPaymentStatusTrackingJob(
                 paymentRepository.Update(payment);
                 await unitOfWork.SaveChangesAsync(context.CancellationToken);
             }
-        }       
+        }
     }
 }

@@ -1,10 +1,9 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Application.Payments.GetById;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Payments.GetAll;
@@ -62,8 +61,8 @@ internal sealed class GetPaymentsQueryHandler(IUserContext userContext, ISqlConn
             parameters.Add("Status", query.Status.Value.ToString());
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
-        
-        string sql = 
+
+        string sql =
             $"""
             SELECT COUNT(*) FROM payments {whereClause};
             SELECT 

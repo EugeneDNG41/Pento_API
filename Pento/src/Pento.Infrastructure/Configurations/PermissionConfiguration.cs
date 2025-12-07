@@ -17,7 +17,7 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
 
         builder.Property(p => p.Name).HasMaxLength(100);
         builder.Property(p => p.Description).HasMaxLength(500);
-        
+
         builder.HasData(
             Permission.UserGeneral,
             Permission.ViewRecipes,
@@ -152,7 +152,7 @@ internal sealed class PermissionConfiguration : IEntityTypeConfiguration<Permiss
                     CreateRolePermission(Role.PantryManager, Permission.CreateGiveaways),
                     CreateRolePermission(Role.PantryManager, Permission.UpdateGiveaways),
                     CreateRolePermission(Role.PantryManager, Permission.DeleteGiveaways),
-                  
+
                     CreateRolePermission(Role.MealPlanner, Permission.ViewHousehold),
                     CreateRolePermission(Role.MealPlanner, Permission.ViewStorages),
                     CreateRolePermission(Role.MealPlanner, Permission.ViewCompartments),

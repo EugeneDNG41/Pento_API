@@ -1,9 +1,5 @@
 ﻿
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.Get;
-using Pento.Domain.FoodReferences;
-using Pento.Domain.Storages;
-using Pento.Domain.Units;
 
 namespace Pento.Application.FoodItems.GetById;
 

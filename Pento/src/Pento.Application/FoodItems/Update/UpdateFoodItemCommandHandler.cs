@@ -1,16 +1,13 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 using Pento.Domain.Storages;
-using Pento.Domain.Units;
-using Pento.Domain.Users;
 
 namespace Pento.Application.FoodItems.Update;
 
@@ -38,7 +35,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         if (foodItem.HouseholdId != householdId)
         {
             return Result.Failure(FoodItemErrors.ForbiddenAccess);
-        }      
+        }
         //Change measurement unit
         if (command.UnitId != null && foodItem.UnitId != command.UnitId)
         {
@@ -57,7 +54,7 @@ internal sealed class UpdateFoodItemCommandHandler(
             if (newCompartment is null || oldCompartment is null)
             {
                 return Result.Failure(CompartmentErrors.NotFound);
-            } 
+            }
             else if (newCompartment.HouseholdId != householdId || oldCompartment.HouseholdId != householdId)
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);

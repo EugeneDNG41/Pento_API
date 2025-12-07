@@ -1,13 +1,13 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.External.Identity;
+﻿using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Users.ResetPassword;
 
 internal sealed class ResetUserPasswordCommandHandler(
-    IGenericRepository<User> userRepository, 
+    IGenericRepository<User> userRepository,
     IIdentityProviderService identityService) : ICommandHandler<ResetUserPasswordCommand>
 {
     public async Task<Result> Handle(ResetUserPasswordCommand request, CancellationToken cancellationToken)

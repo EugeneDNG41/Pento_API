@@ -1,15 +1,14 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
 
 namespace Pento.Application.Households.RevokeInvite;
 
 internal sealed class RevokeInviteCodeCommandHandler(
     IUserContext userContext,
-    IGenericRepository<Household> repository, 
+    IGenericRepository<Household> repository,
     IUnitOfWork unitOfWork) : ICommandHandler<RevokeInviteCodeCommand>
 {
     public async Task<Result> Handle(RevokeInviteCodeCommand command, CancellationToken cancellationToken)

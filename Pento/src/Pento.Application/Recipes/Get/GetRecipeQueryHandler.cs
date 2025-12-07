@@ -1,8 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Recipes.Get;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 

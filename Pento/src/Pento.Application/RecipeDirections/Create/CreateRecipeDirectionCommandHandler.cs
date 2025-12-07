@@ -1,12 +1,13 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.RecipeDirections;
 using Pento.Domain.Recipes;
 
 namespace Pento.Application.RecipeDirections.Create;
+
 internal sealed class CreateRecipeDirectionCommandHandler(
-    IGenericRepository<Recipe> recipeRepository, 
+    IGenericRepository<Recipe> recipeRepository,
     IGenericRepository<RecipeDirection> recipeDirectionRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<CreateRecipeDirectionCommand, Guid>
@@ -35,7 +36,7 @@ internal sealed class CreateRecipeDirectionCommandHandler(
                DateTime.UtcNow);
 
 
-         recipeDirectionRepository.Add(direction);
+        recipeDirectionRepository.Add(direction);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(direction.Id);

@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.FoodItems;
 
 namespace Pento.Infrastructure.Configurations;
+
 internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<FoodReference>
 {
     public void Configure(EntityTypeBuilder<FoodReference> builder)
@@ -43,13 +38,13 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
             .IsRequired();
 
         builder.Property(fr => fr.FoodGroup)
-             .HasConversion<string>()      
+             .HasConversion<string>()
              .HasMaxLength(50)
              .IsRequired();
 
 
         builder.Property(fr => fr.FoodCategoryId);
-    
+
         builder.Property(fr => fr.Brand)
             .HasMaxLength(200);
 
@@ -67,11 +62,11 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
                 v => v != null ? v.ToString() : null,
                 v => string.IsNullOrEmpty(v) ? null : new Uri(v))
             .HasMaxLength(500);
-            builder.Property(fr => fr.UnitType) 
-        .HasColumnName("unit_type")
-        .HasConversion<string>()
-        .HasMaxLength(50)
-        .IsRequired();
+        builder.Property(fr => fr.UnitType)
+    .HasColumnName("unit_type")
+    .HasConversion<string>()
+    .HasMaxLength(50)
+    .IsRequired();
 
         builder.Property(fr => fr.CreatedOnUtc)
             .IsRequired();

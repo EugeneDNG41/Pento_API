@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
-using Pento.Domain.Units;
+﻿using Pento.Domain.Abstractions;
 
 namespace Pento.Domain.FoodItemLogs;
 
@@ -33,7 +27,7 @@ public sealed class FoodItemLog : Entity
     public Guid FoodItemId { get; private set; }
     public Guid HouseholdId { get; private set; }
     public Guid UserId { get; private set; }
-    public DateTime Timestamp{ get; private set; }
+    public DateTime Timestamp { get; private set; }
     public FoodItemLogAction Action { get; private set; }
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }

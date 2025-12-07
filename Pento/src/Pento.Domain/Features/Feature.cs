@@ -43,8 +43,8 @@ public sealed class Feature : BaseEntity
     private Feature() { }
     public string Code { get; private set; }
     public string Name { get; private set; }
-    public string Description {  get; private set; }
-    public int? DefaultQuota{ get; private set; }
+    public string Description { get; private set; }
+    public int? DefaultQuota { get; private set; }
     public TimeUnit? DefaultResetPeriod { get; private set; }
 
     public void UpdateDetails(string? name, string? description, int? defaultQuota, TimeUnit? defaultResetPeriod)
@@ -66,7 +66,7 @@ public sealed class Feature : BaseEntity
             DefaultResetPeriod = defaultResetPeriod;
         }
         Raise(new FeatureUpdatedDomainEvent(Code));
-        
+
     }
 }
 public enum FeatureCode

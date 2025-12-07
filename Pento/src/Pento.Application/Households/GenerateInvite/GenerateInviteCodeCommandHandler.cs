@@ -1,17 +1,14 @@
-﻿
-using System.Security.Cryptography;
-using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
 
 namespace Pento.Application.Households.GenerateInvite;
 
 internal sealed class GenerateInviteCodeCommandHandler(
     IUserContext userContext,
-    IGenericRepository<Household> repository, 
+    IGenericRepository<Household> repository,
     IUnitOfWork unitOfWork) : ICommandHandler<GenerateInviteCodeCommand, string>
 {
     public async Task<Result<string>> Handle(GenerateInviteCodeCommand command, CancellationToken cancellationToken)
@@ -28,8 +25,8 @@ internal sealed class GenerateInviteCodeCommandHandler(
         }
         household.GenerateInviteCode();
         household.SetInviteCodeExpiration(
-            command.CodeExpiration is null ? 
-            command.CodeExpiration : 
+            command.CodeExpiration is null ?
+            command.CodeExpiration :
             command.CodeExpiration.Value.ToUniversalTime());
         repository.Update(household);
         await unitOfWork.SaveChangesAsync(cancellationToken);

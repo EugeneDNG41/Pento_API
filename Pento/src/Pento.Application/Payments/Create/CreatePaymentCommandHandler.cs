@@ -1,13 +1,12 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.PayOS;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Pento.Application.Payments.Create;
 

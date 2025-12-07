@@ -1,8 +1,7 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Features;
-using Pento.Domain.Shared;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.UpdateFeature;
@@ -34,7 +33,7 @@ internal sealed class UpdateSubscriptionFeatureCommandHandler(
             {
                 return Result.Failure(SubscriptionErrors.DuplicateSubscriptionFeature);
             }
-        }      
+        }
         //bool hasTimedPlans = await subscriptionPlanRepository
         //    .AnyAsync(sp => sp.SubscriptionId == subscriptionFeature.SubscriptionId && sp.DurationInDays != null, cancellationToken);
         //if (hasTimedPlans && command.ResetPeriod == null)

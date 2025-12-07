@@ -1,5 +1,5 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
@@ -13,7 +13,7 @@ namespace Pento.Application.EventHandlers;
 internal sealed class HouseholdDeletedEventHandler(
     IGenericRepository<FoodItemReservation> foodItemReservationRepository,
     IGenericRepository<MealPlan> mealPlanRepository,
-    IGenericRepository<FoodItem> foodItemRepository,     
+    IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<GroceryList> groceryListRepository,
@@ -25,7 +25,7 @@ internal sealed class HouseholdDeletedEventHandler(
         foreach (FoodItemReservation reservation in foodItemReservations)
         {
             reservation.Delete();
-            
+
         }
         foodItemReservationRepository.UpdateRange(foodItemReservations);
 
@@ -46,7 +46,7 @@ internal sealed class HouseholdDeletedEventHandler(
         IEnumerable<Storage> storages = await storageRepository.FindAsync(s => s.HouseholdId == domainEvent.HouseholdId, cancellationToken);
         foreach (Storage storage in storages)
         {
-            storage.Delete(); 
+            storage.Delete();
         }
         foodItemRepository.UpdateRange(foodItems);
 

@@ -1,6 +1,6 @@
 ﻿namespace Pento.Domain.UserSubscriptions;
 
-public enum SubscriptionStatus 
+public enum SubscriptionStatus
 {
     Active,
     Paused,

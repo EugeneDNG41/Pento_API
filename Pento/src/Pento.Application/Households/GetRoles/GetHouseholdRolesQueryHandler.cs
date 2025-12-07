@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Data.Common;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authorization;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Households.GetCurrent;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Households;
 using Pento.Domain.Roles;
 
 namespace Pento.Application.Households.GetRoles;
@@ -46,7 +43,7 @@ internal sealed class GetHouseholdRolesQueryHandler(ISqlConnectionFactory connec
         List<RoleResponse> response = roleDict.Values.AsList();
         if (response is null)
         {
-            return Result.Failure<IReadOnlyList<RoleResponse>> (RoleErrors.NotFound);
+            return Result.Failure<IReadOnlyList<RoleResponse>>(RoleErrors.NotFound);
         }
         return response;
     }

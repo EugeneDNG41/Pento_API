@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
@@ -22,7 +22,7 @@ internal sealed class GetUsersQueryQueryHandler(ISqlConnectionFactory dbConnecti
             GetUsersSortBy.FirstName => "4",
             GetUsersSortBy.LastName => "5",
             GetUsersSortBy.CreatedAt => "6",
-            
+
             GetUsersSortBy.Id or _ => "1"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";

@@ -1,11 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
-using Microsoft.AspNetCore.Mvc;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Application.FoodItemLogs.GetSummary;
-using Pento.Application.UserActivities.GetUserActivities;
 using Pento.Application.UserMilestones.GetMilestones;
 using Pento.Domain.Abstractions;
 
@@ -17,7 +12,7 @@ internal sealed class GetMilestones : IEndpoint
     {
         app.MapGet("users/milestones", async (
             string? searchTerm,
-            bool? isAchieved,                       
+            bool? isAchieved,
             IQueryHandler<GetMilestonesQuery, PagedList<UserMilestonePreviewResponse>> handler,
             CancellationToken cancellationToken,
             UserMilestoneSortBy sortBy = UserMilestoneSortBy.Default,

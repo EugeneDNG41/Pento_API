@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.FoodReferences;
 using Pento.Domain.GroceryListItems;
 using Pento.Domain.GroceryLists;
-using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 

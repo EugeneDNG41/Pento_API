@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.Eventing.Reader;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Pento.Application.Abstractions.Exceptions;
 
 namespace Pento.Infrastructure.Authentication;

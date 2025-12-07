@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
@@ -8,7 +7,6 @@ using Pento.Domain.Activities;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.Households;
 using Pento.Domain.Units;
 using Pento.Domain.UserActivities;
 

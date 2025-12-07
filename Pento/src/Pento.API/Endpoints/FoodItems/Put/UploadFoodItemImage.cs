@@ -10,9 +10,9 @@ internal sealed class UploadFoodItemImage : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("food-items/{id:guid}/image", async (
-            Guid id, 
+            Guid id,
             IFormFile? file,
-            ICommandHandler<UploadFoodItemImageCommand, Uri> handler, 
+            ICommandHandler<UploadFoodItemImageCommand, Uri> handler,
             CancellationToken ct) =>
             {
                 Result<Uri> result = await handler.Handle(new UploadFoodItemImageCommand(id, file), ct);

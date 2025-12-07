@@ -1,11 +1,8 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Compartments;
-using Pento.Domain.FoodItems.Events;
 using Pento.Domain.Storages;
-using Pento.Domain.Users;
 
 namespace Pento.Application.Storages.Update;
 
@@ -17,7 +14,7 @@ internal sealed class UpdateStorageCommandHandler(
     public async Task<Result> Handle(UpdateStorageCommand command, CancellationToken cancellationToken)
     {
         Guid? userHouseholdId = userContext.HouseholdId;
-        Storage? storage =  await repository.GetByIdAsync(command.StorageId, cancellationToken);
+        Storage? storage = await repository.GetByIdAsync(command.StorageId, cancellationToken);
         if (storage is null)
         {
             return Result.Failure(StorageErrors.NotFound);

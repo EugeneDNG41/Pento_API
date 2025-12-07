@@ -4,19 +4,19 @@ namespace Pento.Domain.Subscriptions;
 
 public static class SubscriptionErrors
 {
-    public static readonly Error SubscriptionNotFound = 
+    public static readonly Error SubscriptionNotFound =
         Error.NotFound("Subscription.NotFound", "Subscription not found.");
-    public static readonly Error SubscriptionPlanNotFound = 
+    public static readonly Error SubscriptionPlanNotFound =
         Error.NotFound("Subscription.PlanNotFound", "Subscription plan not found.");
-    public static readonly Error SubscriptionFeatureNotFound = 
+    public static readonly Error SubscriptionFeatureNotFound =
         Error.NotFound("Subscription.FeatureNotFound", "Subscription feature not found.");
-    public static readonly Error UserSubscriptionNotFound = 
+    public static readonly Error UserSubscriptionNotFound =
         Error.NotFound("Subscription.UserSubscriptionNotFound", "User subscription not found.");
-    public static readonly Error NameTaken = 
+    public static readonly Error NameTaken =
         Error.Conflict("Subscription.NameTaken", "Subscription name already taken.");
-    public static readonly Error DuplicateSubscriptionPlan = 
+    public static readonly Error DuplicateSubscriptionPlan =
         Error.Conflict("Subscription.DuplicateSubscriptionPlan", "A subscription plan with the same price and duration already exists for this subscription."); //business rule
-    public static readonly Error DuplicateSubscriptionFeature = 
+    public static readonly Error DuplicateSubscriptionFeature =
         Error.Conflict("Subscription.DuplicateSubscriptionFeature", "This feature has already been added to the subscription."); //business rule
     public static readonly Error InactiveSubscription =
         Error.Conflict("Subscription.InactiveSubscription", "Cannot purchase an inactive subscription.");

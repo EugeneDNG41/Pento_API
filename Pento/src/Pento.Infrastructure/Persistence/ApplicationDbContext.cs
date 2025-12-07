@@ -11,7 +11,7 @@ using Pento.Infrastructure.Utility.Outbox;
 
 namespace Pento.Infrastructure.Persistence;
 
-public sealed class ApplicationDbContext(DbContextOptions options)  : DbContext(options), IUnitOfWork
+public sealed class ApplicationDbContext(DbContextOptions options) : DbContext(options), IUnitOfWork
 {
     private static readonly JsonSerializerSettings JsonSerializerSettings = new()
     {

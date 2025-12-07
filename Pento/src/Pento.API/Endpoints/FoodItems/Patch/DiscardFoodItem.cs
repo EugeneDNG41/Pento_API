@@ -3,7 +3,6 @@ using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.Discard;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems.Events;
 
 namespace Pento.API.Endpoints.FoodItems.Patch;
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
@@ -11,6 +6,7 @@ using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Trades.Get;
+
 internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory)
     : IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostResponse>>
 {

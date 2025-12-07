@@ -1,5 +1,4 @@
-﻿using Azure;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.FoodItems.Split;
 using Pento.Domain.Abstractions;
@@ -17,7 +16,7 @@ internal sealed class SplitFoodItem : IEndpoint
             CancellationToken cancellationToken) =>
         {
             Result<Guid> result = await handler.Handle(new SplitFoodItemCommand(foodItemId, request.Quantity, request.UnitId), cancellationToken);
-            return result.Match(guid => Results.CreatedAtRoute(RouteNames.GetFoodItemById, new {id = guid}, new { id = guid }), CustomResults.Problem);
+            return result.Match(guid => Results.CreatedAtRoute(RouteNames.GetFoodItemById, new { id = guid }, new { id = guid }), CustomResults.Problem);
         })
         .WithTags(Tags.FoodItems)
         .RequireAuthorization()

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
-using Pento.Domain.FoodItems;
-using Pento.Domain.Storages;
 using Pento.Domain.Units;
 
 namespace Pento.Infrastructure.Configurations;

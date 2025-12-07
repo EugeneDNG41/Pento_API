@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Pento.Application.Abstractions.Persistence;
+﻿using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.GenerateImage;
+
 internal sealed class GenerateFoodReferenceImageCommandHandler(
     IGenericRepository<FoodReference> foodReferenceRepository,
     IPixabayImageService pixabayService,

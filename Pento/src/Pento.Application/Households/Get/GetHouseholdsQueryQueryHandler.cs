@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
@@ -62,7 +62,7 @@ internal sealed class GetHouseholdsQueryQueryHandler(
                 LIMIT @PageSize OFFSET @Offset;
                 SELECT COUNT(*) FROM households h LEFT JOIN users u ON u.household_id = h.id {whereClause};
             """;
-        
+
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         IEnumerable<HouseholdPreview> households = await multi.ReadAsync<HouseholdPreview>();

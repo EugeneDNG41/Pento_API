@@ -19,7 +19,7 @@ internal sealed class UpdateMilestoneIcon : IEndpoint
                 milestoneId,
                 icon), cancellationToken);
             return result
-            .Match((uri) => Results.Ok(new {IconUrl = uri}), CustomResults.Problem);
+            .Match((uri) => Results.Ok(new { IconUrl = uri }), CustomResults.Problem);
         }).WithTags(Tags.Admin).RequireAuthorization(Permissions.ManageMilestones).DisableAntiforgery();
     }
 }

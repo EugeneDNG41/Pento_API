@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.Activities;
+﻿using Pento.Application.Abstractions.Messaging;
 
 namespace Pento.Application.Activities.GetAll;
 

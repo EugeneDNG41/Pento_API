@@ -1,7 +1,7 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Activities.GetAll;
@@ -21,7 +21,7 @@ internal sealed class GetActivitiesQueryHandler(ISqlConnectionFactory sqlConnect
   
             ORDER BY name;
         ";
-        CommandDefinition command = new(sql, new { query.SearchText}, cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, new { query.SearchText }, cancellationToken: cancellationToken);
         IEnumerable<ActivityResponse> activities = await connection.QueryAsync<ActivityResponse>(command);
         return activities.ToList();
     }

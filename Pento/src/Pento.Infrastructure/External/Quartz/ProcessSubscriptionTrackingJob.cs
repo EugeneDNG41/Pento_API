@@ -1,6 +1,6 @@
-﻿using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.External.Firebase;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
@@ -12,9 +12,9 @@ namespace Pento.Infrastructure.External.Quartz;
 
 [DisallowConcurrentExecution]
 internal sealed class ProcessSubscriptionTrackingJob(
+    INotificationService notificationSender,
     IDateTimeProvider dateTimeProvider,
     ISubscriptionService subscriptionService,
-    INotificationService notificationSender,
     IGenericRepository<Subscription> subscriptionRepository,
     IGenericRepository<UserSubscription> userSubscriptionRepository,
     IUnitOfWork unitOfWork
@@ -60,15 +60,6 @@ internal sealed class ProcessSubscriptionTrackingJob(
                 {
                     throw new PentoException(nameof(ExecuteSubscriptionTracking), deactivationResult.Error);
                 }
-                string title = "Subscription Expired";
-                string body = $"Your {subscription.Name} Subscription for the Pento app has expired. Please renew to continue enjoying our services.";
-
-                Result notificationResult = await notificationSender.SendToUserAsync(userSubscription.UserId, title, body, NotificationType.Subscription, payload, cancellationToken);
-                if (notificationResult.IsFailure)
-                {
-                    throw new PentoException(nameof(ExecuteSubscriptionTracking), notificationResult.Error);
-                }
-
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

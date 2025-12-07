@@ -12,9 +12,9 @@ internal sealed class GetUserEntitlements : IEndpoint
     {
         app.MapGet("admin/users/{userId:guid}/entitlements", async (
             Guid userId,
-            string ? searchText,
-            bool ? available,
-            IQueryHandler <GetUserEntitlementsQuery, IReadOnlyList<UserEntitlementResponse>> handler,
+            string? searchText,
+            bool? available,
+            IQueryHandler<GetUserEntitlementsQuery, IReadOnlyList<UserEntitlementResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             Result<IReadOnlyList<UserEntitlementResponse>> result = await handler.Handle(

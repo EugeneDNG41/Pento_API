@@ -1,10 +1,9 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodItems.Events;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodItems.UploadImage;
@@ -48,8 +47,8 @@ internal sealed class UploadFoodItemImageCommandHandler(
                     return Result.Failure<Uri>(deleteResult.Error);
                 }
             }
-            foodItem.UpdateImageUrl(uploadResult.Value, userContext.UserId);            
-        } 
+            foodItem.UpdateImageUrl(uploadResult.Value, userContext.UserId);
+        }
         else if (foodReference.ImageUrl is not null)
         {
             foodItem.UpdateImageUrl(foodReference.ImageUrl, userContext.UserId);

@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
-using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Abstractions;
-using Serilog.Context;
 
 
 namespace Pento.Application.Abstractions.Behaviors;

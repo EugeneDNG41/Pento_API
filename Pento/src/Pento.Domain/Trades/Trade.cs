@@ -34,7 +34,7 @@ public sealed class TradeOffer : Entity
         DateTime startDate,
         DateTime endDate,
         PickupOption pickupOption,
-        DateTime createOn 
+        DateTime createOn
         )
     {
         return new TradeOffer(

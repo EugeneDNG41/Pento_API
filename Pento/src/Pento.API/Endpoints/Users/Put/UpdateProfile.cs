@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Users.Update;
 using Pento.Domain.Abstractions;

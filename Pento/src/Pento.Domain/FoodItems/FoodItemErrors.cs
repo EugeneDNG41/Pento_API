@@ -1,5 +1,4 @@
 ﻿using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItems.Events;
 
 namespace Pento.Domain.FoodItems;
 

@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic;
-using Pento.Domain.Abstractions;
-using Pento.Domain.RecipeMedia;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes.Events;
-using Pento.Domain.Roles;
 
 namespace Pento.Domain.Recipes;
-public sealed class Recipe: Entity
+
+public sealed class Recipe : Entity
 {
     public Recipe(
         Guid id,
@@ -59,7 +52,7 @@ public sealed class Recipe: Entity
 
     public Guid CreatedBy { get; private set; }
 
-    public TimeRequirement RecipeTime { get; private set; } 
+    public TimeRequirement RecipeTime { get; private set; }
     public bool IsPublic { get; private set; }
 
     public DateTime CreatedOnUtc { get; private set; }

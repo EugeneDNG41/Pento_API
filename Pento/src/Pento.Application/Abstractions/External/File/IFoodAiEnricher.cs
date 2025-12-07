@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.FoodReferences.Enrich;
+﻿using Pento.Application.FoodReferences.Enrich;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Abstractions.External.File;
+
 public interface IFoodAiEnricher
 {
     Task<FoodEnrichmentResult> EnrichAsync(FoodEnrichmentAsk ask, CancellationToken ct);
@@ -15,7 +11,7 @@ public interface IFoodAiEnricher
 
 public sealed record FoodEnrichmentAsk(
     string Name,
-    string FoodGroup       
+    string FoodGroup
 );
 
 public sealed record ProductExtraInformationWithoutFoodGroup(int UnitType, int PantryShelfLife, int FridgeShelfLife, int FreezerShelfLife);

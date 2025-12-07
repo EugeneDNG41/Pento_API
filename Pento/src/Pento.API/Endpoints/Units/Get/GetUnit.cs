@@ -9,7 +9,7 @@ internal sealed class GetUnit : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("units/{unitId:guid}", async (Guid unitId, IQueryHandler<GetUnitQuery, UnitResponse>  handler, CancellationToken cancellationToken) =>
+        app.MapGet("units/{unitId:guid}", async (Guid unitId, IQueryHandler<GetUnitQuery, UnitResponse> handler, CancellationToken cancellationToken) =>
         {
             Result<UnitResponse> result = await handler.Handle(new GetUnitQuery(unitId), cancellationToken);
 

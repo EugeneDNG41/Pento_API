@@ -1,6 +1,5 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodItems.Search;

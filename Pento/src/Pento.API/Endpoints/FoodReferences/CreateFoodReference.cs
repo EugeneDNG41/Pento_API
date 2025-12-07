@@ -51,7 +51,7 @@ internal sealed class CreateFoodReference : IEndpoint
     internal sealed class Request
     {
         public string Name { get; init; } = string.Empty;
-        public string FoodGroup { get; init; } = string.Empty; 
+        public string FoodGroup { get; init; } = string.Empty;
         public string? Notes { get; init; }
         public int? FoodCategoryId { get; init; }
         public string? Brand { get; init; }
@@ -63,5 +63,5 @@ internal sealed class CreateFoodReference : IEndpoint
         public Guid? AddedBy { get; init; }
         public Uri? ImageUrl { get; init; }
         public string? UnitType { get; init; }
-        }
+    }
 }

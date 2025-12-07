@@ -1,5 +1,4 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Users.Get;
 using Pento.Application.Users.GetAll;
 
 namespace Pento.Application.Users.Create;

@@ -5,6 +5,6 @@ namespace Pento.Application.Subscriptions.GetSummaryById;
 
 public sealed record GetSubscriptionWithPlanPaymentSummaryByIdQuery(
     Guid SubscriptionId,
-    DateOnly? FromDate, 
+    DateOnly? FromDate,
     DateOnly? ToDate,
     TimeWindow? TimeWindow) : IQuery<SubscriptionWithPlanPaymentSummary>;

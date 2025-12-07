@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 
@@ -64,7 +64,7 @@ internal sealed class GetCurrentActivitiesQueryHandler(IUserContext userContext,
             LEFT JOIN activities a ON ua.activity_code = a.code
             {whereClause}
             ";
-        CommandDefinition command = new(sql,parameters,cancellationToken: cancellationToken);
+        CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         var activities = (await multi.ReadAsync<CurrentUserActivityResponse>()).ToList();
         int totalCount = await multi.ReadFirstAsync<int>();

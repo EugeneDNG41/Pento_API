@@ -1,19 +1,16 @@
-﻿using System.Globalization;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Notifications;
 using Pento.Domain.Subscriptions;
 using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Application.UserSubscriptions.ResumeSubscription;
 
 internal sealed class ResumeSubscriptionCommandHandler(
-    INotificationService notificationService,
     ISubscriptionService subscriptionService,
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
@@ -66,25 +63,7 @@ internal sealed class ResumeSubscriptionCommandHandler(
                 return Result.Failure(reactivationResult.Error);
             }
 
-            string title = "Subscription Resumed";
-            string body = $"Your {subscription.Name} subscription has been resumed.";
-            var payload = new Dictionary<string, string>
-            {
-                { "UserSubscriptionId", userSubscription.Id.ToString() },
-                { "SubscriptionId", subscription.Id.ToString() },
-                { "SubscriptionName", subscription.Name  },
-            };
-            Result notificationResult = await notificationService.SendToUserAsync(
-                userSubscription.UserId,
-                title,
-                body,
-                NotificationType.Subscription,
-                payload,
-                cancellationToken);
-            if (notificationResult.IsFailure)
-            {
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-            }
+            await unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
 
         }

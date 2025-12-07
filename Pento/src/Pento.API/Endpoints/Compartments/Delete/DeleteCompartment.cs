@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Compartments.Delete;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.Compartments.Delete;
 

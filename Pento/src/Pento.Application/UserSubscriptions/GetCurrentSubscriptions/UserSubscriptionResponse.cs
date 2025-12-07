@@ -9,6 +9,6 @@ public sealed record UserSubscriptionResponse
     public DateOnly StartDate { get; init; }
     public DateOnly? EndDate { get; init; }
     public DateOnly? PausedDate { get; init; }
-    public DateOnly? CancelledDate {  get; init; }
+    public DateOnly? CancelledDate { get; init; }
     public string Duration { get; init; }
 }

@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
@@ -15,6 +15,7 @@ using Pento.Domain.Recipes;
 using Pento.Domain.Units;
 
 namespace Pento.Application.MealPlans.Create.FromRecipe;
+
 internal sealed class CreateMealPlanFromRecipeCommandHandler(
     IGenericRepository<Recipe> recipeRepo,
     IGenericRepository<FoodItem> foodItemRepo,
@@ -58,7 +59,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
         {
             FoodReference? foodRef = await foodRefRepo.GetByIdAsync(ingredient.FoodRefId, cancellationToken);
 
-            string name =  foodRef?.Name
+            string name = foodRef?.Name
                          ?? "Unknown ingredient";
 
             FoodItem? foodItem = (await foodItemRepo.FindAsync(
@@ -148,7 +149,7 @@ internal sealed class CreateMealPlanFromRecipeCommandHandler(
                 ingredient.UnitId,
                 foodItem.UnitId,
                 IngredientUnitAbbreviation: ingredientUnit.Abbreviation,
-                FoodItemUnitAbbreviation: foodItemUnit!.Abbreviation 
+                FoodItemUnitAbbreviation: foodItemUnit!.Abbreviation
             ));
         }
 

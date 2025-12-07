@@ -1,11 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Compartments.Get;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodReferences;
-using Pento.Domain.Roles;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Pento.API.Endpoints.Compartments.Get;
 
@@ -13,9 +9,9 @@ internal sealed class GetCompartmentById : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("compartments/{compartmentId:guid}", async (           
+        app.MapGet("compartments/{compartmentId:guid}", async (
             Guid compartmentId,
-            string? searchText,    
+            string? searchText,
             IQueryHandler<GetCompartmentByIdQuery, CompartmentWithFoodItemPreviewResponse> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
@@ -25,7 +21,7 @@ internal sealed class GetCompartmentById : IEndpoint
                 new GetCompartmentByIdQuery(
                     compartmentId,
                     searchText,
-                    pageNumber, 
+                    pageNumber,
                     pageSize), cancellationToken);
             return result
             .Match(compartment => Results.Ok(compartment), CustomResults.Problem);

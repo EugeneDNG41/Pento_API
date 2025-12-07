@@ -27,12 +27,12 @@ internal sealed class CustomClaimsTransformation(IServiceScopeFactory serviceSco
 
         var claimsIdentity = new ClaimsIdentity();
 
-        claimsIdentity.AddClaim(new Claim(CustomClaims.User, result.Value.UserId.ToString() ));
+        claimsIdentity.AddClaim(new Claim(CustomClaims.User, result.Value.UserId.ToString()));
         if (result.Value.HouseholdId is not null)
         {
             claimsIdentity.AddClaim(new Claim(CustomClaims.Household, result.Value.HouseholdId.ToString()!));
         }
-        
+
         foreach (string permission in result.Value.Permissions)
         {
             if (!string.IsNullOrEmpty(permission))

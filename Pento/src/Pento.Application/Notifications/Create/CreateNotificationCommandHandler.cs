@@ -13,7 +13,7 @@ internal sealed class CreateNotificationCommandHandler(
 {
     public async Task<Result> Handle(CreateNotificationCommand command, CancellationToken cancellationToken)
     {
-        if(userContext.UserId == Guid.Empty)
+        if (userContext.UserId == Guid.Empty)
         {
             return Result.Failure<Guid>(
                 UserErrors.NotFound

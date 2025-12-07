@@ -47,7 +47,7 @@ internal sealed class ProcessEntitlementResetJob(
                 entitlement.ResetUsage();
             }
             if (entitlement.ResetPeriod == TimeUnit.Year &&
-                (subscriptionInstance == null && today.Day == 1 && today.Month == 1  ||
+                (subscriptionInstance == null && today.Day == 1 && today.Month == 1 ||
                 subscriptionInstance != null && (today.DayNumber - subscriptionInstance.StartDate.DayNumber) % 365 == 0))
             {
                 entitlement.ResetUsage();
@@ -55,6 +55,6 @@ internal sealed class ProcessEntitlementResetJob(
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
-    
+
 }
 

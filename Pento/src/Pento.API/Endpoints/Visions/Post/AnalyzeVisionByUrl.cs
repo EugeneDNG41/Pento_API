@@ -1,5 +1,4 @@
-﻿using Pento.API.Extensions;
-using Pento.Application.Abstractions.External.Vision;
+﻿using Pento.Application.Abstractions.External.Vision;
 
 namespace Pento.API.Endpoints.Visions.Post;
 

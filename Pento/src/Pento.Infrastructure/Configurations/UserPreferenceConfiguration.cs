@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.UserPreferences;
 
 namespace Pento.Infrastructure.Configurations;
+
 public sealed class UserPreferenceConfiguration : IEntityTypeConfiguration<UserPreference>
 {
     public void Configure(EntityTypeBuilder<UserPreference> builder)

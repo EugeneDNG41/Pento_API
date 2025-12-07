@@ -1,19 +1,17 @@
 ﻿using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.MealPlans;
-using Pento.Domain.Recipes;
 
 namespace Pento.Domain.FoodItemReservations;
 
 public abstract class FoodItemReservation : Entity
 {
-    protected FoodItemReservation(Guid id, 
-        Guid foodItemId, 
-        Guid householdId, 
-        DateTime reservationDateUtc, 
-        decimal quantity, 
-        Guid unitId, 
-        ReservationStatus status, 
+    protected FoodItemReservation(Guid id,
+        Guid foodItemId,
+        Guid householdId,
+        DateTime reservationDateUtc,
+        decimal quantity,
+        Guid unitId,
+        ReservationStatus status,
         ReservationFor reservationFor) : base(id)
     {
         FoodItemId = foodItemId;
@@ -30,7 +28,7 @@ public abstract class FoodItemReservation : Entity
     public DateTime ReservationDateUtc { get; private set; }
     public decimal Quantity { get; private set; }
     public Guid UnitId { get; private set; }
-    public ReservationStatus Status { get; protected set; } 
+    public ReservationStatus Status { get; protected set; }
     public ReservationFor ReservationFor { get; private set; }
     public void UpdateQuantity(decimal newQuantity)
     {
@@ -86,7 +84,7 @@ public abstract class FoodItemReservation : Entity
         if (fulfillQuantity == Quantity)
         {
             MarkAsFulfilled(fulfillQuantity, unitId, userId);
-            return (this, 0); 
+            return (this, 0);
         }
 
         Quantity -= fulfillQuantity;

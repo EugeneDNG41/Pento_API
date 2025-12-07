@@ -11,7 +11,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     protected ApplicationDbContext _context;
     protected DbSet<T> Table { get; set; }
 
-    
+
     public GenericRepository(ApplicationDbContext context)
     {
         _context = context ?? throw new ArgumentNullException(nameof(context));  // Thêm kiểm tra null
@@ -71,7 +71,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     }
     public virtual void Update(T entity)
     {
-    EntityEntry<T> tracker = _context.Attach(entity);
+        EntityEntry<T> tracker = _context.Attach(entity);
         tracker.State = EntityState.Modified;
     }
 

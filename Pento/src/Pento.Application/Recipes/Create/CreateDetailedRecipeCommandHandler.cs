@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.RecipeDirections;
@@ -16,6 +11,7 @@ using Pento.Domain.Units;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Recipes.Create;
+
 internal sealed class CreateDetailedRecipeCommandHandler(
     IGenericRepository<Recipe> recipeRepository,
     IGenericRepository<RecipeIngredient> recipeIngredientRepository,
@@ -62,7 +58,7 @@ internal sealed class CreateDetailedRecipeCommandHandler(
             command.Notes,
             command.Servings,
             command.DifficultyLevel,
-            recipeImageUrl,   
+            recipeImageUrl,
             userId,
             command.IsPublic,
             DateTime.UtcNow
@@ -122,7 +118,7 @@ internal sealed class CreateDetailedRecipeCommandHandler(
                 recipe.Id,
                 dir.StepNumber,
                 dir.Description,
-                directionImageUrl,    
+                directionImageUrl,
                 DateTime.UtcNow
             );
 

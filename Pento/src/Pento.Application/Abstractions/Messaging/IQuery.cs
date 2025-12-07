@@ -1,5 +1,4 @@
-﻿using Pento.Domain.Abstractions;
-namespace Pento.Application.Abstractions.Messaging;
+﻿namespace Pento.Application.Abstractions.Messaging;
 
 #pragma warning disable S2326 // Unused type parameters should be removed
 public interface IQuery<TResponse>;

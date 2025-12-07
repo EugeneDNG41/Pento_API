@@ -1,5 +1,3 @@
-using Microsoft.Net.Http.Headers;
-
 namespace Pento.API.Extensions;
 #pragma warning disable S125
 internal static class CorsExtensions

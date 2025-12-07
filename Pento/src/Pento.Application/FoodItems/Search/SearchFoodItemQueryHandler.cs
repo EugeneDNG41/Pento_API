@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -41,7 +41,7 @@ internal sealed class SearchFoodItemQueryHandler(
         var orStatusFilters = new List<string>();
         var parameters = new DynamicParameters();
         parameters.Add("HouseholdId", householdId);
-        if (query.FoodReferenceId  != null)
+        if (query.FoodReferenceId != null)
         {
             andFilters.Add("fi.food_reference_id = @FoodReferenceId");
             parameters.Add("FoodReferenceId", query.FoodReferenceId);
@@ -99,7 +99,7 @@ internal sealed class SearchFoodItemQueryHandler(
         string? orStatusFilterClause = orStatusFilters.Count > 0 ? "(" + string.Join(" OR ", orStatusFilters) + ")" : null;
 
         string whereClause = andFilterClause != null || orFoodGroupFilterClause != null || orStatusFilterClause != null
-            ? "WHERE " + string.Join(" AND ", new[] { andFilterClause,  orFoodGroupFilterClause, orStatusFilterClause }.Where(c => c != null))
+            ? "WHERE " + string.Join(" AND ", new[] { andFilterClause, orFoodGroupFilterClause, orStatusFilterClause }.Where(c => c != null))
             : string.Empty;
 
         string sql = $"""

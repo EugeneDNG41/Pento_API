@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Domain.DeviceTokens;
 
 namespace Pento.Application.Notifications.DeviceTokens;
 

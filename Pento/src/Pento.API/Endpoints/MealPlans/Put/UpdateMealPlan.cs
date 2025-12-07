@@ -3,7 +3,6 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlans.Update;
 using Pento.Domain.Abstractions;
 using Pento.Domain.MealPlans;
-using Pento.Domain.Roles;
 
 namespace Pento.API.Endpoints.MealPlans.Put;
 

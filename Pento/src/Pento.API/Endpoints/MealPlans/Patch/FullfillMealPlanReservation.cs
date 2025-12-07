@@ -4,7 +4,7 @@ using Pento.Application.MealPlans.Reserve.Fullfill;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.MealPlans.Patch;
-    
+
 internal sealed class FullfillMealPlanReservation : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)

@@ -1,6 +1,5 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.Items.Create;
 using Pento.Application.Trades.TradeItem.Offers.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.GiveawayPosts;

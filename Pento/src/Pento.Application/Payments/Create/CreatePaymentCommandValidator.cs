@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Pento.Application.Payments.Create;
 
-internal sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentCommand> 
+internal sealed class CreatePaymentCommandValidator : AbstractValidator<CreatePaymentCommand>
 {
     public CreatePaymentCommandValidator()
     {

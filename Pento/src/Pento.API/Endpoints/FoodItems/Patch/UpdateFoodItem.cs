@@ -17,8 +17,8 @@ internal sealed class UpdateFoodItem : IEndpoint
             CancellationToken cancellationToken) =>
         {
             Result result = await handler.Handle(new UpdateFoodItemCommand(
-                foodItemId, 
-                request.CompartmentId, 
+                foodItemId,
+                request.CompartmentId,
                 request.UnitId,
                 request.Name,
                 request.Quantity,

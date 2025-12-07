@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.MealPlans.Create;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Roles;
 using Pento.Domain.MealPlans;
 
 namespace Pento.API.Endpoints.MealPlans.Post;

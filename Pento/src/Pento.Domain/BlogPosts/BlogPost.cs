@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.Abstractions;
+﻿using Pento.Domain.Abstractions;
 using Pento.Domain.BlogPosts.Events;
 using Pento.Domain.Shared;
-using Pento.Domain.Users;
 
 namespace Pento.Domain.BlogPosts;
 
@@ -61,7 +55,7 @@ public sealed class BlogPost : Entity
             content,
             postType,
             utcNow,
-            true   
+            true
         );
 
         blogPost.Raise(new BlogPostCreatedDomainEvent(blogPost.Id, blogPost.UserId));

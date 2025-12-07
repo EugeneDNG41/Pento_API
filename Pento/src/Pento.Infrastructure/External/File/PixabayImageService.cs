@@ -4,8 +4,9 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Infrastructure.External.File;
+
 internal sealed class PixabayImageService(HttpClient httpClient, IConfiguration config)
-    :IPixabayImageService
+    : IPixabayImageService
 {
     public async Task<Result<Uri>> GetImageUrlAsync(string query, CancellationToken cancellationToken = default)
     {

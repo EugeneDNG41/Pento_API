@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
@@ -64,9 +64,9 @@ internal sealed class CreateGiveawayPostCommandHandler(
         giveawayRepo.Add(post);
 
         foodItem.Reserve(
-            qtyInItemUnit,          
-            cmd.Quantity,           
-            foodItem.UnitId,        
+            qtyInItemUnit,
+            cmd.Quantity,
+            foodItem.UnitId,
             userId
         );
 

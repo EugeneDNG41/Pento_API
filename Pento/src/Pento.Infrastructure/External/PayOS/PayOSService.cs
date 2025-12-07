@@ -3,8 +3,8 @@ using PayOS;
 using PayOS.Exceptions;
 using PayOS.Models.V2.PaymentRequests;
 using PayOS.Models.Webhooks;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.PayOS;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
@@ -12,7 +12,7 @@ using Pento.Domain.Payments;
 namespace Pento.Infrastructure.External.PayOS;
 
 internal sealed class PayOSService(
-    IOptions<PayOSCustomOptions> options, 
+    IOptions<PayOSCustomOptions> options,
     IDateTimeProvider dateTimeProvider,
     IGenericRepository<Payment> paymentRepo,
     IUnitOfWork unitOfWork) : IPayOSService
@@ -145,7 +145,7 @@ internal sealed class PayOSService(
                         break;
                 }
                 await unitOfWork.SaveChangesAsync(cancellationToken);
-            }           
+            }
             return Result.Success();
         }
         catch (WebhookException)

@@ -1,5 +1,4 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.FoodItems.Events;
 
 namespace Pento.Application.FoodItems.Discard;
 

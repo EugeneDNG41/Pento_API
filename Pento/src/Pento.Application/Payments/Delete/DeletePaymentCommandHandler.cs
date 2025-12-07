@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.External.PayOS;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Payments;
 
@@ -9,7 +9,7 @@ namespace Pento.Application.Payments.Delete;
 
 internal sealed class DeletePaymentCommandHandler(
     IPayOSService service,
-    IUserContext userContext, 
+    IUserContext userContext,
     IGenericRepository<Payment> paymentRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<DeletePaymentCommand>
 {

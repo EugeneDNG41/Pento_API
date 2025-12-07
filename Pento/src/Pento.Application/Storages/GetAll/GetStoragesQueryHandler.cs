@@ -1,19 +1,17 @@
 ﻿using System.Data.Common;
 using Dapper;
 using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Application.Compartments.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Users;
 
 namespace Pento.Application.Storages.GetAll;
 
 internal sealed class GetCompartmentsQueryHandler(
     IUserContext userContext,
-    ISqlConnectionFactory sqlConnectionFactory) 
+    ISqlConnectionFactory sqlConnectionFactory)
     : IQueryHandler<GetStoragesQuery, PagedList<StoragePreview>>
 {
     public async Task<Result<PagedList<StoragePreview>>> Handle(

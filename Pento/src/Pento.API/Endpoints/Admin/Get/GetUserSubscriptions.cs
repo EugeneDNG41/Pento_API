@@ -17,7 +17,7 @@ internal sealed class GetUserSubscriptions : IEndpoint
             SubscriptionStatus? status,
             int? fromDuration,
             int? toDuration,
-            IQueryHandler <GetUserSubscriptionsQuery, IReadOnlyList<UserSubscriptionResponse>> handler,
+            IQueryHandler<GetUserSubscriptionsQuery, IReadOnlyList<UserSubscriptionResponse>> handler,
             CancellationToken cancellationToken) =>
         {
             Result<IReadOnlyList<UserSubscriptionResponse>> result = await handler.Handle(

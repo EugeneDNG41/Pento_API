@@ -21,6 +21,6 @@ internal sealed class ResetUserPassword : IEndpoint
     }
     internal sealed class Request
     {
-        public string Email { get; init; } 
+        public string Email { get; init; }
     }
 }

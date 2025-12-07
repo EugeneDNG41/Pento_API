@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Abstractions.External.File;
-    public interface IBlobService
+
+public interface IBlobService
 {
 
     Task<Result<Uri>> UploadFileAsync(
@@ -22,7 +18,7 @@ namespace Pento.Application.Abstractions.External.File;
         string domain,
         CancellationToken cancellationToken = default);
 
- 
+
     Task<Result<Uri>> UploadVideoAsync(
         IFormFile file,
         string domain,

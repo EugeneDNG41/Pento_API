@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
@@ -37,7 +37,7 @@ internal sealed class CreateRecipeReservationCommandHandler(
         {
             return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
         }
-        Recipe? recipe = await recipeRepository.GetByIdAsync (command.RecipeId, cancellationToken);
+        Recipe? recipe = await recipeRepository.GetByIdAsync(command.RecipeId, cancellationToken);
         if (recipe == null)
         {
             return Result.Failure<Guid>(RecipeErrors.NotFound);
@@ -69,7 +69,7 @@ internal sealed class CreateRecipeReservationCommandHandler(
             recipeId: command.RecipeId
             );
         foodItem.Reserve(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
-        foodItemReservationRepository.Add( reservation );
+        foodItemReservationRepository.Add(reservation);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return reservation.Id;
     }

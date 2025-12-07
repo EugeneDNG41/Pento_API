@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Notifications.Send;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Notifications;
 
 namespace Pento.API.Endpoints.Notifications.Post;
 

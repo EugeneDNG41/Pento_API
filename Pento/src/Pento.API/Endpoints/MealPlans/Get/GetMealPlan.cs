@@ -62,5 +62,5 @@ internal sealed class GetMealPlan : IEndpoint
             - **sortAsc**: true = earliest first
             """)
             .RequireAuthorization();
-                }
-            }
+    }
+}

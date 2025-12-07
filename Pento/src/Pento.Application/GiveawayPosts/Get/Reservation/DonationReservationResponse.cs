@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Domain.FoodItemReservations;
+﻿using Pento.Domain.FoodItemReservations;
 
 namespace Pento.Application.GiveawayPosts.Get.Reservation;
+
 public sealed record DonationReservationResponse(
     Guid Id,
     Guid GiveawayPostId,

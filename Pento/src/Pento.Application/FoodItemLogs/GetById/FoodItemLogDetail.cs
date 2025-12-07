@@ -3,14 +3,14 @@
 namespace Pento.Application.FoodItemLogs.GetById;
 
 public sealed record FoodItemLogDetail(
-    Guid Id, 
-    Guid FoodItemId, 
-    string FoodItemName, 
-    Uri? FoodItemImageUrl, 
+    Guid Id,
+    Guid FoodItemId,
+    string FoodItemName,
+    Uri? FoodItemImageUrl,
     BasicUserResponse User,
-    DateTime Timestamp, 
-    string Action, 
-    decimal Quantity, 
+    DateTime Timestamp,
+    string Action,
+    decimal Quantity,
     string UnitAbbreviation);
 public sealed record FoodItemLogDetailRow
 {

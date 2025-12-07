@@ -1,6 +1,5 @@
-﻿using Dapper;
-using Pento.Domain.FoodReferences;
-using System.Data;
+﻿using System.Data;
+using Dapper;
 
 namespace Pento.Infrastructure.Persistence.TypeHandlers;
 

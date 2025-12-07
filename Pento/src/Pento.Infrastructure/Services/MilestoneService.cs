@@ -6,21 +6,21 @@ using Pento.Domain.MilestoneRequirements;
 using Pento.Domain.Milestones;
 using Pento.Domain.UserActivities;
 using Pento.Domain.UserMilestones;
-using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Services;
+
 internal sealed class MilestoneService(
     IDateTimeProvider dateTimeProvider,
     IActivityService activityService,
     IGenericRepository<Milestone> milestoneRepository,
     IGenericRepository<MilestoneRequirement> milestoneRequirementRepository,
-    IGenericRepository<UserMilestone> userMilestoneRepository,   
+    IGenericRepository<UserMilestone> userMilestoneRepository,
     IUnitOfWork unitOfWork)
     : IMilestoneService
 {
     public async Task<Result> CheckUserMilestoneAsync(Guid userId, Milestone milestone, CancellationToken cancellationToken)
     {
-        
+
         UserMilestone? userMilestone = (await userMilestoneRepository.FindAsync(
             um => um.UserId == userId && um.MilestoneId == milestone.Id,
             cancellationToken)).SingleOrDefault();
@@ -49,7 +49,7 @@ internal sealed class MilestoneService(
         if (requirementsMet)
         {
             var newUserMilestone = UserMilestone.Create(userId, milestone.Id, dateTimeProvider.UtcNow);
-            userMilestoneRepository.Add(newUserMilestone);        
+            userMilestoneRepository.Add(newUserMilestone);
         }
         return Result.Success();
     }
@@ -84,7 +84,7 @@ internal sealed class MilestoneService(
         Result result = await CheckMilestoneAfterActivityAsync(userActivity, cancellationToken);
         if (result.IsSuccess)
         {
-            await unitOfWork.SaveChangesAsync(cancellationToken);          
+            await unitOfWork.SaveChangesAsync(cancellationToken);
         }
         return result;
     }

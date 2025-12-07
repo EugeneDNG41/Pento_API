@@ -6,7 +6,7 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryValidator : Abstrac
 {
     public GetSubscriptionsWithPaymentSummaryQueryValidator()
     {
-        RuleFor(x => x.FromDate)          
+        RuleFor(x => x.FromDate)
             .LessThanOrEqualTo(x => x.ToDate)
             .When(x => x.FromDate.HasValue && x.ToDate.HasValue)
             .WithMessage("From Date must be less than or equal to To Date.");

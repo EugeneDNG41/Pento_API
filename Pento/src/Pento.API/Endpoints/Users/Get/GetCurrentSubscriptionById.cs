@@ -11,7 +11,7 @@ internal sealed class GetCurrentSubscriptionById : IEndpoint
     {
         app.MapGet("users/subscriptions/{subscriptionId:guid}", async (
             Guid subscriptionId,
-            IQueryHandler <GetCurrentSubscriptionByIdQuery, UserSubscriptionDetailResponse> handler,
+            IQueryHandler<GetCurrentSubscriptionByIdQuery, UserSubscriptionDetailResponse> handler,
             CancellationToken cancellationToken) =>
         {
             Result<UserSubscriptionDetailResponse> result = await handler.Handle(

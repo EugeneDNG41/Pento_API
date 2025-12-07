@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Pento.Domain.DietaryTags;
+﻿using Pento.Domain.DietaryTags;
 using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
-using Pento.Infrastructure.Persistence;
 
 namespace Pento.Infrastructure.Persistence.Seed;
 

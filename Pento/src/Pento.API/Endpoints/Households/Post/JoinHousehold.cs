@@ -1,8 +1,5 @@
 ﻿using Pento.API.Extensions;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Households.Create;
-using Pento.Application.Households.GenerateInvite;
 using Pento.Application.Households.Join;
 using Pento.Domain.Abstractions;
 

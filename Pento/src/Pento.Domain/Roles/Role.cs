@@ -25,7 +25,7 @@ public sealed class Role
     }
 
     public string Name { get; private set; }
-    public RoleType Type { get; private set;  }
+    public RoleType Type { get; private set; }
 }
 public enum RoleType
 {

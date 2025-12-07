@@ -7,6 +7,7 @@ using Pento.Domain.UserEntitlements;
 using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Services;
+
 internal sealed class EntitlementService(
     IGenericRepository<User> userRepository,
     IGenericRepository<UserEntitlement> userEntitlementRepository,
@@ -17,7 +18,7 @@ internal sealed class EntitlementService(
     {
         User? user = (await userRepository.FindIncludeAsync(u => u.Id == userId, u => u.Roles, cancellationToken)).SingleOrDefault();
         if (user == null)
-        {               
+        {
             return Result.Failure(UserErrors.NotFound);
         }
         if (user.Roles.Any(r => r.Type == RoleType.Administrative))
@@ -25,7 +26,7 @@ internal sealed class EntitlementService(
             return Result.Success();
         }
         IEnumerable<UserEntitlement> userEntitlements = await userEntitlementRepository.FindAsync(
-            ue => ue.UserId == userId && 
+            ue => ue.UserId == userId &&
             ue.FeatureCode == featureCode.ToString(),
             cancellationToken);
         if (userEntitlements.Any())
@@ -41,7 +42,7 @@ internal sealed class EntitlementService(
             else
             {
                 eligibleEntitlement.IncrementUsage();
-            } 
+            }
         }
         else
         {
@@ -53,7 +54,8 @@ internal sealed class EntitlementService(
             if (!feature.DefaultQuota.HasValue)
             {
                 return Result.Failure(UserEntitlementErrors.SubscriptionNeeded);
-            } else
+            }
+            else
             {
                 var newEntitlement = UserEntitlement.Create(
                     userId,

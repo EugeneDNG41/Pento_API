@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Pento.Application.Abstractions.Authentication;
-using Pento.Application.Abstractions.Persistence;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.GiveawayClaims;
 using Pento.Domain.GiveawayPosts;
 using Pento.Domain.Households;
-using Pento.Application.Abstractions.Utility.Clock;
 
 namespace Pento.Application.GiveawayClaims.Complete;
+
 internal sealed class CompleteGiveawayClaimCommandHandler(
     IGenericRepository<GiveawayClaim> claimRepo,
     IGenericRepository<GiveawayPost> postRepo,

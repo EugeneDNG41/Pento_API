@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.RecipeIngredients;
 
 namespace Pento.Infrastructure.Configurations;
+
 internal sealed class RecipeIngredientConfiguration : IEntityTypeConfiguration<RecipeIngredient>
 {
     public void Configure(EntityTypeBuilder<RecipeIngredient> builder)

@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Domain.Abstractions;
 
 namespace Pento.Infrastructure.External.File;
+
 internal sealed class UnsplashImageService(HttpClient httpClient, IConfiguration config)
     : IUnsplashImageService
 {
