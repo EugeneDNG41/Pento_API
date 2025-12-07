@@ -4,6 +4,7 @@ using Pento.Domain.FoodItemReservations;
 using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
+using Pento.Domain.Trades;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -31,7 +32,7 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
         builder.UseTphMappingStrategy().HasDiscriminator(x => x.ReservationFor)
                 .HasValue<FoodItemRecipeReservation>(ReservationFor.Recipe)
                .HasValue<FoodItemMealPlanReservation>(ReservationFor.MealPlan)
-               .HasValue<FoodItemDonationReservation>(ReservationFor.Donation);
+               .HasValue<FoodItemTradeReservation>(ReservationFor.Trade);
         builder.Property<uint>("Version").IsRowVersion();
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
@@ -60,15 +61,15 @@ internal sealed class FoodItemMealPlanReservationConfiguration : IEntityTypeConf
                 .OnDelete(DeleteBehavior.Cascade);
     }
 }
-internal sealed class FoodItemDonationReservationConfiguration : IEntityTypeConfiguration<FoodItemDonationReservation>
+internal sealed class FoodItemDonationReservationConfiguration : IEntityTypeConfiguration<FoodItemTradeReservation>
 {
-    public void Configure(EntityTypeBuilder<FoodItemDonationReservation> builder)
+    public void Configure(EntityTypeBuilder<FoodItemTradeReservation> builder)
     {
-        builder.Property(x => x.GiveawayPostId)
+        builder.Property(x => x.TradeItemId)
                .IsRequired();
-        builder.HasOne<GiveawayPost>()
+        builder.HasOne<TradeItem>()
                .WithMany()
-               .HasForeignKey(x => x.GiveawayPostId)
+               .HasForeignKey(x => x.TradeItemId)
                .OnDelete(DeleteBehavior.Cascade);
     }
 }

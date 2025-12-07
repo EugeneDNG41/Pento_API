@@ -115,7 +115,7 @@ public enum ReservationFor
 {
     Recipe,
     MealPlan,
-    Donation
+    Trade
 }
 public sealed class FoodItemRecipeReservation : FoodItemReservation
 {
@@ -241,31 +241,33 @@ public sealed class FoodItemMealPlanReservation : FoodItemReservation
 
 
 }
-public sealed class FoodItemDonationReservation : FoodItemReservation
+public sealed class FoodItemTradeReservation : FoodItemReservation
 {
-    public Guid GiveawayPostId { get; private set; }
-    private FoodItemDonationReservation() { }
+    public Guid TradeItemId { get; private set; }
 
-    public FoodItemDonationReservation(
-    Guid id,
-    Guid foodItemId,
-    Guid householdId,
-    DateTime reservationDateUtc,
-    decimal quantity,
-    Guid unitId,
-    ReservationStatus reservationStatus,
-    ReservationFor reservationFor,
-    Guid giveAwayPostId
-) : base(id, foodItemId, householdId, reservationDateUtc, quantity, unitId, reservationStatus, reservationFor)
+    private FoodItemTradeReservation() { }
+
+    public FoodItemTradeReservation(
+        Guid id,
+        Guid foodItemId,
+        Guid householdId,
+        DateTime reservationDateUtc,
+        decimal quantity,
+        Guid unitId,
+        ReservationStatus reservationStatus,
+        ReservationFor reservationFor,
+        Guid tradeItemId
+    ) : base(id, foodItemId, householdId, reservationDateUtc, quantity, unitId, reservationStatus, reservationFor)
     {
-        GiveawayPostId = giveAwayPostId;
+        TradeItemId = tradeItemId;
     }
+
     protected override FoodItemReservation CloneAsFulfilled(
-    decimal quantity,
-    Guid unitId,
-    Guid userId)
+        decimal quantity,
+        Guid unitId,
+        Guid userId)
     {
-        return new FoodItemDonationReservation(
+        return new FoodItemTradeReservation(
             Guid.CreateVersion7(),
             FoodItemId,
             HouseholdId,
@@ -273,10 +275,11 @@ public sealed class FoodItemDonationReservation : FoodItemReservation
             quantity,
             unitId,
             ReservationStatus.Fulfilled,
-            ReservationFor.Donation,
-            GiveawayPostId
+            ReservationFor.Trade, 
+            TradeItemId
         );
     }
-
 }
+
+
 

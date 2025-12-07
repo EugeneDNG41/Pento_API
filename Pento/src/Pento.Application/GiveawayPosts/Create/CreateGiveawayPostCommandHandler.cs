@@ -13,7 +13,7 @@ namespace Pento.Application.GiveawayPosts.Create;
 internal sealed class CreateGiveawayPostCommandHandler(
     IGenericRepository<FoodItem> foodItemRepo,
     IGenericRepository<GiveawayPost> giveawayRepo,
-    IGenericRepository<FoodItemDonationReservation> donationReservationRepo,
+    IGenericRepository<FoodItemTradeReservation> donationReservationRepo,
     IUserContext userContext,
     IDateTimeProvider clock,
     IUnitOfWork uow
@@ -70,7 +70,7 @@ internal sealed class CreateGiveawayPostCommandHandler(
             userId
         );
 
-        var donationReservation = new FoodItemDonationReservation(
+        var donationReservation = new FoodItemTradeReservation(
             id: Guid.CreateVersion7(),
             foodItemId: foodItem.Id,
             householdId: householdId.Value,
@@ -78,8 +78,8 @@ internal sealed class CreateGiveawayPostCommandHandler(
             quantity: qtyInItemUnit,
             unitId: foodItem.UnitId,
             reservationStatus: ReservationStatus.Pending,
-            reservationFor: ReservationFor.Donation,
-            giveAwayPostId: post.Id
+            reservationFor: ReservationFor.Trade,
+            tradeItemId: post.Id
         );
 
         donationReservationRepo.Add(donationReservation);
