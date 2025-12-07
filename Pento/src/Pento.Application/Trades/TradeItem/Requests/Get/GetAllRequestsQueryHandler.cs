@@ -33,7 +33,7 @@ internal sealed class GetTradeRequestsByOfferQueryHandler(ISqlConnectionFactory 
                 un.abbreviation     AS UnitAbbreviation
             FROM trade_requests r
             LEFT JOIN users u ON r.user_id = u.id
-            LEFT JOIN trade_item_requests i ON r.id = i.request_id
+            LEFT JOIN trade_items i ON r.id = i.request_id
             LEFT JOIN food_items fi ON i.food_item_id = fi.id
             LEFT JOIN food_references fr ON fi.food_reference_id = fr.id
             LEFT JOIN units un ON i.unit_id = un.id

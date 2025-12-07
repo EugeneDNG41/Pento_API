@@ -8,9 +8,9 @@ using Pento.Domain.Abstractions;
 namespace Pento.Application.Trades.Get;
 
 internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory)
-    : IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostResponse>>
+    : IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostGroupedResponse>>
 {
-    public async Task<Result<PagedList<TradePostResponse>>> Handle(GetAllTradePostsQuery req, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<TradePostGroupedResponse>>> Handle(GetAllTradePostsQuery req, CancellationToken cancellationToken)
     {
         await using DbConnection connection = await factory.OpenConnectionAsync(cancellationToken);
 
@@ -40,7 +40,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
 
         string sql = $@"
         -- Count
-        SELECT COUNT(*) 
+        SELECT COUNT(DISTINCT o.id)
         FROM trade_items i
         JOIN trade_offers o ON i.offer_id = o.id
         JOIN food_items fi ON i.food_item_id = fi.id
@@ -79,13 +79,33 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
 
         int totalCount = await multi.ReadFirstAsync<int>();
         var items = (await multi.ReadAsync<TradePostResponse>()).ToList();
+        var grouped = items
+            .GroupBy(x => x.OfferId)
+            .Select(g => new TradePostGroupedResponse(
+                OfferId: g.Key,
+                StartDate: g.First().StartDate,
+                EndDate: g.First().EndDate,
+                PickupOption: g.First().PickupOption,
+                PostedBy: g.First().PostedBy,
+                CreatedOnUtc: g.First().CreatedOnUtc,
+                Items: g.Select(x => new TradePostItemResponse(
+                    ItemId: x.ItemId,
+                    FoodItemId: x.FoodItemId,
+                    FoodName: x.FoodName,
+                    FoodImageUri: x.FoodImageUri,
+                    Quantity: x.Quantity,
+                    UnitAbbreviation: x.UnitAbbreviation
+                )).ToList()
+    ))
+    .ToList();
 
-        var paged = PagedList<TradePostResponse>.Create(
-            items,
+        var paged = PagedList<TradePostGroupedResponse>.Create(
+            grouped,
             totalCount,
             req.PageNumber,
             req.PageSize
         );
+
 
         return Result.Success(paged);
     }

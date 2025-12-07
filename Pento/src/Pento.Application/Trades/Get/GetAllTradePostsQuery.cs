@@ -8,4 +8,4 @@ public sealed record GetAllTradePostsQuery(
     int PageSize = 10,
     string? Search = null,
     string? Sort = "newest"
-) : IQuery<PagedList<TradePostResponse>>;
+) : IQuery<PagedList<TradePostGroupedResponse>>;
