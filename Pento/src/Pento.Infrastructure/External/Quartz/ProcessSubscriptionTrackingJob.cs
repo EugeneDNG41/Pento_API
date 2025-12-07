@@ -1,5 +1,4 @@
-﻿using System.Threading;
-using Pento.Application.Abstractions.Exceptions;
+﻿using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;

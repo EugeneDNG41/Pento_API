@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pento.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using Pento.Infrastructure.Persistence;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251207082734_RemoveBlogAndComment")]
+    partial class RemoveBlogAndComment
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -3128,6 +3131,22 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("user_roles", (string)null);
                 });
 
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemDonationReservation", b =>
+                {
+                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
+
+                    b.Property<Guid>("GiveawayPostId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("giveaway_post_id");
+
+                    b.HasIndex("GiveawayPostId")
+                        .HasDatabaseName("ix_food_item_reservations_giveaway_post_id");
+
+                    b.ToTable("food_item_reservations", (string)null);
+
+                    b.HasDiscriminator().HasValue("Donation");
+                });
+
             modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemMealPlanReservation", b =>
                 {
                     b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
@@ -3158,22 +3177,6 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("food_item_reservations", (string)null);
 
                     b.HasDiscriminator().HasValue("Recipe");
-                });
-
-            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemTradeReservation", b =>
-                {
-                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
-
-                    b.Property<Guid>("TradeItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trade_item_id");
-
-                    b.HasIndex("TradeItemId")
-                        .HasDatabaseName("ix_food_item_reservations_trade_item_id");
-
-                    b.ToTable("food_item_reservations", (string)null);
-
-                    b.HasDiscriminator().HasValue("Trade");
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>
@@ -3715,6 +3718,16 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_user_roles_user_user_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemDonationReservation", b =>
+                {
+                    b.HasOne("Pento.Domain.GiveawayPosts.GiveawayPost", null)
+                        .WithMany()
+                        .HasForeignKey("GiveawayPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_reservations_giveaway_post_giveaway_post_id");
+                });
+
             modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemMealPlanReservation", b =>
                 {
                     b.HasOne("Pento.Domain.MealPlans.MealPlan", null)
@@ -3733,16 +3746,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_food_item_reservations_recipe_recipe_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemTradeReservation", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeItem", null)
-                        .WithMany()
-                        .HasForeignKey("TradeItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_food_item_reservations_trade_item_trade_item_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>

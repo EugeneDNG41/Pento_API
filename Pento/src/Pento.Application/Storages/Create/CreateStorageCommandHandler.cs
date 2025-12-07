@@ -29,6 +29,13 @@ internal sealed class CreateStorageCommandHandler(
         {
             return Result.Failure<Guid>(HouseholdErrors.NotFound);
         }
+        int storagesCount = await storageRepository.CountAsync(
+            s => s.HouseholdId == householdId.Value,
+            cancellationToken);
+        if (storagesCount >= 6)
+        {
+            return Result.Failure<Guid>(StorageErrors.StorageLimitReached);
+        }
         var storage = Storage.Create(
             command.Name,
             householdId.Value,

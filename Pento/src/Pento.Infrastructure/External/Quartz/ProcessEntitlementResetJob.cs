@@ -1,10 +1,7 @@
-﻿using System.Threading;
-using Pento.Application.Abstractions.External.Firebase;
-using Pento.Application.Abstractions.Persistence;
+﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Shared;
 using Pento.Domain.UserEntitlements;
-using Pento.Domain.UserSubscriptions;
 using Quartz;
 namespace Pento.Infrastructure.External.Quartz;
 #pragma warning disable S125

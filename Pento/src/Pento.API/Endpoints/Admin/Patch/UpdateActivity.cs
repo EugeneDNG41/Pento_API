@@ -9,7 +9,7 @@ internal sealed class UpdateActivity : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPut("admin/activities/{activityCode:guid}", async (
+        app.MapPut("admin/activities/{activityCode}", async (
             string activityCode,
             Request request,
             ICommandHandler<UpdateActivityCommand> handler,
