@@ -11,7 +11,7 @@ namespace Pento.Application.GiveawayPosts.Delete;
 
 internal sealed class DeleteGiveawayPostCommandHandler(
     IGenericRepository<GiveawayPost> giveawayRepo,
-    IGenericRepository<FoodItemDonationReservation> reservationRepo,
+    IGenericRepository<FoodItemTradeReservation> reservationRepo,
     IGenericRepository<FoodItem> foodItemRepo,
     IUserContext userContext,
     IUnitOfWork uow
@@ -36,9 +36,9 @@ internal sealed class DeleteGiveawayPostCommandHandler(
             return Result.Failure<Guid>(GiveawayPostErrors.CannotDelete);
         }
 
-        FoodItemDonationReservation? reservation =
+        FoodItemTradeReservation? reservation =
             (await reservationRepo.FindAsync(
-                x => x.GiveawayPostId == post.Id
+                x => x.TradeItemId == post.Id
                   && x.Status == ReservationStatus.Pending,
                 cancellationToken
             )).FirstOrDefault();

@@ -13,7 +13,7 @@ namespace Pento.Application.GiveawayClaims.Complete;
 internal sealed class CompleteGiveawayClaimCommandHandler(
     IGenericRepository<GiveawayClaim> claimRepo,
     IGenericRepository<GiveawayPost> postRepo,
-    IGenericRepository<FoodItemDonationReservation> reservationRepo,
+    IGenericRepository<FoodItemTradeReservation> reservationRepo,
     IUserContext userContext,
     IDateTimeProvider clock,
     IUnitOfWork uow
@@ -58,8 +58,8 @@ internal sealed class CompleteGiveawayClaimCommandHandler(
             return Result.Failure<Guid>(GiveawayPostErrors.PostNotInClaimedState);
         }
 
-        FoodItemDonationReservation? reservation = (await reservationRepo.FindAsync(
-            x => x.GiveawayPostId == post.Id
+        FoodItemTradeReservation? reservation = (await reservationRepo.FindAsync(
+            x => x.TradeItemId == post.Id
               && x.FoodItemId == post.FoodItemId
               && x.Status == ReservationStatus.Pending,
             cancellationToken

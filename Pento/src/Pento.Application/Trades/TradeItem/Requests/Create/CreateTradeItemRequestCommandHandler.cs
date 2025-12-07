@@ -18,7 +18,7 @@ internal sealed class CreateTradeItemRequestCommandHandler(
     IGenericRepository<TradeRequest> requestRepo,
     IGenericRepository<TradeItemRequest> itemRepo,
     IGenericRepository<TradeOffer> offerRepo,
-    IGenericRepository<FoodItemDonationReservation> reservationRepo,
+    IGenericRepository<FoodItemTradeReservation> reservationRepo,
     IGenericRepository<FoodItem> foodItemRepo,
     IGenericRepository<Unit> unitRepo,
     IConverterService converter,
@@ -110,7 +110,7 @@ internal sealed class CreateTradeItemRequestCommandHandler(
 
             itemRepo.Add(item);
 
-            var reservation = new FoodItemDonationReservation(
+            var reservation = new FoodItemTradeReservation(
                 id: Guid.CreateVersion7(),
                 foodItemId: foodItem.Id,
                 householdId: householdId.Value,
@@ -118,8 +118,8 @@ internal sealed class CreateTradeItemRequestCommandHandler(
                 quantity: dto.Quantity,
                 unitId: dto.UnitId,
                 reservationStatus: ReservationStatus.Pending,
-                reservationFor: ReservationFor.Donation,
-                giveAwayPostId: req.Id
+                reservationFor: ReservationFor.Trade,
+                tradeItemId: req.Id
             );
 
             reservationRepo.Add(reservation);
