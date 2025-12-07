@@ -15,7 +15,7 @@ internal sealed class GetTradePost : IEndpoint
             int pageSize,
             string? search,
             string? sort,
-            IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostResponse>> handler,
+            IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostGroupedResponse>> handler,
             CancellationToken cancellationToken
         ) =>
         {
@@ -26,7 +26,7 @@ internal sealed class GetTradePost : IEndpoint
                 Sort: sort
             );
 
-            Result<PagedList<TradePostResponse>> result =
+            Result<PagedList<TradePostGroupedResponse>> result =
                 await handler.Handle(query, cancellationToken);
 
             return result.Match(
