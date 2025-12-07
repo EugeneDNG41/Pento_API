@@ -28,6 +28,8 @@ public sealed class TradeOffer : Entity
         EndDate = endDate;
         PickupOption = pickupOption;
         CreatedOn = createdOn;
+        UpdatedOn = null;
+
     }
     public static TradeOffer Create(
         Guid userId,

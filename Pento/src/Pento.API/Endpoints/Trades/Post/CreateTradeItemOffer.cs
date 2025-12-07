@@ -47,7 +47,7 @@ internal sealed class CreateMultipleTradeItemOffer : IEndpoint
     internal sealed class ItemRequest
     {
         public Guid FoodItemId { get; init; }
-        public int Quantity { get; init; }
+        public decimal Quantity { get; init; }
         public Guid UnitId { get; init; }
     }
 }

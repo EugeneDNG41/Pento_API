@@ -6,6 +6,8 @@ public sealed record TradePostResponse(
     Guid FoodItemId,
     string FoodName,
     Uri? FoodImageUri,
+    string PostedByName,
+    Uri? PostedByAvatarUrl,
     decimal Quantity,
     string UnitAbbreviation,
     DateTime StartDate,
@@ -14,6 +16,7 @@ public sealed record TradePostResponse(
     Guid PostedBy,
     DateTime CreatedOnUtc
 );
+
 public sealed record TradePostGroupedResponse(
     Guid OfferId,
     DateTime StartDate,
@@ -21,6 +24,8 @@ public sealed record TradePostGroupedResponse(
     string PickupOption,
     Guid PostedBy,
     DateTime CreatedOnUtc,
+    string PostedByName,
+    Uri? PostedByAvatarUrl,
     IReadOnlyList<TradePostItemResponse> Items
 );
 

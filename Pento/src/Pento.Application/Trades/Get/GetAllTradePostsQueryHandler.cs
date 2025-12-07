@@ -39,13 +39,14 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
         };
 
         string sql = $@"
-        -- Count
+        -- Count offers (distinct)
         SELECT COUNT(DISTINCT o.id)
         FROM trade_items i
         JOIN trade_offers o ON i.offer_id = o.id
         JOIN food_items fi ON i.food_item_id = fi.id
         JOIN food_references fr ON fi.food_reference_id = fr.id
         JOIN units u ON i.unit_id = u.id
+        JOIN users us ON o.user_id = us.id
         {whereClause};
 
         -- Data
@@ -55,6 +56,8 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
             fi.id AS FoodItemId,
             fr.name AS FoodName,
             fr.image_url AS FoodImageUri,
+            us.first_name AS PostedByName,
+            us.avatar_url AS PostedByAvatarUrl,
             i.quantity AS Quantity,
             u.abbreviation AS UnitAbbreviation,
             o.start_date AS StartDate,
@@ -67,6 +70,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
         JOIN food_items fi ON i.food_item_id = fi.id
         JOIN food_references fr ON fi.food_reference_id = fr.id
         JOIN units u ON i.unit_id = u.id
+        JOIN users us ON o.user_id = us.id
         {whereClause}
         {orderBy}
         OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
@@ -79,6 +83,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
 
         int totalCount = await multi.ReadFirstAsync<int>();
         var items = (await multi.ReadAsync<TradePostResponse>()).ToList();
+
         var grouped = items
             .GroupBy(x => x.OfferId)
             .Select(g => new TradePostGroupedResponse(
@@ -88,6 +93,8 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
                 PickupOption: g.First().PickupOption,
                 PostedBy: g.First().PostedBy,
                 CreatedOnUtc: g.First().CreatedOnUtc,
+                PostedByName: g.First().PostedByName,
+                PostedByAvatarUrl: g.First().PostedByAvatarUrl,
                 Items: g.Select(x => new TradePostItemResponse(
                     ItemId: x.ItemId,
                     FoodItemId: x.FoodItemId,
@@ -96,8 +103,8 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
                     Quantity: x.Quantity,
                     UnitAbbreviation: x.UnitAbbreviation
                 )).ToList()
-    ))
-    .ToList();
+            ))
+            .ToList();
 
         var paged = PagedList<TradePostGroupedResponse>.Create(
             grouped,
@@ -106,8 +113,6 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
             req.PageSize
         );
 
-
         return Result.Success(paged);
     }
 }
-
