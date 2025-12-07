@@ -9,7 +9,7 @@ public enum NotificationType
     GiveawayPost = 5,
     GiveawayClaim = 6,
     Subscription = 7,
-    Milestone = 8
-
+    Milestone = 8,
+    Entitlement = 9
 }
 
