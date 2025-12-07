@@ -141,8 +141,14 @@ internal sealed class CreateMealPlanFromRecipeConfirmCommandHandler(
 
             mealPlanRepo.Add(mealPlan);
         }
-
-        var mealPlanRecipe = MealPlanRecipe.Create(mealPlan.Id, cmd.RecipeId);
+        MealPlanRecipe? mealPlanExists = (await mealPlanRecipeRepo.FindAsync(
+            x => x.MealPlanId == mealPlan.Id && x.RecipeId == cmd.RecipeId,
+            cancellationToken)).FirstOrDefault();
+        if (mealPlanExists is not null)
+        {
+            return Result.Failure<MealPlanAutoReserveResult>(MealPlanErrors.RecipeAlreadyAssigned);
+        }
+            var mealPlanRecipe = MealPlanRecipe.Create(mealPlan.Id, cmd.RecipeId);
         mealPlanRecipeRepo.Add(mealPlanRecipe);
 
         foreach (ReservationResult r in reserved)

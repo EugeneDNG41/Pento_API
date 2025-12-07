@@ -44,12 +44,6 @@ internal sealed class GetGroceryListsByHouseholdIdQueryHandler(
             sql, new { HouseholdId = householdId }
         )).ToList();
 
-        if (groceryLists.Count == 0)
-        {
-            return Result.Failure<IReadOnlyList<GroceryListResponse>>(
-                GroceryListErrors.NotFoundByHousehold
-            );
-        }
 
         return groceryLists;
     }
