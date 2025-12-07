@@ -25,6 +25,13 @@ internal sealed class CreateCompartmentCommandHandler(
         {
             return Result.Failure<Guid>(StorageErrors.NotFound);
         }
+        int compartmentsCount = await compartmentRepository.CountAsync(
+            c => c.StorageId == command.StorageId && c.HouseholdId == householdId.Value,
+            cancellationToken);
+        if (compartmentsCount >= 5)
+        {
+            return Result.Failure<Guid>(CompartmentErrors.CompartmentLimitReached);
+        }
         var compartment = Compartment.Create(
             command.Name,
             command.StorageId,
