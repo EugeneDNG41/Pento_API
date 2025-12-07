@@ -234,13 +234,23 @@ internal sealed class UserTests
     public void JoinHousehold_ValidGuid_SetsHouseholdIdAndRaisesEvent()
     {
         // Arrange
-        // The production User type cannot be instantiated with the provided source:
-        // - The parameterless constructor is private.
-        // - The static Create(...) factory implementation was not present in the provided file content.
-        //
-        // Act & Assert:
-        // Mark test as inconclusive and provide guidance in the XML comment above.
-        Assert.Inconclusive("Cannot instantiate Pento.Domain.Users.User: private constructor and missing factory implementation in provided scope. Provide a public factory or accessible constructor to enable this test.");
+        var user = User.Create("a@b.com", "First", "Last", "identity-5", DateTime.UtcNow);
+        var householdId = Guid.NewGuid();
+
+        // Act
+        user.JoinHousehold(householdId);
+
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(user.HouseholdId, Is.EqualTo(householdId), "HouseholdId should be set to the provided value after JoinHousehold.");
+            IReadOnlyList<IDomainEvent> events = user.GetDomainEvents();
+            UserHouseholdJoinedDomainEvent? joinEvent = events.OfType<UserHouseholdJoinedDomainEvent>().FirstOrDefault();
+            Assert.That(joinEvent, Is.Not.Null, "A UserHouseholdJoinedDomainEvent should be raised after joining a household.");
+            Assert.That(joinEvent!.UserId, Is.EqualTo(user.Id), "UserId in the event should match the user's Id.");
+            Assert.That(joinEvent.HouseholdId, Is.EqualTo(householdId), "HouseholdId in the event should match the provided householdId.");
+        });
+
     }
 
     /// <summary>
