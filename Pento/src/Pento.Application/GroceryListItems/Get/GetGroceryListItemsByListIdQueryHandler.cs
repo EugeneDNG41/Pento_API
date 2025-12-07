@@ -36,10 +36,12 @@ internal sealed class GetGroceryListItemsByListIdQueryHandler(
                 fr.typical_shelf_life_days_fridge AS TypicalShelfLifeDays_Fridge,
                 fr.typical_shelf_life_days_freezer AS TypicalShelfLifeDays_Freezer,
                 fr.name AS FoodName,
-                fr.image_url AS FoodImageUri
+                fr.image_url AS FoodImageUri,
+                u.abbreviation AS AbbertaionUnit
 
             FROM grocery_list_items gli
             LEFT JOIN food_references fr ON fr.id = gli.food_ref_id
+            LEFT JOIN units u ON u.id = gli.unit_id
 
             WHERE gli.list_id = @ListId
             ORDER BY gli.created_on_utc DESC

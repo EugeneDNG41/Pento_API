@@ -49,7 +49,7 @@ public static class MealPlanErrors
     "You do not have permission to access this MealPlan.");
     public static readonly Error RecipeAlreadyAssigned = Error.Conflict(
         "MealPlan.RecipeAlreadyAssigned",
-        "The recipe is already assigned to another meal plan on the same date.");
+        "The recipe is already assigned to meal plan on the same date and mealtype.");
     public static readonly Error RecipeNotInMealPlan = Error.NotFound(
         "MealPlan.RecipeNotInMealPlan",
         "The recipe is not part of the specified meal plan.");

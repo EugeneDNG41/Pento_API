@@ -45,6 +45,16 @@ public sealed class GroceryListItem : Entity
 
     }
     private GroceryListItem() { }
+    public void IncreaseQuantity(decimal amount)
+    {
+        if (amount <= 0)
+        {
+            return;
+        }
+
+        Quantity += amount;
+    }
+
 
     public Guid ListId { get; private set; }
     public Guid FoodRefId { get; private set; }
