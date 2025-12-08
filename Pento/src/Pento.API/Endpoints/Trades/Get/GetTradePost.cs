@@ -1,4 +1,5 @@
-﻿using Pento.API.Extensions;
+﻿using FluentEmail.Core.Interfaces;
+using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Trades.Get;
@@ -36,5 +37,24 @@ internal sealed class GetTradePost : IEndpoint
         })
         .WithTags(Tags.Trades)
         .WithDescription("sort options: newest | oldest | food | food_desc | quantity");
+
+        app.MapGet("trades/posts/me", async (
+                  IQueryHandler<GetMyTradePostsQuery, IReadOnlyList<TradePostResponse>> handler,
+                  CancellationToken cancellationToken) =>
+        {
+            var query = new GetMyTradePostsQuery();
+
+            Result<IReadOnlyList<TradePostResponse>> result =
+                await handler.Handle(query, cancellationToken);
+
+            return result.Match(
+                list => Results.Ok(list),
+                CustomResults.Problem
+            );
+        })
+              .WithTags(Tags.Trades)
+              .RequireAuthorization();
     }
+
 }
+
