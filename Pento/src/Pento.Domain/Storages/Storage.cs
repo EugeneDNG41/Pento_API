@@ -27,6 +27,16 @@ public sealed class Storage : Entity
         storage.Raise(new StorageCreatedDomainEvent(storage.Id, userId));
         return storage;
     }
+    public static Storage AutoCreate(string name, Guid householdId, StorageType type, string? notes)
+    {
+        var storage = new Storage(
+            Guid.CreateVersion7(),
+            name,
+            householdId,
+            type,
+            notes);
+        return storage;
+    }
     public void UpdateName(string name)
     {
         Name = name;

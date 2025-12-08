@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.UserSubscriptions.AdjustUserSubscription;
 using Pento.Domain.Abstractions;
+using Pento.Infrastructure.Services;
 
 namespace Pento.API.Endpoints.Admin.Patch;
 

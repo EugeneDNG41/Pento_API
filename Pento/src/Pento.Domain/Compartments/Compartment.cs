@@ -22,6 +22,11 @@ public sealed class Compartment : Entity
         compartment.Raise(new CompartmentCreatedDomainEvent(compartment.Id, userId));
         return compartment;
     }
+    public static Compartment AutoCreate(string name, Guid storageId, Guid householdId, string? notes)
+    {
+        var compartment = new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
+        return compartment;
+    }
     public void UpdateName(string name)
     {
         Name = name;
