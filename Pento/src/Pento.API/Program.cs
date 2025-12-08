@@ -5,6 +5,7 @@ using Pento.API.Extensions;
 using Pento.API.Middleware;
 using Pento.Application;
 using Pento.Infrastructure;
+using Pento.Infrastructure.Services;
 using Serilog;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+app.MapHub<MessageHub>("message-hub");
 
 app.MapEndpoints();
 

@@ -11,26 +11,44 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
     : IQueryHandler<GetAllFoodReferencesQuery, PagedList<FoodReferenceResponse>>
 {
     public async Task<Result<PagedList<FoodReferenceResponse>>> Handle(
-        GetAllFoodReferencesQuery request,
+        GetAllFoodReferencesQuery query,
         CancellationToken cancellationToken)
     {
-        await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
-
+        using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
+        string orderBy = query.SortBy switch
+        {
+            GetAllFoodReferencesSortBy.Name => "name",
+            GetAllFoodReferencesSortBy.FoodGroup => "food_group",
+            GetAllFoodReferencesSortBy.Brand => "brand",
+            GetAllFoodReferencesSortBy.CreatedAt => "created_on_utc",
+            _ => "id"
+        };
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>();
         var parameters = new DynamicParameters();
 
-        if (request.FoodGroup.HasValue)
+        if (query.FoodGroup != null && query.FoodGroup.Length > 0)
         {
-            filters.Add("food_group = @FoodGroup");
-            parameters.Add("FoodGroup", request.FoodGroup.ToString());
+            filters.Add("food_group = Any(@FoodGroup::text[])");
+            parameters.Add("FoodGroup", query.FoodGroup.Select(x => x.ToString()).ToArray());
         }
 
-        if (!string.IsNullOrWhiteSpace(request.Search))
+        if (!string.IsNullOrWhiteSpace(query.Search))
         {
             filters.Add("(levenshtein(name, @GetAll) <= 2 OR name ILIKE '%' || @GetAll || '%')");
-            parameters.Add("GetAll", request.Search);
+            parameters.Add("GetAll", query.Search);
         }
-
+        if (query.HasImage.HasValue)
+        {
+            if (query.HasImage.Value)
+            {
+                filters.Add("image_url IS NOT NULL");
+            }
+            else
+            {
+                filters.Add("image_url IS NULL");
+            }
+        }
         string whereClause = filters.Count > 0
             ? "WHERE " + string.Join(" AND ", filters)
             : string.Empty;
@@ -56,12 +74,12 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
                 updated_on_utc AS UpdatedAt
             FROM food_references
             {whereClause}
-            ORDER BY name
+            {orderClause}
             OFFSET @Offset LIMIT @PageSize;
         ";
 
-        parameters.Add("Offset", (request.Page - 1) * request.PageSize);
-        parameters.Add("PageSize", request.PageSize);
+        parameters.Add("Offset", (query.Page - 1) * query.PageSize);
+        parameters.Add("PageSize", query.PageSize);
 
 
         SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
@@ -75,8 +93,8 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
         var paged = PagedList<FoodReferenceResponse>.Create(
             items,
             totalCount,
-            request.Page,
-            request.PageSize
+            query.Page,
+            query.PageSize
         );
 
         return Result.Success(paged);

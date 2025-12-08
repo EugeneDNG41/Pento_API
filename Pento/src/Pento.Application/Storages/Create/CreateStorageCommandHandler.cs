@@ -29,6 +29,10 @@ internal sealed class CreateStorageCommandHandler(
         {
             return Result.Failure<Guid>(HouseholdErrors.NotFound);
         }
+        if (await storageRepository.AnyAsync(s => s.Name == command.Name && s.HouseholdId == householdId, cancellationToken))
+        {
+            return Result.Failure<Guid>(StorageErrors.DuplicateName);
+        }
         int storagesCount = await storageRepository.CountAsync(
             s => s.HouseholdId == householdId.Value,
             cancellationToken);

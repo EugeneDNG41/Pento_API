@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.SignalR;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -53,13 +54,13 @@ internal sealed class CreateHouseholdCommandHandler(
         currentUser.SetRoles([householdHeadRole]);
         userRepository.Update(currentUser);
 
-        var pantry = Storage.Create("Default Pantry", household.Id, StorageType.Pantry, null, userContext.UserId);
-        var fridge = Storage.Create("Default Fridge", household.Id, StorageType.Fridge, null, userContext.UserId);
-        var freezer = Storage.Create("Default Freezer", household.Id, StorageType.Freezer, null, userContext.UserId);
+        var pantry = Storage.AutoCreate("Default Pantry", household.Id, StorageType.Pantry, null);
+        var fridge = Storage.AutoCreate("Default Fridge", household.Id, StorageType.Fridge, null);
+        var freezer = Storage.AutoCreate("Default Freezer", household.Id, StorageType.Freezer, null);
         storageRepository.AddRange([pantry, fridge, freezer]);
-        var pantryCompartment = Compartment.Create("Default Pantry Compartment", pantry.Id, household.Id, null, userContext.UserId);
-        var fridgeCompartment = Compartment.Create("Default Fridge Compartment", fridge.Id, household.Id, null, userContext.UserId);
-        var freezerCompartment = Compartment.Create("Default Freezer Compartment", freezer.Id, household.Id, null, userContext.UserId);
+        var pantryCompartment = Compartment.AutoCreate("Default Pantry Compartment", pantry.Id, household.Id, null);
+        var fridgeCompartment = Compartment.AutoCreate("Default Fridge Compartment", fridge.Id, household.Id, null);
+        var freezerCompartment = Compartment.AutoCreate("Default Freezer Compartment", freezer.Id, household.Id, null);
         compartmentRepository.AddRange([pantryCompartment, fridgeCompartment, freezerCompartment]);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;

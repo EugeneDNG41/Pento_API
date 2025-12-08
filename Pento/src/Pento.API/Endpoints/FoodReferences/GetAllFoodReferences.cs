@@ -12,17 +12,23 @@ internal sealed class GetAllFoodReferences : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("food-references", async (
-            FoodGroup? foodGroup,
+            FoodGroup[]? foodGroup,
             string? search,
-            int pageNumber,
-            int pageSize,
+            bool? hasImage,
+            GetAllFoodReferencesSortBy? sortBy,
+            SortOrder? sortOrder,
             IQueryHandler<GetAllFoodReferencesQuery, PagedList<FoodReferenceResponse>> handler,
-            CancellationToken cancellationToken
+            CancellationToken cancellationToken,
+            int pageNumber = 1 ,
+            int pageSize = 10
         ) =>
         {
             var query = new GetAllFoodReferencesQuery(
                 FoodGroup: foodGroup,
                 Search: search,
+                HasImage: hasImage,
+                sortBy,
+                sortOrder,
                 Page: pageNumber,
                 PageSize: pageSize
             );

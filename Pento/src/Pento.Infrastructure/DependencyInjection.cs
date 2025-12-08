@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
@@ -98,6 +99,9 @@ public static class DependencyInjection
             Credential = cred.ToGoogleCredential()
         });
         services.AddSingleton(firebaseApp);
+        services.AddSignalR();
+        services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
+        
         services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))
             .ValidateDataAnnotations()
