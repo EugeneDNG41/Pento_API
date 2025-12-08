@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Messaging;
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodReferences;
@@ -8,6 +9,7 @@ namespace Pento.Application.FoodReferences.Update;
 
 internal sealed class UpdateFoodReferenceCommandHandler(
     IGenericRepository<FoodReference> foodReferenceRepository,
+    IUserContext usercontext,
     IUnitOfWork unitOfWork)
     : ICommandHandler<UpdateFoodReferenceCommand, Guid>
 {
@@ -39,8 +41,8 @@ internal sealed class UpdateFoodReferenceCommandHandler(
             typicalShelfLifeDaysPantry: request.TypicalShelfLifeDays_Pantry,
             typicalShelfLifeDaysFridge: request.TypicalShelfLifeDays_Fridge,
             typicalShelfLifeDaysFreezer: request.TypicalShelfLifeDays_Freezer,
-            addedBy: null,
-            imageUrl: request.ImageUrl,
+            addedBy: usercontext.UserId,
+            imageUrl: foodRef.ImageUrl,
             unitType: unitType,
             utcNow: DateTime.UtcNow
         );

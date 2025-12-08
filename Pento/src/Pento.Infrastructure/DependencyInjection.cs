@@ -88,7 +88,16 @@ public static class DependencyInjection
 
             return model;
         });
-       
+        GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
+         .Get<GoogleOptions>()
+         ?? throw new InvalidOperationException("Google section is missing or invalid");
+        string jsonOptions = Newtonsoft.Json.JsonConvert.SerializeObject(googleOptions);
+        ServiceAccountCredential cred = CredentialFactory.FromJson<ServiceAccountCredential>(jsonOptions);
+        var firebaseApp = FirebaseApp.Create(new AppOptions()
+        {
+            Credential = cred.ToGoogleCredential()
+        });
+        services.AddSingleton(firebaseApp);
         services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))
             .ValidateDataAnnotations()
