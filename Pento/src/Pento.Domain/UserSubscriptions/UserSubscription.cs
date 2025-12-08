@@ -37,6 +37,7 @@ public sealed class UserSubscription : Entity
         DateOnly? endDate)
     {
         var userSubscription = new UserSubscription(Guid.CreateVersion7(), userId, subscriptionId, SubscriptionStatus.Active, startDate, endDate);
+        userSubscription.Raise(new UserSubscriptionCreatedDomainEvent(userSubscription.Id));
         return userSubscription;
     }
 
