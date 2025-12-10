@@ -33,7 +33,7 @@ internal sealed class GetRecipeWishListQueryHandler(
                 r.title              AS Title,
                 r.image_url           AS ImageUrl,
                 r.difficulty_level    AS DifficultyLevel,
-                r.recipe_prep_time_minutes    AS PrepTimeMinutes,
+                r.prep_time_minutes    AS PrepTimeMinutes,
                 w.added_on_utc         AS AddedOnUtc
             FROM recipe_wishlists w
             INNER JOIN recipes r ON r.id = w.recipe_id
