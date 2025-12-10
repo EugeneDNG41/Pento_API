@@ -21,6 +21,20 @@ internal sealed class RegisterDeviceTokenCommandHandler(
 
         Guid userId = userContext.UserId;
 
+        DeviceToken? usedByOtherUser = (await deviceTokenRepository.FindAsync(
+            x => x.Token == request.Token && x.UserId != userId,
+            cancellationToken
+        )).FirstOrDefault();
+
+        if (usedByOtherUser is not null)
+        {
+            usedByOtherUser.ReassignTo(userId, request.Platform);
+            deviceTokenRepository.Update(usedByOtherUser);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success(request.Token);
+        }
+
         DeviceToken? duplicate = (await deviceTokenRepository.FindAsync(
             x => x.UserId == userId && x.Token == request.Token,
             cancellationToken
@@ -51,4 +65,5 @@ internal sealed class RegisterDeviceTokenCommandHandler(
 
         return Result.Success(request.Token);
     }
+
 }

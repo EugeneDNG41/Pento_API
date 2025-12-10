@@ -17,6 +17,12 @@ public sealed class DeviceToken : Entity
         Platform = platform;
 
     }
+    public void ReassignTo(Guid newUserId, DevicePlatform platform)
+    {
+        UserId = newUserId;
+        Platform = platform;
+    }
+
 
     public void UpdateToken(string token)
     {
