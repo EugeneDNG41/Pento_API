@@ -62,60 +62,12 @@ public abstract class FoodItemReservation : Entity
     public void Increase(decimal additionalQuantity)
     {
         Quantity += additionalQuantity;
-    }
-    public (FoodItemReservation? fulfilledReservation, decimal remainingQuantity)
-    FulfillPartially(decimal fulfillQuantity, Guid unitId, Guid userId)
-    {
-        if (Status != ReservationStatus.Pending)
-        {
-            throw new("Only pending reservations can be fulfilled.");
-        }
-
-        if (fulfillQuantity <= 0)
-        {
-            throw new("Fulfilled quantity must be greater than zero.");
-        }
-
-        if (fulfillQuantity > Quantity)
-        {
-            throw new("Cannot fulfill more than reserved quantity.");
-        }
-
-        if (fulfillQuantity == Quantity)
-        {
-            MarkAsFulfilled(fulfillQuantity, unitId, userId);
-            return (this, 0);
-        }
-
-        Quantity -= fulfillQuantity;
-
-        FoodItemReservation fulfilled = CloneAsFulfilled(fulfillQuantity, unitId, userId);
-
-        fulfilled.Raise(new FoodItemConsumedDomainEvent(
-            FoodItemId,
-            fulfillQuantity,
-            unitId,
-            userId));
-
-        return (fulfilled, Quantity);
-    }
+    }   
     protected abstract FoodItemReservation CloneAsFulfilled(
     decimal quantity,
     Guid unitId,
     Guid userId);
 
-}
-public enum ReservationStatus
-{
-    Pending,
-    Fulfilled,
-    Cancelled
-}
-public enum ReservationFor
-{
-    Recipe,
-    MealPlan,
-    Trade
 }
 public sealed class FoodItemRecipeReservation : FoodItemReservation
 {

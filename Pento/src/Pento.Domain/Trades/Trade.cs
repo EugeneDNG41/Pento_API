@@ -1,12 +1,11 @@
 ﻿using Pento.Domain.Abstractions;
-using Pento.Domain.GiveawayPosts;
 
 namespace Pento.Domain.Trades;
 
 public sealed class TradeOffer : Entity
 {
     public Guid UserId { get; private set; }
-    public GiveawayStatus Status { get; private set; }
+    public TradeStatus Status { get; private set; }
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public PickupOption PickupOption { get; private set; }
@@ -15,7 +14,7 @@ public sealed class TradeOffer : Entity
     public TradeOffer(
            Guid id,
            Guid userId,
-           GiveawayStatus status,
+           TradeStatus status,
            DateTime startDate,
            DateTime endDate,
            PickupOption pickupOption,
@@ -42,7 +41,7 @@ public sealed class TradeOffer : Entity
         return new TradeOffer(
             id: Guid.NewGuid(),
             userId: userId,
-            status: GiveawayStatus.Open,
+            status: TradeStatus.Open,
             startDate: startDate,
             endDate: endDate,
             pickupOption: pickupOption,

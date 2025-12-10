@@ -11,7 +11,6 @@ namespace Pento.Application.MealPlans.Reserve.Fullfill;
 
 internal sealed class FulfillMealPlanReservationCommandHandler(
     IGenericRepository<FoodItemMealPlanReservation> reservationRepository,
-    IGenericRepository<FoodItem> foodItemRepository,
     IConverterService converter,
     IUserContext userContext,
     IUnitOfWork unitOfWork
@@ -45,22 +44,13 @@ internal sealed class FulfillMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemReservationErrors.InvalidState);
         }
 
-        FoodItem? foodItem = await foodItemRepository.GetByIdAsync(
-            reservation.FoodItemId,
-            cancellationToken);
-
-        if (foodItem is null)
-        {
-            return Result.Failure<Guid>(FoodItemErrors.NotFound);
-        }
-
-        decimal qtyFulfillInItemUnit = command.NewQuantity;
-        if (foodItem.UnitId != command.UnitId)
+        decimal qtyFulfillInReservedUnit = command.NewQuantity;
+        if (reservation.UnitId != command.UnitId)
         {
             Result<decimal> converted = await converter.ConvertAsync(
                 command.NewQuantity,
                 command.UnitId,
-                foodItem.UnitId,
+                reservation.UnitId,
                 cancellationToken);
 
             if (converted.IsFailure)
@@ -68,26 +58,22 @@ internal sealed class FulfillMealPlanReservationCommandHandler(
                 return Result.Failure<Guid>(converted.Error);
             }
 
-            qtyFulfillInItemUnit = converted.Value;
+            qtyFulfillInReservedUnit = converted.Value;
         }
 
-        if (qtyFulfillInItemUnit > foodItem.Quantity)
+        if (qtyFulfillInReservedUnit < reservation.Quantity)
         {
-            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
+            var leftover = FoodItemMealPlanReservation.Create(
+                reservation.FoodItemId,
+                reservation.HouseholdId,
+                reservation.ReservationDateUtc,
+                reservation.Quantity - qtyFulfillInReservedUnit,
+                reservation.UnitId,
+                reservation.MealPlanId);
+            reservationRepository.Add(leftover);
         }
-
-        (FoodItemReservation fulfilledReservation, _) = reservation.FulfillPartially(
-            qtyFulfillInItemUnit,
-            foodItem.UnitId,
-            userContext.UserId);
-
-        foodItem.AdjustQuantity(foodItem.Quantity - qtyFulfillInItemUnit, userContext.UserId);
-
-        if (fulfilledReservation is not null && fulfilledReservation.Id != reservation.Id)
-        {
-            reservationRepository.Add((FoodItemMealPlanReservation)fulfilledReservation);
-        }
-
+        reservation.MarkAsFulfilled(command.NewQuantity, command.UnitId, userContext.UserId);
+        reservationRepository.Update(reservation);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return reservation.Id;

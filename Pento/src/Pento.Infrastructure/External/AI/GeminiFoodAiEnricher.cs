@@ -11,7 +11,7 @@ using Pento.Domain.Units;
 
 namespace Pento.Infrastructure.External.AI;
 
-internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration config, GeminiModel model) : IFoodAiEnricher
+internal sealed class GeminiFoodAiEnricher(HttpClient http, IConfiguration config, GenerativeModel model) : IFoodAiEnricher
 {
     private static readonly JsonSerializerOptions JsonOpts = new()
     {

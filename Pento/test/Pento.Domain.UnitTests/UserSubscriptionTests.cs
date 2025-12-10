@@ -83,14 +83,21 @@ internal sealed class UserSubscriptionTests
     /// Expected: EndDate should be newEndDate + RemainingDaysAfterPause days and RemainingDaysAfterPause cleared.
     /// </summary>
     [Test]
-    public void Renew_NewEndDate_WithNonNullRemainingDays_AdjustsEndDateAndClearsRemainingDays_Inconclusive()
+    public void Renew_NewEndDate_AdjustsEndDate()
     {
         // Arrange
-        // NOTE: RemainingDaysAfterPause has a private setter. To exercise the branch where RemainingDaysAfterPause != null
-        // tests must use the public API that produces that state (for example Pause/Resume). The implementations of those
-        // methods were not part of the provided scope for generation, so automatic test setup is not safe to assume.
-        // Marking test as inconclusive and providing guidance for completing the test manually.
-        Assert.Inconclusive("RemainingDaysAfterPause is private. To complete this test, arrange the SUT so that RemainingDaysAfterPause has a value (e.g., by invoking Pause/Resume as implemented) and then call Renew(newEndDate). Verify EndDate == newEndDate.AddDays(previousRemainingDays) and RemainingDaysAfterPause == null.");
+        var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var subscriptionId = Guid.NewGuid();
+        var startDate = new DateOnly(2025, 1, 1);
+        var endDate = new DateOnly(2025, 1, 10);
+        var sut = new UserSubscription(id, userId, subscriptionId, SubscriptionStatus.Paused, startDate, endDate);
+        sut.Expire();
+        // Act
+        sut.Renew(new DateOnly(2025, 2, 1));
+        // Assert
+        Assert.That(sut.EndDate, Is.EqualTo(new DateOnly(2025, 2, 1)), "EndDate should be set to the provided newEndDate.");
+
     }
 
     /// <summary>

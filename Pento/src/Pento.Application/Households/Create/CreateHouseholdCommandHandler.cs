@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using Pento.Application.Abstractions.Authentication;
+﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -30,8 +29,9 @@ internal sealed class CreateHouseholdCommandHandler(
             return Result.Failure<string>(UserErrors.NotFound);
         }
         //deal with previous household if exists
+        Guid? previousHouseholdId = currentUser.HouseholdId;
         Role? householdHeadRole = (await roleRepository.FindAsync(r => r.Name == Role.HouseholdHead.Name, cancellationToken)).Single();
-        if (currentUser.HouseholdId is not null)
+        if (previousHouseholdId is not null)
         {
             IEnumerable<User> otherMembers = await userRepository.FindIncludeAsync(
                 u => u.HouseholdId == currentUser.HouseholdId && u.Id != currentUser.Id,

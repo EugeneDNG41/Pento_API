@@ -1,6 +1,6 @@
-﻿namespace Pento.Domain.GiveawayPosts;
+﻿namespace Pento.Domain.Trades;
 
-public enum GiveawayStatus
+public enum TradeStatus
 {
     Open = 1,
     Fulfilled = 2,

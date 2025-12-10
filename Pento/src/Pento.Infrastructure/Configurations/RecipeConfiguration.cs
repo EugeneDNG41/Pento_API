@@ -25,8 +25,6 @@ internal sealed class RecipeConfiguration : IEntityTypeConfiguration<Recipe>
 
         builder.Property(r => r.Servings);
 
-        builder.Property(r => r.CaloriesPerServing);
-
         builder.Property(r => r.CreatedBy);
 
         builder.Property(r => r.IsPublic)

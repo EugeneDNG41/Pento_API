@@ -1,5 +1,5 @@
 ﻿using Pento.Application.Abstractions.Messaging;
-using Pento.Domain.GiveawayPosts;
+using Pento.Domain.Trades;
 
 namespace Pento.Application.Trades.Offers.Create;
 

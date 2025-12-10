@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.FoodItemReservations;
-using Pento.Domain.GiveawayPosts;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
 using Pento.Domain.Trades;

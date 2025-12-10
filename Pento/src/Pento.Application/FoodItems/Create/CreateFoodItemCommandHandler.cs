@@ -1,7 +1,9 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.SignalR;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
+using Pento.Application.FoodItems.Search;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
@@ -20,6 +22,7 @@ internal sealed class CreateFoodItemCommandHandler(
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<FoodItem> foodItemRepository,
+    IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork)
     : ICommandHandler<CreateFoodItemCommand, Guid>
 {
@@ -94,7 +97,15 @@ internal sealed class CreateFoodItemCommandHandler(
                 userContext.UserId);
         foodItemRepository.Add(foodItem);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-
+        await hubContext.Clients.Group(householdId.Value.ToString())
+            .FoodItemAdded(new FoodItemPreview(
+                foodItem.Id, 
+                foodItem.Name, 
+                foodReference.FoodGroup.ToReadableString(), 
+                foodItem.ImageUrl, 
+                foodItem.Quantity, 
+                validUnit.Abbreviation, 
+                foodItem.ExpirationDate));
         return foodItem.Id;
     }
 }

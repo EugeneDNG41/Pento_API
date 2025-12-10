@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.SignalR;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Converter;
@@ -18,6 +19,7 @@ internal sealed class UpdateFoodItemCommandHandler(
     IGenericRepository<FoodReference> foodReferenceRepository,
     IConverterService converter,
     IGenericRepository<FoodItem> foodItemRepository,
+    IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork) : ICommandHandler<UpdateFoodItemCommand>
 {
     public async Task<Result> Handle(UpdateFoodItemCommand command, CancellationToken cancellationToken)
@@ -109,6 +111,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         }
         foodItemRepository.Update(foodItem);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        await hubContext.Clients.Group(householdId.Value.ToString()).FoodItemUpdated(command);
         return Result.Success();
     }
 }

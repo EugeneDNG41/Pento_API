@@ -3,28 +3,22 @@ using Pento.Application.Abstractions.Authentication;
 
 namespace Pento.Infrastructure.Authentication;
 
-internal sealed class UserContext : IUserContext
+internal sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IUserContext
 {
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public UserContext(IHttpContextAccessor httpContextAccessor)
-    {
-        _httpContextAccessor = httpContextAccessor;
-    }
     public Guid UserId =>
-        _httpContextAccessor
+        httpContextAccessor
             .HttpContext?
             .User
             .GetUserId() ??
         throw new ApplicationException("User context is unavailable");
     public Guid? HouseholdId =>
-        _httpContextAccessor
+        httpContextAccessor
             .HttpContext?
             .User
             .GetHouseholdId();
 
     public string IdentityId =>
-        _httpContextAccessor
+        httpContextAccessor
             .HttpContext?
             .User
             .GetIdentityId() ??

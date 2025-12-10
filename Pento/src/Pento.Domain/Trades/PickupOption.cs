@@ -1,4 +1,4 @@
-﻿namespace Pento.Domain.GiveawayPosts;
+﻿namespace Pento.Domain.Trades;
 
 public enum PickupOption
 {

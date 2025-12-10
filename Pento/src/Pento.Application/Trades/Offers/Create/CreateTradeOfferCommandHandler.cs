@@ -2,7 +2,6 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.GiveawayPosts;
 using Pento.Domain.Trades;
 
 namespace Pento.Application.Trades.Offers.Create;
@@ -22,7 +21,7 @@ internal sealed class CreateTradeOfferCommandHandler(
         var offer = new TradeOffer(
             id: Guid.NewGuid(),
             userId: userId,
-            status: GiveawayStatus.Open,
+            status: TradeStatus.Open,
             startDate: command.StartDate,
             endDate: command.EndDate,
             pickupOption: command.PickupOption,

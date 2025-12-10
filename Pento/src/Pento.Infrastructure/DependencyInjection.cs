@@ -3,6 +3,8 @@ using Dapper;
 using FirebaseAdmin;
 using GenerativeAI;
 using Google.Apis.Auth.OAuth2;
+using Google.GenAI;
+using Google.GenAI.Types;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -80,15 +82,21 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IMilestoneService, MilestoneService>();
         services.AddScoped<IActivityService, ActivityService>();
-        services.AddSingleton(sp =>
+        services.AddHttpClient<OpenFoodFactsClient>((httpClient) =>
+        {
+            httpClient.BaseAddress = new Uri("https://world.openfoodfacts.net/api/v2/");
+            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Pento/1.0 (smarthouseholdfoodpento@gmail.com)");
+        });
+        services.AddScoped(sp =>
         {
             string apiKey = configuration["Gemini:ApiKey"];
             var googleAI = new GoogleAi(apiKey);
 
-            GeminiModel model = googleAI.CreateGeminiModel("gemini-2.0-flash");
+            GenerativeModel model = googleAI.CreateGenerativeModel("models/gemini-1.5-flash");
 
             return model;
         });
+        
         GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
          .Get<GoogleOptions>()
          ?? throw new InvalidOperationException("Google section is missing or invalid");
@@ -99,9 +107,8 @@ public static class DependencyInjection
             Credential = cred.ToGoogleCredential()
         });
         services.AddSingleton(firebaseApp);
-        services.AddSignalR();
-        services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
         
+        services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
         services.AddOptions<PayOSCustomOptions>()
             .Bind(configuration.GetSection("PayOS"))
             .ValidateDataAnnotations()
@@ -142,11 +149,12 @@ public static class DependencyInjection
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
+        services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
         using var redis = new RedisCache(new RedisCacheOptions
         {
             Configuration = redisConnectionString
         });
-
+        
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {

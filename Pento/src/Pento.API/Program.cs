@@ -4,6 +4,7 @@ using Pento.API;
 using Pento.API.Extensions;
 using Pento.API.Middleware;
 using Pento.Application;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Infrastructure;
 using Pento.Infrastructure.Services;
 using Serilog;

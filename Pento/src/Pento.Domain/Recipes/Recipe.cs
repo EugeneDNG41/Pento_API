@@ -36,17 +36,11 @@ public sealed class Recipe : Entity
 
     public string Description { get; private set; }
 
-    public int PrepTimeMinutes { get; private set; }
-
-    public int CookTimeMinutes { get; private set; }
-
     public string? Notes { get; private set; }
 
     public int? Servings { get; private set; }
 
     public DifficultyLevel? DifficultyLevel { get; private set; }
-
-    public int? CaloriesPerServing { get; private set; }
 
     public Uri? ImageUrl { get; private set; }
 

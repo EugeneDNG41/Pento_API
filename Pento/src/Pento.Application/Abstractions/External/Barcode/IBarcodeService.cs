@@ -17,4 +17,8 @@ public static class BarcodeServiceErrors
         "OpenFoodFacts.ProductNotFound",
         "The requested product was not found in the OpenFoodFacts database."
     );
+    public static readonly Error SerializationError = Error.Failure(
+        "OpenFoodFacts.SerializationError",
+        "An error occurred while processing the product data from OpenFoodFacts."
+    );
 }
