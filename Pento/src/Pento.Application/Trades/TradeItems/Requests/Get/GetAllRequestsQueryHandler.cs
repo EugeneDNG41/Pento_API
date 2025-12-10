@@ -2,10 +2,9 @@
 using Dapper;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
-using Pento.Application.Trades.TradeItem.Requests.Get;
 using Pento.Domain.Abstractions;
 
-namespace Pento.Application.Trades.Requests.Get;
+namespace Pento.Application.Trades.TradeItems.Requests.Get;
 
 internal sealed class GetTradeRequestsByOfferQueryHandler(ISqlConnectionFactory factory)
     : IQueryHandler<GetTradeRequestsByOfferQuery, IReadOnlyList<TradeRequestResponse>>

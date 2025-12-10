@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Trades.TradeItem.Requests.Create;
+namespace Pento.Application.Trades.TradeItems.Requests.Create;
 
 public sealed class CreateTradeItemRequestValidator
     : AbstractValidator<CreateTradeItemRequestCommand>

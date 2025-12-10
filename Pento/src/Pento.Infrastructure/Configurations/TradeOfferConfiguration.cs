@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.FoodItems;
+using Pento.Domain.Households;
 using Pento.Domain.Trades;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -29,7 +32,14 @@ internal sealed class TradeOfferConfiguration : IEntityTypeConfiguration<TradeOf
 
         builder.Property(x => x.CreatedOn).IsRequired();
         builder.Property(x => x.UpdatedOn);
-
+        builder.HasOne<Household>()
+               .WithMany()
+               .HasForeignKey(x => x.HouseholdId)
+               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(x => x.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
@@ -51,7 +61,14 @@ internal sealed class TradeRequestConfiguration : IEntityTypeConfiguration<Trade
 
         builder.Property(x => x.CreatedOn).IsRequired();
         builder.Property(x => x.UpdatedOn);
-
+        builder.HasOne<Household>()
+               .WithMany()
+               .HasForeignKey(x => x.HouseholdId)
+               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(x => x.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<TradeOffer>()
                .WithMany()
                .HasForeignKey(x => x.TradeOfferId)
@@ -82,12 +99,18 @@ internal sealed class TradeSessionConfiguration : IEntityTypeConfiguration<Trade
                .WithMany()
                .HasForeignKey(x => x.TradeOfferId)
                .OnDelete(DeleteBehavior.Cascade);
-
         builder.HasOne<TradeRequest>()
                .WithMany()
                .HasForeignKey(x => x.TradeRequestId)
                .OnDelete(DeleteBehavior.Cascade);
-
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(x => x.OfferUserId)
+               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(x => x.RequestUserId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
@@ -100,10 +123,10 @@ internal sealed class TradeSessionMessageConfiguration : IEntityTypeConfiguratio
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.TradeSessionId).IsRequired();
-        builder.Property(x => x.SenderUserId).IsRequired();
+        builder.Property(x => x.UserId).IsRequired();
 
         builder.Property(x => x.MessageText)
-               .HasMaxLength(2000)
+               .HasMaxLength(500)
                .IsRequired();
 
         builder.Property(x => x.SentOn).IsRequired();
@@ -112,7 +135,10 @@ internal sealed class TradeSessionMessageConfiguration : IEntityTypeConfiguratio
                .WithMany()
                .HasForeignKey(x => x.TradeSessionId)
                .OnDelete(DeleteBehavior.Cascade);
-
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(x => x.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
 }
@@ -138,7 +164,10 @@ internal sealed class TradeItemConfiguration : IEntityTypeConfiguration<TradeIte
                .HasValue<TradeItemOffer>(TradeItemFrom.Offer)
                .HasValue<TradeItemRequest>(TradeItemFrom.Request)
                .HasValue<TradeItemSession>(TradeItemFrom.Session);
-
+        builder.HasOne<FoodItem>()
+               .WithMany()
+               .HasForeignKey(x => x.FoodItemId)
+               .OnDelete(DeleteBehavior.Restrict);
         builder.HasQueryFilter(x => true);
     }
 }
@@ -174,7 +203,10 @@ internal sealed class TradeItemSessionConfiguration : IEntityTypeConfiguration<T
     {
         builder.Property(x => x.SessionId)
                .IsRequired();
-
+        builder.Property(x => x.ItemFrom)
+               .HasConversion<string>()
+               .HasMaxLength(10)
+               .IsRequired();
         builder.HasOne<TradeSession>()
                .WithMany()
                .HasForeignKey(x => x.SessionId)

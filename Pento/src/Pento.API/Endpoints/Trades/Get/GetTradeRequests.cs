@@ -1,9 +1,9 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.TradeItem.Requests.Get;
+using Pento.Application.Trades.TradeItems.Requests.Get;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Trades.Requests;
+namespace Pento.API.Endpoints.Trades.Get;
 
 internal sealed class GetTradeRequestsByOffer : IEndpoint
 {

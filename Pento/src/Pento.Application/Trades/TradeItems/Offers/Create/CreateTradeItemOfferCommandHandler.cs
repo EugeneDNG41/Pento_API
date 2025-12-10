@@ -11,7 +11,7 @@ using Pento.Domain.Trades;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.TradeItem.Offers.Create;
+namespace Pento.Application.Trades.TradeItems.Offers.Create;
 
 internal sealed class CreateTradeItemOfferCommandHandler(
     IUserContext userContext,
@@ -30,25 +30,20 @@ internal sealed class CreateTradeItemOfferCommandHandler(
         CancellationToken cancellationToken)
     {
         Guid userId = userContext.UserId;
-
-
-        if (userId == Guid.Empty)
-        {
-            return Result.Failure<Guid>(UserErrors.NotFound);
-        }
-
-        if (userContext.HouseholdId is null)
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId is null)
         {
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        Guid householdId = userContext.HouseholdId.Value;
+        
         var offer = TradeOffer.Create(
             userId: userId,
+            householdId: householdId.Value,
             startDate: command.StartDate,
             endDate: command.EndDate,
             pickupOption: command.PickupOption,
-            createOn: clock.UtcNow
+            createdOn: clock.UtcNow
         );
 
         offerRepository.Add(offer);
@@ -110,7 +105,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
             var reservation = new FoodItemTradeReservation(
               id: Guid.CreateVersion7(),
               foodItemId: foodItem.Id,
-              householdId: householdId,
+              householdId: householdId.Value,
               reservationDateUtc: clock.UtcNow,
               quantity: dto.Quantity,
               unitId: dto.UnitId,
