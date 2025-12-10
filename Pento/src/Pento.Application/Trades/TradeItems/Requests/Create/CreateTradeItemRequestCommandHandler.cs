@@ -11,9 +11,10 @@ using Pento.Domain.Trades;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.TradeItem.Requests.Create;
+namespace Pento.Application.Trades.TradeItems.Requests.Create;
 
 internal sealed class CreateTradeItemRequestCommandHandler(
+    IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
     IGenericRepository<TradeRequest> requestRepo,
     IGenericRepository<TradeItemRequest> itemRepo,
@@ -59,7 +60,7 @@ internal sealed class CreateTradeItemRequestCommandHandler(
         }
         else
         {
-            req = TradeRequest.Create(userId, command.TradeOfferId);
+            req = TradeRequest.Create(userId, householdId.Value, command.TradeOfferId, dateTimeProvider.UtcNow);
             requestRepo.Add(req);
         }
 

@@ -30,6 +30,10 @@
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Endpoints\Trades\Patch\" />
+	</ItemGroup>
+
 
 
 </Project>

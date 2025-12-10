@@ -52,7 +52,7 @@ public sealed class User : Entity
     {
         if (HouseholdId.HasValue && HouseholdId != householdId)
         {
-            Raise(new UserLeftHouseholdDomainEvent(HouseholdId.Value));
+            Raise(new UserLeftHouseholdDomainEvent(Id, HouseholdId.Value));
         }
         HouseholdId = householdId;
     }

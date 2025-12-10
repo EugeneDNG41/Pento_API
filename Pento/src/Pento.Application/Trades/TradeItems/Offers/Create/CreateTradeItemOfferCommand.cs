@@ -1,7 +1,7 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Domain.Trades;
 
-namespace Pento.Application.Trades.TradeItem.Offers.Create;
+namespace Pento.Application.Trades.TradeItems.Offers.Create;
 
 public sealed record CreateTradeItemOfferCommand(
     DateTime StartDate,

@@ -1,12 +1,16 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Trades;
+using Pento.Domain.Users;
 
 namespace Pento.Application.Trades.Offers.Create;
 
 internal sealed class CreateTradeOfferCommandHandler(
+    IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
     IGenericRepository<TradeOffer> offerRepository,
     IUnitOfWork unitOfWork
@@ -17,15 +21,18 @@ internal sealed class CreateTradeOfferCommandHandler(
         CancellationToken cancellationToken)
     {
         Guid userId = userContext.UserId;
-
-        var offer = new TradeOffer(
-            id: Guid.NewGuid(),
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId == null)
+        {
+            return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
+        }
+        var offer = TradeOffer.Create(
             userId: userId,
-            status: TradeStatus.Open,
+            householdId: householdId.Value,
             startDate: command.StartDate,
             endDate: command.EndDate,
             pickupOption: command.PickupOption,
-            createdOn: DateTime.UtcNow
+            createdOn: dateTimeProvider.UtcNow
         );
 
         offerRepository.Add(offer);

@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Trades.TradeItem.Requests.Get;
+﻿namespace Pento.Application.Trades.TradeItems.Requests.Get;
 
 public sealed record TradeRequestResponse(
     Guid RequestId,

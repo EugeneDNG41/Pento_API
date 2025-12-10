@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 
-namespace Pento.Application.Trades.TradeItem.Requests.Create;
+namespace Pento.Application.Trades.TradeItems.Requests.Create;
 
 public sealed record CreateTradeItemRequestCommand(
     Guid TradeOfferId,

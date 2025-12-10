@@ -2367,7 +2367,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("character varying(2000)")
                         .HasColumnName("message_text");
 
-                    b.Property<Guid>("SenderUserId")
+                    b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("sender_user_id");
 
