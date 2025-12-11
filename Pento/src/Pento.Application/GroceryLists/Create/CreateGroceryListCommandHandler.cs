@@ -22,16 +22,6 @@ internal sealed class CreateGroceryListCommandHandler(
             return Result.Failure<Guid>(GroceryListErrors.ForbiddenAccess);
         }
 
-        bool exists = await groceryListRepository.AnyAsync(
-             g => g.HouseholdId == householdId &&
-             g.Name == command.Name,
-        cancellationToken);
-
-        if (exists)
-        {
-            return Result.Failure<Guid>(GroceryListErrors.DuplicateName);
-        }
-
         DateTime utcNow = dateTimeProvider.UtcNow;
 
         var groceryList = GroceryList.Create(

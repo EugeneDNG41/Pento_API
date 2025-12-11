@@ -81,7 +81,6 @@ public sealed class RecipeIngredient : Entity
         Notes = notes;
         UpdatedOnUtc = utcNow;
 
-        Raise(new RecipeIngredientUpdatedDomainEvent(Id));
     }
 
 }
