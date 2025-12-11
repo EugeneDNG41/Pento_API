@@ -9,7 +9,7 @@ internal sealed class CreateMultipleTradeItemRequest : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("trade-requests/items", async (
+        app.MapPost("trades/requests/items", async (
             Request request,
             ICommandHandler<CreateTradeItemRequestCommand, Guid> handler,
             CancellationToken cancellationToken

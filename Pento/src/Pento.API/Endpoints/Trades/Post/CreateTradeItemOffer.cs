@@ -10,7 +10,7 @@ internal sealed class CreateMultipleTradeItemOffer : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("trade-offers/items", async (
+        app.MapPost("trades/offers/items", async (
             Request request,
             ICommandHandler<CreateTradeItemOfferCommand, Guid> handler,
             CancellationToken cancellationToken) =>

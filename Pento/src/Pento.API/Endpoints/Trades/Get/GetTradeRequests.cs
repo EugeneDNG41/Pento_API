@@ -9,7 +9,7 @@ internal sealed class GetTradeRequestsByOffer : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("trade-requests/offer/{offerId:guid}", async (
+        app.MapGet("trades/offers/{offerId:guid}/requests", async (
             Guid offerId,
             IQueryHandler<GetTradeRequestsByOfferQuery, IReadOnlyList<TradeRequestResponse>> handler,
             CancellationToken cancellationToken

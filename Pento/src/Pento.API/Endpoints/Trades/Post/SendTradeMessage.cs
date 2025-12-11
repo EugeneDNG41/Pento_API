@@ -9,7 +9,7 @@ internal sealed class SendTradeMessage : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("trade-sessions/{tradeSessionId:guid}/messages", async (
+        app.MapPost("trades/sessions/{tradeSessionId:guid}/messages", async (
             Guid tradeSessionId,
             Request request,
             ICommandHandler<SendTradeMessageCommand, TradeMessageResponse> handler,

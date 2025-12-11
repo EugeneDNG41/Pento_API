@@ -11,7 +11,7 @@ internal sealed class GetTradePost : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("trade-posts", async (
+        app.MapGet("trades/offers", async (
             int pageNumber,
             int pageSize,
             string? search,
@@ -38,7 +38,7 @@ internal sealed class GetTradePost : IEndpoint
         .WithTags(Tags.Trades)
         .WithDescription("sort options: newest | oldest | food | food_desc | quantity");
 
-        app.MapGet("trades/posts/me", async (
+        app.MapGet("trades/offers/me", async (
                   IQueryHandler<GetMyTradePostsQuery, IReadOnlyList<TradePostResponse>> handler,
                   CancellationToken cancellationToken) =>
         {
