@@ -4,6 +4,6 @@ public enum FoodItemLogAction
 {
     Intake,
     Consumption,
-    Donation,
+    TradeAway,
     Discard
 }

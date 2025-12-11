@@ -29,6 +29,8 @@ internal sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             Activity.CreateGroceryList,
             Activity.CreateHousehold,
             Activity.JoinHousehold,
-            Activity.HouseholdMemberJoined);
+            Activity.HouseholdMemberJoined,
+            Activity.TradeInFoodItem,
+            Activity.TradeAwayFoodItem);
     }
 }

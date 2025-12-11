@@ -32,9 +32,7 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
             SELECT
                 s.id AS SubscriptionId,
                 s.name AS Name,
-                COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date) AS FromDate,
-                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date
-                ) AS ToDate,
+                CAST(p.paid_at AS DATE) AS Date,
                 COALESCE(SUM(p.amount_paid), 0) AS Amount,
                 p.currency AS Currency
             FROM subscriptions s
@@ -44,14 +42,10 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
                 AND (@ids::uuid[] IS NULL OR s.id = ANY(@ids::uuid[]))
                 AND (@IsActive IS NULL OR s.is_active = @IsActive)
                 AND (@IsDeleted IS NULL OR s.is_deleted = @IsDeleted)
-              AND (@FromDate IS NULL OR p.paid_at >= @FromDate)
-              AND (@ToDate IS NULL OR p.paid_at <= @ToDate)
-            GROUP BY s.id, s.name, 
-                COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
-                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date),
-                p.currency
-            ORDER BY COALESCE(@FromDate::date, date_trunc(@dateTrunc, p.paid_at)::date), 
-                COALESCE(@ToDate::date, (date_trunc(@dateTrunc, p.paid_at) + (@dateInterval)::interval - interval '1 day')::date);
+                AND (@FromDate::date IS NULL OR p.paid_at::date >= @FromDate::date)
+                AND (@ToDate::date IS NULL OR p.paid_at::date <= @ToDate::date)
+            GROUP BY s.id, s.name, CAST(p.paid_at AS DATE), p.currency
+            ORDER BY CAST(p.paid_at AS DATE);
         """;
         var parameters = new
         {
@@ -84,7 +78,7 @@ internal sealed class GetSubscriptionsWithPaymentSummaryQueryHandler(ISqlConnect
                 subscription.Payments.Add(payment);
                 return subscription;
             },
-            splitOn: "FromDate"
+            splitOn: "Date"
         );
         return lookup.Values.ToList();
     }

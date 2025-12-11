@@ -25,7 +25,7 @@ internal sealed class CreateCompartmentCommandHandler(
         {
             return Result.Failure<Guid>(StorageErrors.NotFound);
         }
-        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && c.HouseholdId == householdId, cancellationToken))
+        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && c.HouseholdId == householdId && c.StorageId == command.StorageId, cancellationToken))
         {
             return Result.Failure<Guid>(CompartmentErrors.DuplicateName);
         }

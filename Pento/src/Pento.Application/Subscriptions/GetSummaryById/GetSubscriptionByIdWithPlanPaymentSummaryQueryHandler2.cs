@@ -27,8 +27,8 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
                                  END)
                          END
                          AS duration,
-                p.paid_at AS Timestamp,
-                p.amount_paid AS Amount,
+                CAST(p.paid_at AS DATE) AS Date,
+                COALESCE(SUM(p.amount_paid), 0) AS Amount,
                 p.currency AS Currency
             FROM subscriptions s
             JOIN subscription_plans sp ON sp.subscription_id = s.id
@@ -37,8 +37,8 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
                 AND s.id = @SubscriptionId
               AND (@FromDate::date IS NULL OR p.paid_at::date >= @FromDate::date)
               AND (@ToDate::date IS NULL OR p.paid_at::date <= @ToDate::date)
-            GROUP BY s.id, s.name, sp.id, p.paid_at, p.amount_paid, p.currency
-            ORDER BY p.paid_at;
+            GROUP BY s.id, s.name, sp.id, CAST(p.paid_at AS DATE), p.amount_paid, p.currency
+            ORDER BY CAST(p.paid_at AS DATE);
          """;
         var parameters = new
         {
@@ -73,7 +73,7 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
                 planPayment.Payments.Add(payment);
                 return result;
             },
-            splitOn: "SubscriptionPlanId,Timestamp"
+            splitOn: "SubscriptionPlanId,Date"
         );
         if (result == null)
         {
