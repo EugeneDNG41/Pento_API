@@ -24,9 +24,11 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
             _ => "id"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
-        var filters = new List<string>();
+        var filters = new List<string>()
+        {
+            "is_deleted = FALSE"
+        };
         var parameters = new DynamicParameters();
-
         if (query.FoodGroup != null && query.FoodGroup.Length > 0)
         {
             filters.Add("food_group = Any(@FoodGroup::text[])");

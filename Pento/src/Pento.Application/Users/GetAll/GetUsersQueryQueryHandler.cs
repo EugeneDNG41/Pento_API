@@ -25,9 +25,11 @@ internal sealed class GetUsersQueryQueryHandler(ISqlConnectionFactory dbConnecti
 
             GetUsersSortBy.Id or _ => "1"
         };
-        string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
+        string orderClause = $"ORDER BY {orderBy} {query.SortOrder.ToString()}";
         var filters = new List<string>();
         var parameters = new DynamicParameters();
+        parameters.Add("Offset", (query.PageNumber - 1) * query.PageSize);
+        parameters.Add("PageSize", query.PageSize);
         if (query.IsDeleted.HasValue)
         {
             filters.Add("u.is_deleted = @IsDeleted");
@@ -48,7 +50,7 @@ internal sealed class GetUsersQueryQueryHandler(ISqlConnectionFactory dbConnecti
             SELECT COUNT(*)
             FROM users u
             LEFT JOIN households h ON u.household_id = h.id
-            {whereClause}
+            {whereClause};
             SELECT 
                 u.id AS UserId,
                 h.name AS HouseholdName,

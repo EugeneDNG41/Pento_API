@@ -21,7 +21,7 @@ internal sealed class GetUsers : IEndpoint
         {
             Result<PagedList<UserPreview>> result = await handler.Handle(new GetUsersQuery(searchText, isDeleted, sortBy, sortOrder, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).RequireAuthorization(Permissions.ManageUsers)
+        })
         .WithTags(Tags.Admin);
     }
 }
