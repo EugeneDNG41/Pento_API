@@ -28,7 +28,7 @@ internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISq
                          END
                          AS duration,
                 CAST(p.paid_at AS DATE) AS Date,
-                COALESCE(SUM(p.amount), 0) AS Amount,
+                COALESCE(SUM(p.amount_paid), 0) AS Amount,
                 p.currency AS Currency
             FROM subscriptions s
             JOIN subscription_plans sp ON sp.subscription_id = s.id
