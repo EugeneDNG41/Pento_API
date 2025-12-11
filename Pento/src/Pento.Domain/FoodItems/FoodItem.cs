@@ -94,6 +94,11 @@ public sealed class FoodItem : Entity
         LastModifiedBy = userId;
         Raise(new FoodItemReservedDomainEvent(Id, qtyInRequestUnit, unitId, userId));
     }
+    public void AdjustReservedQuantity(decimal qtyInItemUnit, Guid userId)
+    {
+        Quantity += qtyInItemUnit;
+        LastModifiedBy = userId;
+    }
     public void CancelReservation(decimal quantity, Guid reservationId)
     {
         Quantity += quantity;
@@ -130,4 +135,36 @@ public sealed class FoodItem : Entity
         CompartmentId = newCompartmentId;
         LastModifiedBy = userId;
     }
+    public FoodItem Trade(Guid householdId, Guid tradeUserId, Guid compartmentId, decimal quantity, Guid unitId, Guid userId)
+    {
+        Raise(new FoodItemTradedAwayDomainEvent(Id, quantity, unitId, userId));
+        LastModifiedBy = userId;
+        FoodItem foodItem = Create(
+            FoodReferenceId,
+            compartmentId,
+            householdId,
+            Name,
+            ImageUrl,
+            quantity,
+            unitId,
+            ExpirationDate,
+            Notes,
+            tradeUserId);
+        foodItem.Raise(new FoodItemTradedInDomainEvent(foodItem.Id, quantity, unitId, tradeUserId));
+        return foodItem;
+    }
+}
+public sealed class FoodItemTradedAwayDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
+}
+public sealed class FoodItemTradedInDomainEvent(Guid foodItemId, decimal Quantity, Guid unitId, Guid userId) : DomainEvent
+{
+    public Guid FoodItemId { get; } = foodItemId;
+    public decimal Quantity { get; } = Quantity;
+    public Guid UnitId { get; } = unitId;
+    public Guid UserId { get; } = userId;
 }

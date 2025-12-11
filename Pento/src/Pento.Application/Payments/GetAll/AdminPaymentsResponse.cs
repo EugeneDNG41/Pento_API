@@ -30,15 +30,4 @@ public sealed record AdminPaymentPreview
     public bool IsDeleted { get; init; }
 }
 
-public sealed record ActivitySummary //filter by user or household possible
-{
-    public string Code { get; init; }
-    public string Name { get; init; }
-    public List<ActivityByDate> Activities { get; init; } = new();
-}
 
-public sealed record ActivityByDate
-{
-    public int Count { get; init; }
-    public DateOnly Date { get; init; }
-}

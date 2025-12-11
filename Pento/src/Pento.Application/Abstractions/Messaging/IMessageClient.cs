@@ -3,7 +3,8 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.FoodItems.Delete;
 using Pento.Application.FoodItems.Search;
 using Pento.Application.FoodItems.Update;
-using Pento.Application.Trades.Requests.Accept;
+using Pento.Application.Trades.Sessions.AddItems;
+using Pento.Application.Trades.Sessions.SendMessage;
 
 namespace Pento.Application.Abstractions.Messaging;
 
@@ -12,6 +13,7 @@ public interface IMessageClient
     Task ReceiveNotification(string content);
     Task FoodItemAdded(FoodItemPreview foodItem);
     Task FoodItemUpdated(UpdateFoodItemCommand command);
+    Task FoodItemQuantityUpdated(Guid foodItemId, decimal newQuantity);
     Task FoodItemDeleted(DeleteFoodItemCommand command);
     Task FoodItemConsume(Guid foodItemId, decimal quantity);
     Task TradeSessionOpened(Guid sessionId);
@@ -23,8 +25,10 @@ public interface IMessageClient
     Task TradeOfferCancelled(Guid offerId);
     Task TradeOfferExpired(Guid offerId);
     Task TradeSessionItemsRemoved(Guid sessionId, Guid[] tradeItemIds);
+    Task TradeSessionItemsAdded(Guid sessionId, List<TradeItemResponse> tradeItems);
     Task TradeOfferFulfilled(Guid offerId);
-    Task TradeRequestFulFilled(Guid requestId);
+    Task TradeRequestFulfilled(Guid requestId);
+    Task TradeItemUpdated(Guid tradeItemId,  decimal quantity, Guid unitId);
 }
 public sealed class MessageHub(IUserContext userContext) : Hub<IMessageClient>
 {

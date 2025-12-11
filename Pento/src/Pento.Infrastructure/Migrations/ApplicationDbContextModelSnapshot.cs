@@ -136,6 +136,18 @@ namespace Pento.Infrastructure.Migrations
                             Code = "HOUSEHOLD_MEMBER_JOINED",
                             Description = "A new member has joined your household to help manage food, grocery lists, and meal plans.",
                             Name = "Household Member Joined"
+                        },
+                        new
+                        {
+                            Code = "FOOD_ITEM_TRADE_IN",
+                            Description = "Receiving a food item from another household through trade.",
+                            Name = "TradeAway In Food Item"
+                        },
+                        new
+                        {
+                            Code = "FOOD_ITEM_TRADE_AWAY",
+                            Description = "Giving a food item to another household through trade.",
+                            Name = "TradeAway Out Food Item"
                         });
                 });
 

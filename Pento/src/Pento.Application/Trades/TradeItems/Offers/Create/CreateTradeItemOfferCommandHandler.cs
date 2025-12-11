@@ -112,7 +112,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
               reservationStatus: ReservationStatus.Pending,
               reservationFor: ReservationFor.Trade,
               tradeItemId: item.Id
-          );
+            );
 
 
             reservationRepository.Add(reservation);

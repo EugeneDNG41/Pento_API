@@ -4,19 +4,21 @@ namespace Pento.Domain.Trades;
 
 public sealed class TradeErrors
 {
-    public static readonly Error NotFound = Error.NotFound("Trade.NotFound", "Trade not found.");
-    public static readonly Error OfferNotFound = Error.NotFound("TradeOffer.NotFound", "Trade Offer not found.");
-    public static readonly Error RequestNotFound = Error.NotFound("TradeRequest.NotFound", "Trade Request not found.");
-    public static readonly Error SessionNotFound = Error.NotFound("TradeSession.NotFound", "Trade Session not found.");
+    public static readonly Error NotFound = Error.NotFound("TradeAway.NotFound", "TradeAway not found.");
+    public static readonly Error OfferNotFound = Error.NotFound("TradeOffer.NotFound", "TradeAway Offer not found.");
+    public static readonly Error RequestNotFound = Error.NotFound("TradeRequest.NotFound", "TradeAway Request not found.");
+    public static readonly Error SessionNotFound = Error.NotFound("TradeSession.NotFound", "TradeAway Session not found.");
     public static readonly Error DuplicateRequest = Error.Conflict("TradeRequest.Duplicate", "A trade request for this offer by the user already exists.");
-    public static readonly Error InvalidOfferState = Error.Conflict("TradeOffer.InvalidState", "Trade offer must be open to accept requests.");
-    public static readonly Error InvalidRequestState = Error.Conflict("TradeRequest.InvalidState", "Trade request must be pending to accept or reject.");
-    public static readonly Error InvalidSessionState = Error.Conflict("TradeSession.InvalidState", "Trade session must be ongoing to continue.");
+    public static readonly Error InvalidOfferState = Error.Conflict("TradeOffer.InvalidState", "TradeAway offer must be open to accept requests.");
+    public static readonly Error InvalidRequestState = Error.Conflict("TradeRequest.InvalidState", "TradeAway request must be pending to accept or reject.");
+    public static readonly Error InvalidSessionState = Error.Conflict("TradeSession.InvalidState", "TradeAway session must be ongoing to continue.");
     public static readonly Error OfferForbiddenAccess = Error.Forbidden("TradeOffer.Forbidden", "You do not have permission to access this trade offer.");
     public static readonly Error RequestForbiddenAccess = Error.Forbidden("TradeRequest.Forbidden", "You do not have permission to access this trade request.");
     public static readonly Error SessionForbiddenAccess = Error.Forbidden("TradeSession.Forbidden", "You do not have permission to access this trade session.");
     public static readonly Error ItemForbiddenAccess = Error.Forbidden("TradeItem.Forbidden", "You do not have permission to access this trade item.");
-    public static readonly Error MessageNotFound = Error.NotFound("TradeMessage.NotFound", "Trade message not found.");
-    public static readonly Error CannotTradeWithinHousehold = Error.Conflict("Trade.CannotTradeWithinHousehold", "Cannot trade with members of their own household.");
-    public static readonly Error CannotTradeWithSelf = Error.Conflict("Trade.CannotTradeWithSelf", "Cannot trade with yourself.");
+    public static readonly Error MessageNotFound = Error.NotFound("TradeMessage.NotFound", "TradeAway message not found.");
+    public static readonly Error CannotTradeWithinHousehold = Error.Conflict("TradeAway.CannotTradeWithinHousehold", "Cannot trade with members of their own household.");
+    public static readonly Error CannotTradeWithSelf = Error.Conflict("TradeAway.CannotTradeWithSelf", "Cannot trade with yourself.");
+    public static readonly Error DuplicateTradeItems = Error.Conflict("TradeAway.DuplicateItems", "TradeAway contains duplicate items."); //business rule
+    public static readonly Error ExceedsMaxTradeItems = Error.Conflict("TradeAway.ExceedsMaxItems", "TradeAway exceeds maximum allowed items."); //business rule
 }

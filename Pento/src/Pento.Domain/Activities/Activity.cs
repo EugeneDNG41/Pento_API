@@ -62,6 +62,14 @@ public sealed class Activity
         ActivityCode.HOUSEHOLD_MEMBER_JOINED.ToString(),
         "Household Member Joined",
         "A new member has joined your household to help manage food, grocery lists, and meal plans.");
+    public static readonly Activity TradeInFoodItem = new Activity(
+        ActivityCode.FOOD_ITEM_TRADE_IN.ToString(),
+        "TradeAway In Food Item",
+        "Receiving a food item from another household through trade.");
+    public static readonly Activity TradeAwayFoodItem = new Activity(
+        ActivityCode.FOOD_ITEM_TRADE_AWAY.ToString(),
+        "TradeAway Out Food Item",
+        "Giving a food item to another household through trade.");
     private Activity() { }
     public Activity(string code, string name, string description)
     {
@@ -101,5 +109,7 @@ public enum ActivityCode //DO OR PERFORM
     HOUSEHOLD_CREATE,
     HOUSEHOLD_JOIN,
     HOUSEHOLD_MEMBER_JOINED,
+    FOOD_ITEM_TRADE_IN,
+    FOOD_ITEM_TRADE_AWAY
 
 }
