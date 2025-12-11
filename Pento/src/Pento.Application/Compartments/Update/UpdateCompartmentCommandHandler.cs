@@ -24,7 +24,10 @@ internal sealed class UpdateCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.ForbiddenAccess);
         }
-        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && c.Id != compartment.Id && c.HouseholdId == userHouseholdId, cancellationToken))
+        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && 
+        c.Id != compartment.Id && 
+        c.HouseholdId == userHouseholdId &&
+        c.StorageId == compartment.StorageId, cancellationToken))
         {
             return Result.Failure(CompartmentErrors.DuplicateName);
         }

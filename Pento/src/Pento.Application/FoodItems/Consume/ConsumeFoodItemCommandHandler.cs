@@ -50,14 +50,7 @@ internal sealed class ConsumeFoodItemCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await hubContext.Clients
             .Group(userContext.HouseholdId.Value.ToString())
-            .FoodItemUpdated(new UpdateFoodItemCommand(
-                foodItem.Id,
-                foodItem.CompartmentId,            
-                command.UnitId,
-                foodItem.Name,
-                foodItem.Quantity,
-                foodItem.ExpirationDate,
-                foodItem.Notes));
+            .FoodItemQuantityUpdated(foodItem.Id, foodItem.Quantity);
         return Result.Success();
     }
 }

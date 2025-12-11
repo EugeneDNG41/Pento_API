@@ -53,7 +53,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         {
             Compartment? oldCompartment = await compartmentRepository.GetByIdAsync(foodItem.CompartmentId, cancellationToken);
             Compartment? newCompartment = await compartmentRepository.GetByIdAsync(command.CompartmentId.Value, cancellationToken);
-            if (newCompartment is null || oldCompartment is null)
+            if (newCompartment is null || oldCompartment is null || command.StorageId != null && newCompartment.StorageId != command.StorageId)
             {
                 return Result.Failure(CompartmentErrors.NotFound);
             }
@@ -61,9 +61,10 @@ internal sealed class UpdateFoodItemCommandHandler(
             {
                 return Result.Failure(CompartmentErrors.ForbiddenAccess);
             }
-
             Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment.StorageId, cancellationToken);
-            Storage? newStorage = await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
+            Storage? newStorage = command.StorageId != null ?
+                await storageRepository.GetByIdAsync(command.StorageId.Value, cancellationToken) :
+                await storageRepository.GetByIdAsync(newCompartment.StorageId, cancellationToken);
             if (newStorage is null || oldStorage is null)
             {
                 return Result.Failure(StorageErrors.NotFound);
@@ -88,6 +89,44 @@ internal sealed class UpdateFoodItemCommandHandler(
                 foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
             }
             foodItem.MoveToCompartment(command.CompartmentId.Value, userContext.UserId);
+        }
+        //Move storage
+        if (command.StorageId != null && command.CompartmentId == null)
+        {
+            Compartment? oldCompartment = await compartmentRepository.GetByIdAsync(foodItem.CompartmentId, cancellationToken);
+            Storage? oldStorage = await storageRepository.GetByIdAsync(oldCompartment!.StorageId, cancellationToken);
+            Storage? newStorage = await storageRepository.GetByIdAsync(command.StorageId.Value, cancellationToken);
+            if (newStorage is null || oldStorage is null)
+            {
+                return Result.Failure(StorageErrors.NotFound);
+            }
+            else if (newStorage.HouseholdId != householdId || oldStorage.HouseholdId != householdId)
+            {
+                return Result.Failure(StorageErrors.ForbiddenAccess);
+            }
+            Compartment? newCompartment = (await compartmentRepository.FindAsync(
+                c => c.StorageId == command.StorageId.Value,
+                cancellationToken)).FirstOrDefault();
+            if (newCompartment is null)
+            {
+                return Result.Failure(CompartmentErrors.AtLeastOne);
+            }
+            else if (oldStorage.Type != newStorage.Type && foodItem.ExpirationDate == command.ExpirationDate)
+            {
+                FoodReference? foodReference = await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
+                if (foodReference is null)
+                {
+                    return Result.Failure(FoodReferenceErrors.NotFound);
+                }
+                DateOnly newExpirationDateUtc = converter.CalculateNewExpiryRemainingFraction(
+                        oldType: oldStorage.Type,
+                        newType: newStorage.Type,
+                        foodRef: foodReference,
+                        currentExpiry: foodItem.ExpirationDate
+                    );
+                foodItem.AdjustExpirationDate(newExpirationDateUtc, userContext.UserId);
+            }
+            foodItem.MoveToCompartment(newCompartment.Id, userContext.UserId);
         }
         //Rename
         if (!string.IsNullOrEmpty(command.Name) && foodItem.Name != command.Name)

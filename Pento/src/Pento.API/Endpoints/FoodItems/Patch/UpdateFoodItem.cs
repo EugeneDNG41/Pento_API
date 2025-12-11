@@ -18,6 +18,7 @@ internal sealed class UpdateFoodItem : IEndpoint
         {
             Result result = await handler.Handle(new UpdateFoodItemCommand(
                 foodItemId,
+                request.StorageId,
                 request.CompartmentId,
                 request.UnitId,
                 request.Name,
@@ -32,6 +33,7 @@ internal sealed class UpdateFoodItem : IEndpoint
     }
     internal sealed class Request
     {
+        public Guid? StorageId { get; init; }
         public Guid? CompartmentId { get; init; }
         public Guid? UnitId { get; init; }
         public string? Name { get; init; }

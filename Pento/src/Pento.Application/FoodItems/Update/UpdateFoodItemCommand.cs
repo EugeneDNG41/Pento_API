@@ -4,6 +4,7 @@ namespace Pento.Application.FoodItems.Update;
 
 public sealed record UpdateFoodItemCommand(
     Guid Id,
+    Guid? StorageId,
     Guid? CompartmentId,
     Guid? UnitId,
     string? Name,
