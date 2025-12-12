@@ -91,7 +91,7 @@ internal sealed class GetTradeSessionsQueryHandler(
         foreach (TradeSessionRow item in items)
         {
             var userAvatars = (await userRepository
-                .FindAsync(u => u.AvatarUrl != null && (u.HouseholdId == item.OfferHouseholdId || u.HouseholdId == item.RequestHouseholdId), cancellationToken))
+                .FindAsync(u => u.AvatarUrl != null && u.Id != userContext.UserId && (u.HouseholdId == item.OfferHouseholdId || u.HouseholdId == item.RequestHouseholdId), cancellationToken))
                 .Select(u => u.AvatarUrl!)
                 .ToList();
             List<Uri> avatarUrls = userAvatars.Count > 0 ? userAvatars! : new();

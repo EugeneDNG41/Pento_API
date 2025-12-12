@@ -34,5 +34,3 @@ public sealed record TradeSessionRow
     public Guid? ConfirmedByOfferUserId { get; init; }
     public Guid? ConfirmedByRequestUserId { get; init; }
 }
-
-        // Note: Total count query is omitted for brevity; in a real implementation, you

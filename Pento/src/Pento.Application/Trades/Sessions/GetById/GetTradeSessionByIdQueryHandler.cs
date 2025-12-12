@@ -53,7 +53,7 @@ internal sealed class GetTradeSessionByIdQueryHandler( //check household later
             LEFT JOIN trade_session_items tsi ON tsi.id = ts.id
             JOIN households h ON h.id = ts.offer_household_id
             JOIN households h2 ON h2.id = ts.request_household_id
-            WHERE ts.id = @TradeSessionId;
+            WHERE ts.id = @TradeSessionId
                 AND (ts.offer_household_id = @HouseholdId OR ts.request_household_id = @HouseholdId);
             """;
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
