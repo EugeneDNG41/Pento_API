@@ -1,30 +1,41 @@
 ﻿using System.Data.Common;
 using Dapper;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Trades;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Trades.Sessions.GetById;
 
 internal sealed class GetTradeSessionByIdQueryHandler( //check household later
+    IUserContext userContext,
     IGenericRepository<User> userRepository,
     ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetTradeSessionByIdQuery, TradeSessionDetailResponse>
 {
     public async Task<Result<TradeSessionDetailResponse>> Handle(GetTradeSessionByIdQuery request, CancellationToken cancellationToken)
     {
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId == null)
+        {
+            return Result.Failure<TradeSessionDetailResponse>(HouseholdErrors.NotInAnyHouseHold);
+        }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var parameters = new DynamicParameters();
         parameters.Add("@TradeSessionId", request.TradeSessionId);
+        parameters.Add("@HouseholdId", householdId.Value);
         const string sql = """
             SELECT
               ts.id                                   AS TradeSessionId,
               ts.trade_offer_id                       AS TradeOfferId,
               ts.trade_request_id                     AS TradeRequestId,
               ts.offer_household_id                   AS OfferHouseholdId,
+              h.name                                 AS OfferHouseholdName,
               ts.request_household_id                 AS RequestHouseholdId,
+              h2.name                                AS RequestHouseholdName,
               ts.status                               AS Status,
               ts.started_on                           AS StartedOn,
               COALESCE(
@@ -40,7 +51,10 @@ internal sealed class GetTradeSessionByIdQueryHandler( //check household later
               ts.confirmed_by_request_user_id			AS ConfirmedByRequestUserId
             FROM trade_sessions ts
             LEFT JOIN trade_session_items tsi ON tsi.id = ts.id
+            JOIN households h ON h.id = ts.offer_household_id
+            JOIN households h2 ON h2.id = ts.request_household_id
             WHERE ts.id = @TradeSessionId;
+                AND (ts.offer_household_id = @HouseholdId OR ts.request_household_id = @HouseholdId);
             """;
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         TradeSessionRow? tradeSessionRow = await connection.QuerySingleOrDefaultAsync<TradeSessionRow>(command);
@@ -61,7 +75,9 @@ internal sealed class GetTradeSessionByIdQueryHandler( //check household later
             tradeSessionRow.TradeOfferId,
             tradeSessionRow.TradeRequestId,
             tradeSessionRow.OfferHouseholdId,
+            tradeSessionRow.OfferHouseholdName,
             tradeSessionRow.RequestHouseholdId,
+            tradeSessionRow.RequestHouseholdName,
             tradeSessionRow.Status,
             tradeSessionRow.StartedOn,
             tradeSessionRow.TotalOfferedItems,

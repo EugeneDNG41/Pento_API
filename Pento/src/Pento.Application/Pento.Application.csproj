@@ -23,9 +23,5 @@
 	<FrameworkReference Include="Microsoft.AspNetCore.App" />
 	  <InternalsVisibleTo Include="Pento.Application.UnitTests" />		
   </ItemGroup>
-	
-  <ItemGroup>
-    <Folder Include="Trades\Sessions\GetAll\" />
-  </ItemGroup>
 
 </Project>

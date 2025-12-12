@@ -21,7 +21,7 @@ internal sealed class GetTradeSessionById : IEndpoint
                 Results.Ok,
                 CustomResults.Problem
             );
-        })
+        }).RequireAuthorization()
         .WithTags(Tags.Trades);
     }
 }
