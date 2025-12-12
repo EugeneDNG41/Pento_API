@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.TradeItems.Requests.Create;
+using Pento.Application.Trades.Requests.Create;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Trades.Post;

@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.TradeItems.Offers.Create;
+using Pento.Application.Trades.Offers.Create;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 

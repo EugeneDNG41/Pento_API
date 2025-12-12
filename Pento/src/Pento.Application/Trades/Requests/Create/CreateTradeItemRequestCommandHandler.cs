@@ -4,26 +4,21 @@ using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
-using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
-using Pento.Domain.Units;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.TradeItems.Requests.Create;
+namespace Pento.Application.Trades.Requests.Create;
 
 internal sealed class CreateTradeItemRequestCommandHandler(
     IDateTimeProvider dateTimeProvider,
     IUserContext userContext,
     IGenericRepository<TradeRequest> requestRepo,
-    IGenericRepository<TradeItemRequest> itemRepo,
+    IGenericRepository<TradeItemRequest> tradeItemRepo,
     IGenericRepository<TradeOffer> offerRepo,
-    IGenericRepository<FoodItemTradeReservation> reservationRepo,
     IGenericRepository<FoodItem> foodItemRepo,
-    IGenericRepository<Unit> unitRepo,
     IConverterService converter,
-    IDateTimeProvider clock,
     IUnitOfWork uow
 ) : ICommandHandler<CreateTradeItemRequestCommand, Guid>
 {
@@ -38,30 +33,35 @@ internal sealed class CreateTradeItemRequestCommandHandler(
         {
             return Result.Failure<Guid>(UserErrors.NotFound);
         }
-
         if (householdId is null)
         {
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
-
         TradeOffer? offer = await offerRepo.GetByIdAsync(command.TradeOfferId, cancellationToken);
         if (offer is null)
         {
             return Result.Failure<Guid>(TradeErrors.OfferNotFound);
         }
-
-        TradeRequest? req = (await requestRepo.FindAsync(
-            r => r.TradeOfferId == command.TradeOfferId && r.UserId == userId,
+        if (offer.HouseholdId == householdId.Value)
+        {
+            return Result.Failure<Guid>(TradeErrors.CannotTradeWithinHousehold);
+        }
+        if (offer.Status != TradeOfferStatus.Open)
+        {
+            return Result.Failure<Guid>(TradeErrors.InvalidOfferState);
+        }
+        TradeRequest? request = (await requestRepo.FindAsync(
+            r => r.TradeOfferId == command.TradeOfferId && r.HouseholdId == householdId.Value,
             cancellationToken)).FirstOrDefault();
 
-        if (req is not null && req.Status != TradeRequestStatus.Rejected)
+        if (request is not null && request.Status == TradeRequestStatus.Pending)
         {
             return Result.Failure<Guid>(TradeErrors.DuplicateRequest);
         }
         else
         {
-            req = TradeRequest.Create(userId, householdId.Value, command.TradeOfferId, dateTimeProvider.UtcNow);
-            requestRepo.Add(req);
+            request = TradeRequest.Create(userId, householdId.Value, command.TradeOfferId, dateTimeProvider.UtcNow);
+            requestRepo.Add(request);
         }
 
         foreach (CreateTradeItemRequestDto dto in command.Items)
@@ -71,69 +71,33 @@ internal sealed class CreateTradeItemRequestCommandHandler(
             {
                 return Result.Failure<Guid>(FoodItemErrors.NotFound);
             }
-
             if (foodItem.HouseholdId != householdId.Value)
             {
                 return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
             }
-
-            Unit? unit = await unitRepo.GetByIdAsync(dto.UnitId, cancellationToken);
-            if (unit is null)
-            {
-                return Result.Failure<Guid>(UnitErrors.NotFound);
-            }
-
-            decimal qtyInItemUnit = dto.Quantity;
-            if (dto.UnitId != foodItem.UnitId)
-            {
-                Result<decimal> conv = await converter.ConvertAsync(
+            Result<decimal> qtyInItemUnit = await converter.ConvertAsync(
                     dto.Quantity, dto.UnitId, foodItem.UnitId, cancellationToken);
 
-                if (conv.IsFailure)
-                {
-                    return Result.Failure<Guid>(conv.Error);
-                }
-
-                qtyInItemUnit = conv.Value;
+            if (qtyInItemUnit.IsFailure)
+            {
+                return Result.Failure<Guid>(qtyInItemUnit.Error);
             }
-
-            if (qtyInItemUnit > foodItem.Quantity)
+            if (qtyInItemUnit.Value > foodItem.Quantity)
             {
                 return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
             }
-
             var item = TradeItemRequest.Create(
                 foodItemId: dto.FoodItemId,
                 quantity: dto.Quantity,
                 unitId: dto.UnitId,
-                requestId: req.Id
+                requestId: request.Id
             );
 
-            itemRepo.Add(item);
-
-            var reservation = new FoodItemTradeReservation(
-                id: Guid.CreateVersion7(),
-                foodItemId: foodItem.Id,
-                householdId: householdId.Value,
-                reservationDateUtc: clock.UtcNow,
-                quantity: dto.Quantity,
-                unitId: dto.UnitId,
-                reservationStatus: ReservationStatus.Pending,
-                reservationFor: ReservationFor.Trade,
-                tradeItemId: req.Id
-            );
-
-            reservationRepo.Add(reservation);
-
-            foodItem.Reserve(
-                qtyInItemUnit,
-                dto.Quantity,
-                dto.UnitId,
-                userId
-            );
+            tradeItemRepo.Add(item);
+            foodItem.Reserve(qtyInItemUnit.Value, dto.Quantity, dto.UnitId, userId);
         }
 
         await uow.SaveChangesAsync(cancellationToken);
-        return req.Id;
+        return request.Id;
     }
 }

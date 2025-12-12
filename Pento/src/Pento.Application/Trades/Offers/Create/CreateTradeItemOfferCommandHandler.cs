@@ -11,15 +11,13 @@ using Pento.Domain.Trades;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.TradeItems.Offers.Create;
+namespace Pento.Application.Trades.Offers.Create;
 
 internal sealed class CreateTradeItemOfferCommandHandler(
     IUserContext userContext,
     IGenericRepository<TradeOffer> offerRepository,
-    IGenericRepository<TradeItemOffer> itemRepository,
-    IGenericRepository<FoodItemTradeReservation> reservationRepository,
+    IGenericRepository<TradeItemOffer> tradeItemRepository,
     IGenericRepository<FoodItem> foodItemRepository,
-    IGenericRepository<Unit> unitRepository,
     IConverterService converter,
     IDateTimeProvider clock,
     IUnitOfWork uow
@@ -34,9 +32,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
         if (householdId is null)
         {
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
-        }
-
-        
+        }    
         var offer = TradeOffer.Create(
             userId: userId,
             householdId: householdId.Value,
@@ -50,9 +46,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
 
         foreach (CreateTradeItemOfferDto dto in command.Items)
         {
-            FoodItem? foodItem =
-                await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
-
+            FoodItem? foodItem =await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
             if (foodItem is null)
             {
                 return Result.Failure<Guid>(FoodItemErrors.NotFound);
@@ -62,67 +56,28 @@ internal sealed class CreateTradeItemOfferCommandHandler(
             {
                 return Result.Failure<Guid>(FoodItemErrors.ForbiddenAccess);
             }
-
-            Unit? fromUnit = await unitRepository.GetByIdAsync(dto.UnitId, cancellationToken);
-            if (fromUnit is null)
-            {
-                return Result.Failure<Guid>(UnitErrors.NotFound);
-            }
-
-            decimal qtyInItemUnit = dto.Quantity;
-
-            if (dto.UnitId != foodItem.UnitId)
-            {
-                Result<decimal> converted = await converter.ConvertAsync(
+            Result<decimal> qtyInItemUnit = await converter.ConvertAsync(
                     dto.Quantity,
                     dto.UnitId,
                     foodItem.UnitId,
                     cancellationToken
                 );
-
-                if (converted.IsFailure)
-                {
-                    return Result.Failure<Guid>(converted.Error);
-                }
-
-                qtyInItemUnit = converted.Value;
-            }
-
-            if (qtyInItemUnit > foodItem.Quantity)
+            if (qtyInItemUnit.IsFailure)
+            {
+                return Result.Failure<Guid>(qtyInItemUnit.Error);
+            }         
+            if (qtyInItemUnit.Value > foodItem.Quantity)
             {
                 return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
             }
-
             var item = TradeItemOffer.Create(
                 foodItemId: dto.FoodItemId,
                 quantity: dto.Quantity,
                 unitId: dto.UnitId,
                 offerId: offer.Id
             );
-
-            itemRepository.Add(item);
-
-            var reservation = new FoodItemTradeReservation(
-              id: Guid.CreateVersion7(),
-              foodItemId: foodItem.Id,
-              householdId: householdId.Value,
-              reservationDateUtc: clock.UtcNow,
-              quantity: dto.Quantity,
-              unitId: dto.UnitId,
-              reservationStatus: ReservationStatus.Pending,
-              reservationFor: ReservationFor.Trade,
-              tradeItemId: item.Id
-            );
-
-
-            reservationRepository.Add(reservation);
-
-            foodItem.Reserve(
-                qtyInItemUnit,
-                dto.Quantity,
-                dto.UnitId,
-                userId
-            );
+            tradeItemRepository.Add(item);
+            foodItem.Reserve(qtyInItemUnit.Value, dto.Quantity, dto.UnitId, userId);
         }
 
         await uow.SaveChangesAsync(cancellationToken);
