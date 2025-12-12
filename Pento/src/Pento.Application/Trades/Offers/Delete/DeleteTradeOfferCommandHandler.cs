@@ -4,18 +4,19 @@ using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 
-namespace Pento.Application.Trades.Offers.Cancel;
-internal sealed class CancelTradeOfferCommandHandler(
+namespace Pento.Application.Trades.Offers.Delete;
+
+internal sealed class DeleteTradeOfferCommandHandler(
     IUserContext userContext,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IUnitOfWork unitOfWork
-    ) : ICommandHandler<CancelTradeOfferCommand>
+    ) : ICommandHandler<DeleteTradeOfferCommand>
 {
-    public async Task<Result> Handle(CancelTradeOfferCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteTradeOfferCommand command, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
-        TradeOffer? tradeOffer = await tradeOfferRepository.GetByIdAsync(command.OfferId,cancellationToken);
+        TradeOffer? tradeOffer = await tradeOfferRepository.GetByIdAsync(command.OfferId, cancellationToken);
         if (tradeOffer == null)
         {
             return Result.Failure(TradeErrors.OfferNotFound);
@@ -24,9 +25,9 @@ internal sealed class CancelTradeOfferCommandHandler(
         {
             return Result.Failure(TradeErrors.OfferForbiddenAccess);
         }
-        if (tradeOffer.Status != TradeOfferStatus.Open)
+        if (tradeOffer.Status == TradeOfferStatus.Open)
         {
-            return Result.Failure(TradeErrors.InvalidOfferState);
+            tradeOffer.Cancel();
         }
         IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
             ts => ts.TradeOfferId == tradeOffer.Id && ts.Status == TradeSessionStatus.Ongoing,
@@ -36,7 +37,7 @@ internal sealed class CancelTradeOfferCommandHandler(
             session.Cancel();
             tradeSessionRepository.Update(session);
         }
-        tradeOffer.Cancel();
+        tradeOffer.Delete();
         tradeOfferRepository.Update(tradeOffer);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
