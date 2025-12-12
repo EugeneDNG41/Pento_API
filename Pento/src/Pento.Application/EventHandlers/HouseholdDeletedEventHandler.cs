@@ -7,6 +7,7 @@ using Pento.Domain.GroceryLists;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Storages;
+using Pento.Domain.Trades;
 
 namespace Pento.Application.EventHandlers;
 
@@ -17,6 +18,9 @@ internal sealed class HouseholdDeletedEventHandler(
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IGenericRepository<GroceryList> groceryListRepository,
+    IGenericRepository<TradeOffer> tradeOfferRepository,
+    IGenericRepository<TradeRequest> tradeRequestRepository,
+    IGenericRepository<TradeSession> tradeSessionRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<HouseholdDeletedDomainEvent>
 {
     public async override Task Handle(HouseholdDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
@@ -63,7 +67,31 @@ internal sealed class HouseholdDeletedEventHandler(
             groceryList.Delete();
         }
         foodItemRepository.UpdateRange(foodItems);
-
+        IEnumerable<TradeOffer> openOffers = await tradeOfferRepository.FindAsync(
+            offer => offer.HouseholdId == domainEvent.HouseholdId && offer.Status == TradeOfferStatus.Open,
+            cancellationToken);
+        foreach (TradeOffer offer in openOffers)
+        {
+            offer.Delete();
+        }
+        tradeOfferRepository.UpdateRange(openOffers);
+        IEnumerable<TradeRequest> pendingRequests = await tradeRequestRepository.FindAsync(
+            request => request.HouseholdId == domainEvent.HouseholdId && request.Status == TradeRequestStatus.Pending,
+            cancellationToken);
+        foreach (TradeRequest request in pendingRequests)
+        {
+            request.Delete();
+        }
+        tradeRequestRepository.UpdateRange(pendingRequests);
+        IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
+            session => (session.OfferHouseholdId == domainEvent.HouseholdId ||
+                       session.RequestHouseholdId == domainEvent.HouseholdId)
+            && session.Status == TradeSessionStatus.Ongoing,
+            cancellationToken);
+        foreach (TradeSession session in ongoingSessions)
+        {
+            session.Cancel(); 
+        }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

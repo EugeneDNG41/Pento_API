@@ -40,7 +40,7 @@ internal sealed class AcceptTradeRequestCommandHandler(
         {
             return Result.Failure<Guid>(TradeErrors.RequestNotFound);
         }
-        if (offer.Status != TradeStatus.Open)
+        if (offer.Status != TradeOfferStatus.Open)
         {
             return Result.Failure<Guid>(TradeErrors.InvalidOfferState);
         }
@@ -107,7 +107,7 @@ internal sealed class CancelTradeSessionCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionNotFound);
         }
-        if (session.OfferUserId != userContext.UserId && session.RequestUserId != userContext.UserId)
+        if (session.OfferHouseholdId != userContext.HouseholdId && session.RequestHouseholdId != userContext.HouseholdId)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionForbiddenAccess);
         }
@@ -142,7 +142,7 @@ internal sealed class CompleteTradeSessionCommandHandler(// check
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionNotFound);
         }
-        if (session.OfferUserId != userContext.UserId && session.RequestUserId != userContext.UserId)
+        if (session.OfferHouseholdId != userContext.HouseholdId && session.RequestHouseholdId != userContext.HouseholdId)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionForbiddenAccess);
         }
@@ -150,13 +150,13 @@ internal sealed class CompleteTradeSessionCommandHandler(// check
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
-        if (session.OfferUserId == userContext.UserId)
+        if (session.OfferHouseholdId == userContext.HouseholdId)
         {
-            session.ConfirmByOfferUser();
+            session.ConfirmByOfferUser(userContext.UserId);
         }
-        else if (session.RequestUserId == userContext.UserId)
+        else if (session.RequestHouseholdId == userContext.HouseholdId)
         {
-            session.ConfirmByRequestUser();
+            session.ConfirmByRequestUser(userContext.UserId);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

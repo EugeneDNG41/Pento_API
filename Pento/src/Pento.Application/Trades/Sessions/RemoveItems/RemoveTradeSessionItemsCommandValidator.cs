@@ -7,11 +7,11 @@ internal sealed class RemoveTradeSessionItemsCommandValidator : AbstractValidato
     public RemoveTradeSessionItemsCommandValidator()
     {
         RuleFor(x => x.TradeSessionId)
-            .NotEmpty().WithMessage("TradeAway session Id is required.");
+            .NotEmpty().WithMessage("Trade session Id is required.");
         RuleFor(x => x.TradeItemIds)
-            .NotNull().WithMessage("TradeAway tradeItem Ids must not be null.")
+            .NotNull().WithMessage("Trade tradeItem Ids must not be null.")
             .Must(ids => ids.Length > 0).WithMessage("At least one trade tradeItem ID must be provided.");
         RuleForEach(x => x.TradeItemIds)
-            .NotEmpty().WithMessage("TradeAway tradeItem Ids must not contain empty GUIDs.");
+            .NotEmpty().WithMessage("Trade tradeItem Ids must not contain empty GUIDs.");
     }
 }

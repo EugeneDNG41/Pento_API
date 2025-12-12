@@ -8,6 +8,6 @@ internal sealed class CancelTradeSessionCommandValidator : AbstractValidator<Can
     public CancelTradeSessionCommandValidator()
     {
         RuleFor(x => x.TradeSessionId)
-            .NotEmpty().WithMessage("TradeAway Session Id is required.");
+            .NotEmpty().WithMessage("Trade Session Id is required.");
     }
 }

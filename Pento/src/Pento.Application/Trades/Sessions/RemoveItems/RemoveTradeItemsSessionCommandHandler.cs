@@ -36,7 +36,7 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
         {
             return Result.Failure(TradeErrors.SessionNotFound);
         }
-        if (session.OfferUserId != userId && session.RequestUserId != userId)
+        if (session.OfferHouseholdId != householdId && session.RequestHouseholdId != householdId)
         {
             return Result.Failure(TradeErrors.SessionForbiddenAccess);
         }
@@ -51,8 +51,8 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
         var restoredItems = new Dictionary<Guid, decimal>();
         foreach (TradeSessionItem sessionItem in items)
         {
-            if (sessionItem.From == TradeItemFrom.Offer && session.OfferUserId != userId
-                || sessionItem.From == TradeItemFrom.Request && session.RequestUserId != userId)
+            if (sessionItem.From == TradeItemFrom.Offer && session.OfferHouseholdId != householdId
+                || sessionItem.From == TradeItemFrom.Request && session.RequestHouseholdId != householdId)
             {
                 return Result.Failure(TradeErrors.ItemForbiddenAccess);
             }

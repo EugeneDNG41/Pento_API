@@ -32,7 +32,7 @@ internal sealed class SendTradeMessageCommandHandler(
         {
             return Result.Failure<TradeMessageResponse>(TradeErrors.SessionNotFound);
         }
-        if (session.OfferUserId != userContext.UserId && session.RequestUserId != userContext.UserId)
+        if (session.OfferHouseholdId != userContext.HouseholdId && session.RequestHouseholdId != userContext.HouseholdId)
         {
             return Result.Failure<TradeMessageResponse>(TradeErrors.SessionForbiddenAccess);
         }

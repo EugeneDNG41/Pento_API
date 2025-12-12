@@ -64,11 +64,11 @@ public sealed class Activity
         "A new member has joined your household to help manage food, grocery lists, and meal plans.");
     public static readonly Activity TradeInFoodItem = new Activity(
         ActivityCode.FOOD_ITEM_TRADE_IN.ToString(),
-        "TradeAway In Food Item",
+        "Trade In Food Item",
         "Receiving a food item from another household through trade.");
     public static readonly Activity TradeAwayFoodItem = new Activity(
         ActivityCode.FOOD_ITEM_TRADE_AWAY.ToString(),
-        "TradeAway Out Food Item",
+        "Trade Away Food Item",
         "Giving a food item to another household through trade.");
     private Activity() { }
     public Activity(string code, string name, string description)

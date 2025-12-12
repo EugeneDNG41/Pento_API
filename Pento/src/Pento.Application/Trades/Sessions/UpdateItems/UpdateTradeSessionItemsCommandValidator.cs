@@ -8,9 +8,9 @@ internal sealed class UpdateTradeSessionItemsCommandValidator : AbstractValidato
     public UpdateTradeSessionItemsCommandValidator()
     {
         RuleFor(x => x.TradeSessionId)
-            .NotEmpty().WithMessage("TradeAway session Id is required.");
+            .NotEmpty().WithMessage("Trade session Id is required.");
         RuleFor(x => x.Items)
-            .NotNull().WithMessage("TradeAway tradeItem Ids must not be null.")
+            .NotNull().WithMessage("Trade tradeItem Ids must not be null.")
             .Must(ids => ids.Count > 0).WithMessage("At least one trade tradeItem ID must be provided.");
         RuleForEach(x => x.Items).SetValidator(new UpdateTradeItemDtoValidator());
     }

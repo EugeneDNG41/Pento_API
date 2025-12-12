@@ -35,7 +35,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionNotFound);
         }
-        if (session.OfferUserId != userId && session.RequestUserId != userId)
+        if (session.OfferHouseholdId != householdId && session.RequestHouseholdId != householdId)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.SessionForbiddenAccess);
         }
@@ -43,7 +43,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
-        TradeItemFrom from = session.OfferUserId == userId
+        TradeItemFrom from = session.OfferHouseholdId == householdId
                 ? TradeItemFrom.Offer
                 : TradeItemFrom.Request;
         

@@ -3043,7 +3043,7 @@ namespace Pento.Infrastructure.Migrations
 
                     b.ToTable("food_item_reservations", (string)null);
 
-                    b.HasDiscriminator().HasValue("TradeAway");
+                    b.HasDiscriminator().HasValue("Trade");
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>

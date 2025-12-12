@@ -2101,11 +2101,11 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
-                    b.Property<Guid>("OfferUserId")
+                    b.Property<Guid>("OfferHouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("offer_user_id");
 
-                    b.Property<Guid>("RequestUserId")
+                    b.Property<Guid>("RequestHouseholdId")
                         .HasColumnType("uuid")
                         .HasColumnName("request_user_id");
 
@@ -2130,10 +2130,10 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_trade_sessions");
 
-                    b.HasIndex("OfferUserId")
+                    b.HasIndex("OfferHouseholdId")
                         .HasDatabaseName("ix_trade_sessions_offer_user_id");
 
-                    b.HasIndex("RequestUserId")
+                    b.HasIndex("RequestHouseholdId")
                         .HasDatabaseName("ix_trade_sessions_request_user_id");
 
                     b.HasIndex("TradeOfferId")
@@ -3512,14 +3512,14 @@ namespace Pento.Infrastructure.Migrations
                 {
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
-                        .HasForeignKey("OfferUserId")
+                        .HasForeignKey("OfferHouseholdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_trade_sessions_user_offer_user_id");
 
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
-                        .HasForeignKey("RequestUserId")
+                        .HasForeignKey("RequestHouseholdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_trade_sessions_user_request_user_id");

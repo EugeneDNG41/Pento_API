@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
 using Pento.Domain.Users;
@@ -15,7 +16,7 @@ internal sealed class TradeOfferFulfilledEventHandler(
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<User> userRepository)
+    IGenericRepository<Household> householdRepository)
     : DomainEventHandler<TradeOfferFulfilledDomainEvent>
 {
     public override async Task Handle(
@@ -32,19 +33,19 @@ internal sealed class TradeOfferFulfilledEventHandler(
         {
             throw new PentoException(nameof(TradeOfferFulfilledEventHandler), TradeErrors.RequestNotFound);
         }
-        User? requestUser = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
-        if (requestUser == null)
+        Household? requestHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
+        if (requestHousehold == null)
         {
-            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), UserErrors.NotFound);
+            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), HouseholdErrors.NotFound);
         }
-        string title = "TradeAway Fulfilled";
-        string body = $"Your trade with {requestUser.FirstName} has been fulfilled.";
+        string title = "Trade Fulfilled";
+        string body = $"Your trade with household {requestHousehold.Name} has been fulfilled.";
         var payload = new Dictionary<string, string>
         {
             { "tradeOfferId", offer.Id.ToString() }
         };
-        Result notificationResult = await notificationService.SendToUserAsync(
-            offer.UserId,
+        Result notificationResult = await notificationService.SendToHouseholdAsync(
+            offer.HouseholdId,
             title,
             body,
             NotificationType.Trade,

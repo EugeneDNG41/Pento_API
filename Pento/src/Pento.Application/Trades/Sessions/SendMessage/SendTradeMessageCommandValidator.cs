@@ -7,7 +7,7 @@ internal sealed class SendTradeMessageCommandValidator : AbstractValidator<SendT
     public SendTradeMessageCommandValidator()
     {
         RuleFor(x => x.TradeSessionId)
-            .NotEmpty().WithMessage("TradeAway Session Id is required.");
+            .NotEmpty().WithMessage("Trade Session Id is required.");
         RuleFor(x => x.Message)
             .NotEmpty()
             .MaximumLength(500)

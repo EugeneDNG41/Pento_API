@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Households;
 using Pento.Domain.Trades;
 using Pento.Domain.Users;
 
@@ -31,13 +32,21 @@ internal sealed class TradeSessionConfiguration : IEntityTypeConfiguration<Trade
                .WithMany()
                .HasForeignKey(x => x.TradeRequestId)
                .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Household>()
+               .WithMany()
+               .HasForeignKey(x => x.OfferHouseholdId)
+               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Household>()
+            .WithMany()
+            .HasForeignKey(x => x.RequestHouseholdId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<User>()
                .WithMany()
-               .HasForeignKey(x => x.OfferUserId)
+               .HasForeignKey(x => x.ConfirmedByOfferUser)
                .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<User>()
             .WithMany()
-            .HasForeignKey(x => x.RequestUserId)
+            .HasForeignKey(x => x.ConfirmedByRequestUser)
             .OnDelete(DeleteBehavior.Restrict);
         builder.HasQueryFilter(x => !x.IsDeleted);
     }

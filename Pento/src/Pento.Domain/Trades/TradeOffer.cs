@@ -6,7 +6,7 @@ public sealed class TradeOffer : Entity
 {
     public Guid UserId { get; private set; }
     public Guid HouseholdId { get; private set; }
-    public TradeStatus Status { get; private set; }
+    public TradeOfferStatus Status { get; private set; }
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public PickupOption PickupOption { get; private set; }
@@ -16,7 +16,7 @@ public sealed class TradeOffer : Entity
            Guid id,
            Guid userId,
            Guid householdId,
-           TradeStatus status,
+           TradeOfferStatus status,
            DateTime startDate,
            DateTime endDate,
            PickupOption pickupOption,
@@ -46,7 +46,7 @@ public sealed class TradeOffer : Entity
             id: Guid.CreateVersion7(),
             userId: userId,
             householdId: householdId,
-            status: TradeStatus.Open,
+            status: TradeOfferStatus.Open,
             startDate: startDate,
             endDate: endDate,
             pickupOption: pickupOption,
@@ -63,22 +63,30 @@ public sealed class TradeOffer : Entity
     }
     public void Cancel()
     {
-        Status = TradeStatus.Cancelled;
+        Status = TradeOfferStatus.Cancelled;
         Raise(new TradeOfferCancelledDomainEvent(Id));
     }
     public void Expire()
     {
-        Status = TradeStatus.Expired;
+        Status = TradeOfferStatus.Expired;
         Raise(new TradeOfferExpiredDomainEvent(Id));
     }
     public void AutoCancel()
     {
-        Status = TradeStatus.Cancelled;
+        Status = TradeOfferStatus.Cancelled;
     }
     public void Fulfill(Guid requestId)
     {
-        Status = TradeStatus.Fulfilled;
+        Status = TradeOfferStatus.Fulfilled;
         Raise(new TradeOfferFulfilledDomainEvent(Id, requestId));
+    }
+    public new void Delete()
+    {
+        if (Status == TradeOfferStatus.Open)
+        {
+            Cancel();
+        }
+        base.Delete();
     }
 }
 public sealed class TradeOfferCancelledDomainEvent(Guid tradeOfferId) : DomainEvent

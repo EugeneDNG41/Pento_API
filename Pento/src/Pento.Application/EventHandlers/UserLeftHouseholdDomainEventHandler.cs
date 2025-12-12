@@ -7,12 +7,10 @@ using Pento.Domain.Trades;
 using Pento.Domain.Users;
 using Pento.Domain.Users.Events;
 
-namespace Pento.Application.Households.Leave;
+namespace Pento.Application.EventHandlers;
 
 internal sealed class UserLeftHouseholdDomainEventHandler(
     IGenericRepository<Household> householdRepository,
-    IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<User> repository,
     IUnitOfWork unitOfWork) : DomainEventHandler<UserLeftHouseholdDomainEvent>
 {
@@ -41,20 +39,6 @@ internal sealed class UserLeftHouseholdDomainEventHandler(
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return;
         }
-        IEnumerable<TradeOffer> openOffers = await tradeOfferRepository.FindAsync(
-            offer => offer.UserId == domainEvent.UserId && offer.Status == TradeStatus.Open,
-            cancellationToken);
-        foreach (TradeOffer offer in openOffers)
-        {
-            offer.Cancel();
-        }
-        tradeOfferRepository.UpdateRange(openOffers);
-        IEnumerable<TradeRequest> pendingRequests = await tradeRequestRepository.FindAsync(
-            request => request.UserId == domainEvent.UserId && request.Status == TradeRequestStatus.Pending,
-            cancellationToken);
-        foreach (TradeRequest request in pendingRequests)
-        {
-            request.Cancel();
-        }
+        
     }
 }

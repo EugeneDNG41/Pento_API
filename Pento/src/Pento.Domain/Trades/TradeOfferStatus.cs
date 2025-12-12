@@ -1,6 +1,6 @@
 ﻿namespace Pento.Domain.Trades;
 
-public enum TradeStatus
+public enum TradeOfferStatus
 {
     Open = 1,
     Fulfilled = 2,

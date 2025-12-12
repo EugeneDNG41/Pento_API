@@ -19,8 +19,8 @@ public partial class ActualTradeActivity : Migration
             columns: columns,
             values: new object[,]
             {
-                { "FOOD_ITEM_TRADE_AWAY", "Giving a food item to another household through trade.", "TradeAway Out Food Item" },
-                { "FOOD_ITEM_TRADE_IN", "Receiving a food item from another household through trade.", "TradeAway In Food Item" }
+                { "FOOD_ITEM_TRADE_AWAY", "Giving a food item to another household through trade.", "Trade Away Food Item" },
+                { "FOOD_ITEM_TRADE_IN", "Receiving a food item from another household through trade.", "Trade In Food Item" }
             });
     }
 

@@ -35,9 +35,9 @@ internal sealed class TradeSessionMessageCreatedEventHandler(
         {
             throw new PentoException(nameof(TradeSessionMessageCreatedEventHandler), UserErrors.NotFound);
         }
-        Guid recipientUserId = session.OfferUserId == message.UserId
-            ? session.RequestUserId
-            : session.OfferUserId;
+        Guid recipientHouseholdId = session.OfferHouseholdId == senderUser.HouseholdId
+            ? session.RequestHouseholdId
+            : session.OfferHouseholdId;
         string title = $"New Message From {senderUser.FirstName}";
         string body = $"{senderUser.FirstName}: {message.MessageText}.";
         var payload = new Dictionary<string, string>
@@ -45,8 +45,8 @@ internal sealed class TradeSessionMessageCreatedEventHandler(
             { "tradeSessionId", session.Id.ToString() },
             { "tradeSessionMessageId", message.Id.ToString() }
         };
-        Result notificationResult = await notificationService.SendToUserAsync(
-            recipientUserId,
+        Result notificationResult = await notificationService.SendToHouseholdAsync(
+            recipientHouseholdId,
             title,
             body,
             NotificationType.Trade,

@@ -8,10 +8,10 @@ public sealed class TradeSession : Entity
 
     public Guid TradeOfferId { get; private set; }
     public Guid TradeRequestId { get; private set; }
-    public Guid OfferUserId { get; private set; }
-    public Guid RequestUserId { get; private set; }
-    public bool ConfirmedByOfferUser { get; private set; }
-    public bool ConfirmedByRequestUser { get; private set; }
+    public Guid OfferHouseholdId { get; private set; }
+    public Guid RequestHouseholdId { get; private set; }
+    public Guid? ConfirmedByOfferUser { get; private set; }
+    public Guid? ConfirmedByRequestUser { get; private set; }
     public TradeSessionStatus Status { get; private set; }
     public DateTime StartedOn { get; private set; }
 
@@ -19,29 +19,29 @@ public sealed class TradeSession : Entity
         Guid id,
         Guid tradeOfferId,
         Guid tradeRequestId,
-        Guid offerUserId,
-        Guid requestUserId,
+        Guid offerHouseholdId,
+        Guid requestHouseholdId,
         TradeSessionStatus status,
         DateTime startedOn
     ) : base(id)
     {
         TradeOfferId = tradeOfferId;
         TradeRequestId = tradeRequestId;
-        OfferUserId = offerUserId;
-        RequestUserId = requestUserId;
+        OfferHouseholdId = offerHouseholdId;
+        RequestHouseholdId = requestHouseholdId;
         Status = status;
         StartedOn = startedOn;
     }
 
-    public static TradeSession Create(Guid offerId, Guid requestId, Guid offerUserId,
-        Guid requestUserId, DateTime startedOn)
+    public static TradeSession Create(Guid offerId, Guid requestId, Guid offerHouseholdId,
+        Guid requestHouseholdId, DateTime startedOn)
     {
         return new TradeSession(
             id: Guid.CreateVersion7(),
             tradeOfferId: offerId,
             tradeRequestId: requestId,
-            offerUserId: offerUserId,
-            requestUserId: requestUserId,
+            offerHouseholdId: offerHouseholdId,
+            requestHouseholdId: requestHouseholdId,
             status: TradeSessionStatus.Ongoing,
             startedOn: startedOn
         );
@@ -57,18 +57,18 @@ public sealed class TradeSession : Entity
         Status = TradeSessionStatus.Cancelled;
         Raise(new TradeSessionCancelledDomainEvent(Id));
     }
-    public void ConfirmByOfferUser()
+    public void ConfirmByOfferUser(Guid? userId)
     {
-        ConfirmedByOfferUser = true;
-        if (ConfirmedByRequestUser)
+        ConfirmedByOfferUser = userId;
+        if (ConfirmedByRequestUser != null && ConfirmedByOfferUser != null)
         {
             Complete();
         }
     }
-    public void ConfirmByRequestUser()
+    public void ConfirmByRequestUser(Guid? userId)
     {
-        ConfirmedByRequestUser = true;
-        if (ConfirmedByOfferUser)
+        ConfirmedByRequestUser = userId;
+        if (ConfirmedByOfferUser != null && ConfirmedByRequestUser != null)
         {
             Complete();
         }

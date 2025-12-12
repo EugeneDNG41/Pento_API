@@ -12,6 +12,7 @@ using Pento.Domain.Compartments;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
+using Pento.Domain.Households;
 using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
 using Pento.Domain.Units;
@@ -74,7 +75,7 @@ internal sealed class TradeOfferCancelledEventHandler(
     INotificationService notificationService,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<User> userRepository)
+    IGenericRepository<Household> householdRepository)
     : DomainEventHandler<TradeOfferCancelledDomainEvent>
 {
     public override async Task Handle(
@@ -86,16 +87,16 @@ internal sealed class TradeOfferCancelledEventHandler(
         {
             throw new PentoException(nameof(TradeOfferCancelledEventHandler), TradeErrors.OfferNotFound);
         }
-        User? offerUser = await userRepository.GetByIdAsync(offer.UserId, cancellationToken);
-        if (offerUser == null)
+        Household? offerHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
+        if (offerHousehold == null)
         {
-            throw new PentoException(nameof(TradeOfferCancelledEventHandler), UserErrors.NotFound);
+            throw new PentoException(nameof(TradeOfferCancelledEventHandler), HouseholdErrors.NotFound);
         }
         IEnumerable<TradeRequest> requests = await tradeRequestRepository.FindAsync(
             r => r.TradeOfferId == offer.Id && r.Status == TradeRequestStatus.Pending,
             cancellationToken);
-        string title = "TradeAway Offer Cancelled";
-        string body = $"{offerUser.FirstName} has cancelled their trade offer(s)";
+        string title = "Trade Offer Cancelled";
+        string body = $"Household {offerHousehold.Name} has cancelled their trade offer";
         var payload = new Dictionary<string, string>
             {
                 { "tradeOfferId", offer.Id.ToString() }
@@ -104,8 +105,8 @@ internal sealed class TradeOfferCancelledEventHandler(
         {
             request.AutoCancel();
             payload.Add("tradeRequestId", request.Id.ToString());
-            Result notificationResult = await notificationService.SendToUserAsync(
-                request.UserId,
+            Result notificationResult = await notificationService.SendToHouseholdAsync(
+                request.HouseholdId,
                 title,
                 body,
                 NotificationType.Trade,
@@ -122,7 +123,7 @@ internal sealed class TradeRequestCancelledEventHandler(
     INotificationService notificationService,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<User> userRepository)
+    IGenericRepository<Household> householdRepository)
     : DomainEventHandler<TradeRequestCancelledDomainEvent>
 {
     public override async Task Handle(
@@ -139,20 +140,20 @@ internal sealed class TradeRequestCancelledEventHandler(
         {
             throw new PentoException(nameof(TradeRequestCancelledEventHandler), TradeErrors.OfferNotFound);
         }
-        User? requestUser = await userRepository.GetByIdAsync(request.UserId, cancellationToken);
-        if (requestUser == null)
+        Household? requestHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
+        if (requestHousehold == null)
         {
-            throw new PentoException(nameof(TradeRequestCancelledEventHandler), UserErrors.NotFound);
+            throw new PentoException(nameof(TradeRequestCancelledEventHandler), HouseholdErrors.NotFound);
         }
-        string title = "TradeAway Request Cancelled";
-        string body = $"{requestUser.FirstName} has cancelled their trade request.";
+        string title = "Trade Request Cancelled";
+        string body = $"Household {requestHousehold.Name} has cancelled their trade request.";
         var payload = new Dictionary<string, string>
             {
                 { "tradeOfferId", offer.Id.ToString() },
                 { "tradeRequestId", request.Id.ToString() }
             };
-        Result notificationResult = await notificationService.SendToUserAsync(
-            offer.UserId,
+        Result notificationResult = await notificationService.SendToHouseholdAsync(
+            offer.HouseholdId,
             title,
             body,
             NotificationType.Trade,
@@ -168,7 +169,7 @@ internal sealed class TradeRequestRejectedEventHandler(
     INotificationService notificationService,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<User> userRepository)
+    IGenericRepository<Household> householdRepository)
      : DomainEventHandler<TradeRequestRejectedDomainEvent>
 {
     public async override Task Handle(TradeRequestRejectedDomainEvent domainEvent, CancellationToken cancellationToken = default)
@@ -183,20 +184,20 @@ internal sealed class TradeRequestRejectedEventHandler(
         {
             throw new PentoException(nameof(TradeRequestRejectedEventHandler), TradeErrors.OfferNotFound);
         }
-        User? offerUser = await userRepository.GetByIdAsync(offer.UserId, cancellationToken);
-        if (offerUser == null)
+        Household? offerHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
+        if (offerHousehold == null)
         {
-            throw new PentoException(nameof(TradeRequestRejectedEventHandler), UserErrors.NotFound);
+            throw new PentoException(nameof(TradeRequestRejectedEventHandler), HouseholdErrors.NotFound);
         }
-        string title = "TradeAway Request Rejected";
-        string body = $"{offerUser.FirstName} has rejected your trade request.";
+        string title = "Trade Request Rejected";
+        string body = $"Household {offerHousehold.Name} has rejected your trade request.";
         var payload = new Dictionary<string, string>
             {
                 { "tradeRequestId", request.Id.ToString() },
                 { "tradeOfferId", offer.Id.ToString() }
             };
-        Result notificationResult = await notificationService.SendToUserAsync(
-            request.UserId,
+        Result notificationResult = await notificationService.SendToHouseholdAsync(
+            request.HouseholdId,
             title,
             body,
             NotificationType.Trade,

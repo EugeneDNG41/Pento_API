@@ -65,6 +65,14 @@ public sealed class TradeRequest : Entity
         Status = TradeRequestStatus.Cancelled;
         // No domain event raised for auto-cancellation
     }
+    public new void Delete()
+    {
+        if (Status == TradeRequestStatus.Pending)
+        {
+            Cancel();
+        }
+        base.Delete();
+    }
 }
 public sealed class TradeRequestCreatedDomainEvent(Guid tradeRequestId) : DomainEvent
 {

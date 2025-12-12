@@ -8,6 +8,6 @@ internal sealed class ConfirmTradeSessionCommandValidator : AbstractValidator<Co
     public ConfirmTradeSessionCommandValidator()
     {
         RuleFor(x => x.TradeSessionId)
-            .NotEmpty().WithMessage("TradeAway Session Id is required.");
+            .NotEmpty().WithMessage("Trade Session Id is required.");
     }
 }

@@ -2183,7 +2183,7 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("subscription_plans", (string)null);
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeAway", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.Trade", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -3601,7 +3601,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeOffer", b =>
                 {
-                    b.HasOne("Pento.Domain.Trades.TradeAway", null)
+                    b.HasOne("Pento.Domain.Trades.Trade", null)
                         .WithMany()
                         .HasForeignKey("TradeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -3611,7 +3611,7 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeWant", b =>
                 {
-                    b.HasOne("Pento.Domain.Trades.TradeAway", null)
+                    b.HasOne("Pento.Domain.Trades.Trade", null)
                         .WithMany()
                         .HasForeignKey("TradeId")
                         .OnDelete(DeleteBehavior.Cascade)

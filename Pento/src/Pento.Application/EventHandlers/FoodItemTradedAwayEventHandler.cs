@@ -32,7 +32,7 @@ internal sealed class FoodItemTradedAwayEventHandler(
             foodItem.HouseholdId,
             domainEvent.UserId,
             domainEvent.Timestamp,
-            FoodItemLogAction.TradeAway,
+            FoodItemLogAction.Trade,
             domainEvent.Quantity,
             domainEvent.UnitId);
         logRepository.Add(log);
