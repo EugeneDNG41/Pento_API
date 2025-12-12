@@ -51,7 +51,14 @@ internal sealed class AcceptTradeRequestCommandHandler(
         {
             return Result.Failure<Guid>(TradeErrors.CannotTradeWithinHousehold);
         }
-        var session = TradeSession.Create(offer.Id, request.Id, offer.UserId, request.UserId, dateTimeProvider.UtcNow);
+        bool ongoingSessionExists = await tradeSessionRepository.AnyAsync(
+            session => session.TradeOfferId == offer.Id && session.TradeRequestId == request.Id && session.Status == TradeSessionStatus.Ongoing,
+            cancellationToken);
+        if (ongoingSessionExists) 
+        {
+            return Result.Failure<Guid>(TradeErrors.AlreadyOngoingSession);
+        }
+        var session = TradeSession.Create(offer.Id, request.Id, offer.HouseholdId, request.HouseholdId, dateTimeProvider.UtcNow);
         tradeSessionRepository.Add(session);
         IEnumerable<TradeItemOffer> offerItems = await tradeItemOfferRepository.FindAsync(
             item => item.OfferId == session.TradeOfferId,

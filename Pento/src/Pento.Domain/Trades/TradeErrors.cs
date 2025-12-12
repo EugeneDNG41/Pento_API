@@ -21,4 +21,5 @@ public sealed class TradeErrors
     public static readonly Error CannotTradeWithSelf = Error.Conflict("Trade.CannotTradeWithSelf", "Cannot trade with yourself.");
     public static readonly Error DuplicateTradeItems = Error.Conflict("Trade.DuplicateItems", "Trade contains duplicate items."); //business rule
     public static readonly Error ExceedsMaxTradeItems = Error.Conflict("Trade.ExceedsMaxItems", "Trade exceeds maximum allowed items."); //business rule
+    public static readonly Error AlreadyOngoingSession = Error.Conflict("Trade.AlreadyOngoingSession", "An ongoing trade session already exists between the involved offer and request.");
 }
