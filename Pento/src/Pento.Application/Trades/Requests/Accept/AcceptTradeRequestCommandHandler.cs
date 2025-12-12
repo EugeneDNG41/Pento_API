@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.SignalR;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -16,6 +17,7 @@ internal sealed class AcceptTradeRequestCommandHandler(
     IGenericRepository<TradeItemOffer> tradeItemOfferRepository,
     IGenericRepository<TradeItemRequest> tradeItemRequestRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
+    IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork
     ) : ICommandHandler<AcceptTradeRequestCommand, Guid>
 {
@@ -89,6 +91,8 @@ internal sealed class AcceptTradeRequestCommandHandler(
         }
         tradeItemSessionRepository.AddRange(sessionItems);
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        await hubContext.Clients.Groups(session.OfferHouseholdId.ToString(), session.RequestHouseholdId.ToString())
+            .TradeSessionCreated(session.Id);
         return session.Id;
     }
 }

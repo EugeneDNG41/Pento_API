@@ -7,11 +7,5 @@ public sealed record CreateTradeItemOfferCommand(
     DateTime StartDate,
     DateTime EndDate,
     PickupOption PickupOption,
-    List<CreateTradeItemOfferDto> Items
+    List<AddTradeItemDto> Items
 ) : ICommand<Guid>;
-
-public sealed record CreateTradeItemOfferDto(
-    Guid FoodItemId,
-    decimal Quantity,
-    Guid UnitId
-);

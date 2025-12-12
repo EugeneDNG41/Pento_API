@@ -1,21 +1,22 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.Sessions.Confirm;
+using Pento.Application.Trades.Offers.RemoveItems;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Trades.Patch;
+namespace Pento.API.Endpoints.Trades.Delete;
 
-internal sealed class ConfirmTradeSession : IEndpoint
+internal sealed class RemoveTradeOfferItems : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPatch("trades/sessions/{tradeSessionId:guid}/confirm", async (
-            Guid tradeSessionId,
-            ICommandHandler<ConfirmTradeSessionCommand> handler,
+        app.MapDelete("trades/offers/{tradeOfferId:guid}/items", async (
+            Guid tradeOfferId,
+            Guid[] tradeItemIds,
+            ICommandHandler<RemoveTradeOfferItemsCommand> handler,
             CancellationToken cancellationToken
         ) =>
         {
-            var command = new ConfirmTradeSessionCommand(tradeSessionId);
+            var command = new RemoveTradeOfferItemsCommand(tradeOfferId, tradeItemIds);
             Result result = await handler.Handle(command, cancellationToken);
             return result.Match(
                 Results.NoContent,

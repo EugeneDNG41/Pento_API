@@ -1,6 +1,8 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Trades;
 using Pento.Application.Trades.Requests.Create;
+using Pento.Application.Trades.Sessions.AddItems;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Trades.Post;
@@ -18,7 +20,7 @@ internal sealed class CreateMultipleTradeItemRequest : IEndpoint
             var command = new CreateTradeItemRequestCommand(
                 TradeOfferId: request.TradeOfferId,
                 Items: request.Items.Select(i =>
-                    new CreateTradeItemRequestDto(
+                    new AddTradeItemDto(
                         i.FoodItemId,
                         i.Quantity,
                         i.UnitId
@@ -29,7 +31,7 @@ internal sealed class CreateMultipleTradeItemRequest : IEndpoint
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
-                id => Results.Created($"/trade/requests/{id}", id),
+                id => Results.Created($"/trades/requests/{id}", id),
                 CustomResults.Problem
             );
         })

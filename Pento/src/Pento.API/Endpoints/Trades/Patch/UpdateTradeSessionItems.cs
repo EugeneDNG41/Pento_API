@@ -1,10 +1,11 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Trades;
 using Pento.Application.Trades.Sessions.AddItems;
 using Pento.Application.Trades.Sessions.UpdateItems;
 using Pento.Domain.Abstractions;
 
-namespace Pento.API.Endpoints.Trades.Delete;
+namespace Pento.API.Endpoints.Trades.Patch;
 
 internal sealed class UpdateTradeSessionItems : IEndpoint
 {

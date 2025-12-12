@@ -1,17 +1,21 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System;
+using System.Threading;
+using Microsoft.AspNetCore.SignalR;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
+using Pento.Domain.Units;
+using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.Sessions.UpdateItems;
+namespace Pento.Application.Trades.Sessions.RemoveItems;
 
-internal sealed class UpdateTradeItemsSessionCommandHandler(
+internal sealed class RemoveTradeSessionItemsCommandHandler(
     IUserContext userContext,
     TradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
@@ -19,9 +23,9 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
     IGenericRepository<FoodItem> foodItemRepository,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork)
-    : ICommandHandler<UpdateTradeSessionItemsCommand>
+    : ICommandHandler<RemoveTradeSessionItemsCommand>
 {
-    public async Task<Result> Handle(UpdateTradeSessionItemsCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(RemoveTradeSessionItemsCommand command, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
@@ -41,28 +45,21 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
         {
             return Result.Failure(TradeErrors.InvalidSessionState);
         }
-        TradeItemFrom from = session.OfferHouseholdId == householdId
-                ? TradeItemFrom.Offer
-                : TradeItemFrom.Request;
-        
-        var affectedFoodItems = new Dictionary<Guid, decimal>();
-        var affectedTradeItems = new List<TradeSessionItem>();
-        foreach (UpdateTradeItemDto dto in command.Items)
+        IEnumerable<TradeSessionItem> items = await tradeItemSessionRepository.FindAsync(
+            item => item.SessionId == command.TradeSessionId
+                && command.TradeItemIds.Contains(item.Id),
+            cancellationToken);
+        var restoredItems = new Dictionary<Guid, decimal>();
+        foreach (TradeSessionItem sessionItem in items)
         {
-            TradeSessionItem? sessionItem =
-                await tradeItemSessionRepository.GetByIdAsync(dto.TradeItemId, cancellationToken);
-            if (sessionItem is null)
-            {
-                return Result.Failure(TradeErrors.NotFound);
-            }
-            if (sessionItem.From != from || sessionItem.SessionId != session.Id)
+            if (sessionItem.From == TradeItemFrom.Offer && session.OfferHouseholdId != householdId
+                || sessionItem.From == TradeItemFrom.Request && session.RequestHouseholdId != householdId)
             {
                 return Result.Failure(TradeErrors.ItemForbiddenAccess);
             }
-            FoodItem? foodItem = 
-                await foodItemRepository.GetByIdAsync(sessionItem.FoodItemId, cancellationToken);
-            if (foodItem is null)
-                {
+            FoodItem? foodItem = await foodItemRepository.GetByIdAsync(sessionItem.FoodItemId, cancellationToken);
+            if (foodItem == null)
+            {
                 return Result.Failure(FoodItemErrors.NotFound);
             }
             if (foodItem.HouseholdId != householdId)
@@ -78,23 +75,16 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
             {
                 return reconciliationResult;
             }
-            sessionItem.Update(dto.Quantity, dto.UnitId);
-            tradeItemSessionRepository.Update(sessionItem);
-
-            affectedFoodItems.Add(foodItem.Id, foodItem.Quantity);
-            affectedTradeItems.Add(sessionItem);
+            tradeItemSessionRepository.Remove(sessionItem);
+            restoredItems.Add(foodItem.Id, foodItem.Quantity);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        foreach (TradeSessionItem item in affectedTradeItems)
+        await hubContext.Clients.All.TradeItemsRemoved(command.TradeItemIds);
+        foreach (KeyValuePair<Guid, decimal> restoredItem in restoredItems)
         {
             await hubContext.Clients.Group(householdId.Value.ToString())
-                .TradeItemUpdated(item.Id, item.Quantity, item.UnitId);
-        }
-        foreach (KeyValuePair<Guid, decimal> affectedItem in affectedFoodItems)
-        {
-            await hubContext.Clients.Group(householdId.Value.ToString())
-                .FoodItemQuantityUpdated(affectedItem.Key, affectedItem.Value);
+                .FoodItemQuantityUpdated(restoredItem.Key, restoredItem.Value);
         }
         return Result.Success();
     }
-}
+} 

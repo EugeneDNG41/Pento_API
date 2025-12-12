@@ -44,7 +44,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
 
         offerRepository.Add(offer);
 
-        foreach (CreateTradeItemOfferDto dto in command.Items)
+        foreach (AddTradeItemDto dto in command.Items)
         {
             FoodItem? foodItem =await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
             if (foodItem is null)
@@ -78,6 +78,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
             );
             tradeItemRepository.Add(item);
             foodItem.Reserve(qtyInItemUnit.Value, dto.Quantity, dto.UnitId, userId);
+            foodItemRepository.Update(foodItem);
         }
 
         await uow.SaveChangesAsync(cancellationToken);

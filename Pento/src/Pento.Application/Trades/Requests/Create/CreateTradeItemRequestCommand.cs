@@ -4,13 +4,9 @@ namespace Pento.Application.Trades.Requests.Create;
 
 public sealed record CreateTradeItemRequestCommand(
     Guid TradeOfferId,
-    List<CreateTradeItemRequestDto> Items
+    List<AddTradeItemDto> Items
 ) : ICommand<Guid>;
-public sealed record CreateTradeItemRequestDto(
-    Guid FoodItemId,
-    decimal Quantity,
-    Guid UnitId
-);
+
 
 
 

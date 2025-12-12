@@ -13,7 +13,6 @@ namespace Pento.Application.EventHandlers;
 
 internal sealed class TradeSessionCreatedEventHandler(
     INotificationService notificationService,
-    IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeRequest> tradeRequestRepository,
@@ -60,8 +59,6 @@ internal sealed class TradeSessionCreatedEventHandler(
         if (notificationResult.IsFailure)
         {
             throw new PentoException(nameof(TradeSessionCreatedEventHandler), notificationResult.Error);
-        }
-        await hubContext.Clients.User(request.UserId.ToString())
-            .TradeSessionOpened(session.Id);
+        }      
     }
 }

@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Trades.Sessions.AddItems;
+namespace Pento.Application.Trades;
 
 internal sealed class AddTradeItemDtoValidator : AbstractValidator<AddTradeItemDto>
 {

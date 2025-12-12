@@ -1,24 +1,24 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Trades;
-using Pento.Application.Trades.Sessions.AddItems;
+using Pento.Application.Trades.Requests.AddItems;
 using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Trades.Post;
 
-internal sealed class AddTradeSessionItems : IEndpoint
+internal sealed class AddTradeRequestItems : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapPost("trades/sessions/{tradeSessionId:guid}/items", async (
-            Guid tradeSessionId,
+        app.MapPost("trades/requests/{tradeRequestId:guid}/items", async (
+            Guid tradeRequestId,
             Request request,
-            ICommandHandler<AddTradeSessionItemsCommand, IReadOnlyList<TradeItemResponse>> handler,
+            ICommandHandler<AddTradeRequestItemsCommand, IReadOnlyList<TradeItemResponse>> handler,
             CancellationToken cancellationToken
         ) =>
         {
-            var command = new AddTradeSessionItemsCommand(tradeSessionId, request.Items);
+            var command = new AddTradeRequestItemsCommand(tradeRequestId, request.Items);
             Result<IReadOnlyList<TradeItemResponse>> result = await handler.Handle(command, cancellationToken);
             return result.Match(
                 Results.Ok,

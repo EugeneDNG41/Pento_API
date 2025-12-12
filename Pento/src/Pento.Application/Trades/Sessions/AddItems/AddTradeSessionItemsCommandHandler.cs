@@ -73,16 +73,17 @@ internal sealed class AddTradeSessionItemsCommandHandler(
                 unitId: dto.UnitId,
                 from,
                 sessionId: session.Id);
-            Unit? unit = await unitRepository.GetByIdAsync(sessionItem.UnitId, cancellationToken);
-            if (unit == null)
-            {
-                return Result.Failure<IReadOnlyList<TradeItemResponse>>(UnitErrors.NotFound);
-            }
+            
             FoodItem? foodItem =
                 await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
             if (foodItem is null)
             {
                 return Result.Failure<IReadOnlyList<TradeItemResponse>>(FoodItemErrors.NotFound);
+            }
+            Unit? unit = await unitRepository.GetByIdAsync(sessionItem.UnitId, cancellationToken);
+            if (unit == null)
+            {
+                return Result.Failure<IReadOnlyList<TradeItemResponse>>(UnitErrors.NotFound);
             }
             FoodReference? foodReference =
                 await foodReferenceRepository.GetByIdAsync(foodItem.FoodReferenceId, cancellationToken);
@@ -106,7 +107,6 @@ internal sealed class AddTradeSessionItemsCommandHandler(
             }
             tradeItemSessionRepository.Add(sessionItem);
             
-
             responses.Add(new TradeItemResponse(
                 sessionItem.Id,
                 foodItem.Id,

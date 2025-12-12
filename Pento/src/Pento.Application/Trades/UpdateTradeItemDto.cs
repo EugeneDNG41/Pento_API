@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Trades.Sessions.UpdateItems;
+﻿namespace Pento.Application.Trades;
 
 public sealed record UpdateTradeItemDto(
     Guid TradeItemId,

@@ -1,0 +1,36 @@
+﻿using Pento.Application.Abstractions.Authentication;
+using Pento.Application.Abstractions.Messaging;
+using Pento.Application.Abstractions.Persistence;
+using Pento.Domain.Abstractions;
+using Pento.Domain.Trades;
+
+namespace Pento.Application.Trades.Requests.Cancel;
+
+internal sealed class CancelTradeRequestCommandHandler(
+    IUserContext userContext,
+    IGenericRepository<TradeRequest> tradeRequestRepository,
+    IUnitOfWork unitOfWork
+    ) : ICommandHandler<CancelTradeRequestCommand>
+{
+    public async Task<Result> Handle(CancelTradeRequestCommand command, CancellationToken cancellationToken)
+    {
+        Guid? householdId = userContext.HouseholdId;
+        TradeRequest? tradeRequest = await tradeRequestRepository.GetByIdAsync(command.RequestId,cancellationToken);
+        if (tradeRequest == null)
+        {
+            return Result.Failure(TradeErrors.RequestNotFound);
+        }
+        if (tradeRequest.HouseholdId != householdId)
+        {
+            return Result.Failure(TradeErrors.RequestForbiddenAccess);
+        }
+        if (tradeRequest.Status != TradeRequestStatus.Pending)
+        {
+            return Result.Failure(TradeErrors.InvalidRequestState);
+        }
+        tradeRequest.Cancel();
+        tradeRequestRepository.Update(tradeRequest);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+        return Result.Success();
+    }
+}

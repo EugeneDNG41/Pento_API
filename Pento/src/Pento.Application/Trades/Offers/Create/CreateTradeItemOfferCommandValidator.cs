@@ -15,13 +15,6 @@ public sealed class CreateTradeItemOfferCommandValidator
             .NotEmpty()
             .WithMessage("At least one item must be provided.");
 
-        RuleForEach(x => x.Items).ChildRules(item =>
-        {
-            item.RuleFor(i => i.FoodItemId).NotEmpty();
-            item.RuleFor(i => i.UnitId).NotEmpty();
-            item.RuleFor(i => i.Quantity)
-                .GreaterThan(0)
-                .WithMessage("Quantity must be greater than 0.");
-        });
+        RuleForEach(x => x.Items).SetValidator(new AddTradeItemDtoValidator());
     }
 }

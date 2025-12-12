@@ -1,4 +1,4 @@
-﻿namespace Pento.Application.Trades.Sessions.AddItems;
+﻿namespace Pento.Application.Trades;
 
 public sealed record AddTradeItemDto(
     Guid FoodItemId,
