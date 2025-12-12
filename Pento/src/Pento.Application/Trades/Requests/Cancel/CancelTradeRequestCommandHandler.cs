@@ -9,6 +9,7 @@ namespace Pento.Application.Trades.Requests.Cancel;
 internal sealed class CancelTradeRequestCommandHandler(
     IUserContext userContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
+    IGenericRepository<TradeSession> tradeSessionRepository,
     IUnitOfWork unitOfWork
     ) : ICommandHandler<CancelTradeRequestCommand>
 {
@@ -28,7 +29,15 @@ internal sealed class CancelTradeRequestCommandHandler(
         {
             return Result.Failure(TradeErrors.InvalidRequestState);
         }
-        tradeRequest.Cancel();
+        IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
+            ts => ts.TradeRequestId == tradeRequest.Id && ts.Status == TradeSessionStatus.Ongoing,
+            cancellationToken);
+        foreach (TradeSession session in ongoingSessions)
+        {
+            session.Cancel();
+            tradeSessionRepository.Update(session);
+        }
+        tradeRequest.Cancel();     
         tradeRequestRepository.Update(tradeRequest);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

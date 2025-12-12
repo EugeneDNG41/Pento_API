@@ -10,6 +10,7 @@ internal sealed class RejectTradeRequestCommandHandler(
     IUserContext userContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
+    IGenericRepository<TradeSession> tradeSessionRepository,
     IUnitOfWork unitOfWork
     ) : ICommandHandler<RejectTradeRequestCommand>
 {
@@ -33,6 +34,14 @@ internal sealed class RejectTradeRequestCommandHandler(
         if (tradeRequest.Status != TradeRequestStatus.Pending)
         {
             return Result.Failure(TradeErrors.InvalidRequestState);
+        }
+        IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
+            ts => ts.TradeRequestId == tradeRequest.Id && ts.Status == TradeSessionStatus.Ongoing,
+            cancellationToken);
+        foreach (TradeSession session in ongoingSessions)
+        {
+            session.Cancel();
+            tradeSessionRepository.Update(session);
         }
         tradeRequest.Reject();
         tradeRequestRepository.Update(tradeRequest);
