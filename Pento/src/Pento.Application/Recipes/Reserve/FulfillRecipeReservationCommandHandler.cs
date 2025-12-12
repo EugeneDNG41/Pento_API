@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using Microsoft.AspNetCore.Mvc;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Converter;
@@ -47,42 +48,40 @@ internal sealed class FulfillRecipeReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemErrors.NotFound);
         }
 
-        decimal reservedQty = reservation.Quantity;
-        decimal newQty = command.NewQuantity;
-
-        decimal newQtyInItemUnit = newQty;
-
-        if (foodItem.UnitId != command.UnitId)
-        {
-            Result<decimal> convertResult = await converter.ConvertAsync(
-                newQty,
+        Result<decimal> newQtyInItemUnit = await converter.ConvertAsync(
+                command.NewQuantity,
                 fromUnitId: command.UnitId,
                 toUnitId: foodItem.UnitId,
                 cancellationToken);
 
-            if (convertResult.IsFailure)
-            {
-                return Result.Failure<Guid>(convertResult.Error);
-            }
-
-            newQtyInItemUnit = convertResult.Value;
-        }
-
-        if (newQtyInItemUnit < reservedQty)
+        if (newQtyInItemUnit.IsFailure)
         {
-            decimal returnQty = reservedQty - newQtyInItemUnit;
+            return Result.Failure<Guid>(newQtyInItemUnit.Error);
+        }
+        Result<decimal> reservedQtyInItemUnit = await converter.ConvertAsync(
+                reservation.Quantity,
+                fromUnitId: reservation.UnitId,
+                toUnitId: foodItem.UnitId,
+                cancellationToken);
+        if (reservedQtyInItemUnit.IsFailure)
+        {
+            return Result.Failure<Guid>(reservedQtyInItemUnit.Error);
+        }
+        if (newQtyInItemUnit.Value < reservedQtyInItemUnit.Value)
+        {
+            decimal returnQty = reservedQtyInItemUnit.Value - newQtyInItemUnit.Value;
             foodItem.CancelReservation(returnQty, reservation.Id);
         }
-        else if (newQtyInItemUnit > reservedQty)
+        else if (newQtyInItemUnit.Value > reservedQtyInItemUnit.Value)
         {
-            decimal additionalQty = newQtyInItemUnit - reservedQty;
+            decimal additionalQty = newQtyInItemUnit.Value - reservedQtyInItemUnit.Value;
 
             if (additionalQty > foodItem.Quantity)
             {
                 return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
             }
 
-            foodItem.Reserve(additionalQty, command.NewQuantity, command.UnitId, userContext.UserId);
+            foodItem.Reserve(additionalQty, additionalQty, foodItem.UnitId, userContext.UserId);
         }
 
         reservation.MarkAsFulfilled(command.NewQuantity, command.UnitId, userContext.UserId);

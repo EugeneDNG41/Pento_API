@@ -1,6 +1,7 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
@@ -9,6 +10,7 @@ using Pento.Domain.Households;
 namespace Pento.Application.MealPlans.Reserve.Cancel;
 
 internal sealed class CancelMealPlanCommandHandler(
+    IConverterService converter,
     IGenericRepository<FoodItemMealPlanReservation> reservationRepo,
     IGenericRepository<FoodItem> foodItemRepo,
     IUserContext userContext,
@@ -59,9 +61,18 @@ internal sealed class CancelMealPlanCommandHandler(
         foreach (FoodItemMealPlanReservation? r in reservations)
         {
             FoodItem item = foodItems.Single(fi => fi.Id == r.FoodItemId);
-
-            item.AdjustQuantity(
-                item.Quantity + r.Quantity,
+            Result<decimal> qtyInItemUnit = await converter.ConvertAsync(
+                r.Quantity,
+                r.UnitId,
+                item.UnitId,
+                cancellationToken
+            );
+            if (qtyInItemUnit.IsFailure)
+            {
+                return Result.Failure<Guid>(qtyInItemUnit.Error);
+            }
+            item.AdjustReservedQuantity(
+                qtyInItemUnit.Value,
                 userContext.UserId
             );
 

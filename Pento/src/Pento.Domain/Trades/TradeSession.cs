@@ -10,8 +10,8 @@ public sealed class TradeSession : Entity
     public Guid TradeRequestId { get; private set; }
     public Guid OfferHouseholdId { get; private set; }
     public Guid RequestHouseholdId { get; private set; }
-    public Guid? ConfirmedByOfferUser { get; private set; }
-    public Guid? ConfirmedByRequestUser { get; private set; }
+    public Guid? ConfirmedByOfferUserId { get; private set; }
+    public Guid? ConfirmedByRequestUserId { get; private set; }
     public TradeSessionStatus Status { get; private set; }
     public DateTime StartedOn { get; private set; }
 
@@ -59,16 +59,16 @@ public sealed class TradeSession : Entity
     }
     public void ConfirmByOfferUser(Guid? userId)
     {
-        ConfirmedByOfferUser = userId;
-        if (ConfirmedByRequestUser != null && ConfirmedByOfferUser != null)
+        ConfirmedByOfferUserId = userId;
+        if (ConfirmedByRequestUserId != null && ConfirmedByOfferUserId != null)
         {
             Complete();
         }
     }
     public void ConfirmByRequestUser(Guid? userId)
     {
-        ConfirmedByRequestUser = userId;
-        if (ConfirmedByOfferUser != null && ConfirmedByRequestUser != null)
+        ConfirmedByRequestUserId = userId;
+        if (ConfirmedByOfferUserId != null && ConfirmedByRequestUserId != null)
         {
             Complete();
         }

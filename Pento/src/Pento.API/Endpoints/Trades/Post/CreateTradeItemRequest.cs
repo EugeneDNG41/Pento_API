@@ -29,7 +29,7 @@ internal sealed class CreateMultipleTradeItemRequest : IEndpoint
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
-                id => Results.Created($"/trade-requests/{id}", id),
+                id => Results.Created($"/trade/requests/{id}", id),
                 CustomResults.Problem
             );
         })

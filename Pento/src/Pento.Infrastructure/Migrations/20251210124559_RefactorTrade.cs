@@ -16,19 +16,7 @@ public partial class RefactorTrade : Migration
             table: "trade_session_messages",
             newName: "user_id");
 
-        migrationBuilder.AddColumn<bool>(
-            name: "confirmed_by_offer_user",
-            table: "trade_sessions",
-            type: "boolean",
-            nullable: false,
-            defaultValue: false);
 
-        migrationBuilder.AddColumn<bool>(
-            name: "confirmed_by_request_user",
-            table: "trade_sessions",
-            type: "boolean",
-            nullable: false,
-            defaultValue: false);
 
         migrationBuilder.AddColumn<Guid>(
             name: "offer_user_id",
@@ -247,13 +235,6 @@ public partial class RefactorTrade : Migration
             name: "ix_trade_items_food_item_id",
             table: "trade_items");
 
-        migrationBuilder.DropColumn(
-            name: "confirmed_by_offer_user",
-            table: "trade_sessions");
-
-        migrationBuilder.DropColumn(
-            name: "confirmed_by_request_user",
-            table: "trade_sessions");
 
         migrationBuilder.DropColumn(
             name: "offer_user_id",

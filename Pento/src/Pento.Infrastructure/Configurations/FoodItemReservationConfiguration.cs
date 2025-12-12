@@ -30,8 +30,7 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
                .IsRequired();
         builder.UseTphMappingStrategy().HasDiscriminator(x => x.ReservationFor)
                 .HasValue<FoodItemRecipeReservation>(ReservationFor.Recipe)
-               .HasValue<FoodItemMealPlanReservation>(ReservationFor.MealPlan)
-               .HasValue<FoodItemTradeReservation>(ReservationFor.Trade);
+               .HasValue<FoodItemMealPlanReservation>(ReservationFor.MealPlan);
         builder.Property<uint>("Version").IsRowVersion();
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
@@ -58,17 +57,5 @@ internal sealed class FoodItemMealPlanReservationConfiguration : IEntityTypeConf
                 .WithMany()
                 .HasForeignKey(x => x.MealPlanId)
                 .OnDelete(DeleteBehavior.Cascade);
-    }
-}
-internal sealed class FoodItemDonationReservationConfiguration : IEntityTypeConfiguration<FoodItemTradeReservation>
-{
-    public void Configure(EntityTypeBuilder<FoodItemTradeReservation> builder)
-    {
-        builder.Property(x => x.TradeItemId)
-               .IsRequired();
-        builder.HasOne<TradeItem>()
-               .WithMany()
-               .HasForeignKey(x => x.TradeItemId)
-               .OnDelete(DeleteBehavior.Cascade);
     }
 }

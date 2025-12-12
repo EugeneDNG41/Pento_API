@@ -2089,14 +2089,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<bool>("ConfirmedByOfferUser")
-                        .HasColumnType("boolean")
-                        .HasColumnName("confirmed_by_offer_user");
-
-                    b.Property<bool>("ConfirmedByRequestUser")
-                        .HasColumnType("boolean")
-                        .HasColumnName("confirmed_by_request_user");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");

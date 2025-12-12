@@ -2104,13 +2104,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
-                    b.Property<Guid?>("ConfirmedByOfferUser")
-                        .HasColumnType("uuid")
-                        .HasColumnName("confirmed_by_offer_user");
-
-                    b.Property<Guid?>("ConfirmedByRequestUser")
-                        .HasColumnType("uuid")
-                        .HasColumnName("confirmed_by_request_user");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
@@ -2145,11 +2138,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_trade_sessions");
 
-                    b.HasIndex("ConfirmedByOfferUser")
-                        .HasDatabaseName("ix_trade_sessions_confirmed_by_offer_user");
 
-                    b.HasIndex("ConfirmedByRequestUser")
-                        .HasDatabaseName("ix_trade_sessions_confirmed_by_request_user");
 
                     b.HasIndex("OfferHouseholdId")
                         .HasDatabaseName("ix_trade_sessions_offer_household_id");
@@ -3560,17 +3549,6 @@ namespace Pento.Infrastructure.Migrations
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeSession", b =>
                 {
-                    b.HasOne("Pento.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("ConfirmedByOfferUser")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_trade_sessions_user_confirmed_by_offer_user");
-
-                    b.HasOne("Pento.Domain.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("ConfirmedByRequestUser")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("fk_trade_sessions_user_confirmed_by_request_user");
 
                     b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
