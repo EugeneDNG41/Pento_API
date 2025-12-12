@@ -76,7 +76,7 @@ public sealed class TradeSession : Entity
 }
 public sealed class TradeSessionCreatedDomainEvent(Guid tradeSessionId) : DomainEvent
 {
-    public Guid TradeSessionId { get; } = tradeSessionId;
+    public Guid TradeSessionId { get; } = tradeSessionId; //not needed currently
 }
 public sealed class TradeSessionCompletedDomainEvent(Guid tradeSessionId) : DomainEvent
 {

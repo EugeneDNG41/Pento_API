@@ -75,7 +75,8 @@ internal sealed class TradeOfferCancelledEventHandler(
     INotificationService notificationService,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<Household> householdRepository)
+    IGenericRepository<Household> householdRepository,
+    IUnitOfWork unitOfWork)
     : DomainEventHandler<TradeOfferCancelledDomainEvent>
 {
     public override async Task Handle(
@@ -103,7 +104,7 @@ internal sealed class TradeOfferCancelledEventHandler(
             };
         foreach (TradeRequest request in requests)
         {
-            request.AutoCancel();
+            request.Cancel();
             payload.Add("tradeRequestId", request.Id.ToString());
             Result notificationResult = await notificationService.SendToHouseholdAsync(
                 request.HouseholdId,
@@ -117,96 +118,7 @@ internal sealed class TradeOfferCancelledEventHandler(
                 throw new PentoException(nameof(TradeOfferCancelledEventHandler), notificationResult.Error);
             }
         }
-    }
-}
-internal sealed class TradeRequestCancelledEventHandler(
-    INotificationService notificationService,
-    IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<Household> householdRepository)
-    : DomainEventHandler<TradeRequestCancelledDomainEvent>
-{
-    public override async Task Handle(
-        TradeRequestCancelledDomainEvent domainEvent,
-        CancellationToken cancellationToken = default)
-    {
-        TradeRequest? request = await tradeRequestRepository.GetByIdAsync(domainEvent.TradeRequestId, cancellationToken);
-        if (request == null)
-        {
-            throw new PentoException(nameof(TradeRequestCancelledEventHandler), TradeErrors.RequestNotFound);
-        }
-        TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
-        if (offer == null)
-        {
-            throw new PentoException(nameof(TradeRequestCancelledEventHandler), TradeErrors.OfferNotFound);
-        }
-        Household? requestHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
-        if (requestHousehold == null)
-        {
-            throw new PentoException(nameof(TradeRequestCancelledEventHandler), HouseholdErrors.NotFound);
-        }
-        string title = "Trade Request Cancelled";
-        string body = $"Household {requestHousehold.Name} has cancelled their trade request.";
-        var payload = new Dictionary<string, string>
-            {
-                { "tradeOfferId", offer.Id.ToString() },
-                { "tradeRequestId", request.Id.ToString() }
-            };
-        Result notificationResult = await notificationService.SendToHouseholdAsync(
-            offer.HouseholdId,
-            title,
-            body,
-            NotificationType.Trade,
-            payload,
-            cancellationToken);
-        if (notificationResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeRequestCancelledEventHandler), notificationResult.Error);
-        }
-    }
-}
-internal sealed class TradeRequestRejectedEventHandler(
-    INotificationService notificationService,
-    IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<Household> householdRepository)
-     : DomainEventHandler<TradeRequestRejectedDomainEvent>
-{
-    public async override Task Handle(TradeRequestRejectedDomainEvent domainEvent, CancellationToken cancellationToken = default)
-    {
-        TradeRequest? request = await tradeRequestRepository.GetByIdAsync(domainEvent.TradeRequestId, cancellationToken);
-        if (request == null)
-        {
-            throw new PentoException(nameof(TradeRequestRejectedEventHandler), TradeErrors.RequestNotFound);
-        }
-        TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
-        if (offer == null)
-        {
-            throw new PentoException(nameof(TradeRequestRejectedEventHandler), TradeErrors.OfferNotFound);
-        }
-        Household? offerHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
-        if (offerHousehold == null)
-        {
-            throw new PentoException(nameof(TradeRequestRejectedEventHandler), HouseholdErrors.NotFound);
-        }
-        string title = "Trade Request Rejected";
-        string body = $"Household {offerHousehold.Name} has rejected your trade request.";
-        var payload = new Dictionary<string, string>
-            {
-                { "tradeRequestId", request.Id.ToString() },
-                { "tradeOfferId", offer.Id.ToString() }
-            };
-        Result notificationResult = await notificationService.SendToHouseholdAsync(
-            request.HouseholdId,
-            title,
-            body,
-            NotificationType.Trade,
-            payload,
-            cancellationToken);
-        if (notificationResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeRequestRejectedEventHandler), notificationResult.Error);
-        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
 internal sealed class TradeSessionCompletedEventHandler(
@@ -271,7 +183,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             {
                 throw new PentoException(nameof(TradeSessionCompletedEventHandler), conversionResult.Error);
             }
-            foodItem.AdjustReservedQuantity(conversionResult.Value, offer.UserId); //restore reserved quantity
+            foodItem.AdjustReservedQuantity(conversionResult.Value); //restore reserved quantity
             bool inSession = sessionItems.Any(si => si.From == TradeItemFrom.Offer && si.FoodItemId == offeredItem.FoodItemId);
             if (!inSession)
             {
@@ -290,7 +202,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             {
                 throw new PentoException(nameof(TradeSessionCompletedEventHandler), conversionResult.Error);
             }
-            foodItem.AdjustReservedQuantity(conversionResult.Value, offer.UserId); //restore reserved quantity
+            foodItem.AdjustReservedQuantity(conversionResult.Value); //restore reserved quantity
             bool inSession = sessionItems.Any(si => si.From == TradeItemFrom.Request && si.FoodItemId == requestedItem.FoodItemId);
             if (!inSession)
             {

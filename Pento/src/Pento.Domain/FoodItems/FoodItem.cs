@@ -94,10 +94,9 @@ public sealed class FoodItem : Entity
         LastModifiedBy = userId;
         Raise(new FoodItemReservedDomainEvent(Id, qtyInRequestUnit, unitId, userId));
     }
-    public void AdjustReservedQuantity(decimal qtyInItemUnit, Guid userId)
+    public void AdjustReservedQuantity(decimal qtyInItemUnit)
     {
         Quantity += qtyInItemUnit;
-        LastModifiedBy = userId;
     }
     public void CancelReservation(decimal quantity, Guid reservationId)
     {

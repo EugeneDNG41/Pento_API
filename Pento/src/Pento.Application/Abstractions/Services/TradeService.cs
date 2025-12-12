@@ -1,6 +1,6 @@
 ﻿using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Converter;
-using Pento.Application.Trades.Sessions.AddItems;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Trades;
@@ -17,8 +17,7 @@ public sealed class TradeService(
         TradeSession session, 
         TradeSessionItem sessionItem,
         FoodItem foodItem, 
-        decimal newQuantity,
-        Guid userId,        
+        decimal newQuantity,     
         CancellationToken cancellationToken)
     {
         Result<decimal> currentQtyInItemUnit = await converter.ConvertAsync(
@@ -59,7 +58,7 @@ public sealed class TradeService(
             }
             if (originalOffer == null)
             {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value, userId);
+                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
                 foodItemRepository.Update(foodItem);
             }
             else
@@ -69,7 +68,7 @@ public sealed class TradeService(
                     currentQtyInItemUnit.Value - newQtyInItemUnit.Value;
                 if (qtyDifference > 0) // More was reserved in session than originally offered, so only adjust the difference then
                 {
-                    foodItem.AdjustReservedQuantity(qtyDifference, userId);
+                    foodItem.AdjustReservedQuantity(qtyDifference);
                 }
             }
         }
@@ -81,7 +80,7 @@ public sealed class TradeService(
                 cancellationToken)).SingleOrDefault();
             if (originalRequest == null)
             {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value, userId);
+                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
                 foodItemRepository.Update(foodItem);
             }
             else
@@ -109,7 +108,7 @@ public sealed class TradeService(
                 decimal qtyDifference = qtySessionInItemUnit.Value - qtyRequestInItemUnit.Value;
                 if (qtyDifference > 0) // More was reserved in session than originally requested, so only adjust the difference then
                 {
-                    foodItem.AdjustReservedQuantity(qtyDifference, userId);
+                    foodItem.AdjustReservedQuantity(qtyDifference);
                 }
             }
         }
@@ -117,11 +116,10 @@ public sealed class TradeService(
         return Result.Success();
 
     }
-    public async Task<Result> ReconcileRemovedTradeItemsDuringSessionAsync(
+    public async Task<Result> ReconcileTradeItemsRemovedFromSessionAsync(
         TradeSession session, 
         TradeSessionItem sessionItem,
-        FoodItem foodItem, 
-        Guid userId,        
+        FoodItem foodItem,
         CancellationToken cancellationToken)
     {
         Result<decimal> currentQtyInItemUnit = await converter.ConvertAsync(
@@ -142,7 +140,7 @@ public sealed class TradeService(
                 cancellationToken)).SingleOrDefault();
             if (originalOffer == null)
             {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value, userId);
+                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
             }
             else
             {
@@ -159,7 +157,7 @@ public sealed class TradeService(
                 decimal qtyDifference = currentQtyInItemUnit.Value - qtyOfferInItemUnit.Value;
                 if (qtyDifference > 0) // More was reserved in session than originally offered, so only adjust the difference then
                 {
-                    foodItem.AdjustReservedQuantity(qtyDifference, userId);
+                    foodItem.AdjustReservedQuantity(qtyDifference);
                 }                                  
             }
         }
@@ -171,7 +169,7 @@ public sealed class TradeService(
                 cancellationToken)).SingleOrDefault();
             if (originalRequest == null)
             {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value, userId);
+                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
             }
             else
             {
@@ -188,7 +186,7 @@ public sealed class TradeService(
                 decimal qtyDifference = currentQtyInItemUnit.Value - qtyRequestInItemUnit.Value;
                 if (qtyDifference > 0) // More was reserved in session than originally requested, so only adjust the difference then
                 {
-                    foodItem.AdjustReservedQuantity(qtyDifference, userId);
+                    foodItem.AdjustReservedQuantity(qtyDifference);
                 }
             }
         }

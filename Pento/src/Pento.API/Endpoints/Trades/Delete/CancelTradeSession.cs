@@ -1,6 +1,6 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.Requests.Accept;
+using Pento.Application.Trades.Sessions.Cancel;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Trades.Delete;

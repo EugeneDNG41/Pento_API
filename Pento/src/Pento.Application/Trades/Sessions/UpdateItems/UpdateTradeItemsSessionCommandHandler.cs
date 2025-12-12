@@ -24,7 +24,6 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
     public async Task<Result> Handle(UpdateTradeSessionItemsCommand command, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
-        Guid userId = userContext.UserId;
         if (householdId is null)
         {
             return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
@@ -70,11 +69,10 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
             {
                 return Result.Failure(FoodItemErrors.ForbiddenAccess);
             }
-            Result reconciliationResult = await tradeService.ReconcileRemovedTradeItemsDuringSessionAsync(
+            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedFromSessionAsync(
                 session,
                 sessionItem,
                 foodItem,
-                userId,
                 cancellationToken);
             if (reconciliationResult.IsFailure)
             {

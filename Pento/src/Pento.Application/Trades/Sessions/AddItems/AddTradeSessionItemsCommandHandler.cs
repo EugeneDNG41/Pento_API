@@ -3,11 +3,13 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
+using Pento.Domain.Units;
 
 namespace Pento.Application.Trades.Sessions.AddItems;
 
@@ -18,6 +20,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
+    IGenericRepository<Unit> unitRepository,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork)
     : ICommandHandler<AddTradeSessionItemsCommand, IReadOnlyList<TradeItemResponse>>
@@ -25,7 +28,6 @@ internal sealed class AddTradeSessionItemsCommandHandler(
     public async Task<Result<IReadOnlyList<TradeItemResponse>>> Handle(AddTradeSessionItemsCommand command, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
-        Guid userId = userContext.UserId;
         if (householdId is null)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(HouseholdErrors.NotInAnyHouseHold);
@@ -71,6 +73,11 @@ internal sealed class AddTradeSessionItemsCommandHandler(
                 unitId: dto.UnitId,
                 from,
                 sessionId: session.Id);
+            Unit? unit = await unitRepository.GetByIdAsync(sessionItem.UnitId, cancellationToken);
+            if (unit == null)
+            {
+                return Result.Failure<IReadOnlyList<TradeItemResponse>>(UnitErrors.NotFound);
+            }
             FoodItem? foodItem =
                 await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
             if (foodItem is null)
@@ -88,24 +95,27 @@ internal sealed class AddTradeSessionItemsCommandHandler(
                 return Result.Failure<IReadOnlyList<TradeItemResponse>>(FoodItemErrors.ForbiddenAccess);
             }
 
-            Result reconciliationResult = await tradeService.ReconcileRemovedTradeItemsDuringSessionAsync(
+            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedFromSessionAsync(
                 session,
                 sessionItem,
                 foodItem,
-                userId,
                 cancellationToken);
             if (reconciliationResult.IsFailure)
             {
                 return Result.Failure<IReadOnlyList<TradeItemResponse>>(reconciliationResult.Error);
             }
             tradeItemSessionRepository.Add(sessionItem);
+            
+
             responses.Add(new TradeItemResponse(
                 sessionItem.Id,
                 foodItem.Id,
                 foodItem.Name,
                 foodReference.Name,
+                foodItem.ImageUrl,
                 foodReference.FoodGroup.ToReadableString(),
                 sessionItem.Quantity,
+                unit.Abbreviation,
                 sessionItem.UnitId,
                 foodItem.ExpirationDate,
                 sessionItem.From));

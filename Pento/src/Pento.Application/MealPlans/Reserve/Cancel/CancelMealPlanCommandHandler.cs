@@ -72,8 +72,7 @@ internal sealed class CancelMealPlanCommandHandler(
                 return Result.Failure<Guid>(qtyInItemUnit.Error);
             }
             item.AdjustReservedQuantity(
-                qtyInItemUnit.Value,
-                userContext.UserId
+                qtyInItemUnit.Value
             );
 
             r.MarkAsCancelled();

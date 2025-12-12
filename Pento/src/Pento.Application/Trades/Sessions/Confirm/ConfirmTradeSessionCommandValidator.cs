@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Pento.Application.Trades.Requests.Accept;
 
 namespace Pento.Application.Trades.Sessions.Confirm;
 

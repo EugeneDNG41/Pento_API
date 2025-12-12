@@ -64,8 +64,7 @@ internal sealed class CancelMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(qtyInItemUnit.Error);
         }
         foodItem.AdjustReservedQuantity(
-            qtyInItemUnit.Value,
-            userContext.UserId
+            qtyInItemUnit.Value
         );
 
         reservation.MarkAsCancelled();

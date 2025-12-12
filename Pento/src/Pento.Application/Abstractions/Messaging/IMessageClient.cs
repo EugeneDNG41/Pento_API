@@ -1,7 +1,7 @@
 ﻿using Pento.Application.FoodItems.Delete;
 using Pento.Application.FoodItems.Search;
 using Pento.Application.FoodItems.Update;
-using Pento.Application.Trades.Sessions.AddItems;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Application.Trades.Sessions.SendMessage;
 
 namespace Pento.Application.Abstractions.Messaging;
@@ -25,4 +25,5 @@ public interface IMessageClient
     Task TradeOfferFulfilled(Guid offerId);
     Task TradeRequestFulfilled(Guid requestId);
     Task TradeItemUpdated(Guid tradeItemId,  decimal quantity, Guid unitId);
+    Task TradeSessionConfirm(bool confirmedByOfferer, bool confirmedByRequester);
 }

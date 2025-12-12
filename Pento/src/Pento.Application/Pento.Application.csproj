@@ -25,7 +25,6 @@
   </ItemGroup>
 	
   <ItemGroup>
-    <Folder Include="Trades\Sessions\GetById\" />
     <Folder Include="Trades\Sessions\GetAll\" />
   </ItemGroup>
 

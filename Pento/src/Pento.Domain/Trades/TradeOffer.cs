@@ -71,10 +71,6 @@ public sealed class TradeOffer : Entity
         Status = TradeOfferStatus.Expired;
         Raise(new TradeOfferExpiredDomainEvent(Id));
     }
-    public void AutoCancel()
-    {
-        Status = TradeOfferStatus.Cancelled;
-    }
     public void Fulfill(Guid requestId)
     {
         Status = TradeOfferStatus.Fulfilled;

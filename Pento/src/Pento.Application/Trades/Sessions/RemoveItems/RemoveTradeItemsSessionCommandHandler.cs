@@ -5,10 +5,12 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
+using Pento.Domain.Units;
 using Pento.Domain.Users;
 
 namespace Pento.Application.Trades.Sessions.RemoveItems;
@@ -26,7 +28,6 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
     public async Task<Result> Handle(RemoveTradeSessionItemsCommand command, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
-        Guid userId = userContext.UserId;
         if (householdId is null)
         {
             return Result.Failure(HouseholdErrors.NotInAnyHouseHold);
@@ -65,11 +66,10 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
             {
                 return Result.Failure(FoodItemErrors.ForbiddenAccess);
             }
-            Result reconciliationResult = await tradeService.ReconcileRemovedTradeItemsDuringSessionAsync(
+            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedFromSessionAsync(
                 session,
                 sessionItem,
                 foodItem,
-                userId,
                 cancellationToken);
             if (reconciliationResult.IsFailure)
             {
