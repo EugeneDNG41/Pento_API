@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.SignalR;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
@@ -37,6 +38,14 @@ internal sealed class AddTradeOfferItemsCommandHandler(IUserContext userContext,
         if (offer.Status != TradeOfferStatus.Open)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidOfferState);
+        }
+        bool existingTradeItemsDuplicate = await tradeItemRepository
+            .AnyAsync(ti => ti.OfferId == offer.Id && command.Items
+                .Select(i => i.FoodItemId)
+                .Contains(ti.FoodItemId), cancellationToken);
+        if (existingTradeItemsDuplicate)
+        {
+            return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.DuplicateTradeItems);
         }
         int currentOfferItemCount = await tradeItemRepository.CountAsync(
             ti => ti.OfferId == offer.Id,

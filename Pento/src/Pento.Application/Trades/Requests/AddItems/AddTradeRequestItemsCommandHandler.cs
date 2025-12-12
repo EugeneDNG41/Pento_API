@@ -39,6 +39,14 @@ internal sealed class AddTradeRequestItemsCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidRequestState);
         }
+        bool existingTradeItemsDuplicate = await tradeItemRepository
+            .AnyAsync(ti => ti.RequestId == request.Id && command.Items
+                .Select(i => i.FoodItemId)
+                .Contains(ti.FoodItemId), cancellationToken);
+        if (existingTradeItemsDuplicate) 
+        {
+            return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.DuplicateTradeItems);
+        }
         int currentRequestItemCount = await tradeItemRepository.CountAsync(
             ti => ti.RequestId == request.Id,
             cancellationToken);
