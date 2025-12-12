@@ -15,7 +15,7 @@ public sealed class TradeService(
 {
     public async Task<Result> ReconcileUpdatedTradeItemsDuringSessionAsync(
         TradeSession session, 
-        TradeItemSession sessionItem,
+        TradeSessionItem sessionItem,
         FoodItem foodItem, 
         decimal newQuantity,
         Guid userId,        
@@ -41,7 +41,7 @@ public sealed class TradeService(
         {
             return Result.Failure(newQtyInItemUnit.Error);
         }
-        if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer)
+        if (sessionItem.From == TradeItemFrom.Offer)
         {
             TradeItemOffer? originalOffer = (await tradeItemOfferRepository.FindAsync(
                 tio => tio.FoodItemId == sessionItem.FoodItemId
@@ -119,7 +119,7 @@ public sealed class TradeService(
     }
     public async Task<Result> ReconcileRemovedTradeItemsDuringSessionAsync(
         TradeSession session, 
-        TradeItemSession sessionItem,
+        TradeSessionItem sessionItem,
         FoodItem foodItem, 
         Guid userId,        
         CancellationToken cancellationToken)
@@ -134,7 +134,7 @@ public sealed class TradeService(
         {
             return Result.Failure(currentQtyInItemUnit.Error);
         }
-        if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer)
+        if (sessionItem.From == TradeItemFrom.Offer)
         {
             TradeItemOffer? originalOffer = (await tradeItemOfferRepository.FindAsync(
                 tio => tio.FoodItemId == sessionItem.FoodItemId
@@ -197,7 +197,7 @@ public sealed class TradeService(
     }
     public async Task<Result> ReconcileAddedTradeItemsDuringSessionAsync(
         TradeSession session,
-        TradeItemSession sessionItem,
+        TradeSessionItem sessionItem,
         FoodItem foodItem,
         Guid userId,
         CancellationToken cancellationToken)
@@ -212,7 +212,7 @@ public sealed class TradeService(
         {
             return Result.Failure(currentQtyInItemUnit.Error);
         }
-        if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer)
+        if (sessionItem.From == TradeItemFrom.Offer)
         {
             TradeItemOffer? originalOffer = (await tradeItemOfferRepository.FindAsync(
                 tio => tio.FoodItemId == sessionItem.FoodItemId

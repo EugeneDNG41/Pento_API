@@ -20,7 +20,7 @@ internal sealed class AcceptTradeRequestCommandHandler(
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeItemOffer> tradeItemOfferRepository,
     IGenericRepository<TradeItemRequest> tradeItemRequestRepository,
-    IGenericRepository<TradeItemSession> tradeItemSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IUnitOfWork unitOfWork
     ) : ICommandHandler<AcceptTradeRequestCommand, Guid>
 {
@@ -64,25 +64,25 @@ internal sealed class AcceptTradeRequestCommandHandler(
         IEnumerable<TradeItemRequest> requestItems = await tradeItemRequestRepository.FindAsync(
             item => item.RequestId == session.TradeRequestId,
             cancellationToken);
-        var sessionItems = new List<TradeItemSession>();
+        var sessionItems = new List<TradeSessionItem>();
         foreach (TradeItemOffer offerItem in offerItems)
         {
-            var sessionItem = TradeItemSession.Create(
+            var sessionItem = TradeSessionItem.Create(
                 offerItem.FoodItemId,
                 offerItem.Quantity,
                 offerItem.UnitId,
-                session.Id,
-                TradeItemSessionFrom.Offer);
+                TradeItemFrom.Offer,
+                session.Id);
             sessionItems.Add(sessionItem);
         }
         foreach (TradeItemRequest requestItem in requestItems)
         {
-            var sessionItem = TradeItemSession.Create(
+            var sessionItem = TradeSessionItem.Create(
                 requestItem.FoodItemId,
                 requestItem.Quantity,
                 requestItem.UnitId,
-                session.Id,
-                TradeItemSessionFrom.Request);
+                TradeItemFrom.Request,
+                session.Id);
             sessionItems.Add(sessionItem);
         }
         tradeItemSessionRepository.AddRange(sessionItems);

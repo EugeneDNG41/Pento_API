@@ -3126,7 +3126,7 @@ namespace Pento.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Request");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemSession", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
                 {
                     b.HasBaseType("Pento.Domain.Trades.TradeItem");
 
@@ -3724,7 +3724,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_trade_items_trade_request_request_id");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeItemSession", b =>
+            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
                 {
                     b.HasOne("Pento.Domain.Trades.TradeSession", null)
                         .WithMany()

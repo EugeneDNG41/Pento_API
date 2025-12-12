@@ -15,7 +15,7 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
     IUserContext userContext,
     TradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
-    IGenericRepository<TradeItemSession> tradeItemSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork)
@@ -42,21 +42,21 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
         {
             return Result.Failure(TradeErrors.InvalidSessionState);
         }
-        TradeItemSessionFrom from = session.OfferUserId == userId
-                ? TradeItemSessionFrom.Offer
-                : TradeItemSessionFrom.Request;
+        TradeItemFrom from = session.OfferUserId == userId
+                ? TradeItemFrom.Offer
+                : TradeItemFrom.Request;
         
         var affectedFoodItems = new Dictionary<Guid, decimal>();
-        var affectedTradeItems = new List<TradeItemSession>();
+        var affectedTradeItems = new List<TradeSessionItem>();
         foreach (UpdateTradeItemDto dto in command.Items)
         {
-            TradeItemSession? sessionItem =
+            TradeSessionItem? sessionItem =
                 await tradeItemSessionRepository.GetByIdAsync(dto.TradeItemId, cancellationToken);
             if (sessionItem is null)
             {
                 return Result.Failure(TradeErrors.NotFound);
             }
-            if (sessionItem.ItemFrom != from || sessionItem.SessionId != session.Id)
+            if (sessionItem.From != from || sessionItem.SessionId != session.Id)
             {
                 return Result.Failure(TradeErrors.ItemForbiddenAccess);
             }
@@ -87,7 +87,7 @@ internal sealed class UpdateTradeItemsSessionCommandHandler(
             affectedTradeItems.Add(sessionItem);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        foreach (TradeItemSession item in affectedTradeItems)
+        foreach (TradeSessionItem item in affectedTradeItems)
         {
             await hubContext.Clients.Group(householdId.Value.ToString())
                 .TradeItemUpdated(item.Id, item.Quantity, item.UnitId);

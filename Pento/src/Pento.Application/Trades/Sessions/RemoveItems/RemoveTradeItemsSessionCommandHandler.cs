@@ -17,7 +17,7 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
     IUserContext userContext,
     TradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
-    IGenericRepository<TradeItemSession> tradeItemSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IUnitOfWork unitOfWork)
@@ -44,15 +44,15 @@ internal sealed class RemoveTradeItemsSessionCommandHandler(
         {
             return Result.Failure(TradeErrors.InvalidSessionState);
         }
-        IEnumerable<TradeItemSession> items = await tradeItemSessionRepository.FindAsync(
+        IEnumerable<TradeSessionItem> items = await tradeItemSessionRepository.FindAsync(
             item => item.SessionId == command.TradeSessionId
                 && command.TradeItemIds.Contains(item.Id),
             cancellationToken);
         var restoredItems = new Dictionary<Guid, decimal>();
-        foreach (TradeItemSession sessionItem in items)
+        foreach (TradeSessionItem sessionItem in items)
         {
-            if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer && session.OfferUserId != userId
-                || sessionItem.ItemFrom == TradeItemSessionFrom.Request && session.RequestUserId != userId)
+            if (sessionItem.From == TradeItemFrom.Offer && session.OfferUserId != userId
+                || sessionItem.From == TradeItemFrom.Request && session.RequestUserId != userId)
             {
                 return Result.Failure(TradeErrors.ItemForbiddenAccess);
             }

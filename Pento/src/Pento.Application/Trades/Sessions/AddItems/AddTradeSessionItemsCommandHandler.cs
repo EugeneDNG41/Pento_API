@@ -15,7 +15,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
     IUserContext userContext,
     TradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
-    IGenericRepository<TradeItemSession> tradeItemSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<FoodReference> foodReferenceRepository,
     IHubContext<MessageHub, IMessageClient> hubContext,
@@ -43,9 +43,9 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
-        TradeItemSessionFrom from = session.OfferUserId == userId
-                ? TradeItemSessionFrom.Offer
-                : TradeItemSessionFrom.Request;
+        TradeItemFrom from = session.OfferUserId == userId
+                ? TradeItemFrom.Offer
+                : TradeItemFrom.Request;
         
         bool existingItemsExist = await tradeItemSessionRepository
             .AnyAsync(item => item.SessionId == command.TradeSessionId 
@@ -56,7 +56,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         }
         
         int currentItemCount = await tradeItemSessionRepository
-            .CountAsync(item => item.SessionId == command.TradeSessionId && item.ItemFrom == from, cancellationToken);
+            .CountAsync(item => item.SessionId == command.TradeSessionId && item.From == from, cancellationToken);
         if (command.Items.Count + currentItemCount > 5)
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.ExceedsMaxTradeItems);
@@ -65,13 +65,12 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         var affectedFoodItems = new Dictionary<Guid, decimal>();
         foreach (AddTradeItemDto dto in command.Items)
         {
-            var sessionItem = TradeItemSession.Create(
+            var sessionItem = TradeSessionItem.Create(
                 foodItemId: dto.FoodItemId,
                 quantity: dto.Quantity,
                 unitId: dto.UnitId,
-                sessionId: session.Id,
-                from
-            );
+                from,
+                sessionId: session.Id);
             FoodItem? foodItem =
                 await foodItemRepository.GetByIdAsync(dto.FoodItemId, cancellationToken);
             if (foodItem is null)
@@ -109,7 +108,7 @@ internal sealed class AddTradeSessionItemsCommandHandler(
                 sessionItem.Quantity,
                 sessionItem.UnitId,
                 foodItem.ExpirationDate,
-                sessionItem.ItemFrom));
+                sessionItem.From));
             affectedFoodItems.Add(foodItem.Id, foodItem.Quantity);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

@@ -1,4 +1,4 @@
 ﻿namespace Pento.Domain.Trades;
 
-public enum TradeItemFrom { Offer, Request, Session }
+public enum TradeItemFrom { Offer, Request }
 

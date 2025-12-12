@@ -11,4 +11,4 @@ public sealed record TradeItemResponse(
     decimal Quantity,
     Guid UnitId,
     DateOnly ExpirationDate,
-    TradeItemSessionFrom From);
+    TradeItemFrom From);

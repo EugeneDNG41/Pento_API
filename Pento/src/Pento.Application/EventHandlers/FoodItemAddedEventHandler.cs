@@ -215,7 +215,7 @@ internal sealed class TradeSessionCompletedEventHandler(
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeItemOffer> tradeItemOfferRepository,
     IGenericRepository<TradeItemRequest> tradeItemRequestRepository,
-    IGenericRepository<TradeItemSession> tradeItemSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Compartment> compartmentRepository,
     IUnitOfWork unitOfWork)
@@ -250,7 +250,7 @@ internal sealed class TradeSessionCompletedEventHandler(
         IEnumerable<TradeItemRequest> requestedItems = await tradeItemRequestRepository.FindAsync(
             tir => tir.RequestId == request.Id,
             cancellationToken);
-        IEnumerable<TradeItemSession> sessionItems = await tradeItemSessionRepository.FindAsync(
+        IEnumerable<TradeSessionItem> sessionItems = await tradeItemSessionRepository.FindAsync(
             tis => tis.SessionId == session.Id,
             cancellationToken);
         IEnumerable<FoodItem> allInvolvedFoodItems = await foodItemRepository.FindAsync(
@@ -271,7 +271,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 throw new PentoException(nameof(TradeSessionCompletedEventHandler), conversionResult.Error);
             }
             foodItem.AdjustReservedQuantity(conversionResult.Value, offer.UserId); //restore reserved quantity
-            bool inSession = sessionItems.Any(si => si.ItemFrom == TradeItemSessionFrom.Offer && si.FoodItemId == offeredItem.FoodItemId);
+            bool inSession = sessionItems.Any(si => si.From == TradeItemFrom.Offer && si.FoodItemId == offeredItem.FoodItemId);
             if (!inSession)
             {
                 tradeItemOfferRepository.Remove(offeredItem);
@@ -290,16 +290,16 @@ internal sealed class TradeSessionCompletedEventHandler(
                 throw new PentoException(nameof(TradeSessionCompletedEventHandler), conversionResult.Error);
             }
             foodItem.AdjustReservedQuantity(conversionResult.Value, offer.UserId); //restore reserved quantity
-            bool inSession = sessionItems.Any(si => si.ItemFrom == TradeItemSessionFrom.Request && si.FoodItemId == requestedItem.FoodItemId);
+            bool inSession = sessionItems.Any(si => si.From == TradeItemFrom.Request && si.FoodItemId == requestedItem.FoodItemId);
             if (!inSession)
             {
                 tradeItemRequestRepository.Remove(requestedItem);
             }
         }
         
-        foreach (TradeItemSession sessionItem in sessionItems) //overwrite offered/requested quantities with actual traded quantities
+        foreach (TradeSessionItem sessionItem in sessionItems) //overwrite offered/requested quantities with actual traded quantities
         {
-            if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer)
+            if (sessionItem.From == TradeItemFrom.Offer)
             {
                 TradeItemOffer? offeredItem = offeredItems.SingleOrDefault(oi => oi.FoodItemId == sessionItem.FoodItemId); //business rule: only one offered item per food item id
                 if (offeredItem != null)
@@ -328,7 +328,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                     tradeItemOfferRepository.Add(offeredItem); //no need to reserve since already did when first added
                 }
             }
-            else if (sessionItem.ItemFrom == TradeItemSessionFrom.Request)
+            else if (sessionItem.From == TradeItemFrom.Request)
             {
                 TradeItemRequest? requestedItem = requestedItems.FirstOrDefault(ri => ri.FoodItemId == sessionItem.FoodItemId);
                 if (requestedItem != null)
@@ -360,10 +360,10 @@ internal sealed class TradeSessionCompletedEventHandler(
         }
 
         IEnumerable<FoodItem> foodItemsFromRequestToOffer = await foodItemRepository.FindAsync(
-            fi => sessionItems.Where(s => s.ItemFrom == TradeItemSessionFrom.Request).Select(ri => ri.FoodItemId).Contains(fi.Id),
+            fi => sessionItems.Where(s => s.From == TradeItemFrom.Request).Select(ri => ri.FoodItemId).Contains(fi.Id),
             cancellationToken);
         IEnumerable<FoodItem> foodItemsFromOfferToRequest = await foodItemRepository.FindAsync(
-            fi => sessionItems.Where(s => s.ItemFrom == TradeItemSessionFrom.Offer).Select(oi => oi.FoodItemId).Contains(fi.Id),
+            fi => sessionItems.Where(s => s.From == TradeItemFrom.Offer).Select(oi => oi.FoodItemId).Contains(fi.Id),
             cancellationToken);
         Compartment offerCompartment = (await compartmentRepository.FindAsync(
             c => c.HouseholdId == offer.HouseholdId,
@@ -371,9 +371,9 @@ internal sealed class TradeSessionCompletedEventHandler(
         Compartment requestCompartment = (await compartmentRepository.FindAsync(
             c => c.HouseholdId == request.HouseholdId,
             cancellationToken)).First();
-        foreach (TradeItemSession sessionItem in sessionItems)
+        foreach (TradeSessionItem sessionItem in sessionItems)
         {
-            if (sessionItem.ItemFrom == TradeItemSessionFrom.Offer)
+            if (sessionItem.From == TradeItemFrom.Offer)
             {
                 FoodItem? foodItem = foodItemsFromOfferToRequest.FirstOrDefault(fi => fi.Id == sessionItem.FoodItemId);
                 if (foodItem != null)
@@ -383,7 +383,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                     foodItemRepository.Update(foodItem);
                 }
             }
-            else if (sessionItem.ItemFrom == TradeItemSessionFrom.Request)
+            else if (sessionItem.From == TradeItemFrom.Request)
             {
                 FoodItem? foodItem = foodItemsFromRequestToOffer.FirstOrDefault(fi => fi.Id == sessionItem.FoodItemId);
                 if (foodItem != null)
