@@ -1,7 +1,6 @@
 ﻿using Azure.Core;
 using FluentValidation;
 using Pento.Application.Abstractions.Exceptions;
-using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
@@ -12,8 +11,6 @@ using Pento.Domain.Compartments;
 using Pento.Domain.FoodItemLogs;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodItems.Events;
-using Pento.Domain.Households;
-using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
 using Pento.Domain.Units;
 using Pento.Domain.UserActivities;
@@ -71,56 +68,6 @@ internal sealed class FoodItemAddedEventHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }
-internal sealed class TradeOfferCancelledEventHandler(
-    INotificationService notificationService,
-    IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<TradeRequest> tradeRequestRepository,
-    IGenericRepository<Household> householdRepository,
-    IUnitOfWork unitOfWork)
-    : DomainEventHandler<TradeOfferCancelledDomainEvent>
-{
-    public override async Task Handle(
-        TradeOfferCancelledDomainEvent domainEvent,
-        CancellationToken cancellationToken = default)
-    {
-        TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(domainEvent.TradeOfferId, cancellationToken);
-        if (offer == null)
-        {
-            throw new PentoException(nameof(TradeOfferCancelledEventHandler), TradeErrors.OfferNotFound);
-        }
-        Household? offerHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
-        if (offerHousehold == null)
-        {
-            throw new PentoException(nameof(TradeOfferCancelledEventHandler), HouseholdErrors.NotFound);
-        }
-        IEnumerable<TradeRequest> requests = await tradeRequestRepository.FindAsync(
-            r => r.TradeOfferId == offer.Id && r.Status == TradeRequestStatus.Pending,
-            cancellationToken);
-        string title = "Trade Offer Cancelled";
-        string body = $"Household {offerHousehold.Name} has cancelled their trade offer";
-        var payload = new Dictionary<string, string>
-            {
-                { "tradeOfferId", offer.Id.ToString() }
-            };
-        foreach (TradeRequest request in requests)
-        {
-            request.Cancel();
-            payload.Add("tradeRequestId", request.Id.ToString());
-            Result notificationResult = await notificationService.SendToHouseholdAsync(
-                request.HouseholdId,
-                title,
-                body,
-                NotificationType.Trade,
-                payload,
-                cancellationToken);
-            if (notificationResult.IsFailure)
-            {
-                throw new PentoException(nameof(TradeOfferCancelledEventHandler), notificationResult.Error);
-            }
-        }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-    }
-}
 internal sealed class TradeSessionCompletedEventHandler(
     IConverterService converterService,
     IGenericRepository<TradeSession> tradeSessionRepository,
@@ -157,20 +104,20 @@ internal sealed class TradeSessionCompletedEventHandler(
         offer.Fulfill(session.TradeRequestId);
         request.Fulfill(session.TradeOfferId);
         //restore offered/requested items back to food items before reconciling with session items
-        IEnumerable<TradeItemOffer> offeredItems = await tradeItemOfferRepository.FindAsync(
+        var offeredItems = (await tradeItemOfferRepository.FindAsync(
             tio => tio.OfferId == offer.Id,
-            cancellationToken);
-        IEnumerable<TradeItemRequest> requestedItems = await tradeItemRequestRepository.FindAsync(
+            cancellationToken)).ToList();
+        var requestedItems = (await tradeItemRequestRepository.FindAsync(
             tir => tir.RequestId == request.Id,
-            cancellationToken);
-        IEnumerable<TradeSessionItem> sessionItems = await tradeItemSessionRepository.FindAsync(
+            cancellationToken)).ToList();
+        var sessionItems = (await tradeItemSessionRepository.FindAsync(
             tis => tis.SessionId == session.Id,
-            cancellationToken);
-        IEnumerable<FoodItem> allInvolvedFoodItems = await foodItemRepository.FindAsync(
+            cancellationToken)).ToList();
+        var allInvolvedFoodItems = (await foodItemRepository.FindAsync(
             fi => offeredItems.Select(oi => oi.FoodItemId).Contains(fi.Id) ||
                   requestedItems.Select(ri => ri.FoodItemId).Contains(fi.Id) ||
                   sessionItems.Select(si => si.FoodItemId).Contains(fi.Id),
-            cancellationToken);
+            cancellationToken)).ToList();
         foreach (TradeItemOffer offeredItem in offeredItems) //remove any not in session item
         {
             FoodItem foodItem = allInvolvedFoodItems.Single(fi => fi.Id == offeredItem.FoodItemId);
@@ -272,12 +219,12 @@ internal sealed class TradeSessionCompletedEventHandler(
             } 
         }
 
-        IEnumerable<FoodItem> foodItemsFromRequestToOffer = await foodItemRepository.FindAsync(
+        var foodItemsFromRequestToOffer = (await foodItemRepository.FindAsync(
             fi => sessionItems.Where(s => s.From == TradeItemFrom.Request).Select(ri => ri.FoodItemId).Contains(fi.Id),
-            cancellationToken);
-        IEnumerable<FoodItem> foodItemsFromOfferToRequest = await foodItemRepository.FindAsync(
+            cancellationToken)).ToList();
+        var foodItemsFromOfferToRequest = (await foodItemRepository.FindAsync(
             fi => sessionItems.Where(s => s.From == TradeItemFrom.Offer).Select(oi => oi.FoodItemId).Contains(fi.Id),
-            cancellationToken);
+            cancellationToken)).ToList();
         Compartment offerCompartment = (await compartmentRepository.FindAsync(
             c => c.HouseholdId == offer.HouseholdId,
             cancellationToken)).First();
