@@ -12,7 +12,7 @@ using Pento.Domain.UserSubscriptions;
 
 namespace Pento.Application.EventHandlers;
 
-internal sealed class UserEntitlementUpdatedEventHandler( // business rule
+internal sealed class UserEntitlementUpdatedEventHandler(
     INotificationService notificationService,
     IGenericRepository<UserEntitlement> entitlementRepository,
     IGenericRepository<Feature> featureRepository,

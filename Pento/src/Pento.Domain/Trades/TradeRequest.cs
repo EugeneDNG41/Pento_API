@@ -46,31 +46,31 @@ public sealed class TradeRequest : Entity
     public void Fulfill(Guid offerId)
     {
         Status = TradeRequestStatus.Fulfilled;
+        UpdatedOn = DateTime.UtcNow;
         Raise(new TradeRequestFulfilledDomainEvent(Id, offerId));
     }
 
     public void Reject()
     {
         Status = TradeRequestStatus.Rejected;
+        UpdatedOn = DateTime.UtcNow;
         Raise(new TradeRequestRejectedDomainEvent(Id));
     }
 
     public void Cancel()
     {
         Status = TradeRequestStatus.Cancelled;
+        UpdatedOn = DateTime.UtcNow;
         Raise(new TradeRequestCancelledDomainEvent(Id));
     }
-    public void AutoCancel()
-    {
-        Status = TradeRequestStatus.Cancelled;
-        // No domain event raised for auto-cancellation
-    }
+
     public new void Delete()
     {
         if (Status == TradeRequestStatus.Pending)
         {
             Cancel();
         }
+        UpdatedOn = DateTime.UtcNow;
         base.Delete();
     }
 }

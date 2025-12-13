@@ -11,6 +11,6 @@ internal sealed class SendTradeMessageCommandValidator : AbstractValidator<SendT
         RuleFor(x => x.Message)
             .NotEmpty()
             .MaximumLength(500)
-            .WithMessage("Message must be between 1 and 500 characters."); //business rule
+            .WithMessage("Message must be between 1 and 500 characters.");
     }
 }

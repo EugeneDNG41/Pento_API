@@ -43,7 +43,7 @@ public sealed class TradeOffer : Entity
         DateTime createdOn
         )
     {
-        return new TradeOffer(
+        var offer = new TradeOffer(
             id: Guid.CreateVersion7(),
             userId: userId,
             householdId: householdId,
@@ -53,6 +53,8 @@ public sealed class TradeOffer : Entity
             pickupOption: pickupOption,
             createdOn: createdOn
         );
+        offer.Raise(new TradeOfferCreatedDomainEvent(offer.Id));
+        return offer;
 
     }
     public void Update(DateTime start, DateTime end, PickupOption option, DateTime updatedOn)
@@ -85,6 +87,10 @@ public sealed class TradeOffer : Entity
         }
         base.Delete();
     }
+}
+public sealed class TradeOfferCreatedDomainEvent(Guid tradeOfferId) : DomainEvent
+{
+    public Guid TradeOfferId { get; } = tradeOfferId;
 }
 public sealed class TradeOfferCancelledDomainEvent(Guid tradeOfferId) : DomainEvent
 {

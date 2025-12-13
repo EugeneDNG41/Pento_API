@@ -1,24 +1,30 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
-using Pento.Application.Trades.TradeItems.Requests.Get;
+using Pento.Application.Abstractions.Utility.Pagination;
+using Pento.Application.Trades.Requests.GetAll;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Trades;
 
 namespace Pento.API.Endpoints.Trades.Get;
 
-internal sealed class GetTradeRequestsByOffer : IEndpoint
+internal sealed class GetTradeRequests : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("trades/offers/{offerId:guid}/requests", async (
-            Guid offerId,
-            IQueryHandler<GetTradeRequestsByOfferQuery, IReadOnlyList<TradeRequestResponse>> handler,
-            CancellationToken cancellationToken
+        app.MapGet("trades/requests", async (
+            Guid? offerId,
+            TradeRequestStatus? status,
+            bool? isMine,
+            GetTradeRequestsSortBy? sortBy,
+            SortOrder? sortOrder,
+            IQueryHandler<GetTradeRequestsQuery, PagedList<TradeRequestResponse>> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10
         ) =>
         {
-            var query = new GetTradeRequestsByOfferQuery(offerId);
-
-            Result<IReadOnlyList<TradeRequestResponse>> result = await handler.Handle(query, cancellationToken);
-
+            var query = new GetTradeRequestsQuery(offerId, status, isMine, sortBy, sortOrder, pageNumber, pageSize);
+            Result<PagedList<TradeRequestResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(
                 Results.Ok,
                 CustomResults.Problem
@@ -28,3 +34,4 @@ internal sealed class GetTradeRequestsByOffer : IEndpoint
         .WithTags(Tags.Trades);
     }
 }
+

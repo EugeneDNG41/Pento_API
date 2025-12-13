@@ -3,20 +3,27 @@ using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.Households;
 using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
+using Pento.Domain.UserActivities;
 using Pento.Domain.Users;
 
 namespace Pento.Application.EventHandlers;
 
 internal sealed class TradeRequestCreatedEventHandler(
     INotificationService notificationService,
+    IActivityService activityService,
+    IMilestoneService milestoneService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<Household> householdRepository)
+    IGenericRepository<Household> householdRepository,
+    IUnitOfWork unitOfWork
+    )
     : DomainEventHandler<TradeRequestCreatedDomainEvent>
 {
     public override async Task Handle(
@@ -28,6 +35,22 @@ internal sealed class TradeRequestCreatedEventHandler(
         {
             throw new PentoException(nameof(TradeRequestCreatedEventHandler), TradeErrors.RequestNotFound);
         }
+        Result<UserActivity> createResult = await activityService.RecordActivityAsync(
+            request.UserId,
+            request.HouseholdId,
+            ActivityCode.TRADE_REQUEST_CREATE.ToString(),
+            request.Id,
+            cancellationToken);
+        if (createResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeRequestCreatedEventHandler), createResult.Error);
+        }
+        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
+        if (milestoneCheckResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeRequestCreatedEventHandler), milestoneCheckResult.Error);
+        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
         if (offer == null)
         {
@@ -39,7 +62,7 @@ internal sealed class TradeRequestCreatedEventHandler(
             throw new PentoException(nameof(TradeRequestCreatedEventHandler), HouseholdErrors.NotFound);
         }
         string title = "New Trade Request";
-        string body = $"you have received a new trade request from household {requestHousehold.Name}.";
+        string body = $"you have received a new trade offer from household {requestHousehold.Name}.";
         var payload = new Dictionary<string, string>
         {
             { "tradeRequestId", request.Id.ToString() }

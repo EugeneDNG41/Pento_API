@@ -2,18 +2,23 @@
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
+using Pento.Domain.UserActivities;
 
 namespace Pento.Application.EventHandlers;
 
 internal sealed class TradeSessionCompletedEventHandler(
     IConverterService converterService,
     INotificationService notificationService,
+    IActivityService activityService,
+    IMilestoneService milestoneService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,  
     IGenericRepository<TradeRequest> tradeRequestRepository,
@@ -45,6 +50,22 @@ internal sealed class TradeSessionCompletedEventHandler(
         {
             throw new PentoException(nameof(TradeSessionCompletedEventHandler), TradeErrors.RequestNotFound);
         }
+        Result<UserActivity> createResult = await activityService.RecordActivityAsync(
+            offer.UserId,
+            null,
+            ActivityCode.TRADE_OFFER_CREATE.ToString(),
+            offer.Id,
+            cancellationToken);
+        if (createResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
+        }
+        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
+        if (milestoneCheckResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeOfferCreatedEventHandler), milestoneCheckResult.Error);
+        }
+        
         offer.Fulfill(session.TradeRequestId);
         request.Fulfill(session.TradeOfferId);
         //restore offered/requested items back to food items before reconciling with session items

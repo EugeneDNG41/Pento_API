@@ -70,6 +70,18 @@ public sealed class Activity
         ActivityCode.FOOD_ITEM_TRADE_AWAY.ToString(),
         "Trade Away Food Item",
         "Giving a food item to another household through trade.");
+    public static readonly Activity CreateTradeOffer = new Activity(
+        ActivityCode.TRADE_OFFER_CREATE.ToString(),
+        "Create Trade Offer",
+        "Creating a trade offer to exchange food items with other households.");
+    public static readonly Activity CreateTradeRequest = new Activity(
+        ActivityCode.TRADE_REQUEST_CREATE.ToString(),
+        "Create Trade Request",
+        "Creating a trade request for offers from other households.");
+    public static readonly Activity CompleteTrade = new Activity(
+        ActivityCode.TRADE_COMPLETE.ToString(),
+        "Complete Trade",
+        "Finalizing a trade between households to exchange food items.");
     private Activity() { }
     public Activity(string code, string name, string description)
     {
@@ -92,7 +104,7 @@ public sealed class Activity
         }
     }
 }
-public enum ActivityCode //DO OR PERFORM
+public enum ActivityCode
 {
     STORAGE_CREATE,
     COMPARTMENT_CREATE,
@@ -110,6 +122,10 @@ public enum ActivityCode //DO OR PERFORM
     HOUSEHOLD_JOIN,
     HOUSEHOLD_MEMBER_JOINED,
     FOOD_ITEM_TRADE_IN,
-    FOOD_ITEM_TRADE_AWAY
+    FOOD_ITEM_TRADE_AWAY,
+    TRADE_OFFER_CREATE,
+    TRADE_REQUEST_CREATE,
+    TRADE_COMPLETE
+
 
 }

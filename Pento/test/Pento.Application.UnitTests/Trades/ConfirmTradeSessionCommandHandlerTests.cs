@@ -18,6 +18,7 @@ internal sealed class ConfirmTradeSessionCommandHandlerTests
     private readonly IHubClients<IMessageClient> _hubClients;
     private readonly IMessageClient _messageClient;
     private readonly IGenericRepository<TradeSession> _sessionRepo;
+    private readonly IGenericRepository<TradeSessionItem> _sessionItemRepo;
     private readonly IUnitOfWork _uow;
 
     private readonly ConfirmTradeSessionCommandHandler _handler;
@@ -29,6 +30,7 @@ internal sealed class ConfirmTradeSessionCommandHandlerTests
         _hubClients = Substitute.For<IHubClients<IMessageClient>>();
         _messageClient = Substitute.For<IMessageClient>();
         _sessionRepo = Substitute.For<IGenericRepository<TradeSession>>();
+        _sessionItemRepo = Substitute.For<IGenericRepository<TradeSessionItem>>();
         _uow = Substitute.For<IUnitOfWork>();
 
         _hubContext.Clients.Returns(_hubClients);
@@ -38,6 +40,7 @@ internal sealed class ConfirmTradeSessionCommandHandlerTests
             _userContext,
             _hubContext,
             _sessionRepo,
+            _sessionItemRepo,
             _uow
         );
     }
