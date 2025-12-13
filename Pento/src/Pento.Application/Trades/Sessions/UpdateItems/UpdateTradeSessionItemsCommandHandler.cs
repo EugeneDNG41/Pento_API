@@ -88,7 +88,7 @@ internal sealed class UpdateTradeSessionItemsCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
         foreach (TradeSessionItem item in affectedTradeItems)
         {
-            await hubContext.Clients.Group(householdId.Value.ToString())
+            await hubContext.Clients.Group(session.Id.ToString())
                 .TradeItemUpdated(item.Id, item.Quantity, item.UnitId);
         }
         foreach (KeyValuePair<Guid, decimal> affectedItem in affectedFoodItems)

@@ -107,7 +107,7 @@ internal sealed class TradeSessionCompletedEventHandler(
 
         foreach (TradeSessionItem sessionItem in sessionOfferItems) //overwrite offered/requested quantities with actual traded quantities
         {
-            TradeItemOffer? offeredItem = offeredItems.SingleOrDefault(oi => oi.FoodItemId == sessionItem.FoodItemId); //business rule: only one offered item per food item id
+            TradeItemOffer? offeredItem = offeredItems.SingleOrDefault(oi => oi.FoodItemId == sessionItem.FoodItemId);
             if (offeredItem != null)
             {
                 FoodItem foodItem = allInvolvedFoodItems.Single(fi => fi.Id == offeredItem.FoodItemId);
