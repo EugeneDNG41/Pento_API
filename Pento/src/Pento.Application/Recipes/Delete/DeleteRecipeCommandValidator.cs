@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Recipes.Delete;
 
-public sealed class DeleteRecipeCommandValidator : AbstractValidator<DeleteRecipeCommand>
+internal sealed class DeleteRecipeCommandValidator : AbstractValidator<DeleteRecipeCommand>
 {
     public DeleteRecipeCommandValidator()
     {

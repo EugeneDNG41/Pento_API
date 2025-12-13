@@ -3,7 +3,7 @@
 namespace Pento.Domain.Payments;
 
 
-public class PaymentCompletedDomainEvent(Guid paymentId) : DomainEvent
+public sealed class PaymentCompletedDomainEvent(Guid paymentId) : DomainEvent
 {
     public Guid PaymentId { get; } = paymentId;
 }

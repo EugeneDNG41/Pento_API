@@ -4,6 +4,7 @@ namespace Pento.Domain.Trades;
 
 public sealed class TradeOffer : Entity
 {
+    private TradeOffer() { }
     public Guid UserId { get; private set; }
     public Guid HouseholdId { get; private set; }
     public TradeOfferStatus Status { get; private set; }

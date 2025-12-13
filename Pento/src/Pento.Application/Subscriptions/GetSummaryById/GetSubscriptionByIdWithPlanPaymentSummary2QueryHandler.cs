@@ -7,9 +7,9 @@ using Pento.Domain.Subscriptions;
 
 namespace Pento.Application.Subscriptions.GetSummaryById;
 
-internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryHandler2(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetSubscriptionWithPlanPaymentSummaryByIdQuery2, SubscriptionWithPlanPaymentSummary2>
+internal sealed class GetSubscriptionByIdWithPlanPaymentSummary2QueryHandler(ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetSubscriptionWithPlanPaymentSummaryById2Query, SubscriptionWithPlanPaymentSummary2>
 {
-    public async Task<Result<SubscriptionWithPlanPaymentSummary2>> Handle(GetSubscriptionWithPlanPaymentSummaryByIdQuery2 query, CancellationToken cancellationToken)
+    public async Task<Result<SubscriptionWithPlanPaymentSummary2>> Handle(GetSubscriptionWithPlanPaymentSummaryById2Query query, CancellationToken cancellationToken)
     {
 
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);

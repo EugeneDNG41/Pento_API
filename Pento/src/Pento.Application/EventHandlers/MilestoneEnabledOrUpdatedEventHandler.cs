@@ -14,7 +14,6 @@ internal sealed class MilestoneEnabledOrUpdatedEventHandler( //business rule: wh
     IGenericRepository<Milestone> milestoneRepository,
     IGenericRepository<UserMilestone> userMilestoneRepository,
     IGenericRepository<User> userRepository,
-
     IUnitOfWork unitOfWork) : DomainEventHandler<MilestoneEnabledOrUpdatedDomainEvent>
 {
     public async override Task Handle(MilestoneEnabledOrUpdatedDomainEvent domainEvent, CancellationToken cancellationToken = default)

@@ -2,7 +2,7 @@
 
 namespace Pento.Application.RecipeDirections.Update;
 
-public sealed class UpdateRecipeDirectionImageValidator
+internal sealed class UpdateRecipeDirectionImageValidator
     : AbstractValidator<UpdateRecipeDirectionImageCommand>
 {
     private static readonly string[] AllowedTypes =

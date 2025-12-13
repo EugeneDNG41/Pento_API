@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 namespace Pento.Application.MealPlans.Create.FromRecipe;
 
-public sealed class CreateMealPlanFromRecipeConfirmCommandValidator
+internal sealed class CreateMealPlanFromRecipeConfirmCommandValidator
     : AbstractValidator<CreateMealPlanFromRecipeConfirmCommand>
 {
     public CreateMealPlanFromRecipeConfirmCommandValidator()

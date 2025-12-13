@@ -2,7 +2,7 @@
 
 namespace Pento.Application.GroceryListItems.Create;
 
-public sealed class CreateGroceryListItemCommandValidator
+internal sealed class CreateGroceryListItemCommandValidator
     : AbstractValidator<CreateGroceryListItemCommand>
 {
     public CreateGroceryListItemCommandValidator()

@@ -3,7 +3,7 @@ using Pento.Domain.GroceryListItems;
 
 namespace Pento.Application.GroceryLists.Create;
 
-public sealed class CreateGroceryListDetailCommandValidator : AbstractValidator<CreateGroceryListDetailCommand>
+internal sealed class CreateGroceryListDetailCommandValidator : AbstractValidator<CreateGroceryListDetailCommand>
 {
     public CreateGroceryListDetailCommandValidator()
     {

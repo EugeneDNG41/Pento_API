@@ -32,10 +32,10 @@ internal sealed class GetSubscriptionWithPlanPaymentSummaryById2 : IEndpoint
             Guid subscriptionId,
             DateOnly? fromDate,
             DateOnly? toDate,
-            IQueryHandler<GetSubscriptionWithPlanPaymentSummaryByIdQuery2, SubscriptionWithPlanPaymentSummary2> handler,
+            IQueryHandler<GetSubscriptionWithPlanPaymentSummaryById2Query, SubscriptionWithPlanPaymentSummary2> handler,
             CancellationToken cancellationToken) =>
         {
-            var query = new GetSubscriptionWithPlanPaymentSummaryByIdQuery2(subscriptionId, fromDate, toDate);
+            var query = new GetSubscriptionWithPlanPaymentSummaryById2Query(subscriptionId, fromDate, toDate);
             Result<SubscriptionWithPlanPaymentSummary2> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
         }).WithTags(Tags.Admin);

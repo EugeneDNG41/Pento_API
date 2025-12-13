@@ -2,7 +2,7 @@
 
 namespace Pento.Application.MealPlans.Reserve.Fullfill;
 
-public sealed class FulfillMealPlanReservationCommandValidator
+internal sealed class FulfillMealPlanReservationCommandValidator
     : AbstractValidator<FulfillMealPlanReservationCommand>
 {
     public FulfillMealPlanReservationCommandValidator()

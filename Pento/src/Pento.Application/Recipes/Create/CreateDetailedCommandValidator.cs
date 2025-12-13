@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Recipes.Create;
 
-public sealed class CreateDetailedCommandValidator : AbstractValidator<CreateDetailedRecipeCommand>
+internal sealed class CreateDetailedCommandValidator : AbstractValidator<CreateDetailedRecipeCommand>
 {
     public CreateDetailedCommandValidator()
     {

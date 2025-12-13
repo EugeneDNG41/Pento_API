@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Trades.Offers.Create;
 
-public sealed class CreateTradeItemOfferCommandValidator
+internal sealed class CreateTradeItemOfferCommandValidator
     : AbstractValidator<CreateTradeItemOfferCommand>
 {
     public CreateTradeItemOfferCommandValidator()
