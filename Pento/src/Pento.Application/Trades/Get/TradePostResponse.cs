@@ -10,6 +10,7 @@ public sealed record TradePostResponse(
     Uri? PostedByAvatarUrl,
     decimal Quantity,
     string UnitAbbreviation,
+    string Status,
     DateTime StartDate,
     DateTime EndDate,
     string PickupOption,
@@ -19,6 +20,7 @@ public sealed record TradePostResponse(
 
 public sealed record TradePostGroupedResponse(
     Guid OfferId,
+    string Status,
     DateTime StartDate,
     DateTime EndDate,
     string PickupOption,

@@ -1,26 +1,63 @@
 ﻿using System.Data.Common;
 using Dapper;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 
 namespace Pento.Application.Trades.Get;
 
-internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory)
+internal sealed class GetAllTradePostsQueryHandler(
+    IUserContext userContext,
+    ISqlConnectionFactory factory)
     : IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostGroupedResponse>>
 {
-    public async Task<Result<PagedList<TradePostGroupedResponse>>> Handle(GetAllTradePostsQuery req, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<TradePostGroupedResponse>>> Handle(GetAllTradePostsQuery query, CancellationToken cancellationToken)
     {
+        Guid? householdId = userContext.HouseholdId;
+        if (householdId is null)
+        {
+            return Result.Failure<PagedList<TradePostGroupedResponse>>(HouseholdErrors.NotInAnyHouseHold);
+
+        }
         await using DbConnection connection = await factory.OpenConnectionAsync(cancellationToken);
 
         var filters = new List<string>();
-        var param = new DynamicParameters();
+        var parameters = new DynamicParameters();
 
-        if (!string.IsNullOrWhiteSpace(req.Search))
+        if (!string.IsNullOrWhiteSpace(query.Search))
         {
             filters.Add("fr.name ILIKE @Search");
-            param.Add("Search", $"%{req.Search}%");
+            parameters.Add("Search", $"%{query.Search}%");
+        }
+        if (query.IsMyHousehold.HasValue)
+        {
+            if (query.IsMyHousehold.Value)
+            {
+                parameters.Add("@HouseholdId", householdId.Value);
+                filters.Add("o.household_id = @HouseholdId");
+            }
+            else
+            {
+                parameters.Add("@HouseholdId", householdId.Value);
+                filters.Add("o.household_id <> @HouseholdId");
+            }
+        }
+        if (query.IsMine.HasValue)
+        {
+            if (query.IsMine.Value)
+            {
+                parameters.Add("@UserId", userContext.UserId);
+                filters.Add("o.user_id = @UserId");
+            }
+            else
+            {
+                parameters.Add("@UserId", userContext.UserId);
+                filters.Add("o.user_id <> @UserId");
+            }
+
         }
 
         filters.Add("o.is_deleted = false");
@@ -29,7 +66,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
             ? "WHERE " + string.Join(" AND ", filters)
             : string.Empty;
 
-        string orderBy = req.Sort?.ToLower(System.Globalization.CultureInfo.CurrentCulture) switch
+        string orderBy = query.Sort?.ToLower(System.Globalization.CultureInfo.CurrentCulture) switch
         {
             "oldest" => "ORDER BY o.created_on ASC",
             "food" => "ORDER BY fr.name ASC",
@@ -60,6 +97,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
             us.avatar_url AS PostedByAvatarUrl,
             i.quantity AS Quantity,
             u.abbreviation AS UnitAbbreviation,
+            o.status AS Status,
             o.start_date AS StartDate,
             o.end_date AS EndDate,
             o.pickup_option AS PickupOption,
@@ -76,10 +114,10 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
         OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         ";
 
-        param.Add("Offset", (req.PageNumber - 1) * req.PageSize);
-        param.Add("PageSize", req.PageSize);
+        parameters.Add("Offset", (query.PageNumber - 1) * query.PageSize);
+        parameters.Add("PageSize", query.PageSize);
 
-        SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, param);
+        SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
 
         int totalCount = await multi.ReadFirstAsync<int>();
         var items = (await multi.ReadAsync<TradePostResponse>()).ToList();
@@ -88,6 +126,7 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
             .GroupBy(x => x.OfferId)
             .Select(g => new TradePostGroupedResponse(
                 OfferId: g.Key,
+                Status: g.First().Status,
                 StartDate: g.First().StartDate,
                 EndDate: g.First().EndDate,
                 PickupOption: g.First().PickupOption,
@@ -109,8 +148,8 @@ internal sealed class GetAllTradePostsQueryHandler(ISqlConnectionFactory factory
         var paged = PagedList<TradePostGroupedResponse>.Create(
             grouped,
             totalCount,
-            req.PageNumber,
-            req.PageSize
+            query.PageNumber,
+            query.PageSize
         );
 
         return Result.Success(paged);

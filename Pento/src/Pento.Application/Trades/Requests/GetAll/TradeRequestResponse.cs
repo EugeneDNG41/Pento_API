@@ -5,8 +5,6 @@ using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Application.FoodItems.Search;
-using Pento.Application.Trades.Sessions.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
@@ -23,7 +21,15 @@ public sealed record TradeRequestResponse
     public DateTime CreatedOn { get; init; }
     public DateTime UpdatedOn { get; init; }
     public int TotalItems { get; init; }
-
+}
+public sealed record TradeOfferResponse
+{
+    public Guid TradeOfferId { get; init; }
+    public string OfferHouseholdName { get; init; }
+    public string Status { get; init; }
+    public DateTime CreatedOn { get; init; }
+    public DateTime UpdatedOn { get; init; }
+    public int TotalItems { get; init; }
 }
 public enum GetTradeRequestsSortBy
 {
@@ -90,11 +96,21 @@ internal sealed class GetTradeRequestsQueryHandler(
             parameters.Add("@Status", query.Status.Value.ToString());
             filters.Add("tr.status = @Status");
         }
-        if (query.IsMine.HasValue && query.IsMine.Value)
+        if (query.IsMine.HasValue)
         {
-            parameters.Add("@UserId", userContext.UserId);
-            filters.Add("tr.user_id = @UserId");
+            if (query.IsMine.Value)
+            {
+                parameters.Add("@UserId", userContext.UserId);
+                filters.Add("tr.user_id = @UserId");
+            }
+            else
+            {
+                parameters.Add("@UserId", userContext.UserId);
+                filters.Add("tr.user_id <> @UserId");
+            }
+            
         }
+        
         parameters.Add("@Offset", (query.PageNumber - 1) * query.PageSize);
         parameters.Add("@PageSize", query.PageSize);
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
