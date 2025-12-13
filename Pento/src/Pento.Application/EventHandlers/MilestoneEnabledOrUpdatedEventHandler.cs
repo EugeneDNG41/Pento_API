@@ -9,7 +9,7 @@ using Pento.Domain.Users;
 
 namespace Pento.Application.EventHandlers;
 
-internal sealed class MilestoneEnabledOrUpdatedEventHandler( //business rule: when a milestone is enabled, check all users against it
+internal sealed class MilestoneEnabledOrUpdatedEventHandler( 
     IMilestoneService milestoneService,
     IGenericRepository<Milestone> milestoneRepository,
     IGenericRepository<UserMilestone> userMilestoneRepository,
