@@ -1,13 +1,12 @@
 ﻿using System.Data.Common;
 using Dapper;
-using FluentValidation;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
-using Pento.Domain.Trades;
 
 namespace Pento.Application.Trades.Requests.GetAll;
 
@@ -22,44 +21,9 @@ public sealed record TradeRequestResponse
     public DateTime UpdatedOn { get; init; }
     public int TotalItems { get; init; }
 }
-public sealed record TradeOfferResponse
-{
-    public Guid TradeOfferId { get; init; }
-    public string OfferHouseholdName { get; init; }
-    public string Status { get; init; }
-    public DateTime CreatedOn { get; init; }
-    public DateTime UpdatedOn { get; init; }
-    public int TotalItems { get; init; }
-}
-public enum GetTradeRequestsSortBy
-{
-    CreatedOn,
-    TotalItems
-}
-public sealed record GetTradeRequestsQuery(
-    Guid? OfferId,
-    TradeRequestStatus? Status, 
-    bool? IsMine,
-    GetTradeRequestsSortBy? SortBy,
-    SortOrder? SortOrder,
-    int PageNumber, 
-    int PageSize) : IQuery<PagedList<TradeRequestResponse>>;
-internal sealed class GetTradeRequestsQueryValidator : AbstractValidator<GetTradeRequestsQuery>
-{
-    public GetTradeRequestsQueryValidator()
-    {
-        RuleFor(x => x.PageNumber)
-            .GreaterThan(0).WithMessage("Page number must be greater than 0.");
-        RuleFor(x => x.PageSize)
-            .GreaterThan(0).WithMessage("Page size must be greater than 0.");
-        RuleFor(x => x.SortBy)        
-            .IsInEnum().WithMessage("Invalid sort by option.")
-            .When(x => x.SortBy.HasValue);
-        RuleFor(x => x.SortOrder)
-            .IsInEnum().WithMessage("Invalid sort order option.")
-            .When(x => x.SortOrder.HasValue);
-    }
-}
+public sealed record TradeRequestDetailResponse(TradeRequestResponse TradeRequest, IReadOnlyList<TradeItemResponse> Items);
+public sealed record GetTradeRequestByIdQuery(Guid TradeRequestId) : IQuery<TradeRequestDetailResponse>;
+
 internal sealed class GetTradeRequestsQueryHandler(
     IUserContext userContext,
     ISqlConnectionFactory sqlConnectionFactory

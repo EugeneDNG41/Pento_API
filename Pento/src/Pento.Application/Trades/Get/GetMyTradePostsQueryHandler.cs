@@ -31,6 +31,7 @@ internal sealed class GetMyTradePostsQueryHandler(
                 u.avatar_url            AS PostedByAvatarUrl,
                 i.quantity              AS Quantity,
                 un.abbreviation         AS UnitAbbreviation,
+                o.status                AS Status,
                 o.start_date            AS StartDate,
                 o.end_date              AS EndDate,
                 o.pickup_option         AS PickupOption,
