@@ -1,16 +1,19 @@
 ﻿using Pento.Application.Abstractions.Exceptions;
+using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
 using Pento.Domain.FoodItems;
+using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
 
 namespace Pento.Application.EventHandlers;
 
 internal sealed class TradeSessionCompletedEventHandler(
     IConverterService converterService,
+    INotificationService notificationService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,  
     IGenericRepository<TradeRequest> tradeRequestRepository,
@@ -193,5 +196,42 @@ internal sealed class TradeSessionCompletedEventHandler(
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        string title = "Trade Completed";
+        string requestItemsToOfferMessage = sessionRequestItems.Any()
+            ? $"You received {sessionRequestItems.Count} item(s) in {offerCompartment.Name} from the trade."
+            : "No items were received from the trade.";
+        string offerItemsToRequestMessage = sessionOfferItems.Any()
+            ? $"You received {sessionOfferItems.Count} item(s) in {requestCompartment.Name} from the trade."
+            : "No items were sent from the trade.";
+        var payload = new Dictionary<string, string>
+        {
+            { "TradeSessionId", session.Id.ToString() },
+            { "CompartmentId", offerCompartment.Id.ToString() }
+        };
+        Result receiveRequestedItemsNotification = await notificationService.SendToHouseholdAsync(
+            offer.HouseholdId,
+            title,
+            requestItemsToOfferMessage,
+            NotificationType.Trade,
+            payload,
+            cancellationToken);
+        payload.Remove("CompartmentId");
+        payload.Add("CompartmentId", requestCompartment.Id.ToString());
+        Result receiveOfferedItemsNotification = await notificationService.SendToHouseholdAsync(
+            request.HouseholdId,
+            title,
+            offerItemsToRequestMessage,
+            NotificationType.Trade,
+            payload,
+            cancellationToken);
+        if (receiveRequestedItemsNotification.IsFailure) 
+        {
+            throw new PentoException(nameof(TradeSessionCompletedEventHandler), receiveRequestedItemsNotification.Error);
+        }
+        if (receiveOfferedItemsNotification.IsFailure) 
+        {
+            throw new PentoException(nameof(TradeSessionCompletedEventHandler), receiveOfferedItemsNotification.Error);
+        }
     }
 }

@@ -13,6 +13,7 @@ internal sealed class ConfirmTradeSessionCommandHandler(
     IUserContext userContext,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeSession> tradeSessionRepository,
+    IGenericRepository<TradeSessionItem> tradeSessionItemRepository,
     IUnitOfWork unitOfWork
     ) : ICommandHandler<ConfirmTradeSessionCommand>
 {
@@ -40,6 +41,12 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         {
             if (session.ConfirmedByOfferUserId == null)
             {
+                bool existingTradeItems = await tradeSessionItemRepository
+                    .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
+                if (!existingTradeItems)
+                {
+                    return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.NoTradeItemsInSession);
+                }
                 session.ConfirmByOfferUser(userContext.UserId);
             }
             else
@@ -51,6 +58,12 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         {
             if (session.ConfirmedByRequestUserId == null)
             {
+                bool existingTradeItems = await tradeSessionItemRepository
+                    .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
+                if (!existingTradeItems)
+                {
+                    return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.NoTradeItemsInSession);
+                }
                 session.ConfirmByRequestUser(userContext.UserId);
             }
             else

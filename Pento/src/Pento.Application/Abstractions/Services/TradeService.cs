@@ -75,7 +75,8 @@ public sealed class TradeService(
         TradeSession session, 
         TradeSessionItem sessionItem,
         FoodItem foodItem, 
-        decimal newQuantity,     
+        decimal newQuantity,
+        Guid newUnitId,
         CancellationToken cancellationToken)
     {
         Result<decimal> currentQtyInItemUnit = await converter.ConvertAsync(
@@ -90,7 +91,7 @@ public sealed class TradeService(
         }
         Result<decimal> newQtyInItemUnit = await converter.ConvertAsync(
                     newQuantity,
-                    sessionItem.UnitId,
+                    newUnitId,
                     foodItem.UnitId,
                     cancellationToken
                 );

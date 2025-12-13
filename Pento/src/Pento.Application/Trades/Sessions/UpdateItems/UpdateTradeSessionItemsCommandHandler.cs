@@ -5,7 +5,6 @@ using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
-using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
 
@@ -69,10 +68,12 @@ internal sealed class UpdateTradeSessionItemsCommandHandler(
             {
                 return Result.Failure(FoodItemErrors.ForbiddenAccess);
             }
-            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedFromSessionAsync(
+            Result reconciliationResult = await tradeService.ReconcileUpdatedTradeItemsDuringSessionAsync(
                 session,
                 sessionItem,
                 foodItem,
+                dto.Quantity,
+                dto.UnitId,
                 cancellationToken);
             if (reconciliationResult.IsFailure)
             {
