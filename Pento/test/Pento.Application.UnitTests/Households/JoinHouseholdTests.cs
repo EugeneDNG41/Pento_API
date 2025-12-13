@@ -181,14 +181,14 @@ internal sealed class JoinHouseholdTests
         _roleRepo.FindAsync(r => r.Name == Role.HouseholdHead.Name, Arg.Any<CancellationToken>())
             .Returns([Role.HouseholdHead]);
 
-        _roleRepo.FindAsync(r => r.Name == Role.PantryManager.Name, Arg.Any<CancellationToken>())
-            .Returns([Role.PantryManager]);
+        _roleRepo.FindAsync(r => r.Name == Role.HouseholdMember.Name, Arg.Any<CancellationToken>())
+            .Returns([Role.HouseholdMember]);
 
         Result result = await _handler.Handle(CreateCommand(household.InviteCode!), CancellationToken.None);
 
         Assert.That(result.IsSuccess);
         Assert.That(user.HouseholdId, Is.EqualTo(household.Id));
-        Assert.That(user.Roles.Any(r => r.Name == Role.PantryManager.Name));
+        Assert.That(user.Roles.Any(r => r.Name == Role.HouseholdMember.Name));
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

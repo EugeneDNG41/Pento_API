@@ -20,7 +20,7 @@ internal sealed class UserTests
     {
         // Arrange
         var user = User.Create("a@b.com", "First", "Last", "identity-1", DateTime.UtcNow);
-        Role[] newRoles = new[] { Role.Administrator, Role.User };
+        Role[] newRoles = new[] { Role.Administrator, Role.HouseholdMember };
 
         // Act
         user.SetRoles(newRoles);
@@ -29,7 +29,7 @@ internal sealed class UserTests
         var roleNames = user.Roles.Select(r => r.Name).ToList();
         Assert.That(roleNames.Count, Is.EqualTo(2), "Expected two roles to be present after adding.");
         Assert.That(roleNames, Does.Contain(Role.Administrator.Name));
-        Assert.That(roleNames, Does.Contain(Role.User.Name));
+        Assert.That(roleNames, Does.Contain(Role.HouseholdMember.Name));
     }
 
     /// <summary>
@@ -43,16 +43,16 @@ internal sealed class UserTests
         // Arrange
         var user = User.Create("a@b.com", "First", "Last", "identity-2", DateTime.UtcNow);
         // Seed with two roles first
-        user.SetRoles(new[] { Role.Administrator, Role.User });
+        user.SetRoles(new[] { Role.Administrator, Role.HouseholdMember });
         Assert.That(user.Roles.Select(r => r.Name).Count(n => n == Role.Administrator.Name), Is.EqualTo(1), "Precondition: Administrator should be present once.");
 
         // Act
-        user.SetRoles(new[] { Role.User });
+        user.SetRoles(new[] { Role.HouseholdMember });
 
         // Assert
         var roleNames = user.Roles.Select(r => r.Name).ToList();
         Assert.That(roleNames, Has.Count.EqualTo(1), "Expected only one role after removing unspecified roles.");
-        Assert.That(roleNames[0], Is.EqualTo(Role.User.Name));
+        Assert.That(roleNames[0], Is.EqualTo(Role.HouseholdMember.Name));
         Assert.That(roleNames, Does.Not.Contain(Role.Administrator.Name));
     }
 
