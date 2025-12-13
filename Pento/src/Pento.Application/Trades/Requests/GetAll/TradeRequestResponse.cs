@@ -55,7 +55,7 @@ internal sealed class GetTradeRequestByIdQueryHandler(
             JOIN trade_offers tof ON tr.trade_offer_id = tof.id
             JOIN households h1 ON tof.household_id = h1.id
             JOIN households h2 ON tr.household_id = h2.id
-            WHERE tr.id = @TradeRequestId AND (h1.id = @HouseholdId OR h2.id =@HouseholdId) and tr.is_deleted is false;
+            WHERE tr.id = @TradeRequestId AND (h1.id = @HouseholdId OR h2.id = @HouseholdId) and tr.is_deleted = false;
         ";
         var parameters = new DynamicParameters();
         parameters.Add("@TradeRequestId", query.TradeRequestId);
@@ -83,7 +83,7 @@ internal sealed class GetTradeRequestByIdQueryHandler(
             JOIN food_items fi ON fi.id = ti.food_item_id
             JOIN food_references fr ON fr.id = fi.food_reference_id
             JOIN units u ON u.id = ti.unit_id
-            WHERE ti.request_id = @TradeRequestId and (h1.id = @HouseholdId OR h2.id =@HouseholdId);
+            WHERE ti.request_id = @TradeRequestId;
             """;
         var itemsCommand = new CommandDefinition(itemsSql, parameters, cancellationToken: cancellationToken);
         IEnumerable<TradeItemResponse> items = await connection.QueryAsync<TradeItemResponse>(itemsCommand);
@@ -167,6 +167,9 @@ internal sealed class GetTradeRequestsQueryHandler(
             {orderClause}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             SELECT COUNT(*) FROM trade_requests tr
+            JOIN trade_offers tof ON tr.trade_offer_id = tof.id
+            JOIN households h1 ON tof.household_id = h1.id
+            JOIN households h2 ON tr.household_id = h2.id
             {whereClause};
         ";
         var command = new CommandDefinition(sql, parameters, cancellationToken: cancellationToken);
