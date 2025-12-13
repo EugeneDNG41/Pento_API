@@ -68,7 +68,7 @@ public sealed class FcmNotificationService : INotificationService
         CancellationToken cancellationToken)
     {
         payload ??= [];
-        payload.Add("type", notificationType.ToString());
+        payload.TryAdd("type", notificationType.ToString());
         var deviceTokens = (await deviceTokenRepository.FindAsync(dt => dt.UserId == userId, cancellationToken)).Select(dt => dt.Token).ToList();
         foreach (string deviceToken in deviceTokens)
         {

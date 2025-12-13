@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
+using Pento.Domain.FoodReferences;
 
 namespace Pento.Application.FoodReferences.Get;
 
@@ -88,9 +89,21 @@ internal sealed class GetAllFoodReferencesQueryHandler(ISqlConnectionFactory sql
 
         int totalCount = await multi.ReadFirstAsync<int>();
 
-        var items = (await multi.ReadAsync<FoodReferenceResponse>())
-            .ToList();
-
+        IEnumerable<FoodReferenceRow> rowItems = await multi.ReadAsync<FoodReferenceRow>();
+        IEnumerable<FoodReferenceResponse> items = rowItems.Select(x => new FoodReferenceResponse(
+            x.Id,
+            x.Name,
+            x.FoodGroup.ToReadableString(),
+            x.TypicalShelfLifeDays_Pantry,
+            x.TypicalShelfLifeDays_Fridge,
+            x.TypicalShelfLifeDays_Freezer,
+            x.AddedBy,
+            x.ImageUrl,
+            x.Brand,
+            x.Barcode,
+            x.UnitType,
+            x.CreatedAt,
+            x.UpdatedAt));
 
         var paged = PagedList<FoodReferenceResponse>.Create(
             items,
