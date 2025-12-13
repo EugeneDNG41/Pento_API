@@ -55,7 +55,7 @@ internal sealed class GetTradeRequestByIdQueryHandler(
             JOIN trade_offers tof ON tr.trade_offer_id = tof.id
             JOIN households h1 ON tof.household_id = h1.id
             JOIN households h2 ON tr.household_id = h2.id
-            WHERE tr.id = @TradeRequestId AND tr.household_id = @HouseholdId and ti.is_deleted is false;
+            WHERE tr.id = @TradeRequestId AND (h1.id = @HouseholdId OR h2.id =@HouseholdId) and tr.is_deleted is false;
         ";
         var parameters = new DynamicParameters();
         parameters.Add("@TradeRequestId", query.TradeRequestId);
@@ -83,7 +83,7 @@ internal sealed class GetTradeRequestByIdQueryHandler(
             JOIN food_items fi ON fi.id = ti.food_item_id
             JOIN food_references fr ON fr.id = fi.food_reference_id
             JOIN units u ON u.id = ti.unit_id
-            WHERE ti.request_id = @TradeRequestId and ti.household_id = @HouseholdId and ti.is_deleted is false;
+            WHERE ti.request_id = @TradeRequestId and (h1.id = @HouseholdId OR h2.id =@HouseholdId);
             """;
         var itemsCommand = new CommandDefinition(itemsSql, parameters, cancellationToken: cancellationToken);
         IEnumerable<TradeItemResponse> items = await connection.QueryAsync<TradeItemResponse>(itemsCommand);
@@ -118,7 +118,7 @@ internal sealed class GetTradeRequestsQueryHandler(
         var parameters = new DynamicParameters();
         var filters = new List<string>();
         parameters.Add("@HouseholdId", householdId.Value);
-        filters.Add("tr.household_id = @HouseholdId");
+        filters.Add("(h1.id = @HouseholdId OR h2.id =@HouseholdId)");
         if (query.OfferId.HasValue)
         {
             parameters.Add("@OfferId", query.OfferId.Value);
