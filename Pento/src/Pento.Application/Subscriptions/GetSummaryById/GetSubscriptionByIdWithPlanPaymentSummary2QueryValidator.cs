@@ -2,9 +2,9 @@
 
 namespace Pento.Application.Subscriptions.GetSummaryById;
 
-internal sealed class GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator2 : AbstractValidator<GetSubscriptionWithPlanPaymentSummaryByIdQuery2>
+internal sealed class GetSubscriptionByIdWithPlanPaymentSummary2QueryValidator : AbstractValidator<GetSubscriptionWithPlanPaymentSummaryById2Query>
 {
-    public GetSubscriptionByIdWithPlanPaymentSummaryQueryValidator2()
+    public GetSubscriptionByIdWithPlanPaymentSummary2QueryValidator()
     {
         RuleFor(x => x.SubscriptionId)
             .NotEmpty()

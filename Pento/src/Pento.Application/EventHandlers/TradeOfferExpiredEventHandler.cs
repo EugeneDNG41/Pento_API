@@ -11,7 +11,7 @@ using Pento.Domain.Trades;
 
 namespace Pento.Application.EventHandlers;
 
-internal sealed class TradeOfferCancelledEventHandler(
+internal sealed class TradeOfferExpiredEventHandler(
     INotificationService notificationService,
     IConverterService converterService,
     IGenericRepository<TradeOffer> tradeOfferRepository,
@@ -20,10 +20,10 @@ internal sealed class TradeOfferCancelledEventHandler(
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Household> householdRepository,
     IUnitOfWork unitOfWork)
-    : DomainEventHandler<TradeOfferCancelledDomainEvent>
+    : DomainEventHandler<TradeOfferExpiredDomainEvent>
 {
     public override async Task Handle(
-        TradeOfferCancelledDomainEvent domainEvent,
+        TradeOfferExpiredDomainEvent domainEvent,
         CancellationToken cancellationToken = default)
     {
         TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(domainEvent.TradeOfferId, cancellationToken);
@@ -69,9 +69,9 @@ internal sealed class TradeOfferCancelledEventHandler(
         if (offerHousehold == null)
         {
             throw new PentoException(nameof(TradeOfferCancelledEventHandler), HouseholdErrors.NotFound);
-        }   
-        string title = "Trade Offer Cancelled";
-        string body = $"Household {offerHousehold.Name} has cancelled their trade offer";
+        }
+        string title = "Trade Offer Expired";
+        string body = $"Household {offerHousehold.Name}'s offer has expired";
         var payload = new Dictionary<string, string>
             {
                 { "tradeOfferId", offer.Id.ToString() }

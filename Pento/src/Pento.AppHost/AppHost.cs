@@ -1,4 +1,5 @@
 using Aspire.Hosting.Azure;
+using Aspire.Hosting.Testing;
 using Azure.Provisioning;
 using Azure.Provisioning.PostgreSql;
 
@@ -144,5 +145,13 @@ project.WithEnvironment("PayOS__WebhookUrl", webhookUrl)
          .WithEnvironment("PayOS__ReturnUrl", returnUrl)
          .WithEnvironment("PayOS__CancelUrl", cancelUrl);
 builder.AddAzureContainerAppEnvironment("cae");
-
+builder = await DistributedApplicationTestingBuilder
+    .CreateAsync<Projects.Pento_AppHost>(
+        [
+            "DcpPublisher:RandomizePorts=false"
+        ],
+        configureBuilder: (appOptions, hostSettings) =>
+        {
+            appOptions.DisableDashboard = false;
+        });
 await builder.Build().RunAsync();

@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Notifications.DeviceTokens;
 
-public sealed class RegisterDeviceTokenCommandValidator
+internal sealed class RegisterDeviceTokenCommandValidator
     : AbstractValidator<RegisterDeviceTokenCommand>
 {
     public RegisterDeviceTokenCommandValidator()

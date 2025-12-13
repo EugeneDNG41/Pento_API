@@ -2,7 +2,7 @@
 
 namespace Pento.Application.GroceryListItems.Update;
 
-public sealed class UpdateGroceryListItemCommandValidator : AbstractValidator<UpdateGroceryListItemCommand>
+internal sealed class UpdateGroceryListItemCommandValidator : AbstractValidator<UpdateGroceryListItemCommand>
 {
     public UpdateGroceryListItemCommandValidator()
     {

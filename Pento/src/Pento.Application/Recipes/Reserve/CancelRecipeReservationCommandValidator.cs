@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Recipes.Reserve;
 
-public sealed class CancelRecipeReservationCommandValidator
+internal sealed class CancelRecipeReservationCommandValidator
     : AbstractValidator<CancelRecipeReservationCommand>
 {
     public CancelRecipeReservationCommandValidator()

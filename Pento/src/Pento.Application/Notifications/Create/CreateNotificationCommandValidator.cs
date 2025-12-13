@@ -2,7 +2,7 @@
 
 namespace Pento.Application.Notifications.Create;
 
-public sealed class CreateNotificationCommandValidator
+internal sealed class CreateNotificationCommandValidator
     : AbstractValidator<CreateNotificationCommand>
 {
     public CreateNotificationCommandValidator()

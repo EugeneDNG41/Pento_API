@@ -2,7 +2,7 @@
 
 namespace Pento.Application.DietaryTags.Create;
 
-public sealed class CreateDietaryTagCommandValidator : AbstractValidator<CreateDietaryTagCommand>
+internal sealed class CreateDietaryTagCommandValidator : AbstractValidator<CreateDietaryTagCommand>
 {
     public CreateDietaryTagCommandValidator()
     {

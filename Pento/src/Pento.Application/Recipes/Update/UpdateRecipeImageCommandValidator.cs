@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Pento.Application.Recipes.Update;
 
-public sealed class UpdateRecipeImageCommandValidator
+internal sealed class UpdateRecipeImageCommandValidator
     : AbstractValidator<UpdateRecipeImageCommand>
 {
     private static readonly string[] AllowedImageTypes =

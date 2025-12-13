@@ -2,7 +2,7 @@
 
 namespace Pento.Application.MealPlans.Create;
 
-public sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMealPlanCommand>
+internal sealed class CreateMealPlanCommandValidator : AbstractValidator<CreateMealPlanCommand>
 {
     public CreateMealPlanCommandValidator()
     {
