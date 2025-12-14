@@ -12,8 +12,8 @@ using Pento.Infrastructure.Persistence;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251211091259_ActualTradeActivity")]
-    partial class ActualTradeActivity
+    [Migration("20251214090308_init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -474,6 +474,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_food_item_reservations");
 
+                    b.HasIndex("FoodItemId")
+                        .HasDatabaseName("ix_food_item_reservations_food_item_id");
+
                     b.ToTable("food_item_reservations", (string)null);
 
                     b.HasDiscriminator<string>("ReservationFor");
@@ -548,6 +551,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_food_items");
+
+                    b.HasIndex("AddedBy")
+                        .HasDatabaseName("ix_food_items_added_by");
 
                     b.HasIndex("CompartmentId")
                         .HasDatabaseName("ix_food_items_compartment_id");
@@ -859,6 +865,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_meal_plan_recipes");
 
+                    b.HasIndex("RecipeId")
+                        .HasDatabaseName("ix_meal_plan_recipes_recipe_id");
+
                     b.HasIndex("MealPlanId", "RecipeId")
                         .IsUnique()
                         .HasDatabaseName("ix_meal_plan_recipes_meal_plan_id_recipe_id");
@@ -924,6 +933,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_meal_plans");
+
+                    b.HasIndex("CreatedBy")
+                        .HasDatabaseName("ix_meal_plans_created_by");
 
                     b.HasIndex("HouseholdId")
                         .HasDatabaseName("ix_meal_plans_household_id");
@@ -1539,6 +1551,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_recipe_directions");
 
+                    b.HasIndex("RecipeId")
+                        .HasDatabaseName("ix_recipe_directions_recipe_id");
+
                     b.ToTable("recipe_directions", (string)null);
                 });
 
@@ -1597,42 +1612,6 @@ namespace Pento.Infrastructure.Migrations
                     b.ToTable("recipe_ingredients", (string)null);
                 });
 
-            modelBuilder.Entity("Pento.Domain.RecipeMedia.RecipeMedia", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
-                        .HasColumnName("id");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_deleted");
-
-                    b.Property<string>("MimeType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("mime_type");
-
-                    b.Property<Guid>("RecipeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("recipe_id");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
-                        .HasColumnName("url");
-
-                    b.HasKey("Id")
-                        .HasName("pk_recipe_media");
-
-                    b.HasIndex("RecipeId")
-                        .HasDatabaseName("ix_recipe_media_recipe_id");
-
-                    b.ToTable("recipe_media", (string)null);
-                });
-
             modelBuilder.Entity("Pento.Domain.RecipeWishLists.RecipeWishList", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1658,6 +1637,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_recipe_wishlists");
+
+                    b.HasIndex("RecipeId")
+                        .HasDatabaseName("ix_recipe_wishlists_recipe_id");
 
                     b.HasIndex("HouseholdId", "RecipeId")
                         .IsUnique()
@@ -1764,23 +1746,8 @@ namespace Pento.Infrastructure.Migrations
                         },
                         new
                         {
-                            Name = "Grocery Shopper",
+                            Name = "Household Member",
                             Type = "Household"
-                        },
-                        new
-                        {
-                            Name = "Meal Planner",
-                            Type = "Household"
-                        },
-                        new
-                        {
-                            Name = "Pantry Manager",
-                            Type = "Household"
-                        },
-                        new
-                        {
-                            Name = "User",
-                            Type = "General"
                         });
                 });
 
@@ -1976,6 +1943,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasIndex("FoodItemId")
                         .HasDatabaseName("ix_trade_items_food_item_id");
 
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_trade_items_unit_id");
+
                     b.ToTable("trade_items", (string)null);
 
                     b.HasDiscriminator<string>("From");
@@ -2101,17 +2071,25 @@ namespace Pento.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<Guid?>("ConfirmedByOfferUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("confirmed_by_offer_user_id");
+
+                    b.Property<Guid?>("ConfirmedByRequestUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("confirmed_by_request_user_id");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean")
                         .HasColumnName("is_deleted");
 
                     b.Property<Guid>("OfferHouseholdId")
                         .HasColumnType("uuid")
-                        .HasColumnName("offer_user_id");
+                        .HasColumnName("offer_household_id");
 
                     b.Property<Guid>("RequestHouseholdId")
                         .HasColumnType("uuid")
-                        .HasColumnName("request_user_id");
+                        .HasColumnName("request_household_id");
 
                     b.Property<DateTime>("StartedOn")
                         .HasColumnType("timestamp with time zone")
@@ -2134,11 +2112,17 @@ namespace Pento.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_trade_sessions");
 
+                    b.HasIndex("ConfirmedByOfferUserId")
+                        .HasDatabaseName("ix_trade_sessions_confirmed_by_offer_user_id");
+
+                    b.HasIndex("ConfirmedByRequestUserId")
+                        .HasDatabaseName("ix_trade_sessions_confirmed_by_request_user_id");
+
                     b.HasIndex("OfferHouseholdId")
-                        .HasDatabaseName("ix_trade_sessions_offer_user_id");
+                        .HasDatabaseName("ix_trade_sessions_offer_household_id");
 
                     b.HasIndex("RequestHouseholdId")
-                        .HasDatabaseName("ix_trade_sessions_request_user_id");
+                        .HasDatabaseName("ix_trade_sessions_request_household_id");
 
                     b.HasIndex("TradeOfferId")
                         .HasDatabaseName("ix_trade_sessions_trade_offer_id");
@@ -2147,6 +2131,50 @@ namespace Pento.Infrastructure.Migrations
                         .HasDatabaseName("ix_trade_sessions_trade_request_id");
 
                     b.ToTable("trade_sessions", (string)null);
+                });
+
+            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("FoodItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("food_item_id");
+
+                    b.Property<string>("From")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("from");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("numeric")
+                        .HasColumnName("quantity");
+
+                    b.Property<Guid>("SessionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("session_id");
+
+                    b.Property<Guid>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_trade_session_items");
+
+                    b.HasIndex("FoodItemId")
+                        .HasDatabaseName("ix_trade_session_items_food_item_id");
+
+                    b.HasIndex("SessionId")
+                        .HasDatabaseName("ix_trade_session_items_session_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_trade_session_items_unit_id");
+
+                    b.ToTable("trade_session_items", (string)null);
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeSessionMessage", b =>
@@ -2266,6 +2294,9 @@ namespace Pento.Infrastructure.Migrations
                     b.HasIndex("HouseholdId")
                         .HasDatabaseName("ix_user_activities_household_id");
 
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_activities_user_id");
+
                     b.ToTable("user_activities", (string)null);
                 });
 
@@ -2351,6 +2382,9 @@ namespace Pento.Infrastructure.Migrations
 
                     b.HasIndex("MilestoneId")
                         .HasDatabaseName("ix_user_milestones_milestone_id");
+
+                    b.HasIndex("UserId")
+                        .HasDatabaseName("ix_user_milestones_user_id");
 
                     b.ToTable("user_milestones", (string)null);
                 });
@@ -2571,36 +2605,6 @@ namespace Pento.Infrastructure.Migrations
                     b.HasData(
                         new
                         {
-                            PermissionCode = "user:general",
-                            RoleName = "User"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:read",
-                            RoleName = "User"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:create",
-                            RoleName = "User"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:update",
-                            RoleName = "User"
-                        },
-                        new
-                        {
-                            PermissionCode = "recipes:delete",
-                            RoleName = "User"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:read",
-                            RoleName = "User"
-                        },
-                        new
-                        {
                             PermissionCode = "users:read",
                             RoleName = "Administrator"
                         },
@@ -2807,227 +2811,127 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             PermissionCode = "household:read",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "household:update",
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "storages:read",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "storages:create",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "storages:update",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "storages:delete",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "compartments:read",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "compartments:create",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "compartments:update",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "compartments:delete",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "fooditems:read",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "fooditems:create",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "fooditems:update",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "fooditems:delete",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "groceries:read",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "groceries:create",
-                            RoleName = "Pantry Manager"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "groceries:update",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:read",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:create",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:update",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:create",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:update",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "giveaways:delete",
-                            RoleName = "Pantry Manager"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "storages:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "compartments:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "fooditems:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "fooditems:create",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "fooditems:update",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:create",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:update",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:read",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:create",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:update",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "mealplans:delete",
-                            RoleName = "Meal Planner"
-                        },
-                        new
-                        {
-                            PermissionCode = "household:read",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "storages:read",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "compartments:read",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "fooditems:read",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "fooditems:create",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:read",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:create",
-                            RoleName = "Grocery Shopper"
-                        },
-                        new
-                        {
-                            PermissionCode = "groceries:update",
-                            RoleName = "Grocery Shopper"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "groceries:delete",
-                            RoleName = "Grocery Shopper"
+                            RoleName = "Household Member"
                         },
                         new
                         {
                             PermissionCode = "mealplans:read",
-                            RoleName = "Grocery Shopper"
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "mealplans:create",
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "mealplans:update",
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "mealplans:delete",
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "giveaways:create",
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "giveaways:update",
+                            RoleName = "Household Member"
+                        },
+                        new
+                        {
+                            PermissionCode = "giveaways:delete",
+                            RoleName = "Household Member"
                         });
                 });
 
@@ -3082,22 +2986,6 @@ namespace Pento.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Recipe");
                 });
 
-            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemTradeReservation", b =>
-                {
-                    b.HasBaseType("Pento.Domain.FoodItemReservations.FoodItemReservation");
-
-                    b.Property<Guid>("TradeItemId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("trade_item_id");
-
-                    b.HasIndex("TradeItemId")
-                        .HasDatabaseName("ix_food_item_reservations_trade_item_id");
-
-                    b.ToTable("food_item_reservations", (string)null);
-
-                    b.HasDiscriminator().HasValue("Trade");
-                });
-
             modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>
                 {
                     b.HasBaseType("Pento.Domain.Trades.TradeItem");
@@ -3130,28 +3018,6 @@ namespace Pento.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue("Request");
                 });
 
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
-                {
-                    b.HasBaseType("Pento.Domain.Trades.TradeItem");
-
-                    b.Property<string>("ItemFrom")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
-                        .HasColumnName("item_from");
-
-                    b.Property<Guid>("SessionId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("session_id");
-
-                    b.HasIndex("SessionId")
-                        .HasDatabaseName("ix_trade_items_session_id");
-
-                    b.ToTable("trade_items", (string)null);
-
-                    b.HasDiscriminator().HasValue("Session");
-                });
-
             modelBuilder.Entity("Pento.Domain.Compartments.Compartment", b =>
                 {
                     b.HasOne("Pento.Domain.Households.Household", null)
@@ -3169,6 +3035,16 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_compartments_storage_storage_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.DeviceTokens.DeviceToken", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_device_tokens_user_user_id");
+                });
+
             modelBuilder.Entity("Pento.Domain.FoodDietaryTags.FoodDietaryTag", b =>
                 {
                     b.HasOne("Pento.Domain.DietaryTags.DietaryTag", null)
@@ -3177,6 +3053,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_food_dietary_tags_dietary_tags_dietary_tag_id");
+
+                    b.HasOne("Pento.Domain.FoodReferences.FoodReference", null)
+                        .WithMany()
+                        .HasForeignKey("FoodReferenceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_dietary_tags_food_reference_food_reference_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.FoodItemLogs.FoodItemLog", b =>
@@ -3200,7 +3083,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_food_item_logs_units_unit_id");
+                        .HasConstraintName("fk_food_item_logs_unit_unit_id");
 
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
@@ -3210,8 +3093,25 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_food_item_logs_user_user_id");
                 });
 
+            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemReservation", b =>
+                {
+                    b.HasOne("Pento.Domain.FoodItems.FoodItem", null)
+                        .WithMany()
+                        .HasForeignKey("FoodItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_item_reservations_food_items_food_item_id");
+                });
+
             modelBuilder.Entity("Pento.Domain.FoodItems.FoodItem", b =>
                 {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("AddedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_food_items_user_added_by");
+
                     b.HasOne("Pento.Domain.Compartments.Compartment", null)
                         .WithMany()
                         .HasForeignKey("CompartmentId")
@@ -3224,7 +3124,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("FoodReferenceId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_food_items_food_references_food_reference_id");
+                        .HasConstraintName("fk_food_items_food_reference_food_reference_id");
 
                     b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
@@ -3238,7 +3138,7 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_food_items_units_unit_id");
+                        .HasConstraintName("fk_food_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.GroceryListAssignees.GroceryListAssignee", b =>
@@ -3285,23 +3185,35 @@ namespace Pento.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.SetNull)
-                        .HasConstraintName("fk_grocery_list_items_units_unit_id");
+                        .HasConstraintName("fk_grocery_list_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.MealPlanRecipe.MealPlanRecipe", b =>
                 {
-                    b.HasOne("Pento.Domain.MealPlans.MealPlan", "MealPlan")
+                    b.HasOne("Pento.Domain.MealPlans.MealPlan", null)
                         .WithMany()
                         .HasForeignKey("MealPlanId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_meal_plan_recipes_meal_plans_meal_plan_id");
 
-                    b.Navigation("MealPlan");
+                    b.HasOne("Pento.Domain.Recipes.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_meal_plan_recipes_recipe_recipe_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.MealPlans.MealPlan", b =>
                 {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("CreatedBy")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_meal_plans_user_created_by");
+
                     b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
                         .HasForeignKey("HouseholdId")
@@ -3325,6 +3237,16 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_milestone_requirements_milestones_milestone_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.Notifications.Notification", b =>
+                {
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_notifications_user_user_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Payments.Payment", b =>
@@ -3352,6 +3274,23 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_recipe_dietary_tags_dietary_tags_dietary_tag_id");
+
+                    b.HasOne("Pento.Domain.Recipes.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_recipe_dietary_tags_recipes_recipe_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.RecipeDirections.RecipeDirection", b =>
+                {
+                    b.HasOne("Pento.Domain.Recipes.Recipe", null)
+                        .WithMany()
+                        .HasForeignKey("RecipeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_recipe_directions_recipes_recipe_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.RecipeIngredients.RecipeIngredient", b =>
@@ -3375,17 +3314,24 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_recipe_ingredients_units_unit_id");
+                        .HasConstraintName("fk_recipe_ingredients_unit_unit_id");
                 });
 
-            modelBuilder.Entity("Pento.Domain.RecipeMedia.RecipeMedia", b =>
+            modelBuilder.Entity("Pento.Domain.RecipeWishLists.RecipeWishList", b =>
                 {
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
+                        .HasForeignKey("HouseholdId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_recipe_wishlists_households_household_id");
+
                     b.HasOne("Pento.Domain.Recipes.Recipe", null)
-                        .WithMany("Media")
+                        .WithMany()
                         .HasForeignKey("RecipeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_recipe_media_recipe_recipe_id");
+                        .HasConstraintName("fk_recipe_wishlists_recipes_recipe_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>
@@ -3469,6 +3415,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_trade_items_food_items_food_item_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_trade_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeOffer", b =>
@@ -3516,17 +3469,29 @@ namespace Pento.Infrastructure.Migrations
                 {
                     b.HasOne("Pento.Domain.Users.User", null)
                         .WithMany()
+                        .HasForeignKey("ConfirmedByOfferUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_trade_sessions_user_confirmed_by_offer_user_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("ConfirmedByRequestUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_trade_sessions_user_confirmed_by_request_user_id");
+
+                    b.HasOne("Pento.Domain.Households.Household", null)
+                        .WithMany()
                         .HasForeignKey("OfferHouseholdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_trade_sessions_user_offer_user_id");
+                        .HasConstraintName("fk_trade_sessions_households_offer_household_id");
 
-                    b.HasOne("Pento.Domain.Users.User", null)
+                    b.HasOne("Pento.Domain.Households.Household", null)
                         .WithMany()
                         .HasForeignKey("RequestHouseholdId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
-                        .HasConstraintName("fk_trade_sessions_user_request_user_id");
+                        .HasConstraintName("fk_trade_sessions_households_request_household_id");
 
                     b.HasOne("Pento.Domain.Trades.TradeOffer", null)
                         .WithMany()
@@ -3541,6 +3506,30 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_trade_sessions_trade_requests_trade_request_id");
+                });
+
+            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
+                {
+                    b.HasOne("Pento.Domain.FoodItems.FoodItem", null)
+                        .WithMany()
+                        .HasForeignKey("FoodItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_trade_session_items_food_items_food_item_id");
+
+                    b.HasOne("Pento.Domain.Trades.TradeSession", null)
+                        .WithMany()
+                        .HasForeignKey("SessionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_trade_session_items_trade_sessions_session_id");
+
+                    b.HasOne("Pento.Domain.Units.Unit", null)
+                        .WithMany()
+                        .HasForeignKey("UnitId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_trade_session_items_unit_unit_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.Trades.TradeSessionMessage", b =>
@@ -3574,6 +3563,13 @@ namespace Pento.Infrastructure.Migrations
                         .HasForeignKey("HouseholdId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .HasConstraintName("fk_user_activities_households_household_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_activities_user_user_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserEntitlements.UserEntitlement", b =>
@@ -3606,6 +3602,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_milestones_milestones_milestone_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_milestones_users_user_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserPreferences.UserPreference", b =>
@@ -3616,6 +3619,13 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_preferences_dietary_tags_dietary_tag_id");
+
+                    b.HasOne("Pento.Domain.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_user_preferences_users_user_id");
                 });
 
             modelBuilder.Entity("Pento.Domain.UserSubscriptions.UserSubscription", b =>
@@ -3698,16 +3708,6 @@ namespace Pento.Infrastructure.Migrations
                         .HasConstraintName("fk_food_item_reservations_recipe_recipe_id");
                 });
 
-            modelBuilder.Entity("Pento.Domain.FoodItemReservations.FoodItemTradeReservation", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeItem", null)
-                        .WithMany()
-                        .HasForeignKey("TradeItemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_food_item_reservations_trade_item_trade_item_id");
-                });
-
             modelBuilder.Entity("Pento.Domain.Trades.TradeItemOffer", b =>
                 {
                     b.HasOne("Pento.Domain.Trades.TradeOffer", null)
@@ -3726,21 +3726,6 @@ namespace Pento.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_trade_items_trade_request_request_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Trades.TradeSessionItem", b =>
-                {
-                    b.HasOne("Pento.Domain.Trades.TradeSession", null)
-                        .WithMany()
-                        .HasForeignKey("SessionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired()
-                        .HasConstraintName("fk_trade_items_trade_session_session_id");
-                });
-
-            modelBuilder.Entity("Pento.Domain.Recipes.Recipe", b =>
-                {
-                    b.Navigation("Media");
                 });
 #pragma warning restore 612, 618
         }

@@ -46,6 +46,7 @@ using Pento.Infrastructure.External.PayOS;
 using Pento.Infrastructure.External.Quartz;
 using Pento.Infrastructure.External.Vision;
 using Pento.Infrastructure.Persistence;
+using Pento.Infrastructure.Persistence.Seed;
 using Pento.Infrastructure.Persistence.TypeHandlers;
 using Pento.Infrastructure.Services;
 using Pento.Infrastructure.Utility.Caching;
@@ -97,7 +98,7 @@ public static class DependencyInjection
 
             return model;
         });
-        
+        services.AddScoped<DataSeeder>();
         GoogleOptions googleOptions = configuration.GetRequiredSection("Google")
          .Get<GoogleOptions>()
          ?? throw new InvalidOperationException("Google section is missing or invalid");

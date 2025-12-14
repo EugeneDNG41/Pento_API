@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using CsvHelper;
 using CsvHelper.Configuration;
+using Microsoft.AspNetCore.Http;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
@@ -16,7 +17,7 @@ internal sealed class ImportFoodReferencesCommandHandler(
 {
     public async Task<Result<int>> Handle(ImportFoodReferencesCommand request, CancellationToken cancellationToken)
     {
-        Microsoft.AspNetCore.Http.IFormFile? file = request.File;
+        IFormFile? file = request.File;
         if (file is null || file.Length == 0)
         {
             return Result.Failure<int>(Error.Conflict("FoodReferences.EmptyFile", "Uploaded file is empty."));
@@ -57,9 +58,9 @@ internal sealed class ImportFoodReferencesCommandHandler(
                 brand: null,
                 barcode: null,
                 usdaId: f.FdcId.ToString(CultureInfo.InvariantCulture),
-                typicalShelfLifeDaysPantry: 0,
-                typicalShelfLifeDaysFridge: 0,
-                typicalShelfLifeDaysFreezer: 0,
+                typicalShelfLifeDaysPantry: 1,
+                typicalShelfLifeDaysFridge: 7,
+                typicalShelfLifeDaysFreezer: 30,
                 addedBy: null,
                 imageUrl: null,
                 unitType: UnitData.Gram.Type,

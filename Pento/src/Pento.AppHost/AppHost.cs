@@ -20,7 +20,7 @@ IResourceBuilder<AzurePostgresFlexibleServerResource> postgres = builder
     .AddAzurePostgresFlexibleServer("postgres")
     .RunAsContainer(postgres =>
     {
-        postgres.WithBindMount("VolumeMount.AppHost-postgres-data", "/var/lib/postgresql/data");
+        postgres.WithBindMount("postgres", "/var/lib/postgresql/data");
         postgres.WithPgAdmin(pgAdmin =>
         {
             pgAdmin.WithHostPort(5050);

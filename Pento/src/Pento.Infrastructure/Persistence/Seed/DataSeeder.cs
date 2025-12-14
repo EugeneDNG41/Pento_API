@@ -13,7 +13,7 @@ using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Persistence.Seed;
 #pragma warning disable CA5394 // Do not use insecure randomness
-internal sealed class DataSeeder(
+public sealed class DataSeeder(
     IIdentityProviderService identityProviderService,
     ApplicationDbContext dbContext)
 {
@@ -34,7 +34,7 @@ internal sealed class DataSeeder(
         }
         string adminFirstName = "Admin";
         string adminLastName = "Pento";
-        string adminEmail = "admin@pento.com";
+        string adminEmail = "pento@admin.com";
         string adminPassword = "Admin123!";
         Result<string> adminIdentityId = await identityProviderService.RegisterUserAsync(
             new UserModel(adminEmail, adminPassword, adminFirstName, adminLastName),
@@ -57,44 +57,39 @@ internal sealed class DataSeeder(
     }
     public async Task SeedRandomUsersAsync(CancellationToken cancellationToken = default)
     {
-        var random = new Random();
         string[] firstNames =
         {
             "Alice", "Bob", "Charlie", "Diana", "Ethan",
             "Fiona", "George", "Hannah", "Ian", "Julia",
             "Kevin", "Laura", "Michael", "Nina", "Oliver",
-            "Paula", "Quentin", "Rachel", "Samuel", "Tina",
-            "Ulysses", "Victor", "Wendy", "Xavier", "Yvonne"
         };
         string[] lastNames =
         {
             "Smith", "Johnson", "Williams", "Brown", "Jones",
-            "Garcia", "Miller", "Davis", "Rodriguez", "Martinez",
-            "Hernandez", "Lopez", "Gonzalez", "Wilson", "Anderson",
-            "Thomas", "Taylor", "Moore", "Jackson", "Martin",
-            "Lee", "Perez", "Thompson", "White", "Harris"
+            "Thomas", "Taylor", "Moore", "Jackson", "Martin"
         };
         
         var users = new List<User>();
-        for (int i = 0; i < 50; i++)
+        foreach (string firstName in firstNames)
         {
-            string firstName = firstNames[random.Next(firstNames.Length)];
-            string lastName = lastNames[random.Next(lastNames.Length)];
-            string email = $"{firstName.ToLower(CultureInfo.InvariantCulture)}.{lastName.ToLower(CultureInfo.InvariantCulture)}@example.com";
-            string password = "Password123!";
-            Result<string> identityId = await identityProviderService.RegisterUserAsync(new UserModel(email, password, firstName, lastName), cancellationToken);
-            if (identityId.IsFailure)
+            foreach (string lastName in lastNames)
             {
-                throw new InvalidOperationException($"Failed to register user {email}: {identityId.Error.Description}");
-            }
-            var user = User.Create(
-                email: email,
-                firstName: firstName,
-                lastName: lastName,
-                identityId: identityId.Value,
-                createdAt: DateTime.UtcNow
-            );
-            users.Add(user);
+                string email = $"{firstName.ToLower(CultureInfo.InvariantCulture)}.{lastName.ToLower(CultureInfo.InvariantCulture)}@example.com";
+                string password = "Password123!";
+                Result<string> identityId = await identityProviderService.RegisterUserAsync(new UserModel(email, password, firstName, lastName), cancellationToken);
+                if (identityId.IsFailure)
+                {
+                    return;
+                }
+                var user = User.Create(
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    identityId: identityId.Value,
+                    createdAt: DateTime.UtcNow
+                );
+                users.Add(user);
+            }          
         }
         dbContext.Set<User>().AddRange(users);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -192,12 +187,11 @@ internal sealed class DataSeeder(
                 foreach(Compartment compartment in compartments)
                 {
                     List<FoodReference> foodReferences = await dbContext.Set<FoodReference>()
-                        .OrderBy(_ => Random.Shared.Next())
                         .Take(5)
                         .ToListAsync(cancellationToken);
                     foreach (FoodReference foodReference in foodReferences)
                     {
-                        Unit? unit = await dbContext.Set<Unit>().OrderBy(_ => Random.Shared.Next())
+                        Unit? unit = await dbContext.Set<Unit>()
                             .FirstOrDefaultAsync(u => u.Type == foodReference.UnitType, cancellationToken);
                         if (unit == null)
                         {
