@@ -26,6 +26,7 @@ internal sealed class CreateUnit : IEndpoint
                 CustomResults.Problem
             );
         })
+            .RequireAuthorization(Permissions.ManageFoodReferences)
         .WithTags(Tags.Admin);
     }
 

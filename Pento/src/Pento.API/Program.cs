@@ -31,7 +31,11 @@ builder.Services.AddHttpLogging(options =>
 });
 builder.AddCors();
 WebApplication app = builder.Build();
-app.ApplyMigrations();
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    await app.ApplyMigrations();
+}
 
 app.UseExceptionHandler();
 

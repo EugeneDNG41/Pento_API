@@ -19,8 +19,6 @@ internal sealed partial class KeyCloakAuthDelegatingHandler(IOptions<KeycloakOpt
 
         HttpResponseMessage httpResponseMessage = await base.SendAsync(request, cancellationToken);
 
-        httpResponseMessage.EnsureSuccessStatusCode();
-
         return httpResponseMessage;
     }
 

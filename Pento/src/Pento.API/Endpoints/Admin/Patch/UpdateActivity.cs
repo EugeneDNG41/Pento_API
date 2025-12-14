@@ -17,7 +17,7 @@ internal sealed class UpdateActivity : IEndpoint
         {
             Result result = await handler.Handle(new UpdateActivityCommand(activityCode, request.Name, request.Description), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManageSubscriptions).WithTags(Tags.Admin);
     }
     internal sealed class Request
     {

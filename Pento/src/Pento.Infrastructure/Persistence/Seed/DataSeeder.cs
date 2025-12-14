@@ -10,25 +10,26 @@ using Pento.Domain.Roles;
 using Pento.Domain.Storages;
 using Pento.Domain.Units;
 using Pento.Domain.Users;
-
-namespace Pento.Infrastructure.Persistence.Seed;
 #pragma warning disable CA5394 // Do not use insecure randomness
+namespace Pento.Infrastructure.Persistence.Seed;
 public sealed class DataSeeder(
     IIdentityProviderService identityProviderService,
     ApplicationDbContext dbContext)
 {
-    public async Task<Result<User>> SeedAdminAsync(CancellationToken cancellationToken = default)
+    public async Task<Result> SeedAdminAsync(CancellationToken cancellationToken = default)
     {
         User? adminUser = await dbContext.Set<User>().Include(u => u.Roles)
             .FirstOrDefaultAsync(u => u.Roles.Any(r => r.Name == Role.Administrator.Name), cancellationToken);
+
         if (adminUser != null)
         {
-            return adminUser;
+            return Result.Success();
         } 
         Role ? adminRole = await dbContext.Set<Role>()
             .FindAsync([Role.Administrator.Name], cancellationToken);
-
-        if (adminRole == null)
+        Role? householdHeadRole = await dbContext.Set<Role>()
+            .FindAsync([Role.HouseholdHead.Name], cancellationToken);
+        if (adminRole == null || householdHeadRole == null)
         {
             return Result.Failure<User>(RoleErrors.NotFound);
         }
@@ -52,8 +53,9 @@ public sealed class DataSeeder(
         );
         adminUser.SetRoles(new[] { adminRole });
         dbContext.Set<User>().Add(adminUser);
+
         await dbContext.SaveChangesAsync(cancellationToken);
-        return adminUser;
+        return Result.Success();
     }
     public async Task SeedRandomUsersAsync(CancellationToken cancellationToken = default)
     {

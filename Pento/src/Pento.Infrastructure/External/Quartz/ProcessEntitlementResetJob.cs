@@ -39,4 +39,3 @@ internal sealed class ProcessEntitlementResetJob(
         await unitOfWork.SaveChangesAsync(context.CancellationToken);
     }
 }
-

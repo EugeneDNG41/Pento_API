@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-using CsvHelper;
-using CsvHelper.Configuration;
+﻿using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
@@ -11,13 +9,15 @@ namespace Pento.API.Extensions;
 
 internal static class MigrationExtensions
 {
-    public static void ApplyMigrations(this IApplicationBuilder app)
+    public async static Task ApplyMigrations(this IApplicationBuilder app, CancellationToken cancellationToken = default)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
+        DataSeeder dataSeeder =
+            scope.ServiceProvider.GetRequiredService<DataSeeder>();
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        dbContext.Database.Migrate();
-        if (!dbContext.Set<Unit>().Any())
+        await dbContext.Database.MigrateAsync(default);
+        if (!await dbContext.Set<Unit>().AnyAsync(default))
         {
             dbContext.Set<Unit>().AddRange(UnitData.Gram,
             UnitData.Kilogram,
@@ -38,39 +38,12 @@ internal static class MigrationExtensions
             UnitData.Piece,
             UnitData.Pair,
             UnitData.Dozen);
-            dbContext.SaveChanges();
+            await dbContext.SaveChangesAsync(default);
         }
-
-
+        await dataSeeder.SeedAdminAsync(cancellationToken);
     }
-    public static async Task ImportFoodReferences(this IApplicationBuilder app, CancellationToken cancellationToken = default)
-    {
-        using IServiceScope scope = app.ApplicationServices.CreateScope();
-        using ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        if (!await dbContext.Set<FoodReference>().AnyAsync(cancellationToken))
-        {
-            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
-            {
-                HeaderValidated = null,
-                MissingFieldFound = null
-            };
-            using Stream stream = File.OpenRead(@"food_references.csv");
-            using var reader = new StreamReader(stream);
-            using var csv = new CsvReader(reader, csvConfig);
-            csv.Context.RegisterClassMap<FoodReferenceCsvMap>();
 
-            var records = new List<FoodReference>();
-            await foreach (FoodReference record in csv.GetRecordsAsync<FoodReference>(cancellationToken))
-            {
-                records.Add(record);
-            }
-            dbContext.Set<FoodReference>().AddRange(records);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
-        }
-        
-
-    }
     private sealed class FoodReferenceCsvMap : ClassMap<FoodReference>
     {
         public FoodReferenceCsvMap()

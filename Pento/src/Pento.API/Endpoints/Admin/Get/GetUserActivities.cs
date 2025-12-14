@@ -27,6 +27,6 @@ internal sealed class GetUserActivities : IEndpoint
             Result<PagedList<UserActivityResponse>> result = await handler.Handle(
                 new GetUserActivitiesQuery(userIds, activityCodes, keyword, from, to, sort, order, pageNumber, pageSize), cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManageUsers).WithTags(Tags.Admin);
     }
 }

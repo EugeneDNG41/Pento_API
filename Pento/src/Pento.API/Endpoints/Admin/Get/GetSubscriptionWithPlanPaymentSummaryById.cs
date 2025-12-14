@@ -21,7 +21,7 @@ internal sealed class GetSubscriptionWithPlanPaymentSummaryById : IEndpoint
             var query = new GetSubscriptionWithPlanPaymentSummaryByIdQuery(subscriptionId, fromDate, toDate, timeWindow);
             Result<SubscriptionWithPlanPaymentSummary> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManagePayments).WithTags(Tags.Admin);
     }
 }
 internal sealed class GetSubscriptionWithPlanPaymentSummaryById2 : IEndpoint
@@ -38,6 +38,6 @@ internal sealed class GetSubscriptionWithPlanPaymentSummaryById2 : IEndpoint
             var query = new GetSubscriptionWithPlanPaymentSummaryById2Query(subscriptionId, fromDate, toDate);
             Result<SubscriptionWithPlanPaymentSummary2> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManagePayments).WithTags(Tags.Admin);
     }
 }

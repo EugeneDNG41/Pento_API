@@ -23,7 +23,7 @@ internal sealed class UpdateFeature : IEndpoint
                 request.DefaultQuota,
                 request.DefaultResetPeriod), cancellationToken);
             return result.Match(Results.NoContent, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManageSubscriptions).WithTags(Tags.Admin);
     }
     internal sealed class Request
     {

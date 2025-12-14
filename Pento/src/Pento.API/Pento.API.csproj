@@ -8,6 +8,10 @@
 
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="food_references.csv" />
+  </ItemGroup>
+
 
 	<ItemGroup>
 		<PackageReference Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
@@ -29,6 +33,12 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Pento.Infrastructure\Pento.Infrastructure.csproj" />
 	  <ProjectReference Include="..\Pento.ServiceDefaults\Pento.ServiceDefaults.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="food_references.csv">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Resource>
 	</ItemGroup>
 
 

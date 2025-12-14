@@ -78,7 +78,6 @@ internal sealed class TradeOfferExpiredEventHandler(
             };
         foreach (TradeRequest request in requests)
         {
-            request.Cancel();
             payload.Add("tradeRequestId", request.Id.ToString());
             Result notificationResult = await notificationService.SendToHouseholdAsync(
                 request.HouseholdId,

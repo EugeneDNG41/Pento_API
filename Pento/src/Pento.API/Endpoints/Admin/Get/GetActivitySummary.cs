@@ -23,6 +23,6 @@ internal sealed class GetActivitySummary : IEndpoint
             var query = new GetActivitySummaryQuery(codes, userIds, householdIds, fromDate, toDate, timeWindow);
             Result<IReadOnlyList<ActivitySummary>> result = await handler.Handle(query, cancellationToken);
             return result.Match(Results.Ok, CustomResults.Problem);
-        }).WithTags(Tags.Admin);
+        }).RequireAuthorization(Permissions.ManageUsers).WithTags(Tags.Admin);
     }
 }
