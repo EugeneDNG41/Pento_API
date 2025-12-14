@@ -4,7 +4,7 @@ namespace Pento.Domain.Compartments;
 
 public sealed class Compartment : Entity
 {
-    public Compartment(Guid id, string name, Guid storageId, Guid householdId, string? notes) : base(id)
+    public Compartment(Guid id, string name, Guid storageId, Guid householdId, string? notes = null) : base(id)
     {
         Name = name;
         StorageId = storageId;
@@ -22,7 +22,7 @@ public sealed class Compartment : Entity
         compartment.Raise(new CompartmentCreatedDomainEvent(compartment.Id, userId));
         return compartment;
     }
-    public static Compartment AutoCreate(string name, Guid storageId, Guid householdId, string? notes)
+    public static Compartment AutoCreate(string name, Guid storageId, Guid householdId, string? notes = null)
     {
         var compartment = new Compartment(Guid.CreateVersion7(), name, storageId, householdId, notes);
         return compartment;

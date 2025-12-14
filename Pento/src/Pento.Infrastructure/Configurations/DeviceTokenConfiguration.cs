@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DeviceTokens;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -37,5 +38,9 @@ internal sealed class DeviceTokenConfiguration : IEntityTypeConfiguration<Device
             .IsUnique()
             .HasDatabaseName("ux_device_tokens_token");
         builder.HasQueryFilter(x => !x.IsDeleted);
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(dt => dt.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

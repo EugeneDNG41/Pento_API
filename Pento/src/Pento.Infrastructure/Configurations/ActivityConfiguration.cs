@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Activities;
+using Pento.Domain.MilestoneRequirements;
+using Pento.Domain.UserActivities;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -14,6 +16,12 @@ internal sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
         builder.Property(a => a.Code).HasMaxLength(50);
         builder.Property(a => a.Name).HasMaxLength(100);
         builder.Property(a => a.Description).HasMaxLength(500);
+        builder.HasMany<UserActivity>()
+               .WithOne()
+               .HasForeignKey(ua => ua.ActivityCode);
+        builder.HasMany<MilestoneRequirement>()
+               .WithOne()
+               .HasForeignKey(mr => mr.ActivityCode);
         builder.HasData(
             Activity.CreateStorage,
             Activity.CreateCompartment,

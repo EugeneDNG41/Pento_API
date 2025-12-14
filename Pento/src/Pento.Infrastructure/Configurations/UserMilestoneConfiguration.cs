@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Milestones;
 using Pento.Domain.UserMilestones;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -15,6 +16,10 @@ internal sealed class UserMilestoneConfiguration : IEntityTypeConfiguration<User
         builder.HasOne<Milestone>()
             .WithMany()
             .HasForeignKey(um => um.MilestoneId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(um => um.UserId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.HasQueryFilter(um => !um.IsDeleted);
     }

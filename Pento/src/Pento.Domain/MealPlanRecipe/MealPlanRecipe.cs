@@ -19,7 +19,6 @@ public sealed class MealPlanRecipe : Entity
 
     public static MealPlanRecipe Create(Guid mealPlanId, Guid recipeId)
         => new MealPlanRecipe(mealPlanId, recipeId);
-    public MealPlan MealPlan { get; private set; } = null!;
 
 }
 

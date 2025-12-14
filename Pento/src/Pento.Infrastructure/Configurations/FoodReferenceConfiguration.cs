@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
+using Pento.Domain.GroceryListItems;
+using Pento.Domain.RecipeIngredients;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -74,6 +77,15 @@ internal sealed class FoodReferenceConfiguration : IEntityTypeConfiguration<Food
         builder.Property(fr => fr.UpdatedOnUtc)
             .IsRequired();
         builder.HasQueryFilter(x => !x.IsDeleted);
-
+        builder.HasMany<FoodItem>()
+            .WithOne()
+            .HasForeignKey(fi => fi.FoodReferenceId)
+            .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany<RecipeIngredient>()
+            .WithOne()
+            .HasForeignKey(ri => ri.FoodRefId);
+        builder.HasMany<GroceryListItem>()
+            .WithOne()
+            .HasForeignKey(gli => gli.FoodRefId);
     }
 }

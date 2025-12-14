@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.FoodItemReservations;
+using Pento.Domain.FoodItems;
 using Pento.Domain.MealPlans;
 using Pento.Domain.Recipes;
 using Pento.Domain.Trades;
@@ -31,6 +32,10 @@ internal sealed class FoodItemReservationConfiguration : IEntityTypeConfiguratio
         builder.UseTphMappingStrategy().HasDiscriminator(x => x.ReservationFor)
                 .HasValue<FoodItemRecipeReservation>(ReservationFor.Recipe)
                .HasValue<FoodItemMealPlanReservation>(ReservationFor.MealPlan);
+        builder.HasOne<FoodItem>()
+            .WithMany()
+            .HasForeignKey(x => x.FoodItemId)
+            .OnDelete(DeleteBehavior.Restrict);
         builder.Property<uint>("Version").IsRowVersion();
         builder.HasQueryFilter(x => !x.IsDeleted);
     }

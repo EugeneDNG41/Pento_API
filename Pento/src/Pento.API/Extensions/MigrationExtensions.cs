@@ -13,9 +13,9 @@ internal static class MigrationExtensions
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         dbContext.Database.Migrate();
-        if (!dbContext.Units.Any())
+        if (!dbContext.Set<Unit>().Any())
         {
-            dbContext.Units.AddRange(UnitData.Gram,
+            dbContext.Set<Unit>().AddRange(UnitData.Gram,
             UnitData.Kilogram,
             UnitData.Ounce,
             UnitData.Pound,

@@ -8,15 +8,16 @@ public static class FoodDietaryTagSeeder
 {
     public static void Seed(ApplicationDbContext db)
     {
-        var dietaryTags = db.DietaryTags.ToList();
+        
+        var dietaryTags = db.Set<DietaryTag>().ToList();
         var tagsByName = dietaryTags.ToDictionary(
             x => x.Name,
             x => x,
             StringComparer.OrdinalIgnoreCase);
 
-        var foods = db.FoodReferences.ToList();
+        var foods = db.Set<FoodReference>().ToList();
 
-        var existing = db.FoodDietaryTags
+        var existing = db.Set<FoodDietaryTag>()
             .Select(x => new { x.FoodReferenceId, x.DietaryTagId })
             .AsEnumerable()
             .Select(x => Tuple.Create(x.FoodReferenceId, x.DietaryTagId))
@@ -41,7 +42,7 @@ public static class FoodDietaryTagSeeder
 
         if (newLinks.Count > 0)
         {
-            db.FoodDietaryTags.AddRange(newLinks);
+            db.Set<FoodDietaryTag>().AddRange(newLinks);
             db.SaveChanges();
         }
     }

@@ -52,7 +52,6 @@ public sealed class Recipe : Entity
     public DateTime CreatedOnUtc { get; private set; }
 
     public DateTime UpdatedOnUtc { get; private set; }
-    public ICollection<RecipeMedia.RecipeMedia> Media { get; private set; }
 
     public static Recipe Create(
     string title,

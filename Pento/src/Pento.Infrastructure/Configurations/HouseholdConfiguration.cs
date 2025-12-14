@@ -20,6 +20,7 @@ internal sealed class HouseholdConfiguration : IEntityTypeConfiguration<Househol
         builder.Property(h => h.InviteCodeExpirationUtc).IsRequired(false);
 
         builder.HasMany<User>().WithOne().HasForeignKey(u => u.HouseholdId).IsRequired(false);
+        
         builder.HasQueryFilter(x => !x.IsDeleted);
 
     }

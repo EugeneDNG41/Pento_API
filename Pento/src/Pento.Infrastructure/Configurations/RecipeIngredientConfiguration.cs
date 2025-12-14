@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.FoodReferences;
 using Pento.Domain.RecipeIngredients;
+using Pento.Domain.Recipes;
+using Pento.Domain.Units;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -24,14 +27,14 @@ internal sealed class RecipeIngredientConfiguration : IEntityTypeConfiguration<R
         builder.Property(ri => ri.UpdatedOnUtc)
                .IsRequired();
 
-        builder.HasOne<Domain.Recipes.Recipe>()
+        builder.HasOne<Recipe>()
                .WithMany()
                .HasForeignKey(ri => ri.RecipeId);
 
-        builder.HasOne<Domain.FoodReferences.FoodReference>()
+        builder.HasOne<FoodReference>()
                .WithMany()
                .HasForeignKey(ri => ri.FoodRefId);
-        builder.HasOne<Domain.Units.Unit>()
+        builder.HasOne<Unit>()
             .WithMany()
             .HasForeignKey(ri => ri.UnitId);
         builder.HasQueryFilter(x => !x.IsDeleted);

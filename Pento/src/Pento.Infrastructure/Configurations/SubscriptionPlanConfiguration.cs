@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Pento.Domain.Payments;
 using Pento.Domain.Subscriptions;
 
 namespace Pento.Infrastructure.Configurations;
@@ -15,5 +16,6 @@ internal sealed class SubscriptionPlanConfiguration : IEntityTypeConfiguration<S
         builder.Property(sp => sp.DurationInDays).IsRequired(false);
         builder.HasQueryFilter(x => !x.IsDeleted);
         builder.HasOne<Subscription>().WithMany().HasForeignKey(sp => sp.SubscriptionId);
+        builder.HasMany<Payment>().WithOne().HasForeignKey(p => p.SubscriptionPlanId);
     }
 }

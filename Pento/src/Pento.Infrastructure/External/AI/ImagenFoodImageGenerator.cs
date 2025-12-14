@@ -3,6 +3,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Pento.Application.Abstractions.External.File;
+using Pento.Domain.FoodReferences;
 using Pento.Infrastructure.Persistence;
 
 namespace Pento.Infrastructure.External.AI;
@@ -12,7 +13,7 @@ internal sealed class ImagenFoodImageGenerator(HttpClient http, IConfiguration c
 {
     public async Task<string?> GenerateImageAsync(Guid foodId, CancellationToken ct)
     {
-        Domain.FoodReferences.FoodReference? food = await db.FoodReferences
+        FoodReference? food = await db.Set<FoodReference>()
             .AsNoTracking()
             .FirstOrDefaultAsync(f => f.Id == foodId, ct);
 

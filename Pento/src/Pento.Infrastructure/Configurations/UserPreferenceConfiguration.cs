@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.UserPreferences;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -27,7 +28,10 @@ public sealed class UserPreferenceConfiguration : IEntityTypeConfiguration<UserP
 
         builder.HasIndex(x => new { x.UserId, x.DietaryTagId })
             .IsUnique();
-
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Cascade);
         builder.HasOne<DietaryTag>()
             .WithMany()
             .HasForeignKey(x => x.DietaryTagId)

@@ -4,7 +4,7 @@ namespace Pento.Domain.Storages;
 
 public sealed class Storage : Entity
 {
-    public Storage(Guid id, string name, Guid householdId, StorageType type, string? notes) : base(id)
+    public Storage(Guid id, string name, Guid householdId, StorageType type, string? notes = null) : base(id)
     {
         Name = name;
         HouseholdId = householdId;
@@ -27,7 +27,7 @@ public sealed class Storage : Entity
         storage.Raise(new StorageCreatedDomainEvent(storage.Id, userId));
         return storage;
     }
-    public static Storage AutoCreate(string name, Guid householdId, StorageType type, string? notes)
+    public static Storage AutoCreate(string name, Guid householdId, StorageType type, string? notes = null)
     {
         var storage = new Storage(
             Guid.CreateVersion7(),

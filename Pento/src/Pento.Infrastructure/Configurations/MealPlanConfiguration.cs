@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -20,9 +21,10 @@ internal sealed class MealPlanConfiguration : IEntityTypeConfiguration<MealPlan>
             .WithMany()
             .HasForeignKey(mp => mp.HouseholdId)
             .OnDelete(DeleteBehavior.Restrict);
-
-
-
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(mp => mp.CreatedBy)
+            .OnDelete(DeleteBehavior.Restrict);
 
         builder.Property(mp => mp.MealType)
             .IsRequired()

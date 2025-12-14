@@ -22,15 +22,10 @@ internal sealed class TradeItemConfiguration : IEntityTypeConfiguration<TradeIte
                .HasConversion<string>()
                .HasMaxLength(10)
                .IsRequired();
-
         builder.UseTphMappingStrategy()
                .HasDiscriminator(x => x.From)
                .HasValue<TradeItemOffer>(TradeItemFrom.Offer)
                .HasValue<TradeItemRequest>(TradeItemFrom.Request);
-        builder.HasOne<FoodItem>()
-               .WithMany()
-               .HasForeignKey(x => x.FoodItemId)
-               .OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<FoodItem>()
                .WithMany()
                .HasForeignKey(x => x.FoodItemId)

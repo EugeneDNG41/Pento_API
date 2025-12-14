@@ -1,10 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Households;
+using Pento.Domain.Trades;
 using Pento.Domain.Units;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -56,7 +59,19 @@ internal sealed class FoodItemConfiguration : IEntityTypeConfiguration<FoodItem>
                .WithMany()
                .HasForeignKey(s => s.HouseholdId)
                .OnDelete(DeleteBehavior.Cascade);
-
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(s => s.AddedBy)
+               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany<FoodItemReservation>()
+            .WithOne()
+            .HasForeignKey(x => x.FoodItemId);
+        builder.HasMany<TradeItem>()
+            .WithOne()
+            .HasForeignKey(x => x.FoodItemId);
+        builder.HasMany<TradeSessionItem>()
+            .WithOne()
+            .HasForeignKey(x => x.FoodItemId);
         builder.Property(x => x.Notes)
            .HasMaxLength(500);
         builder.HasQueryFilter(x => !x.IsDeleted);

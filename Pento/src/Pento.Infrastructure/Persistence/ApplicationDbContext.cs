@@ -25,10 +25,6 @@ public sealed class ApplicationDbContext(DbContextOptions options) : DbContext(o
 
         base.OnModelCreating(modelBuilder);
     }
-    public DbSet<FoodReference> FoodReferences { get; set; } = null!;
-    public DbSet<Unit> Units { get; set; } = null!;
-    public DbSet<DietaryTag> DietaryTags { get; set; } = null!;
-    public DbSet<FoodDietaryTag> FoodDietaryTags { get; set; } = null!;
 
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

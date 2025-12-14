@@ -21,12 +21,12 @@ internal sealed class AddRecipeToWishListCommandHandler(
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        IEnumerable<RecipeWishList> exists = await repository.FindAsync(
+        bool exists = await repository.AnyAsync(
             x => x.HouseholdId == householdId.Value &&
                  x.RecipeId == command.RecipeId,
             cancellationToken);
 
-        if (exists.Any())
+        if (exists)
         {
             return Result.Failure<Guid>(RecipeWishListErrors.AlreadyExists);
         }

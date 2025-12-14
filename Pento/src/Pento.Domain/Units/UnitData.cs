@@ -6,25 +6,25 @@ public static class UnitData
     public static readonly Unit Gram = Unit.Create(
         name: "Gram",
         abbreviation: "g",
-        toBaseFactor: 1m,
+        toBaseFactor: 0.001m,
         type: UnitType.Weight);
 
     public static readonly Unit Kilogram = Unit.Create(
         name: "Kilogram",
         abbreviation: "kg",
-        toBaseFactor: 1000m,
+        toBaseFactor: 1m,
         type: UnitType.Weight);
 
     public static readonly Unit Ounce = Unit.Create(
         name: "Ounce",
         abbreviation: "oz",
-        toBaseFactor: 28.3495m,
+        toBaseFactor: 0.028m,
         type: UnitType.Weight);
 
     public static readonly Unit Pound = Unit.Create(
         name: "Pound",
         abbreviation: "lb",
-        toBaseFactor: 453.592m,
+        toBaseFactor: 0.453m,
         type: UnitType.Weight);
 
 

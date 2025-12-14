@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.DietaryTags;
 using Pento.Domain.RecipeDietaryTags;
+using Pento.Domain.Recipes;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -28,6 +29,10 @@ public sealed class RecipeDietaryTagConfiguration : IEntityTypeConfiguration<Rec
         builder.HasOne<DietaryTag>()
             .WithMany()
             .HasForeignKey(x => x.DietaryTagId)
+            .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<Recipe>()
+            .WithMany()
+            .HasForeignKey(x => x.RecipeId)
             .OnDelete(DeleteBehavior.Cascade);
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
