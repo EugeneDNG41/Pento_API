@@ -190,3 +190,4 @@ ClientBin/
 orleans.codegen.cs
 /Pento/src/Pento.AppHost/realms/realm-export.json
 /Pento/src/Pento.API/food_references.csv
+/Pento_PostgreSQL_Backup_Script.sql
