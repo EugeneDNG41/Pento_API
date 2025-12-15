@@ -83,8 +83,6 @@ IResourceBuilder<ParameterResource> keycloakClientId = builder.AddParameter("Key
 IResourceBuilder<ParameterResource> keycloakClientSecret = builder.AddParameter("KeycloakClientSecret", secret: true);
 IResourceBuilder<ParameterResource> geminiApiKey = builder.AddParameter("GeminiApiKey", secret: true);
 IResourceBuilder<ParameterResource> pixabayApiKey = builder.AddParameter("PixabayApiKey", secret: true);
-IResourceBuilder<ParameterResource> visionEndpoint = builder.AddParameter("VisionEndpoint");
-IResourceBuilder<ParameterResource> visionKey = builder.AddParameter("VisionApiKey", secret: true);
 IResourceBuilder<ParameterResource> payosClientId = builder.AddParameter("PayosClientId", secret: true);
 IResourceBuilder<ParameterResource> payosApiKey = builder.AddParameter("PayosApiKey", secret: true);
 IResourceBuilder<ParameterResource> payosChecksumKey = builder.AddParameter("PayosChecksumKey", secret: true);
@@ -109,8 +107,6 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Keycloak__ClientSecret", keycloakClientSecret)
     .WithEnvironment("Gemini__ApiKey", geminiApiKey)
     .WithEnvironment("Pixabay__ApiKey", pixabayApiKey)
-    .WithEnvironment("Vision__Endpoint", visionEndpoint)
-    .WithEnvironment("Vision__ApiKey", visionKey)
     .WithEnvironment("PayOS__ClientId", payosClientId)
     .WithEnvironment("PayOS__ApiKey", payosApiKey)
     .WithEnvironment("PayOS__ChecksumKey", payosChecksumKey)

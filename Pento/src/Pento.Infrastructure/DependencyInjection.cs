@@ -3,8 +3,6 @@ using Dapper;
 using FirebaseAdmin;
 using GenerativeAI;
 using Google.Apis.Auth.OAuth2;
-using Google.GenAI;
-using Google.GenAI.Types;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -26,7 +24,6 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.External.PayOS;
-using Pento.Application.Abstractions.External.Vision;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Caching;
@@ -44,7 +41,6 @@ using Pento.Infrastructure.External.Identity;
 using Pento.Infrastructure.External.OpenFoodFacts;
 using Pento.Infrastructure.External.PayOS;
 using Pento.Infrastructure.External.Quartz;
-using Pento.Infrastructure.External.Vision;
 using Pento.Infrastructure.Persistence;
 using Pento.Infrastructure.Persistence.Seed;
 using Pento.Infrastructure.Persistence.TypeHandlers;
@@ -144,7 +140,6 @@ public static class DependencyInjection
         services.AddScoped<IBlobService, BlobService>();
         services.AddScoped<IUnsplashImageService, UnsplashImageService>();
         services.AddScoped<IPixabayImageService, PixabayImageService>();
-        services.AddScoped<IVisionService, VisionService>();
         services.AddScoped<INotificationService, FcmNotificationService>();
     }
 
