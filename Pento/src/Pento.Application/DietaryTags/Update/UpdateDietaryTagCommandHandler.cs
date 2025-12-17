@@ -20,7 +20,7 @@ internal sealed class UpdateDietaryTagCommandHandler(
         }
         bool duplicateNameExists = await dietaryTagRepository
             .AnyAsync(
-                dt => dt.Id != request.Id && dt.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase),
+                dt => dt.Id != request.Id && dt.Name == request.Name,
                 cancellationToken);
         if (duplicateNameExists)
         {

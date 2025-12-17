@@ -32,7 +32,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrSetAsync(
-            key: $"{nameof(T)}_{id}",
+            key: $"{typeof(T)}_{id}",
             async entry => await Table.FindAsync([id], cancellationToken),
             token: cancellationToken
             );
@@ -40,7 +40,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     public async Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrSetAsync(
-            key: $"{nameof(T)}_{id}",
+            key: $"{typeof(T)}_{id}",
             async entry => await Table.FindAsync([id], cancellationToken),
             token: cancellationToken
             );
@@ -142,7 +142,8 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         object? code = entity.GetType().GetProperty("Code")?.GetValue(entity);
         if (id != null)
         {
-            await _cache.RemoveAsync($"{nameof(T)}_{id}", token: cancellationToken);
+            string key = $"{typeof(T)}_{id}";
+            await _cache.RemoveAsync(key, token: cancellationToken);
         }
         if (code != null)
         {

@@ -148,11 +148,8 @@ public static class DependencyInjection
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
         services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
-        using var redis = new RedisCache(new RedisCacheOptions
-        {
-            Configuration = redisConnectionString
-        });
-        
+
+#pragma warning disable CA2000 // Dispose objects before losing scope
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
@@ -168,7 +165,11 @@ public static class DependencyInjection
             FailSafeThrottleDuration = TimeSpan.FromSeconds(30)
         })
         .WithSerializer(new FusionCacheNewtonsoftJsonSerializer())
-        .WithDistributedCache(redis);
+        .WithDistributedCache(new RedisCache(new RedisCacheOptions
+        {
+            Configuration = redisConnectionString
+        }));
+#pragma warning restore CA2000 // Dispose objects before losing scope
         services.AddSingleton<ICacheService, CacheService>();
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
