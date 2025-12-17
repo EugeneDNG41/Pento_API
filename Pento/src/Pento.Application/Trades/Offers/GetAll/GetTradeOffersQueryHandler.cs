@@ -117,9 +117,8 @@ internal sealed class GetTradeOffersQueryHandler(
         JOIN units u ON i.unit_id = u.id
         JOIN users us ON o.user_id = us.id
         {whereClause}
-        {orderBy}
-        GROUP BY o.id, i.id, fi.id, fr.name, fr.image_url, us.first_name, us.avatar_url,
-        u.abbreviation
+        GROUP BY o.id, i.id, fi.id, fr.name, fr.image_url, us.first_name, us.avatar_url, u.abbreviation
+        {orderBy}      
         OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         ";
 

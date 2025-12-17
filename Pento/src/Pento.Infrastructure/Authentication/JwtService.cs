@@ -1,8 +1,10 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 using Microsoft.Extensions.Options;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.External.Identity;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Users;
 using Pento.Infrastructure.External.Identity;
 
 namespace Pento.Infrastructure.Authentication;
@@ -29,8 +31,10 @@ internal sealed class JwtService(HttpClient httpClient, IOptions<KeycloakOptions
                 endpoint,
                 content,
                 cancellationToken);
-
-            response.EnsureSuccessStatusCode();
+            if (response.StatusCode == HttpStatusCode.Unauthorized)
+            {
+                return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidCredentials);
+            }
 
             AuthToken? token = await response.Content.ReadFromJsonAsync<AuthToken>(cancellationToken: cancellationToken);
             return token is null

@@ -19,7 +19,7 @@ internal sealed class MobileSignInCommandHandler(IGenericRepository<User> userRe
             cancellationToken)).SingleOrDefault();
         if (user == null)
         {
-            return Result.Failure<AuthToken>(UserErrors.InvalidCredentials);
+            return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidCredentials);
         }
         Result<AuthToken> result = await jwtService.GetAuthTokenAsync(
             request.Email,
