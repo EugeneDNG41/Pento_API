@@ -1,8 +1,7 @@
-﻿using FluentEmail.Core.Interfaces;
-using Pento.API.Extensions;
+﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
-using Pento.Application.Trades.Get;
+using Pento.Application.Trades.Offers.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 
@@ -15,17 +14,16 @@ internal sealed class GetTradePost : IEndpoint
         app.MapGet("trades/offers", async (
             bool? isMine,
             bool? isMyHousehold,
-            TradeOfferStatus? status,
-            
+            TradeOfferStatus? status,          
             string? search,
             string? sort,
-            IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostGroupedResponse>> handler,
+            IQueryHandler<GetTradeOffersQuery, PagedList<TradeOfferGroupedResponse>> handler,
             CancellationToken cancellationToken,
             int pageNumber = 1,
             int pageSize = 10
         ) =>
         {
-            var query = new GetAllTradePostsQuery(
+            var query = new GetTradeOffersQuery(
                 isMine, isMyHousehold, status,
                 PageNumber: pageNumber,
                 PageSize: pageSize,
@@ -33,7 +31,7 @@ internal sealed class GetTradePost : IEndpoint
                 Sort: sort
             );
 
-            Result<PagedList<TradePostGroupedResponse>> result =
+            Result<PagedList<TradeOfferGroupedResponse>> result =
                 await handler.Handle(query, cancellationToken);
 
             return result.Match(
@@ -43,23 +41,6 @@ internal sealed class GetTradePost : IEndpoint
         })
         .WithTags(Tags.Trades)
         .WithDescription("sort options: newest | oldest | food | food_desc | quantity");
-
-        app.MapGet("trades/offers/me", async (
-                  IQueryHandler<GetMyTradePostsQuery, IReadOnlyList<TradePostResponse>> handler,
-                  CancellationToken cancellationToken) =>
-        {
-            var query = new GetMyTradePostsQuery();
-
-            Result<IReadOnlyList<TradePostResponse>> result =
-                await handler.Handle(query, cancellationToken);
-
-            return result.Match(
-                list => Results.Ok(list),
-                CustomResults.Problem
-            );
-        })
-              .WithTags(Tags.Trades)
-              .RequireAuthorization();
     }
 
 }

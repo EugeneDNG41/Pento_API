@@ -2,9 +2,9 @@
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Trades;
 
-namespace Pento.Application.Trades.Get;
+namespace Pento.Application.Trades.Offers.GetAll;
 
-public sealed record GetAllTradePostsQuery(
+public sealed record GetTradeOffersQuery(
     bool? IsMine,
     bool? IsMyHousehold,
     TradeOfferStatus? Status,
@@ -12,4 +12,4 @@ public sealed record GetAllTradePostsQuery(
     int PageSize = 10,
     string? Search = null,
     string? Sort = "newest"
-) : IQuery<PagedList<TradePostGroupedResponse>>;
+) : IQuery<PagedList<TradeOfferGroupedResponse>>;
