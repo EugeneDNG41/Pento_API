@@ -33,7 +33,7 @@ internal sealed class RejectTradeReportCommandHandler(
         }
 
         report.Reject(dateTimeProvider.UtcNow);
-
+        await reportRepo.UpdateAsync(report, cancellationToken);
         await uow.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

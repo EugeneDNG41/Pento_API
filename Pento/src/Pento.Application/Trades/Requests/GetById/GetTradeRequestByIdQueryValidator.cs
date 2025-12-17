@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Trades.Requests.GetAll;
+namespace Pento.Application.Trades.Requests.GetById;
 
 internal sealed class GetTradeRequestByIdQueryValidator : AbstractValidator<GetTradeRequestByIdQuery>
 {

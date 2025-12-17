@@ -1,6 +1,7 @@
 ﻿using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Trades.Requests.GetAll;
+using Pento.Application.Trades.Requests.GetById;
 using Pento.Domain.Abstractions;
 
 namespace Pento.API.Endpoints.Trades.Get;
