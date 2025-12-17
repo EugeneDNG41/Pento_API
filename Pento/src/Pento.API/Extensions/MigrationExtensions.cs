@@ -1,5 +1,7 @@
 ﻿using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Pento.Domain.DietaryTags;
+using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
 using Pento.Domain.Units;
 using Pento.Infrastructure.Persistence;
@@ -39,6 +41,30 @@ internal static class MigrationExtensions
             UnitData.Pair,
             UnitData.Dozen);
             await dbContext.SaveChangesAsync(default);
+
+
+        }
+        if (!await dbContext.Set<DietaryTag>().AnyAsync(default))
+        {
+            dbContext.Set<DietaryTag>().AddRange(
+                DietaryTagData.ContainsAddedSugar,
+                DietaryTagData.ContainsGluten,
+                DietaryTagData.ContainsEgg,
+                DietaryTagData.ContainsPeanuts,
+                DietaryTagData.ContainsTreeNuts,
+                DietaryTagData.ContainsSoy,
+                DietaryTagData.ContainsAlcohol,
+                DietaryTagData.ContainsCaffeine,
+                DietaryTagData.HighlyProcessed
+            );
+
+
+            await dbContext.SaveChangesAsync(default);
+        }
+
+        if (!await dbContext.Set<FoodDietaryTag>().AnyAsync(default))
+        {
+            FoodDietaryTagSeeder.Seed(dbContext);
         }
         await dataSeeder.SeedAdminAsync(cancellationToken);
     }
