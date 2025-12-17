@@ -26,7 +26,7 @@ internal sealed class UploadAvatarCommandHandler(
             return Result.Failure<Uri>(uploadResult.Error);
         }
         user.SetAvatarUrl(uploadResult.Value);
-        userRepository.Update(user);
+        await userRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return user.AvatarUrl;
     }

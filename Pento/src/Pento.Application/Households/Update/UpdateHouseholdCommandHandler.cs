@@ -24,7 +24,7 @@ internal sealed class UpdateHouseholdCommandHandler(
             return Result.Failure(HouseholdErrors.NotFound);
         }
         household.Update(command.Name);
-        repository.Update(household);
+        await repository.UpdateAsync(household, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

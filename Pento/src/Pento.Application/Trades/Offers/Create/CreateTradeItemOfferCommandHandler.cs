@@ -78,7 +78,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
             );
             tradeItemRepository.Add(item);
             foodItem.Reserve(qtyInItemUnit.Value, dto.Quantity, dto.UnitId, userId);
-            foodItemRepository.Update(foodItem);
+            await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         }
 
         await uow.SaveChangesAsync(cancellationToken);

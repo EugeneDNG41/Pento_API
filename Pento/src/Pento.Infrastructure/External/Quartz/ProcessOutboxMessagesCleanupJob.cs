@@ -18,7 +18,7 @@ internal sealed class ProcessOutboxMessagesCleanupJob(
                 m => m.ProcessedOnUtc != null &&
                 m.ProcessedOnUtc <= dateTimeProvider.UtcNow.AddDays(-7), context.CancellationToken))
             .ToList();
-        outboxMessageRepository.RemoveRange(oldMessages);
+        await outboxMessageRepository.RemoveRangeAsync(oldMessages, context.CancellationToken);
         await unitOfWork.SaveChangesAsync(context.CancellationToken);
     }
 }

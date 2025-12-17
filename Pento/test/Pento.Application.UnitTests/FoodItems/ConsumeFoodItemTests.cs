@@ -160,7 +160,7 @@ internal sealed class ConsumeFoodItemTests
         Assert.That(result.IsSuccess);
         Assert.That(foodItem.Quantity, Is.EqualTo(3));
 
-        _foodItemRepo.Received(1).Update(foodItem);
+        await _foodItemRepo.Received(1).UpdateAsync(foodItem);
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

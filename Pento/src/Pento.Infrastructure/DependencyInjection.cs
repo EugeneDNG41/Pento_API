@@ -79,7 +79,8 @@ public static class DependencyInjection
         services.AddScoped<ISubscriptionService, SubscriptionService>();
         services.AddScoped<IMilestoneService, MilestoneService>();
         services.AddScoped<IActivityService, ActivityService>();
-        services.AddScoped<TradeService>();
+        services.AddScoped<ICompartmentService, CompartmentService>();
+        services.AddScoped<ITradeService, TradeService>();
         services.AddHttpClient<OpenFoodFactsClient>((httpClient) =>
         {
             httpClient.BaseAddress = new Uri("https://world.openfoodfacts.net/api/v2/");

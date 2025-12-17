@@ -93,7 +93,7 @@ internal sealed class LeaveHouseholdTests
         Assert.That(result.IsSuccess);
         Assert.That(user.HouseholdId, Is.Null);
 
-        _userRepo.Received(1).Update(user);
+        await _userRepo.Received(1).UpdateAsync(user);
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

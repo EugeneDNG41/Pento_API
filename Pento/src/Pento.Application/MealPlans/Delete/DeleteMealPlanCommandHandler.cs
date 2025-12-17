@@ -18,7 +18,7 @@ internal sealed class DeleteMealPlanCommandHandler(
             return Result.Failure(MealPlanErrors.NotFound);
         }
 
-        mealPlanRepository.Remove(mealPlan); //check if there's any reserved food
+        await mealPlanRepository.RemoveAsync(mealPlan, cancellationToken); //check if there's any reserved food
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

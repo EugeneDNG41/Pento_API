@@ -64,7 +64,7 @@ internal sealed class JoinHouseholdCommandHandler(
         currentUser.JoinHousehold(household.Id);
         currentUser.SetRoles([errandRunnerRole]);
 
-        userRepository.Update(currentUser);
+        await userRepository.UpdateAsync(currentUser, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

@@ -52,7 +52,7 @@ internal sealed class CreateHouseholdCommandHandler(
 
         currentUser.SetHouseholdId(household.Id);
         currentUser.SetRoles([householdHeadRole]);
-        userRepository.Update(currentUser);
+        await userRepository.UpdateAsync(currentUser, cancellationToken);
 
         var pantry = Storage.AutoCreate("Default Pantry", household.Id, StorageType.Pantry, null);
         var fridge = Storage.AutoCreate("Default Fridge", household.Id, StorageType.Fridge, null);

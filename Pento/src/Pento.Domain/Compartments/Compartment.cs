@@ -1,4 +1,5 @@
-﻿using Pento.Domain.Abstractions;
+﻿using Microsoft.VisualBasic.FileIO;
+using Pento.Domain.Abstractions;
 
 namespace Pento.Domain.Compartments;
 
@@ -35,9 +36,18 @@ public sealed class Compartment : Entity
     {
         Notes = notes;
     }
+    public new void Delete()
+    {
+        Raise(new CompartmentDeletedDomainEvent(Id));
+        base.Delete();
+    }
 }
 public sealed class CompartmentCreatedDomainEvent(Guid compartmentId, Guid userId) : DomainEvent
 {
     public Guid CompartmentId { get; } = compartmentId;
     public Guid UserId { get; } = userId;
+}
+public sealed class CompartmentDeletedDomainEvent(Guid compartmentId) : DomainEvent
+{
+    public Guid CompartmentId { get; } = compartmentId;
 }

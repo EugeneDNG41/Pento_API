@@ -41,7 +41,7 @@ internal sealed class UpdateGroceryListCommandHandler(
         if (!string.Equals(list.Name, command.Name, StringComparison.Ordinal))
         {
             list.UpdateName(command.Name, dateTimeProvider.UtcNow);
-            groceryListRepository.Update(list);
+            await groceryListRepository.UpdateAsync(list, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }
 

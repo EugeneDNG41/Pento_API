@@ -12,7 +12,7 @@ namespace Pento.Application.Trades.Sessions.UpdateItems;
 
 internal sealed class UpdateTradeSessionItemsCommandHandler(
     IUserContext userContext,
-    TradeService tradeService,
+    ITradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
@@ -80,7 +80,7 @@ internal sealed class UpdateTradeSessionItemsCommandHandler(
                 return reconciliationResult;
             }
             sessionItem.Update(dto.Quantity, dto.UnitId);
-            tradeItemSessionRepository.Update(sessionItem);
+            await tradeItemSessionRepository.UpdateAsync(sessionItem, cancellationToken);
 
             affectedFoodItems.Add(foodItem.Id, foodItem.Quantity);
             affectedTradeItems.Add(sessionItem);

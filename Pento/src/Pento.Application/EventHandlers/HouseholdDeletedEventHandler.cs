@@ -1,8 +1,6 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
-using Pento.Domain.Compartments;
 using Pento.Domain.FoodItemReservations;
-using Pento.Domain.FoodItems;
 using Pento.Domain.GroceryLists;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
@@ -13,10 +11,8 @@ namespace Pento.Application.EventHandlers;
 
 internal sealed class HouseholdDeletedEventHandler(
     IGenericRepository<FoodItemReservation> foodItemReservationRepository,
-    IGenericRepository<MealPlan> mealPlanRepository,
-    IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Storage> storageRepository,
-    IGenericRepository<Compartment> compartmentRepository,
+    IGenericRepository<MealPlan> mealPlanRepository,
     IGenericRepository<GroceryList> groceryListRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeRequest> tradeRequestRepository,
@@ -25,64 +21,28 @@ internal sealed class HouseholdDeletedEventHandler(
 {
     public async override Task Handle(HouseholdDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
-        IEnumerable<FoodItemReservation> foodItemReservations = await foodItemReservationRepository.FindAsync(fir => fir.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (FoodItemReservation reservation in foodItemReservations)
-        {
-            reservation.Delete();
+        IEnumerable<Storage> storages = await storageRepository.FindAsync(s => s.HouseholdId == domainEvent.HouseholdId, cancellationToken);
+        await storageRepository.RemoveRangeAsync(storages, cancellationToken);
 
-        }
-        foodItemReservationRepository.UpdateRange(foodItemReservations);
+        IEnumerable<FoodItemReservation> foodItemReservations = await foodItemReservationRepository.FindAsync(fir => fir.HouseholdId == domainEvent.HouseholdId, cancellationToken);
+        await foodItemReservationRepository.RemoveRangeAsync(foodItemReservations, cancellationToken);
 
         IEnumerable<MealPlan> mealPlans = await mealPlanRepository.FindAsync(mp => mp.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (MealPlan mealPlan in mealPlans)
-        {
-            mealPlan.Delete();
-        }
-        mealPlanRepository.UpdateRange(mealPlans);
-
-        IEnumerable<FoodItem> foodItems = await foodItemRepository.FindAsync(fi => fi.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (FoodItem foodItem in foodItems)
-        {
-            foodItem.Delete();
-        }
-        foodItemRepository.UpdateRange(foodItems);
-
-        IEnumerable<Storage> storages = await storageRepository.FindAsync(s => s.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (Storage storage in storages)
-        {
-            storage.Delete();
-        }
-        foodItemRepository.UpdateRange(foodItems);
-
-        IEnumerable<Compartment> compartments = await compartmentRepository.FindAsync(c => c.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (Compartment compartment in compartments)
-        {
-            compartment.Delete();
-        }
-        foodItemRepository.UpdateRange(foodItems);
+        await mealPlanRepository.RemoveRangeAsync(mealPlans, cancellationToken);
 
         IEnumerable<GroceryList> groceryLists = await groceryListRepository.FindAsync(gl => gl.HouseholdId == domainEvent.HouseholdId, cancellationToken);
-        foreach (GroceryList groceryList in groceryLists)
-        {
-            groceryList.Delete();
-        }
-        foodItemRepository.UpdateRange(foodItems);
+        await groceryListRepository.RemoveRangeAsync(groceryLists, cancellationToken);
+
         IEnumerable<TradeOffer> openOffers = await tradeOfferRepository.FindAsync(
-            offer => offer.HouseholdId == domainEvent.HouseholdId && offer.Status == TradeOfferStatus.Open,
+            offer => offer.HouseholdId == domainEvent.HouseholdId,
             cancellationToken);
-        foreach (TradeOffer offer in openOffers)
-        {
-            offer.Delete();
-        }
-        tradeOfferRepository.UpdateRange(openOffers);
+        await tradeOfferRepository.RemoveRangeAsync(openOffers, cancellationToken);
+
         IEnumerable<TradeRequest> pendingRequests = await tradeRequestRepository.FindAsync(
-            request => request.HouseholdId == domainEvent.HouseholdId && request.Status == TradeRequestStatus.Pending,
+            request => request.HouseholdId == domainEvent.HouseholdId,
             cancellationToken);
-        foreach (TradeRequest request in pendingRequests)
-        {
-            request.Delete();
-        }
-        tradeRequestRepository.UpdateRange(pendingRequests);
+        await tradeRequestRepository.RemoveRangeAsync(pendingRequests,cancellationToken);
+
         IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
             session => (session.OfferHouseholdId == domainEvent.HouseholdId ||
                        session.RequestHouseholdId == domainEvent.HouseholdId)

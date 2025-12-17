@@ -54,7 +54,7 @@ internal sealed class SubscriptionFeatureAddedOrUpdatedEventHandler( //business 
                     userEntitlement.UpdateEntitlement(
                         subscriptionFeature.Quota,
                         subscriptionFeature.ResetPeriod);
-                    userEntitlementRepository.Update(userEntitlement);
+                    await userEntitlementRepository.UpdateAsync(userEntitlement, cancellationToken);
                 }
             }
             await unitOfWork.SaveChangesAsync(cancellationToken);

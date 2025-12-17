@@ -11,7 +11,7 @@ internal sealed class UpdateActivityCommandHandler(
 {
     public async Task<Result> Handle(UpdateActivityCommand command, CancellationToken cancellationToken)
     {
-        Activity? activity = (await activityRepository.FindAsync(a => a.Code == command.Code, cancellationToken)).SingleOrDefault();
+        Activity? activity = await activityRepository.GetByIdAsync(command.Code, cancellationToken);
         if (activity is null)
         {
             return Result.Failure(ActivityErrors.NotFound);

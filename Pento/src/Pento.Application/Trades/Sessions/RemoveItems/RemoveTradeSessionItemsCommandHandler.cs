@@ -17,7 +17,7 @@ namespace Pento.Application.Trades.Sessions.RemoveItems;
 
 internal sealed class RemoveTradeSessionItemsCommandHandler(
     IUserContext userContext,
-    TradeService tradeService,
+    ITradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
@@ -75,7 +75,7 @@ internal sealed class RemoveTradeSessionItemsCommandHandler(
             {
                 return reconciliationResult;
             }
-            tradeItemSessionRepository.Remove(sessionItem);
+            await tradeItemSessionRepository.RemoveAsync(sessionItem, cancellationToken);
             restoredItems.Add(foodItem.Id, foodItem.Quantity);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

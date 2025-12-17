@@ -21,7 +21,7 @@ internal sealed class UpdateGroceryListAssigneeCommandHandler(
 
         assignee.UpdateCompletionStatus(request.IsCompleted);
 
-        groceryListAssigneeRepository.Update(assignee);
+        await groceryListAssigneeRepository.UpdateAsync(assignee, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

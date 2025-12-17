@@ -30,7 +30,7 @@ internal sealed class UpdateRecipeIngredientCommandHandler(
             command.Notes,
             DateTime.UtcNow
         );
-        recipeIngredientRepository.Update(recipeIngredient);
+        await recipeIngredientRepository.UpdateAsync(recipeIngredient, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

@@ -46,7 +46,7 @@ internal sealed class DiscardFoodItemCommandHandler(
             return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
         foodItem.Discard(requestedQtyInItemUnit, command.Quantity, command.UnitId, userContext.UserId);
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await hubContext.Clients.Group(userContext.HouseholdId.Value.ToString())
             .FoodItemQuantityUpdated(foodItem.Id, foodItem.Quantity);

@@ -14,7 +14,7 @@ namespace Pento.Application.Trades.Requests.AddItems;
 
 internal sealed class AddTradeRequestItemsCommandHandler(
     IUserContext userContext,
-    TradeService tradeService,
+    ITradeService tradeService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeItemRequest> tradeItemRepository,

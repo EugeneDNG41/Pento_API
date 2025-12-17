@@ -53,7 +53,7 @@ internal sealed class UploadFoodItemImageCommandHandler(
         {
             foodItem.UpdateImageUrl(foodReference.ImageUrl, userContext.UserId);
         }
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return foodItem.ImageUrl;
     }

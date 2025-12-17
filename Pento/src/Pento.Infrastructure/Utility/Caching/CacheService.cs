@@ -2,6 +2,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Caching.Distributed;
 using Pento.Application.Abstractions.Utility.Caching;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Pento.Infrastructure.Utility.Caching;
 

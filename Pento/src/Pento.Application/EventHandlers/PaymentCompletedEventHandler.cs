@@ -56,7 +56,7 @@ internal sealed class PaymentCompletedEventHandler(
         else
         {
             userSubscription.Renew(plan.DurationInDays is null ? null : dateTimeProvider.Today.AddDays(plan.DurationInDays.Value));
-            userSubscriptionRepository.Update(userSubscription);
+            await userSubscriptionRepository.UpdateAsync(userSubscription, cancellationToken);
         }
         Result activationResult = await subscriptionService.ActivateAsync(
             userSubscription,

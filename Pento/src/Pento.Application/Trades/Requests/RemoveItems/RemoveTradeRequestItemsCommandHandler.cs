@@ -61,8 +61,8 @@ internal sealed class RemoveTradeRequestItemsCommandHandler(
                 return Result.Failure(restoredResult.Error);
             }
             foodItem.AdjustReservedQuantity(restoredResult.Value);
-            foodItemRepository.Update(foodItem);
-            tradeItemRepository.Remove(item);
+            await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
+            await tradeItemRepository.RemoveAsync(item, cancellationToken);
             restoredItems.Add(foodItem.Id, foodItem.Quantity);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

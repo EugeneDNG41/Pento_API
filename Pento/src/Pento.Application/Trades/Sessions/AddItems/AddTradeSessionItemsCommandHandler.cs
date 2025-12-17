@@ -15,7 +15,7 @@ namespace Pento.Application.Trades.Sessions.AddItems;
 
 internal sealed class AddTradeSessionItemsCommandHandler(
     IUserContext userContext,
-    TradeService tradeService,
+    ITradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,

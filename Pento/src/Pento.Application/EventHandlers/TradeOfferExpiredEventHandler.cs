@@ -53,7 +53,7 @@ internal sealed class TradeOfferExpiredEventHandler(
             }
             foodItem.AdjustReservedQuantity(conversionResult.Value);
         }
-        foodItemRepository.UpdateRange(foodItems);
+        await foodItemRepository.UpdateRangeAsync(foodItems, cancellationToken);
         IEnumerable<TradeRequest> requests = await tradeRequestRepository.FindAsync(
             r => r.TradeOfferId == offer.Id && r.Status == TradeRequestStatus.Pending,
             cancellationToken);
@@ -62,7 +62,7 @@ internal sealed class TradeOfferExpiredEventHandler(
         {
             request.Cancel();
         }
-        tradeRequestRepository.UpdateRange(requests);
+        await tradeRequestRepository.UpdateRangeAsync(requests, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         Household? offerHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);

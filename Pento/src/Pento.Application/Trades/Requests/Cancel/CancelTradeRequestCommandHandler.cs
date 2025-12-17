@@ -35,10 +35,10 @@ internal sealed class CancelTradeRequestCommandHandler(
         foreach (TradeSession session in ongoingSessions)
         {
             session.Cancel();
-            tradeSessionRepository.Update(session);
+            await tradeSessionRepository.UpdateAsync(session, cancellationToken);
         }
         tradeRequest.Cancel();     
-        tradeRequestRepository.Update(tradeRequest);
+        await tradeRequestRepository.UpdateAsync(tradeRequest, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

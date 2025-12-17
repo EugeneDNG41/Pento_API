@@ -1,4 +1,5 @@
 ﻿using Pento.Domain.Abstractions;
+using Pento.Domain.Compartments;
 
 namespace Pento.Domain.Storages;
 
@@ -45,4 +46,13 @@ public sealed class Storage : Entity
     {
         Notes = notes;
     }
+    public new void Delete()
+    {
+        Raise(new StorageDeletedDomainEvent(Id));
+        base.Delete();
+    }
+}
+public sealed class StorageDeletedDomainEvent(Guid storageId) : DomainEvent
+{
+    public Guid StorageId { get; } = storageId;
 }

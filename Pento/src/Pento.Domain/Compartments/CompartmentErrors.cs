@@ -22,4 +22,7 @@ public static class CompartmentErrors
     public static readonly Error CompartmentLimitReached = Error.Conflict(
         "Compartment.LimitReached",
         "The maximum number of compartments has been reached."); //business rule: limit the number of compartments per storage
+    public static readonly Error ItemsInUse = Error.Conflict(
+        "Compartment.ItemsInUse",
+        "Compartment contains items that are reserved or involved in trades.");
 }

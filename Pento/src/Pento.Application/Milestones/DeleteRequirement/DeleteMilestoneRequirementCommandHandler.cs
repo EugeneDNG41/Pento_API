@@ -17,7 +17,7 @@ internal sealed class DeleteMilestoneRequirementCommandHandler(
         {
             return Result.Failure(MilestoneErrors.RequirementNotFound);
         }
-        milestoneRequirementRepository.Remove(milestoneRequirement);
+        await milestoneRequirementRepository.RemoveAsync(milestoneRequirement, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

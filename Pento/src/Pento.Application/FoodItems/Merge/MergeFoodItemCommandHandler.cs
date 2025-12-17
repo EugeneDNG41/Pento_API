@@ -7,7 +7,7 @@ using Pento.Domain.FoodItems;
 namespace Pento.Application.FoodItems.Merge;
 #pragma warning disable S125 // Sections of code should not be commented out
 #pragma warning disable CS9113 // Sections of code should not be commented out
-#pragma warning disable IDE0060 // Remove unused parameter
+#pragma warning disable IDE0060 // RemoveAsync unused parameter
 internal sealed class MergeFoodItemCommandHandler(
     IUserContext userContext,
     IGenericRepository<FoodItem> foodItemRepository,

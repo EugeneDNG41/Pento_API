@@ -50,7 +50,7 @@ internal sealed class TradeRequestRejectedEventHandler(
             }
             foodItem.AdjustReservedQuantity(conversionResult.Value);
         }
-        foodItemRepository.UpdateRange(foodItems);
+        await foodItemRepository.UpdateRangeAsync(foodItems, cancellationToken);
         
         TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
         if (offer == null)

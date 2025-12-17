@@ -33,7 +33,7 @@ internal sealed class EnrichAllShelfLifeCommandHandler(
                 foodReference.UpdateUnitType(
                     (UnitType)extraInfoResult.Value.UnitType,
                     dateTimeProvider.UtcNow);
-                foodReferenceRepository.Update(foodReference);
+                await foodReferenceRepository.UpdateAsync(foodReference, cancellationToken);
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

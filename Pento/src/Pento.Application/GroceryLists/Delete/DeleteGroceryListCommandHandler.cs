@@ -25,7 +25,7 @@ internal sealed class DeleteGroceryListCommandHandler(
             return Result.Failure<Guid>(GroceryListErrors.ForbiddenAccess);
         }
 
-        groceryListRepository.Remove(list);
+        await groceryListRepository.RemoveAsync(list, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(list.Id);

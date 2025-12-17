@@ -19,7 +19,7 @@ internal sealed class DeleteGroceryListAssigneeCommandHandler(
             return Result.Failure<Guid>(GroceryListAssigneeErrors.NotFound);
         }
 
-        groceryListAssigneeRepository.Remove(assignee);
+        await groceryListAssigneeRepository.RemoveAsync(assignee, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(request.Id);

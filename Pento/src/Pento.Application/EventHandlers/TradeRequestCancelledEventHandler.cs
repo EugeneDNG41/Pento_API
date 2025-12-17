@@ -46,7 +46,7 @@ internal sealed class TradeRequestCancelledEventHandler(
             }
             foodItem.AdjustReservedQuantity(conversionResult.Value);
         }
-        foodItemRepository.UpdateRange(foodItems);
+        await foodItemRepository.UpdateRangeAsync(foodItems, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }
 }

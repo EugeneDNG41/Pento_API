@@ -18,7 +18,7 @@ internal sealed class DeleteDietaryTagCommandHandler(
             return Result.Failure<Guid>(DietaryTagErrors.NotFound);
         }
 
-        dietaryTagRepository.Remove(tag);
+        await dietaryTagRepository.RemoveAsync(tag, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(tag.Id);

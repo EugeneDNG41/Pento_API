@@ -12,8 +12,8 @@ using Pento.Infrastructure.Persistence;
 namespace Pento.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251214090308_init")]
-    partial class Init
+    [Migration("20251217084226_New")]
+    partial class New
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1218,7 +1218,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "recipes:update",
                             Description = "edit your own recipes.",
-                            Name = "UpdateAsync Recipes"
+                            Name = "Update Recipes"
                         },
                         new
                         {
@@ -1248,7 +1248,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "giveaways:update",
                             Description = "Edit giveaway posts you created.",
-                            Name = "UpdateAsync Giveaways"
+                            Name = "Update Giveaways"
                         },
                         new
                         {
@@ -1325,7 +1325,7 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             Code = "household:update",
-                            Description = "UpdateAsync household name and invite code.",
+                            Description = "Update household name and invite code.",
                             Name = "Manage Household"
                         },
                         new
@@ -1337,8 +1337,8 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             Code = "members:delete",
-                            Description = "RemoveAsync/kick members from the household and revoke their access.",
-                            Name = "RemoveAsync Members"
+                            Description = "Remove/kick members from the household and revoke their access.",
+                            Name = "Remove Members"
                         },
                         new
                         {
@@ -1356,7 +1356,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "storages:update",
                             Description = "Rename storages and modify their attributes.",
-                            Name = "UpdateAsync Storages"
+                            Name = "Update Storages"
                         },
                         new
                         {
@@ -1380,7 +1380,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "compartments:update",
                             Description = "Rename/reorder compartments and edit their attributes.",
-                            Name = "UpdateAsync Compartments"
+                            Name = "Update Compartments"
                         },
                         new
                         {
@@ -1404,7 +1404,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "fooditems:update",
                             Description = "Edit item details and adjust quantities (consume/waste/donate).",
-                            Name = "UpdateAsync Food Items"
+                            Name = "Update Food Items"
                         },
                         new
                         {
@@ -1428,7 +1428,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "groceries:update",
                             Description = "Edit grocery lists and list items.",
-                            Name = "UpdateAsync Groceries"
+                            Name = "Update Groceries"
                         },
                         new
                         {
@@ -1452,7 +1452,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "mealplans:update",
                             Description = "Modify meal plans.",
-                            Name = "UpdateAsync Meal Plans"
+                            Name = "Update Meal Plans"
                         },
                         new
                         {

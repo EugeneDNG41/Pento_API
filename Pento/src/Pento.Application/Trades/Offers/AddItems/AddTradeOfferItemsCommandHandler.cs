@@ -14,7 +14,7 @@ using Pento.Domain.Units;
 namespace Pento.Application.Trades.Offers.AddItems;
 
 internal sealed class AddTradeOfferItemsCommandHandler(IUserContext userContext,
-    TradeService tradeService,
+    ITradeService tradeService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeOffer> tradeOfferRepository,
     IGenericRepository<TradeItemOffer> tradeItemRepository,
