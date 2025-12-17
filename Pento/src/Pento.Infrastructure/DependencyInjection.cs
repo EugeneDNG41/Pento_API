@@ -70,10 +70,9 @@ public static class DependencyInjection
                 o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         AddPersistence(services, configuration);
 
-        AddCaching(services, configuration);
 
         AddBackgroundJobs(services, configuration);
-
+        services.AddSignalR();
         services.AddScoped<IBarcodeService, BarcodeService>();
         services.AddScoped<IConverterService, ConverterService>();
         services.AddScoped<IEntitlementService, EntitlementService>();
@@ -148,7 +147,7 @@ public static class DependencyInjection
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
-        services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
+        
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = redisConnectionString;
