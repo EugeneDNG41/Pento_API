@@ -10,12 +10,12 @@ internal sealed class UpdateRecipeDirectionImage : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapPut("recipes-directions/{directionId:guid}/image", async (
-            Guid recipeDirectionId,
+            Guid directionId,
             IFormFile file,
             ICommandHandler<UpdateRecipeDirectionImageCommand, string> handler,
             CancellationToken ct) =>
         {
-            var cmd = new UpdateRecipeDirectionImageCommand(recipeDirectionId, file);
+            var cmd = new UpdateRecipeDirectionImageCommand(directionId, file);
 
             Result<string> result = await handler.Handle(cmd, ct);
 

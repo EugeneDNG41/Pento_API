@@ -16,7 +16,6 @@ internal sealed class CreateRecipeDirection : IEndpoint
         {
             var command = new CreateRecipeDirectionCommand(
                 request.RecipeId,
-                request.StepNumber,
                 request.Description,
                 request.ImageUrl is not null ? new Uri(request.ImageUrl) : null
             );
@@ -34,7 +33,6 @@ internal sealed class CreateRecipeDirection : IEndpoint
     internal sealed class Request
     {
         public Guid RecipeId { get; init; }
-        public int StepNumber { get; init; }
         public string Description { get; init; } = string.Empty;
         public string? ImageUrl { get; init; }
     }
