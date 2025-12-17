@@ -148,11 +148,7 @@ public static class DependencyInjection
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
-        services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
-        services.AddStackExchangeRedisCache(options =>
-        {
-            options.Configuration = redisConnectionString;
-        });
+        services.AddSignalR();
 #pragma warning disable CA2000 // Dispose objects before losing scope
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
@@ -177,7 +173,6 @@ public static class DependencyInjection
             Configuration = redisConnectionString
         }));
 #pragma warning restore CA2000 // Dispose objects before losing scope
-        services.AddSingleton<ICacheService, CacheService>();
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {
