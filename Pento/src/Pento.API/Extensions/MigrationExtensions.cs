@@ -55,6 +55,7 @@ internal static class MigrationExtensions
                 DietaryTagData.ContainsSoy,
                 DietaryTagData.ContainsAlcohol,
                 DietaryTagData.ContainsCaffeine,
+
                 DietaryTagData.HighlyProcessed
             );
 
