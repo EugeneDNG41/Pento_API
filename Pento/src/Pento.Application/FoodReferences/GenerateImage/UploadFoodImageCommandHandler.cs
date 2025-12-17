@@ -46,6 +46,7 @@ internal sealed class ManualUploadFoodImageCommandHandler(
             }
 
             foodRef.UpdateImageUrl(uploadResult.Value, DateTime.UtcNow);
+            await foodReferenceRepository.UpdateAsync(foodRef, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(uploadResult.Value.AbsoluteUri);

@@ -20,4 +20,9 @@ public sealed class DietaryTag : Entity
     {
         return new DietaryTag(Guid.CreateVersion7(), name, description);
     }
+    public void Update (string name, string? description = null)
+    {
+        Name = name;
+        Description = description;
+    }
 }

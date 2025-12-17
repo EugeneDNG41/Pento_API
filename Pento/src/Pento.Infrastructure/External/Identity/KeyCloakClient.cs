@@ -10,7 +10,7 @@ internal sealed class KeyCloakClient(HttpClient httpClient)
             "users",
             user,
             cancellationToken);
-
+        
         httpResponseMessage.EnsureSuccessStatusCode();
 
         return ExtractIdentityIdFromLocationHeader(httpResponseMessage);

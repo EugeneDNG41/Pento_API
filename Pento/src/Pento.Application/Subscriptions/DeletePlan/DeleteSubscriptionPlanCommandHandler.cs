@@ -16,7 +16,7 @@ internal sealed class DeleteSubscriptionPlanCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.SubscriptionPlanNotFound);
         }
-        subscriptionPlan.Delete();
+        await subscriptionPlanRepository.RemoveAsync(subscriptionPlan, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
