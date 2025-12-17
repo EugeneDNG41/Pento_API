@@ -121,14 +121,12 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Google__AuthProviderX509CertUrl", googleAuthProviderCertUrl)
     .WithEnvironment("Google__ClientX509CertUrl", googleClientCertUrl)
     .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)
+    .WithHttpHealthCheck("/health/ready")
     .WithReference(pentoDb)
-    .WaitFor(pentoDb)
     .WithReference(keycloak)
-    .WaitFor(keycloak)
     .WithReference(cache)
-    .WaitFor(cache)
     .WithReference(blobs)
-    .WithHttpHealthCheck("/health/ready");
+    ;
 if (builder.ExecutionContext.IsRunMode)
 {
     project.WithReference(seq);
