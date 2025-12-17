@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Pento.Application.Trades.Sessions.GetAll;
+namespace Pento.Application.Trades.Sessions.AdminGetAll;
 
-internal sealed class GetTradeSessionsQueryValidator : AbstractValidator<GetTradeSessionsQuery>
+internal sealed class GetAdminTradeSessionsQueryValidator : AbstractValidator<GetAdminTradeSessionsQuery>
 {
-    public GetTradeSessionsQueryValidator()
+    public GetAdminTradeSessionsQueryValidator()
     {
         RuleFor(x => x.PageNumber)
             .GreaterThan(0).WithMessage("Page number must be greater than 0.");
