@@ -7,19 +7,19 @@ using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Households;
 
-namespace Pento.Application.Trades.Get;
+namespace Pento.Application.Trades.Offers.GetAll;
 
-internal sealed class GetAllTradePostsQueryHandler(
+internal sealed class GetTradeOffersQueryHandler(
     IUserContext userContext,
     ISqlConnectionFactory factory)
-    : IQueryHandler<GetAllTradePostsQuery, PagedList<TradePostGroupedResponse>>
+    : IQueryHandler<GetTradeOffersQuery, PagedList<TradeOfferGroupedResponse>>
 {
-    public async Task<Result<PagedList<TradePostGroupedResponse>>> Handle(GetAllTradePostsQuery query, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<TradeOfferGroupedResponse>>> Handle(GetTradeOffersQuery query, CancellationToken cancellationToken)
     {
         Guid? householdId = userContext.HouseholdId;
         if (householdId is null)
         {
-            return Result.Failure<PagedList<TradePostGroupedResponse>>(HouseholdErrors.NotInAnyHouseHold);
+            return Result.Failure<PagedList<TradeOfferGroupedResponse>>(HouseholdErrors.NotInAnyHouseHold);
 
         }
         await using DbConnection connection = await factory.OpenConnectionAsync(cancellationToken);
@@ -106,15 +106,20 @@ internal sealed class GetAllTradePostsQueryHandler(
             o.end_date AS EndDate,
             o.pickup_option AS PickupOption,
             o.user_id AS PostedBy,
-            o.created_on AS CreatedOnUtc
+            o.created_on AS CreatedOnUtc,
+            COUNT(*) FILTER 
+	            (WHERE (r.Status = 'Pending' AND r.is_deleted is false)) AS PendingRequests
         FROM trade_items i
         JOIN trade_offers o ON i.offer_id = o.id
+        JOIN trade_requests r ON r.trade_offer_id = o.id
         JOIN food_items fi ON i.food_item_id = fi.id
         JOIN food_references fr ON fi.food_reference_id = fr.id
         JOIN units u ON i.unit_id = u.id
         JOIN users us ON o.user_id = us.id
         {whereClause}
         {orderBy}
+        GROUP BY o.id, i.id, fi.id, fr.name, fr.image_url, us.first_name, us.avatar_url,
+        u.abbreviation
         OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         ";
 
@@ -124,11 +129,11 @@ internal sealed class GetAllTradePostsQueryHandler(
         SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
 
         int totalCount = await multi.ReadFirstAsync<int>();
-        var items = (await multi.ReadAsync<TradePostResponse>()).ToList();
+        var items = (await multi.ReadAsync<TradeOfferResponse>()).ToList();
 
         var grouped = items
             .GroupBy(x => x.OfferId)
-            .Select(g => new TradePostGroupedResponse(
+            .Select(g => new TradeOfferGroupedResponse(
                 OfferId: g.Key,
                 Status: g.First().Status,
                 StartDate: g.First().StartDate,
@@ -136,9 +141,10 @@ internal sealed class GetAllTradePostsQueryHandler(
                 PickupOption: g.First().PickupOption,
                 PostedBy: g.First().PostedBy,
                 CreatedOnUtc: g.First().CreatedOnUtc,
+                PendingRequests: g.First().PendingRequests,
                 PostedByName: g.First().PostedByName,
                 PostedByAvatarUrl: g.First().PostedByAvatarUrl,
-                Items: g.Select(x => new TradePostItemResponse(
+                Items: g.Select(x => new TradeOfferItemResponse(
                     ItemId: x.ItemId,
                     FoodItemId: x.FoodItemId,
                     FoodName: x.FoodName,
@@ -149,7 +155,7 @@ internal sealed class GetAllTradePostsQueryHandler(
             ))
             .ToList();
 
-        var paged = PagedList<TradePostGroupedResponse>.Create(
+        var paged = PagedList<TradeOfferGroupedResponse>.Create(
             grouped,
             totalCount,
             query.PageNumber,

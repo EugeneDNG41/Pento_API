@@ -1,6 +1,6 @@
-﻿namespace Pento.Application.Trades.Get;
+﻿namespace Pento.Application.Trades.Offers.GetAll;
 
-public sealed record TradePostResponse(
+public sealed record TradeOfferResponse(
     Guid OfferId,
     Guid ItemId,
     Guid FoodItemId,
@@ -15,10 +15,11 @@ public sealed record TradePostResponse(
     DateTime EndDate,
     string PickupOption,
     Guid PostedBy,
-    DateTime CreatedOnUtc
+    DateTime CreatedOnUtc,
+    int PendingRequests
 );
 
-public sealed record TradePostGroupedResponse(
+public sealed record TradeOfferGroupedResponse(
     Guid OfferId,
     string Status,
     DateTime StartDate,
@@ -26,12 +27,13 @@ public sealed record TradePostGroupedResponse(
     string PickupOption,
     Guid PostedBy,
     DateTime CreatedOnUtc,
+    int PendingRequests,
     string PostedByName,
     Uri? PostedByAvatarUrl,
-    IReadOnlyList<TradePostItemResponse> Items
+    IReadOnlyList<TradeOfferItemResponse> Items
 );
 
-public sealed record TradePostItemResponse(
+public sealed record TradeOfferItemResponse(
     Guid ItemId,
     Guid FoodItemId,
     string FoodName,
