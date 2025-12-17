@@ -15,12 +15,12 @@ internal sealed class RefreshTokenCommandHandler(IJwtService jwtService) : IComm
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))
         {
-            return Result.Failure<AuthToken>(UserErrors.InvalidToken);
+            return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidToken);
         }
         Result<AuthToken> result = await jwtService.RefreshTokenAsync(command.RefreshToken, cancellationToken);
         if (result.IsFailure)
         {
-            return Result.Failure<AuthToken>(UserErrors.InvalidToken);
+            return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidToken);
         }
         return result;
     }

@@ -21,7 +21,7 @@ internal sealed class WebSignInUserCommandHandler(IGenericRepository<User> userR
             cancellationToken)).SingleOrDefault();
         if (user == null || !user.Roles.Any(r => r.Type == RoleType.Administrative))
         {
-            return Result.Failure<AuthToken>(UserErrors.InvalidCredentials);
+            return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidCredentials);
         }
         Result<AuthToken> result = await jwtService.GetAuthTokenAsync(
             request.Email,
