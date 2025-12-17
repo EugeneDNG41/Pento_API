@@ -66,6 +66,8 @@ internal static class MigrationExtensions
         if (!await dbContext.Set<FoodDietaryTag>().AnyAsync(default))
         {
             FoodDietaryTagSeeder.Seed(dbContext);
+            await dbContext.SaveChangesAsync(default);
+
         }
         await dataSeeder.SeedAdminAsync(cancellationToken);
     }
