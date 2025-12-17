@@ -8,60 +8,59 @@ using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 
-namespace Pento.Application.Trades.Requests.AdminGetById;
+namespace Pento.Application.Trades.Offers.AdminGetById;
 
-internal sealed class GetAdminTradeRequestByIdQueryHandler(
+internal sealed class GetAdminTradeOfferByIdQueryHandler(
     ISqlConnectionFactory sqlConnectionFactory
-    ) : IQueryHandler<GetAdminTradeRequestByIdQuery, TradeRequestDetailAdminResponse>
+    ) : IQueryHandler<GetAdminTradeOfferByIdQuery, TradeOfferDetailAdminResponse>
 {
-    public async Task<Result<TradeRequestDetailAdminResponse>> Handle(
-        GetAdminTradeRequestByIdQuery query,
+    public async Task<Result<TradeOfferDetailAdminResponse>> Handle(
+        GetAdminTradeOfferByIdQuery query,
         CancellationToken cancellationToken)
     {
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         string sql = @"
             SELECT 
-                tr.id AS TradeRequestId,
-                tr.trade_offer_id AS TradeOfferId,
-                tr.user_id AS UserId,
+                tof.id AS TradeOfferId,
+                tof.user_id AS UserId,
                 u.first_name AS FirstName,
                 u.last_name AS LastName,
                 u.avatar_url AS AvatarUrl,
                 h1.name AS OfferHouseholdName,
-                h2.name AS RequestHouseholdName,
-                tr.status AS Status,
-                tr.created_on AS CreatedOn,
-                tr.updated_on AS UpdatedOn,
+                tof.status AS Status,
+                tof.created_on AS CreatedOn,
+                tof.updated_on AS UpdatedOn,
                 COALESCE(
                     (SELECT COUNT(*) FROM trade_items ti
-                     WHERE ti.request_id = tr.id), 0) AS TotalItems,
-                tr.is_deleted AS IsDeleted
-            FROM trade_requests tr
-            JOIN trade_offers tof ON tr.trade_offer_id = tof.id
+                     WHERE ti.offer_id = tof.id), 0) AS TotalItems,
+                Coalesce(
+                    (SELECT COUNT(*) FROM trade_requests tr
+                     WHERE tr.trade_offer_id = tof.id), 0) AS TotalRequests,
+                tof.is_deleted AS IsDeleted
+            FROM trade_offers tof
+            JOIN trade_requests tr ON tr.trade_offer_id = tof.id
             JOIN households h1 ON tof.household_id = h1.id
-            JOIN households h2 ON tr.household_id = h2.id
-            JOIN users u ON tr.user_id = u.id
-            WHERE tr.id = @TradeRequestId;
+            JOIN users u ON tof.user_id = u.id
+            WHERE tof.id = @TradeOfferId;
         ";
         var parameters = new DynamicParameters();
-        parameters.Add("@TradeRequestId", query.TradeRequestId);
+        parameters.Add("@TradeOfferId", query.TradeOfferId);
         var command = new CommandDefinition(sql, parameters, cancellationToken: cancellationToken);
-        TradeRequestAdminRow? row = await connection.QueryFirstOrDefaultAsync<TradeRequestAdminRow>(command);
+        TradeOfferAdminRow? row = await connection.QueryFirstOrDefaultAsync<TradeOfferAdminRow>(command);
         if (row == null)
         {
-            return Result.Failure<TradeRequestDetailAdminResponse>(TradeErrors.RequestNotFound);
+            return Result.Failure<TradeOfferDetailAdminResponse>(TradeErrors.RequestNotFound);
         }
-        var tradeRequest = new TradeRequestAdminResponse
+        var tradeOffer = new TradeOfferAdminResponse
         {
-            TradeRequestId = row.TradeRequestId,
             TradeOfferId = row.TradeOfferId,
-            RequestUser = new BasicUserResponse(row.UserId, row.FirstName, row.LastName, row.AvatarUrl),
+            OfferUser = new BasicUserResponse(row.UserId, row.FirstName, row.LastName, row.AvatarUrl),
             OfferHouseholdName = row.OfferHouseholdName,
-            RequestHouseholdName = row.RequestHouseholdName,
             Status = row.Status,
             CreatedOn = row.CreatedOn,
             UpdatedOn = row.UpdatedOn,
             TotalItems = row.TotalItems,
+            TotalRequests = row.TotalRequests,
             IsDeleted = row.IsDeleted
         };
         const string itemsSql = """
@@ -85,8 +84,8 @@ internal sealed class GetAdminTradeRequestByIdQueryHandler(
             """;
         var itemsCommand = new CommandDefinition(itemsSql, parameters, cancellationToken: cancellationToken);
         IEnumerable<TradeItemResponse> items = await connection.QueryAsync<TradeItemResponse>(itemsCommand);
-        var response = new TradeRequestDetailAdminResponse(
-            TradeRequest: tradeRequest,
+        var response = new TradeOfferDetailAdminResponse(
+            TradeOffer: tradeOffer,
             Items: items.AsList());
         return response;
     }

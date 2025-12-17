@@ -111,7 +111,7 @@ internal sealed class GetTradeOffersQueryHandler(
 	            (WHERE (r.Status = 'Pending' AND r.is_deleted is false)) AS PendingRequests
         FROM trade_items i
         JOIN trade_offers o ON i.offer_id = o.id
-        JOIN trade_requests r ON r.trade_offer_id = o.id
+        LEFT JOIN trade_requests r ON r.trade_offer_id = o.id
         JOIN food_items fi ON i.food_item_id = fi.id
         JOIN food_references fr ON fi.food_reference_id = fr.id
         JOIN units u ON i.unit_id = u.id

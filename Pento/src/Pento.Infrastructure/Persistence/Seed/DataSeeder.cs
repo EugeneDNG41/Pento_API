@@ -35,7 +35,7 @@ public sealed class DataSeeder(
         }
         string adminFirstName = "Admin";
         string adminLastName = "Pento";
-        string adminEmail = "pento@admin.com";
+        string adminEmail = "admin@pento.com";
         string adminPassword = "Admin123!";
         Result<string> adminIdentityId = await identityProviderService.RegisterUserAsync(
             new UserModel(adminEmail, adminPassword, adminFirstName, adminLastName),

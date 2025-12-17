@@ -5,7 +5,7 @@ using Pento.Application.Notifications.Get;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Notifications;
 
-namespace Pento.API.Endpoints.Notifications;
+namespace Pento.API.Endpoints.Notifications.Get;
 
 internal sealed class GetNotifications : IEndpoint
 {
