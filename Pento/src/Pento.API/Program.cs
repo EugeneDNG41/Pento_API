@@ -34,8 +34,8 @@ WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    await app.ApplyMigrations();
 }
+await app.ApplyMigrations();
 
 app.UseExceptionHandler();
 

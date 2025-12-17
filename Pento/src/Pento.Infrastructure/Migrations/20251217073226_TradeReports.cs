@@ -90,5 +90,6 @@ public partial class TradeReports : Migration
 
         migrationBuilder.DropTable(
             name: "trade_reports");
+
     }
 }
