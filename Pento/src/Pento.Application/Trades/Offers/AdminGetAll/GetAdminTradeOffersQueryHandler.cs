@@ -20,10 +20,10 @@ internal sealed class GetAdminTradeOffersQueryHandler(
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         string orderBy = query.SortBy switch
         {
-            GetTradeOffersSortBy.CreatedOn => "to.created_on",
+            GetTradeOffersSortBy.CreatedOn => "tof.created_on",
             GetTradeOffersSortBy.TotalItems => "10",
             GetTradeOffersSortBy.TotalRequests => "11",
-            _ => "to.id"
+            _ => "tof.id"
         };
         string orderClause = $"ORDER BY {orderBy} {(query.SortOrder != null ? query.SortOrder.ToString() : "ASC")}";
         var parameters = new DynamicParameters();
@@ -31,12 +31,12 @@ internal sealed class GetAdminTradeOffersQueryHandler(
         if (query.Status.HasValue)
         {
             parameters.Add("@Status", query.Status.Value.ToString());
-            filters.Add("to.status = @Status");
+            filters.Add("tof.status = @Status");
         }
         if (query.IsDeleted.HasValue)
         {
             parameters.Add("@IsDeleted", query.IsDeleted.Value);
-            filters.Add("to.is_deleted = @IsDeleted");
+            filters.Add("tof.is_deleted = @IsDeleted");
         }
 
         parameters.Add("@Offset", (query.PageNumber - 1) * query.PageSize);
