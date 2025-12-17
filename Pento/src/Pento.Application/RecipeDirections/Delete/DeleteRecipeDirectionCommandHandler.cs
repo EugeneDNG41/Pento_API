@@ -18,7 +18,7 @@ internal sealed class DeleteRecipeDirectionCommandHandler(
         {
             return Result.Failure(RecipeDirectionErrors.NotFound);
         }
-        recipeDirectionRepository.Remove(direction);
+        await recipeDirectionRepository.RemoveAsync(direction, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

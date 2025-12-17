@@ -38,7 +38,7 @@ internal sealed class CancelTradeSessionCommandHandler(
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }     
         session.Cancel();
-        tradeSessionRepository.Update(session);
+        await tradeSessionRepository.UpdateAsync(session, cancellationToken);
         TradeRequest? request = await tradeRequestRepository.GetByIdAsync(session.TradeRequestId, cancellationToken);
         if (request == null)
         {
@@ -56,7 +56,7 @@ internal sealed class CancelTradeSessionCommandHandler(
         {
             request.Reject();
         }
-        tradeRequestRepository.Update(request);
+        await tradeRequestRepository.UpdateAsync(request, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await hubContext.Clients.Group(session.Id.ToString())
             .TradeSessionCancelled(session.Id);

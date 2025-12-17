@@ -46,7 +46,7 @@ internal sealed class AdjustUserSubscriptionCommandHandler(
         {
             userSubscription.Adjust(command.DurationInDays);
         }
-        userSubscriptionRepository.Update(userSubscription);
+        await userSubscriptionRepository.UpdateAsync(userSubscription, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

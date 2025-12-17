@@ -110,7 +110,7 @@ internal sealed class FulfillMealPlanReservationCommandHandler(
             return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
         }
         reservation.MarkAsFulfilled(command.NewQuantity, command.UnitId, userContext.UserId);
-        reservationRepository.Update(reservation);
+        await reservationRepository.UpdateAsync(reservation, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return reservation.Id;

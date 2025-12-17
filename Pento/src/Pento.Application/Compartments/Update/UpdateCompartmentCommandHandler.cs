@@ -33,7 +33,7 @@ internal sealed class UpdateCompartmentCommandHandler(
         }
         compartment.UpdateName(command.Name);
         compartment.UpdateNotes(command.Notes);
-        compartmentRepository.Update(compartment);
+        await compartmentRepository.UpdateAsync(compartment, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

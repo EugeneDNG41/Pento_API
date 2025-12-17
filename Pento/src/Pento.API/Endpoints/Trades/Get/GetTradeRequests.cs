@@ -2,6 +2,7 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Trades.Requests.GetAll;
+using Pento.Application.Trades.Requests.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 

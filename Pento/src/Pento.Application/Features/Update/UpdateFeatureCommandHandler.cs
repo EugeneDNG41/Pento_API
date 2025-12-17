@@ -11,7 +11,7 @@ internal sealed class UpdateFeatureCommandHandler(
 {
     public async Task<Result> Handle(UpdateFeatureCommand command, CancellationToken cancellationToken)
     {
-        Feature? feature = (await featureRepository.FindAsync(f => f.Code == command.Code, cancellationToken)).SingleOrDefault();
+        Feature? feature = await featureRepository.GetByIdAsync(command.Code, cancellationToken);
         if (feature is null)
         {
             return Result.Failure(FeatureErrors.NotFound);

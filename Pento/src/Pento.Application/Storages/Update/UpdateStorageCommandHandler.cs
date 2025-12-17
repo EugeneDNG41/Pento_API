@@ -33,7 +33,7 @@ internal sealed class UpdateStorageCommandHandler(
         }
         storage.UpdateName(command.Name);
         storage.UpdateNotes(command.Notes);
-        repository.Update(storage);
+        await repository.UpdateAsync(storage, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

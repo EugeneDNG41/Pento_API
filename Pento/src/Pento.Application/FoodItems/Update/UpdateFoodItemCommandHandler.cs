@@ -148,7 +148,7 @@ internal sealed class UpdateFoodItemCommandHandler(
         {
             foodItem.UpdateNotes(command.Notes, userContext.UserId);
         }
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await hubContext.Clients.Group(householdId.Value.ToString()).FoodItemUpdated(command);
         return Result.Success();

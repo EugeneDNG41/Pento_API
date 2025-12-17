@@ -36,7 +36,7 @@ internal sealed class RemoveRecipeFromWishListCommandHandler(
         {
             return Result.Failure<Guid>(RecipeWishListErrors.NotFound);
         }
-        repository.Remove(wishlist);
+        await repository.RemoveAsync(wishlist, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

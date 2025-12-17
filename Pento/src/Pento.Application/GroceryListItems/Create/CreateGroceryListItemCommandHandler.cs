@@ -95,7 +95,7 @@ internal sealed class CreateGroceryListItemCommandHandler(
 
             existingItem.IncreaseQuantity(quantityToAdd);
 
-            _groceryListItemRepository.Update(existingItem);
+            await _groceryListItemRepository.UpdateAsync(existingItem, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return existingItem.Id;

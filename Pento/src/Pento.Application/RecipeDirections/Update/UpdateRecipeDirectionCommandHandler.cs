@@ -20,7 +20,7 @@ internal sealed class UpdateRecipeDirectionCommandHandler(
 
         direction.Update(command.Description, DateTime.UtcNow);
 
-        recipeDirectionRepository.Update(direction);
+        await recipeDirectionRepository.UpdateAsync(direction, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

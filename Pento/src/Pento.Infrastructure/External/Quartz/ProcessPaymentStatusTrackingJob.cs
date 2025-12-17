@@ -40,7 +40,7 @@ internal sealed class ProcessPaymentStatusTrackingJob(
                         payment.MarkAsProcessing();
                         break;
                 }
-                paymentRepository.Update(payment);
+                await paymentRepository.UpdateAsync(payment, context.CancellationToken);
                 await unitOfWork.SaveChangesAsync(context.CancellationToken);
             }
         }

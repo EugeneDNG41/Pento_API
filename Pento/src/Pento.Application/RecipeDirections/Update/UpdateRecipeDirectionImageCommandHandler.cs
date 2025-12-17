@@ -37,7 +37,7 @@ internal sealed class UpdateRecipeDirectionImageCommandHandler(
         Uri newUrl = upload.Value;
 
         direction.UpdateImageUrl(newUrl, DateTime.UtcNow);
-        directionRepository.Update(direction);
+        await directionRepository.UpdateAsync(direction, cancellationToken);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

@@ -46,7 +46,7 @@ internal sealed class PauseUserSubscriptionCommandHandler(
         else
         {
             userSubscription.Pause(dateTimeProvider.Today);
-            userSubscriptionRepository.Update(userSubscription);
+            await userSubscriptionRepository.UpdateAsync(userSubscription, cancellationToken);
             Result deactivationResult = await subscriptionService.DeactivateAsync(userSubscription, cancellationToken);
             if (deactivationResult.IsFailure)
             {

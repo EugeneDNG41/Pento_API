@@ -34,7 +34,7 @@ internal sealed class DeleteFoodItemCommandHandler(
             return Result.Failure(FoodItemErrors.HasPendingReservation);
         }
         foodItem.Delete();
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         await hubContext.Clients.Group(userContext.HouseholdId.Value.ToString())
             .FoodItemDeleted(command.FoodItemId);

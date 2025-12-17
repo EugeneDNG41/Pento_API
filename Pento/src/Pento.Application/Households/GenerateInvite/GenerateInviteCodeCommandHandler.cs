@@ -28,7 +28,7 @@ internal sealed class GenerateInviteCodeCommandHandler(
             command.CodeExpiration is null ?
             command.CodeExpiration :
             command.CodeExpiration.Value.ToUniversalTime());
-        repository.Update(household);
+        await repository.UpdateAsync(household, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return household.InviteCode;
     }

@@ -197,8 +197,8 @@ internal sealed class CancelTradeSessionCommandHandlerTests
         Assert.That(session.Status, Is.EqualTo(TradeSessionStatus.Cancelled));
         Assert.That(request.Status, Is.EqualTo(TradeRequestStatus.Cancelled));
 
-        _sessionRepo.Received(1).Update(session);
-        _requestRepo.Received(1).Update(request);
+        await _sessionRepo.Received(1).UpdateAsync(session);
+        await _requestRepo.Received(1).UpdateAsync(request);
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
         await _messageClient.Received(1).TradeSessionCancelled(session.Id);
     }

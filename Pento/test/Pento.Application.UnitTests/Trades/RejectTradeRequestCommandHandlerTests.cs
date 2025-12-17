@@ -200,8 +200,8 @@ internal sealed class RejectTradeRequestCommandHandlerTests
         Assert.That(result.IsSuccess);
         Assert.That(request.Status, Is.EqualTo(TradeRequestStatus.Rejected));
 
-        _sessionRepo.Received(1).Update(session1);
-        _requestRepo.Received(1).Update(request);
+        await _sessionRepo.Received(1).UpdateAsync(session1);
+        await _requestRepo.Received(1).UpdateAsync(request);
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }

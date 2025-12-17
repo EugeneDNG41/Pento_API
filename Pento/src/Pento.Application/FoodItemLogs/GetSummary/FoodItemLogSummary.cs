@@ -13,6 +13,8 @@ public sealed record FoodItemLogSummary
     public decimal ConsumptionByVolume { get; init; }
     public decimal DiscardByWeight { get; init; }
     public decimal DiscardByVolume { get; init; }
+    public decimal TradeByWeight { get; init; }
+    public decimal TradeByVolume { get; init; }
 }
 public sealed record FoodItemSummary
 {

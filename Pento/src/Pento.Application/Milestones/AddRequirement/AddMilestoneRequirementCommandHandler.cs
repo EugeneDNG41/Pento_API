@@ -20,7 +20,7 @@ internal sealed class AddMilestoneRequirementCommandHandler(
         {
             return Result.Failure<Guid>(MilestoneErrors.NotFound);
         }
-        Activity? activity = (await activityRepository.FindAsync(a => a.Code == command.ActivityCode, cancellationToken)).SingleOrDefault();
+        Activity? activity = await activityRepository.GetByIdAsync(command.ActivityCode, cancellationToken);
         if (activity is null)
         {
             return Result.Failure<Guid>(ActivityErrors.NotFound);

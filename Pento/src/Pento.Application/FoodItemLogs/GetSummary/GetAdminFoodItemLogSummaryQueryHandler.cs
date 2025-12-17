@@ -44,6 +44,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
         parameters.Add("IntakeAction", FoodItemLogAction.Intake.ToString(), DbType.String);
         parameters.Add("ConsumptionAction", FoodItemLogAction.Consumption.ToString(), DbType.String);
         parameters.Add("DiscardAction", FoodItemLogAction.Discard.ToString(), DbType.String);
+        parameters.Add("TradeAction", FoodItemLogAction.Trade.ToString(), DbType.String);
 
         parameters.Add("WeightToBaseFactor", weightUnit.ToBaseFactor, DbType.Decimal);
         parameters.Add("VolumeToBaseFactor", volumeUnit.ToBaseFactor, DbType.Decimal);
@@ -96,7 +97,23 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS DiscardByVolume
+            ), 0) AS DiscardByVolume,
+
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @WeightType 
+                         AND l.action = @TradeAction 
+                    THEN l.quantity * u.to_base_factor/ @WeightToBaseFactor
+                END
+            ), 0) AS TradeByWeight,
+        
+            COALESCE(SUM(
+                CASE 
+                    WHEN u.type = @VolumeType 
+                         AND l.action = @TradeAction 
+                    THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
+                END
+            ), 0) AS TradeByVolume
         FROM food_item_logs l
         JOIN units u ON u.id = l.unit_id
         WHERE (@IsDeleted is null OR l.is_deleted = @IsDeleted )

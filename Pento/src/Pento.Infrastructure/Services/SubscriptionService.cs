@@ -32,7 +32,7 @@ internal sealed class SubscriptionService(
             else if (existingEntitlement.Quota != subscriptionFeature.Quota || existingEntitlement.ResetPeriod != subscriptionFeature.ResetPeriod)
             {
                 existingEntitlement.UpdateEntitlement(subscriptionFeature.Quota, subscriptionFeature.ResetPeriod, userSubscription.Id);
-                userEntitlementRepository.Update(existingEntitlement);
+                await userEntitlementRepository.UpdateAsync(existingEntitlement, cancellationToken);
             }
         }
         return Result.Success();
@@ -63,12 +63,12 @@ internal sealed class SubscriptionService(
             }
             else if (thisSubscriptionEntitlement != null && (feature.DefaultQuota == null || otherSubscriptionEntitlementsExist))
             {
-                userEntitlementRepository.Remove(thisSubscriptionEntitlement);
+                await userEntitlementRepository.RemoveAsync(thisSubscriptionEntitlement, cancellationToken);
             }
             else if (thisSubscriptionEntitlement != null && !otherSubscriptionEntitlementsExist)
             {
                 thisSubscriptionEntitlement.UpdateEntitlement(feature.DefaultQuota, feature.DefaultResetPeriod);
-                userEntitlementRepository.Update(thisSubscriptionEntitlement);
+                await userEntitlementRepository.UpdateAsync(thisSubscriptionEntitlement, cancellationToken);
             }
         }
         return Result.Success();

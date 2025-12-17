@@ -46,7 +46,7 @@ internal sealed class SetMemberRolesCommandHandler(
             return Result.Failure(RoleErrors.MustHaveOne);
         }
         user.SetRoles(roles);
-        userRepository.Update(user);
+        await userRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

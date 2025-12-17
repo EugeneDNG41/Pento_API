@@ -1218,7 +1218,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "recipes:update",
                             Description = "edit your own recipes.",
-                            Name = "Update Recipes"
+                            Name = "UpdateAsync Recipes"
                         },
                         new
                         {
@@ -1248,7 +1248,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "giveaways:update",
                             Description = "Edit giveaway posts you created.",
-                            Name = "Update Giveaways"
+                            Name = "UpdateAsync Giveaways"
                         },
                         new
                         {
@@ -1325,7 +1325,7 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             Code = "household:update",
-                            Description = "Update household name and invite code.",
+                            Description = "UpdateAsync household name and invite code.",
                             Name = "Manage Household"
                         },
                         new
@@ -1337,8 +1337,8 @@ namespace Pento.Infrastructure.Migrations
                         new
                         {
                             Code = "members:delete",
-                            Description = "Remove/kick members from the household and revoke their access.",
-                            Name = "Remove Members"
+                            Description = "RemoveAsync/kick members from the household and revoke their access.",
+                            Name = "RemoveAsync Members"
                         },
                         new
                         {
@@ -1356,7 +1356,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "storages:update",
                             Description = "Rename storages and modify their attributes.",
-                            Name = "Update Storages"
+                            Name = "UpdateAsync Storages"
                         },
                         new
                         {
@@ -1380,7 +1380,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "compartments:update",
                             Description = "Rename/reorder compartments and edit their attributes.",
-                            Name = "Update Compartments"
+                            Name = "UpdateAsync Compartments"
                         },
                         new
                         {
@@ -1404,7 +1404,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "fooditems:update",
                             Description = "Edit item details and adjust quantities (consume/waste/donate).",
-                            Name = "Update Food Items"
+                            Name = "UpdateAsync Food Items"
                         },
                         new
                         {
@@ -1428,7 +1428,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "groceries:update",
                             Description = "Edit grocery lists and list items.",
-                            Name = "Update Groceries"
+                            Name = "UpdateAsync Groceries"
                         },
                         new
                         {
@@ -1452,7 +1452,7 @@ namespace Pento.Infrastructure.Migrations
                         {
                             Code = "mealplans:update",
                             Description = "Modify meal plans.",
-                            Name = "Update Meal Plans"
+                            Name = "UpdateAsync Meal Plans"
                         },
                         new
                         {

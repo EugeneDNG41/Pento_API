@@ -37,7 +37,7 @@ internal sealed class FeatureUpdatedEventHandler( //business logic to update use
             {
                 if (feature.DefaultQuota == null && feature.DefaultResetPeriod == null)
                 {
-                    userEntitlementRepository.Remove(userEntitlement);
+                    await userEntitlementRepository.RemoveAsync(userEntitlement, cancellationToken);
                 }
                 else
                 {
@@ -46,7 +46,7 @@ internal sealed class FeatureUpdatedEventHandler( //business logic to update use
                         feature.DefaultResetPeriod);
                 }
             }
-            userEntitlementRepository.UpdateRange(userEntitlements);
+            await userEntitlementRepository.UpdateRangeAsync(userEntitlements, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }

@@ -29,7 +29,7 @@ internal sealed class RegisterDeviceTokenCommandHandler(
         if (usedByOtherUser is not null)
         {
             usedByOtherUser.ReassignTo(userId, request.Platform);
-            deviceTokenRepository.Update(usedByOtherUser);
+            await deviceTokenRepository.UpdateAsync(usedByOtherUser, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(request.Token);
@@ -58,7 +58,7 @@ internal sealed class RegisterDeviceTokenCommandHandler(
         else
         {
             existing.UpdateToken(request.Token);
-            deviceTokenRepository.Update(existing);
+            await deviceTokenRepository.UpdateAsync(existing, cancellationToken);
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);

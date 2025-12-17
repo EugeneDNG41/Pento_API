@@ -1,5 +1,6 @@
 ﻿using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
+using Pento.Application.Trades.Requests.GetById;
 using Pento.Domain.Trades;
 
 namespace Pento.Application.Trades.Requests.GetAll;

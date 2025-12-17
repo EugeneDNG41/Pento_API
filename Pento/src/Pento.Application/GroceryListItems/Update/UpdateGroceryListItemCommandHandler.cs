@@ -31,7 +31,7 @@ internal sealed class UpdateGroceryListItemCommandHandler(
             priority: priority
         );
 
-        groceryListItemRepository.Update(groceryListItem);
+        await groceryListItemRepository.UpdateAsync(groceryListItem, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(request.Id);

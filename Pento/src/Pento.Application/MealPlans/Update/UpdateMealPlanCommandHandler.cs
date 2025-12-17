@@ -33,7 +33,7 @@ internal sealed class UpdateMealPlanCommandHandler(
             datetimeProvider.UtcNow
             );
 
-        mealPlanRepository.Update(mealPlan);
+        await mealPlanRepository.UpdateAsync(mealPlan, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

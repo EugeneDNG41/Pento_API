@@ -1,12 +1,13 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Trades;
 
-namespace Pento.Application.Abstractions.Services;
+namespace Pento.Infrastructure.Services;
 
 public sealed class TradeService(
     IConverterService converter,
@@ -14,14 +15,14 @@ public sealed class TradeService(
     IGenericRepository<TradeSessionItem> tradeSessionItemRepository,
     IGenericRepository<TradeItemOffer> tradeItemOfferRepository,
     IGenericRepository<TradeItemRequest> tradeItemRequestRepository,
-    IGenericRepository<FoodItem> foodItemRepository)
+    IGenericRepository<FoodItem> foodItemRepository) : ITradeService
 {
     public async Task<Result> ReconcileTradeItemsAddedOrUpdatedOutsideSessionAsync(
         Guid offerId,
-        Guid? requestId,      
+        Guid? requestId,
         Guid userId,
         TradeItem tradeItem,
-        FoodItem foodItem, 
+        FoodItem foodItem,
         CancellationToken cancellationToken)
     {
         Result<decimal> qtyInItemUnit = await converter.ConvertAsync(
@@ -62,19 +63,19 @@ public sealed class TradeService(
                 }
                 else
                 {
-                    reservedQty = 0;         
+                    reservedQty = 0;
                     break;
                 }
             }
         }
         foodItem.Reserve(reservedQty, tradeItem.Quantity, tradeItem.UnitId, userId);
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();
     }
     public async Task<Result> ReconcileUpdatedTradeItemsDuringSessionAsync(
-        TradeSession session, 
+        TradeSession session,
         TradeSessionItem sessionItem,
-        FoodItem foodItem, 
+        FoodItem foodItem,
         decimal newQuantity,
         Guid newUnitId,
         CancellationToken cancellationToken)
@@ -118,10 +119,10 @@ public sealed class TradeService(
             if (originalOffer == null)
             {
                 foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
-                foodItemRepository.Update(foodItem);
+                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             }
             else
-            {              
+            {
                 decimal qtyDifference = originalQtyInItemUnit != null && originalQtyInItemUnit.Value >= newQtyInItemUnit.Value ?
                     currentQtyInItemUnit.Value - originalQtyInItemUnit.Value :
                     currentQtyInItemUnit.Value - newQtyInItemUnit.Value;
@@ -140,7 +141,7 @@ public sealed class TradeService(
             if (originalRequest == null)
             {
                 foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
-                foodItemRepository.Update(foodItem);
+                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             }
             else
             {
@@ -171,12 +172,12 @@ public sealed class TradeService(
                 }
             }
         }
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();
 
     }
     public async Task<Result> ReconcileTradeItemsRemovedFromSessionAsync(
-        TradeSession session, 
+        TradeSession session,
         TradeSessionItem sessionItem,
         FoodItem foodItem,
         CancellationToken cancellationToken)
@@ -217,7 +218,7 @@ public sealed class TradeService(
                 if (qtyDifference > 0) // More was reserved in session than originally offered, so only adjust the difference then
                 {
                     foodItem.AdjustReservedQuantity(qtyDifference);
-                }                                  
+                }
             }
         }
         else
@@ -249,7 +250,7 @@ public sealed class TradeService(
                 }
             }
         }
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();
     }
     public async Task<Result> ReconcileAddedTradeItemsDuringSessionAsync(
@@ -327,7 +328,7 @@ public sealed class TradeService(
                 }
             }
         }
-        foodItemRepository.Update(foodItem);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();
     }
 }

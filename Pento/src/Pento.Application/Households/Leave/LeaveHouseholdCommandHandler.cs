@@ -25,7 +25,7 @@ internal sealed class LeaveHouseholdCommandHandler(
             return Result.Failure(UserErrors.NotFound);
         }
         user.SetHouseholdId(null);
-        userRepository.Update(user);
+        await userRepository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

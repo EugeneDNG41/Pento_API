@@ -103,7 +103,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             bool inSession = sessionOfferItems.Any(si => si.FoodItemId == offeredItem.FoodItemId);
             if (!inSession)
             {
-                tradeItemOfferRepository.Remove(offeredItem);
+                await tradeItemOfferRepository.RemoveAsync(offeredItem, cancellationToken);
             }
         }
         foreach (TradeItemRequest requestedItem in requestedItems) //remove any not in session item
@@ -122,7 +122,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             bool inSession = sessionRequestItems.Any(si => si.From == TradeItemFrom.Request && si.FoodItemId == requestedItem.FoodItemId);
             if (!inSession)
             {
-                tradeItemRequestRepository.Remove(requestedItem);
+                await tradeItemRequestRepository.RemoveAsync(requestedItem, cancellationToken);
             }
         }
 
@@ -143,7 +143,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 }
                 foodItem.Reserve(conversionResult.Value, sessionItem.Quantity, sessionItem.UnitId, offer.UserId); //reserve again in case restored above
                 offeredItem.Update(sessionItem.Quantity, sessionItem.UnitId);
-                tradeItemOfferRepository.Update(offeredItem);
+                await tradeItemOfferRepository.UpdateAsync(offeredItem, cancellationToken);
             }
             else
             {
@@ -172,7 +172,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 }
                 foodItem.Reserve(conversionResult.Value, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
                 requestedItem.Update(sessionItem.Quantity, sessionItem.UnitId);
-                tradeItemRequestRepository.Update(requestedItem);
+                await tradeItemRequestRepository.UpdateAsync(requestedItem, cancellationToken);
             }
             else
             {
@@ -203,7 +203,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             {
                 FoodItem tradedItem = foodItem.Trade(request.HouseholdId, request.UserId, requestCompartment.Id, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
                 foodItemRepository.Add(tradedItem);
-                foodItemRepository.Update(foodItem);
+                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             }
         }
         foreach (TradeSessionItem sessionItem in sessionRequestItems)
@@ -213,7 +213,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             {
                 FoodItem tradedItem = foodItem.Trade(offer.HouseholdId, offer.UserId, offerCompartment.Id, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
                 foodItemRepository.Add(tradedItem);
-                foodItemRepository.Update(foodItem);
+                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);

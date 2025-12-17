@@ -23,7 +23,7 @@ internal sealed class UserLeftHouseholdDomainEventHandler(
             if (firstUser is not null)
             {
                 firstUser.SetRoles(new List<Role> { Role.HouseholdHead });
-                repository.Update(firstUser);
+                await repository.UpdateAsync(firstUser, cancellationToken);
                 await unitOfWork.SaveChangesAsync(cancellationToken);
             }
         }
@@ -35,7 +35,7 @@ internal sealed class UserLeftHouseholdDomainEventHandler(
                 throw new PentoException(nameof(UserLeftHouseholdDomainEventHandler), HouseholdErrors.NotFound);
             }
             household.Delete();
-            householdRepository.Update(household);
+            await householdRepository.UpdateAsync(household, cancellationToken);
             await unitOfWork.SaveChangesAsync(cancellationToken);
             return;
         }

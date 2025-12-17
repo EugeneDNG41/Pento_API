@@ -29,7 +29,7 @@ internal sealed class UpdateFoodItem : IEndpoint
         })
         .WithTags(Tags.FoodItems)
         .RequireAuthorization()
-        .WithDescription("Update the attributes of a specified food item");
+        .WithDescription("UpdateAsync the attributes of a specified food item");
     }
     internal sealed class Request
     {

@@ -32,7 +32,7 @@ internal sealed class UpdateMilestoneIconCommandHandler(
             }
         }
         milestone.UpdateIconUrl(urlResult.Value);
-        milestoneRepository.Update(milestone);
+        await milestoneRepository.UpdateAsync(milestone, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return urlResult.Value;
     }

@@ -9,7 +9,7 @@ using Pento.Domain.Trades;
 namespace Pento.Application.EventHandlers;
 
 internal sealed class TradeSessionCancelledEventHandler(
-    TradeService tradeService,
+    ITradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,

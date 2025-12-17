@@ -59,7 +59,11 @@ internal sealed class GetAllTradePostsQueryHandler(
             }
 
         }
-
+        if (query.Status.HasValue)
+        {
+            parameters.Add("@Status", query.Status.Value.ToString());
+            filters.Add("o.status = @Status");
+        }
         filters.Add("o.is_deleted = false");
 
         string whereClause = filters.Count > 0

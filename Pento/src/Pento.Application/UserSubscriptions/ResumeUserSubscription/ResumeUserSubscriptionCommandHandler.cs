@@ -52,7 +52,7 @@ internal sealed class ResumeUserSubscriptionCommandHandler(
                 return Result.Failure(SubscriptionErrors.MinimumPauseDay(minPauseDays));
             }
             userSubscription.Resume(dateTimeProvider.Today);
-            userSubscriptionRepository.Update(userSubscription);
+            await userSubscriptionRepository.UpdateAsync(userSubscription, cancellationToken);
 
             Result reactivationResult = await subscriptionService.ActivateAsync(userSubscription, cancellationToken);
             if (reactivationResult.IsFailure)

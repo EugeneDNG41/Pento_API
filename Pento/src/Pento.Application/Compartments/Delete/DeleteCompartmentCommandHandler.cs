@@ -1,16 +1,19 @@
 ﻿using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Compartments;
+using Pento.Domain.FoodItemReservations;
 using Pento.Domain.FoodItems;
+using Pento.Domain.Trades;
 
 namespace Pento.Application.Compartments.Delete;
 
 internal sealed class DeleteCompartmentCommandHandler(
     IUserContext userContext,
+    ICompartmentService compartmentService,
     IGenericRepository<Compartment> compartmentRepository,
-    IGenericRepository<FoodItem> foodItemRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<DeleteCompartmentCommand>
 {
     public async Task<Result> Handle(DeleteCompartmentCommand request, CancellationToken cancellationToken)
@@ -25,10 +28,10 @@ internal sealed class DeleteCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.ForbiddenAccess);
         }
-        bool itemsInCompartment = await foodItemRepository.AnyAsync(item => item.CompartmentId == compartment.Id && item.Quantity > 0, cancellationToken);
-        if (itemsInCompartment)
+        Result checkEmptyResult = await compartmentService.CheckIfEmptyAsync(compartment.Id, currentHouseholdId.Value, cancellationToken);
+        if (checkEmptyResult.IsFailure)
         {
-            return Result.Failure(CompartmentErrors.NotEmpty);
+            return checkEmptyResult;
         }
         bool otherCompartmentExists = await compartmentRepository.AnyAsync(c => c.HouseholdId == currentHouseholdId && c.Id != compartment.Id, cancellationToken);
         if (!otherCompartmentExists)
@@ -36,7 +39,7 @@ internal sealed class DeleteCompartmentCommandHandler(
             return Result.Failure(CompartmentErrors.AtLeastOne);
         }
         //should check if compartment is empty before deleting
-        compartment.Delete();
+        await compartmentRepository.RemoveAsync(compartment, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

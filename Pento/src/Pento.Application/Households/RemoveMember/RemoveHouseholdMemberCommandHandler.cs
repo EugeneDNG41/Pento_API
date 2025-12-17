@@ -27,7 +27,7 @@ internal sealed class RemoveHouseholdMemberCommandHandler(
         }
         member.SetHouseholdId(null);
         member.SetRoles(new List<Role>());
-        userRepository.Update(member);
+        await userRepository.UpdateAsync(member, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

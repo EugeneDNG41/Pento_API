@@ -246,7 +246,7 @@ internal sealed class CreateTradeItemOfferCommandHandlerTests
 
         _offerRepo.Received(1).Add(Arg.Any<TradeOffer>());
         _tradeItemRepo.Received(1).Add(Arg.Any<TradeItemOffer>());
-        _foodItemRepo.Received(1).Update(foodItem);
+        await _foodItemRepo.Received(1).UpdateAsync(foodItem);
         await _uow.Received(1).SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 }
