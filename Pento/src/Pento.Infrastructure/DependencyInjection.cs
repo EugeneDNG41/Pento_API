@@ -51,6 +51,7 @@ using Pento.Infrastructure.Utility.Converter;
 using Pento.Infrastructure.Utility.Outbox;
 using Quartz;
 using ZiggyCreatures.Caching.Fusion;
+using ZiggyCreatures.Caching.Fusion.Backplane.StackExchangeRedis;
 using ZiggyCreatures.Caching.Fusion.Serialization.NewtonsoftJson;
 
 namespace Pento.Infrastructure;
@@ -148,24 +149,30 @@ public static class DependencyInjection
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
         services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
-
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnectionString;
+        });
 #pragma warning disable CA2000 // Dispose objects before losing scope
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
-            Duration = TimeSpan.FromHours(1),
+            Duration = TimeSpan.FromMinutes(1),
 
-            // FACTORY TIMEOUT
-            FactorySoftTimeout = TimeSpan.FromMilliseconds(100),
-            FactoryHardTimeout = TimeSpan.FromMilliseconds(1500),
-
-            // FAILSAFE
             IsFailSafeEnabled = true,
             FailSafeMaxDuration = TimeSpan.FromHours(2),
-            FailSafeThrottleDuration = TimeSpan.FromSeconds(30)
+            FailSafeThrottleDuration = TimeSpan.FromSeconds(30),
+
+            EagerRefreshThreshold = 0.9f,
+
+            FactorySoftTimeout = TimeSpan.FromMilliseconds(100),
+            FactoryHardTimeout = TimeSpan.FromMilliseconds(1500)
         })
         .WithSerializer(new FusionCacheNewtonsoftJsonSerializer())
         .WithDistributedCache(new RedisCache(new RedisCacheOptions
+        {
+            Configuration = redisConnectionString
+        })).WithBackplane(new RedisBackplane(new RedisBackplaneOptions
         {
             Configuration = redisConnectionString
         }));
