@@ -148,12 +148,22 @@ public static class DependencyInjection
     private static void AddCaching(IServiceCollection services, IConfiguration configuration)
     {
         string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
-        services.AddSignalR();
-#pragma warning disable CA2000 // Dispose objects before losing scope
+        services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisConnectionString;
+        });
+        services.AddFusionCacheNewtonsoftJsonSerializer();
+
+        // ADD SERVICES: REDIS BACKPLANE
+        services.AddFusionCacheStackExchangeRedisBackplane(options =>
+        {
+            options.Configuration = redisConnectionString;
+        });
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
-            Duration = TimeSpan.FromMinutes(1),
+            Duration = TimeSpan.FromHours(1),
 
             IsFailSafeEnabled = true,
             FailSafeMaxDuration = TimeSpan.FromHours(2),
@@ -163,16 +173,7 @@ public static class DependencyInjection
 
             FactorySoftTimeout = TimeSpan.FromMilliseconds(100),
             FactoryHardTimeout = TimeSpan.FromMilliseconds(1500)
-        })
-        .WithSerializer(new FusionCacheNewtonsoftJsonSerializer())
-        .WithDistributedCache(new RedisCache(new RedisCacheOptions
-        {
-            Configuration = redisConnectionString
-        })).WithBackplane(new RedisBackplane(new RedisBackplaneOptions
-        {
-            Configuration = redisConnectionString
-        }));
-#pragma warning restore CA2000 // Dispose objects before losing scope
+        });
     }
     public static WebApplicationBuilder AddAspireHostedServices(this WebApplicationBuilder builder)
     {

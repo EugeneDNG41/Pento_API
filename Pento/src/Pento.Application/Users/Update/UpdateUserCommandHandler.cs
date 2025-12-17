@@ -20,7 +20,7 @@ internal sealed class UpdateUserCommandHandler(
         }
 
         user.Update(request.FirstName, request.LastName);
-
+        await repository.UpdateAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

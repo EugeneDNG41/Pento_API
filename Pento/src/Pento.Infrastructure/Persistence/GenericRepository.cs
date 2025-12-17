@@ -12,14 +12,12 @@ namespace Pento.Infrastructure.Persistence;
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     protected ApplicationDbContext _context;
-    private readonly IFusionCache _cache;
     protected DbSet<T> Table { get; set; }
 
-    public GenericRepository(ApplicationDbContext context, IFusionCache cache)
+    public GenericRepository(ApplicationDbContext context)
     {
         _context = context;
         Table = _context.Set<T>();
-        _cache = cache;
     }
     public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
@@ -31,19 +29,11 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     }
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _cache.GetOrSetAsync(
-            key: $"{typeof(T)}_{id}",
-            async entry => await Table.FindAsync([id], cancellationToken),
-            token: cancellationToken
-            );
+        return await Table.FindAsync([id], cancellationToken);
     }
     public async Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        return await _cache.GetOrSetAsync(
-            key: $"{typeof(T)}_{id}",
-            async entry => await Table.FindAsync([id], cancellationToken),
-            token: cancellationToken
-            );
+        return await Table.FindAsync([id], cancellationToken);
     }
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
@@ -89,7 +79,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         EntityEntry<T> tracker = _context.Attach(entity);
         tracker.State = EntityState.Modified;
-        await InvalidateCacheAsync(entity, cancellationToken);
     }
 
     public async virtual Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
@@ -110,7 +99,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         else
         {
             _context.Remove(entity);
-            await InvalidateCacheAsync(entity, cancellationToken);
         }      
     }
 
@@ -135,19 +123,5 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         }
 
         return await Table.AnyAsync(predicate, cancellationToken);
-    }
-    private async Task InvalidateCacheAsync(T entity, CancellationToken cancellationToken)
-    {
-        object? id = entity.GetType().GetProperty("Id")?.GetValue(entity);
-        object? code = entity.GetType().GetProperty("Code")?.GetValue(entity);
-        if (id != null)
-        {
-            string key = $"{typeof(T)}_{id}";
-            await _cache.RemoveAsync(key, token: cancellationToken);
-        }
-        if (code != null)
-        {
-            await _cache.RemoveAsync($"{nameof(T)}_{code}", token: cancellationToken);
-        }
     }
 }
