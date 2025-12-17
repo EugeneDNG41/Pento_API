@@ -11,9 +11,6 @@ internal sealed class CreateRecipeDirectionCommandValidator
             .NotEmpty()
             .WithMessage("RecipeId is required.");
 
-        RuleFor(x => x.StepNumber)
-            .GreaterThan(0)
-            .WithMessage("StepNumber must be greater than zero.");
 
         RuleFor(x => x.Description)
             .NotEmpty()
