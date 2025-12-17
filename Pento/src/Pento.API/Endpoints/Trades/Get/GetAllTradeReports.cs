@@ -25,6 +25,7 @@ internal sealed class GetAllTradeReports : IEndpoint
         })
         .WithTags(Tags.Trades)
         .RequireAuthorization();
+
         app.MapGet("trades/reports/{tradeReportId:guid}", async (
             Guid tradeReportId,
             IQueryHandler<GetTradeReportByIdQuery, IReadOnlyList<TradeReportResponse>> handler,
@@ -41,6 +42,7 @@ internal sealed class GetAllTradeReports : IEndpoint
                 })
         .WithTags(Tags.Trades)
         .RequireAuthorization();
+
         app.MapGet("trades/reports/me", async (
             IQueryHandler<GetMyTradeReportsQuery, IReadOnlyList<TradeReportResponse>> handler,
             CancellationToken cancellationToken) =>
