@@ -2,32 +2,30 @@
 
 namespace Pento.Application.Trades.Requests.AdminGetAll;
 
-public sealed record TradeRequestAdminResponse
+public sealed record TradeOfferAdminResponse
 {
-    public Guid TradeRequestId { get; init; }
     public Guid TradeOfferId { get; init; }
-    public BasicUserResponse RequestUser { get; init; }
+    public BasicUserResponse OfferUser { get; init; }
     public string OfferHouseholdName { get; init; }
-    public string RequestHouseholdName { get; init; }
     public string Status { get; init; }
     public DateTime CreatedOn { get; init; }
     public DateTime UpdatedOn { get; init; }
     public int TotalItems { get; init; }
+    public int TotalRequests { get; init; }
     public bool IsDeleted { get; init; }
 }
-public sealed record TradeRequestAdminRow
+public sealed record TradeOfferAdminRow
 {
-    public Guid TradeRequestId { get; init; }
     public Guid TradeOfferId { get; init; }
     public Guid UserId { get; init; }
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public Uri? AvatarUrl { get; init; }
     public string OfferHouseholdName { get; init; }
-    public string RequestHouseholdName { get; init; }
     public string Status { get; init; }
     public DateTime CreatedOn { get; init; }
     public DateTime UpdatedOn { get; init; }
     public int TotalItems { get; init; }
+    public int TotalRequests { get; init; }
     public bool IsDeleted { get; init; }
 }
