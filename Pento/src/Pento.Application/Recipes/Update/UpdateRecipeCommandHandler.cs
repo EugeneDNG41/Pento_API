@@ -44,7 +44,7 @@ internal sealed class UpdateRecipeCommandHandler : ICommandHandler<UpdateRecipeC
         );
 
         recipe.ChangeVisibility(request.IsPublic, _dateTimeProvider.UtcNow);
-
+        await _recipeRepository.UpdateAsync(recipe, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

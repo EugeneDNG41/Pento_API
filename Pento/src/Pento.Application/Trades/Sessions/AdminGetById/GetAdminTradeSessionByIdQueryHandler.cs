@@ -1,32 +1,24 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Trades.Sessions.GetById;
 using Pento.Application.Users.GetAll;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Households;
 using Pento.Domain.Trades;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.Sessions.GetById;
+namespace Pento.Application.Trades.Sessions.AdminGetById;
 
-internal sealed class GetTradeSessionByIdQueryHandler(
-    IUserContext userContext,
+internal sealed class GetAdminTradeSessionByIdQueryHandler( 
     IGenericRepository<User> userRepository,
-    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetTradeSessionByIdQuery, TradeSessionDetailResponse>
+    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetAdminTradeSessionByIdQuery, TradeSessionDetailResponse>
 {
-    public async Task<Result<TradeSessionDetailResponse>> Handle(GetTradeSessionByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<TradeSessionDetailResponse>> Handle(GetAdminTradeSessionByIdQuery request, CancellationToken cancellationToken)
     {
-        Guid? householdId = userContext.HouseholdId;
-        if (householdId == null)
-        {
-            return Result.Failure<TradeSessionDetailResponse>(HouseholdErrors.NotInAnyHouseHold);
-        }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var parameters = new DynamicParameters();
         parameters.Add("@TradeSessionId", request.TradeSessionId);
-        parameters.Add("@HouseholdId", householdId.Value);
         const string sql = """
             SELECT
               ts.id                                   AS TradeSessionId,
@@ -53,8 +45,7 @@ internal sealed class GetTradeSessionByIdQueryHandler(
             LEFT JOIN trade_session_items tsi ON tsi.id = ts.id
             JOIN households h ON h.id = ts.offer_household_id
             JOIN households h2 ON h2.id = ts.request_household_id
-            WHERE ts.id = @TradeSessionId
-                AND (ts.offer_household_id = @HouseholdId OR ts.request_household_id = @HouseholdId);
+            WHERE ts.id = @TradeSessionId;
             """;
         CommandDefinition command = new(sql, parameters, cancellationToken: cancellationToken);
         TradeSessionRow? tradeSessionRow = await connection.QuerySingleOrDefaultAsync<TradeSessionRow>(command);

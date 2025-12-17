@@ -78,7 +78,7 @@ internal sealed class FulfillMealPlanRecipeCommandHandler(
                 r.UnitId,
                 userContext.UserId);
         }
-
+        await reservationRepo.UpdateRangeAsync(reservations, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return command.RecipeId;
     }

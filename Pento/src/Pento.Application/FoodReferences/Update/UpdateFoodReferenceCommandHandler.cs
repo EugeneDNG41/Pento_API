@@ -46,7 +46,7 @@ internal sealed class UpdateFoodReferenceCommandHandler(
             unitType: unitType,
             utcNow: DateTime.UtcNow
         );
-
+        await foodReferenceRepository.UpdateAsync(foodRef, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success(foodRef.Id);
     }

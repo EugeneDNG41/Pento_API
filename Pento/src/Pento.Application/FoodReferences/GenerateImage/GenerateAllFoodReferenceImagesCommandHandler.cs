@@ -78,7 +78,7 @@ internal sealed class GenerateAllFoodReferenceImagesCommandHandler(
                 //Eror
             }
         }
-
+        await foodRepo.UpdateRangeAsync(foods, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(successCount);

@@ -16,7 +16,7 @@ internal sealed class DeleteSubscriptionFeatureCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.SubscriptionFeatureNotFound);
         }
-        subscriptionFeature.Delete();
+        await subscriptionFeatureRepository.RemoveAsync(subscriptionFeature, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

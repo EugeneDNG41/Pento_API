@@ -29,7 +29,7 @@ internal sealed class CreateStorageCommandHandler(
         {
             return Result.Failure<Guid>(HouseholdErrors.NotFound);
         }
-        if (await storageRepository.AnyAsync(s => s.Name == command.Name && s.HouseholdId == householdId, cancellationToken))
+        if (await storageRepository.AnyAsync(s => s.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) && s.HouseholdId == householdId, cancellationToken))
         {
             return Result.Failure<Guid>(StorageErrors.DuplicateName);
         }

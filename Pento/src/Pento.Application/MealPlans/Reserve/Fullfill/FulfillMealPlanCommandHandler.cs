@@ -50,7 +50,7 @@ internal sealed class FulfillMealPlanCommandHandler(
                 userContext.UserId
             );
         }
-
+        await reservationRepo.UpdateRangeAsync(reservations, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return command.MealPlanId;
     }

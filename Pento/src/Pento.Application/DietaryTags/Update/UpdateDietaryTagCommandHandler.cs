@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Messaging;
+﻿using System.Globalization;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.DietaryTags;
@@ -17,10 +18,16 @@ internal sealed class UpdateDietaryTagCommandHandler(
         {
             return Result.Failure<Guid>(DietaryTagErrors.NotFound);
         }
-
-        typeof(DietaryTag).GetProperty(nameof(DietaryTag.Name))?.SetValue(tag, request.Name);
-        typeof(DietaryTag).GetProperty(nameof(DietaryTag.Description))?.SetValue(tag, request.Description);
-
+        bool duplicateNameExists = await dietaryTagRepository
+            .AnyAsync(
+                dt => dt.Id != request.Id && dt.Name.Equals(request.Name, StringComparison.OrdinalIgnoreCase),
+                cancellationToken);
+        if (duplicateNameExists)
+        {
+            return Result.Failure<Guid>(DietaryTagErrors.DuplicateName);
+        }
+        tag.Update(request.Name, request.Description);
+        await dietaryTagRepository.UpdateAsync(tag, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success(tag.Id);
     }

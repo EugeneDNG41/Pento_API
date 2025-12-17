@@ -26,7 +26,7 @@ internal sealed class DeleteRecipeCommandHandler : ICommandHandler<DeleteRecipeC
         {
             return Result.Failure(RecipeErrors.NotFound);
         }
-        recipe.Delete();
+        await _recipeRepository.RemoveAsync(recipe, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

@@ -24,7 +24,7 @@ internal sealed class UpdateCompartmentCommandHandler(
         {
             return Result.Failure(CompartmentErrors.ForbiddenAccess);
         }
-        if (await compartmentRepository.AnyAsync(c => c.Name == command.Name && 
+        if (await compartmentRepository.AnyAsync(c => c.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) && 
         c.Id != compartment.Id && 
         c.HouseholdId == userHouseholdId &&
         c.StorageId == compartment.StorageId, cancellationToken))

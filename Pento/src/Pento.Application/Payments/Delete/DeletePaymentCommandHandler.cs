@@ -32,8 +32,7 @@ internal sealed class DeletePaymentCommandHandler(
                 return Result.Failure(PaymentErrors.PaymentCancellationFailed);
             }
         }
-        payment.Delete();
-        await paymentRepository.UpdateAsync(payment, cancellationToken);
+        await paymentRepository.RemoveAsync(payment, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

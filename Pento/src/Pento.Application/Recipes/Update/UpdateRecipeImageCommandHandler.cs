@@ -40,6 +40,7 @@ internal sealed class UpdateRecipeImageCommandHandler(
         }
 
         recipe.UpdateImageUrl(upload.Value, DateTime.UtcNow);
+        await recipeRepository.UpdateAsync(recipe, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success(upload.Value.AbsoluteUri);

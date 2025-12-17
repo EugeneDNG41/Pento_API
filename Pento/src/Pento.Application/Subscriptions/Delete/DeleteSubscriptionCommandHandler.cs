@@ -25,7 +25,7 @@ internal sealed class DeleteSubscriptionCommandHandler(
         {
             return Result.Failure(SubscriptionErrors.SubscriptionInUse);
         }
-        subscription.Delete();
+        await subscriptionRepository.RemoveAsync(subscription, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

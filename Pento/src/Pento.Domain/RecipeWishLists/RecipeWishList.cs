@@ -13,7 +13,7 @@ public sealed class RecipeWishList : Entity
 
     private RecipeWishList(Guid householdId, Guid recipeId)
     {
-        Id = Guid.NewGuid();
+        Id = Guid.CreateVersion7();
         HouseholdId = householdId;
         RecipeId = recipeId;
         AddedOnUtc = DateTime.UtcNow;

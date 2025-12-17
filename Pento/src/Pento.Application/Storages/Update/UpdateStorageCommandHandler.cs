@@ -27,7 +27,7 @@ internal sealed class UpdateStorageCommandHandler(
         {
             return Result.Success();
         }
-        if (await repository.AnyAsync(s => s.Name == command.Name && s.Id != storage.Id && s.HouseholdId == userHouseholdId, cancellationToken))
+        if (await repository.AnyAsync(s => s.Name.Equals(command.Name, StringComparison.OrdinalIgnoreCase) && s.Id != storage.Id && s.HouseholdId == userHouseholdId, cancellationToken))
         {
             return Result.Failure(StorageErrors.DuplicateName);
         }

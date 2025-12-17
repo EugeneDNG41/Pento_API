@@ -18,8 +18,7 @@ internal sealed class DeleteFoodReferenceCommandHandler(
         {
             return Result.Failure(FoodReferenceErrors.NotFound);
         }
-        foodRef.Delete();
-        await foodReferenceRepository.UpdateAsync(foodRef, cancellationToken);
+        await foodReferenceRepository.RemoveAsync(foodRef, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

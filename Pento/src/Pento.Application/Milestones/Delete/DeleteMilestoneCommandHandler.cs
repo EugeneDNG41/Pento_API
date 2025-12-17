@@ -24,7 +24,7 @@ internal sealed class DeleteMilestoneCommandHandler(
         {
             return Result.Failure(MilestoneErrors.MilestoneInUse);
         }
-        milestone.Delete();
+        await milestoneRepository.RemoveAsync(milestone, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

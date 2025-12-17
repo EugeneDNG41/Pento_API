@@ -1,33 +1,24 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
+using Pento.Application.Trades.Sessions.GetAll;
 using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Households;
 using Pento.Domain.Users;
 
-namespace Pento.Application.Trades.Sessions.GetAll;
+namespace Pento.Application.Trades.Sessions.AdminGetAll;
 
-internal sealed class GetTradeSessionsQueryHandler(
-    IUserContext userContext,
+internal sealed class GetAdminTradeSessionsQueryHandler(
     IGenericRepository<User> userRepository,
-    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetTradeSessionsQuery, PagedList<TradeSessionBasicResponse>>
+    ISqlConnectionFactory sqlConnectionFactory) : IQueryHandler<GetAdminTradeSessionsQuery, PagedList<TradeSessionBasicResponse>>
 {
-    public async Task<Result<PagedList<TradeSessionBasicResponse>>> Handle(GetTradeSessionsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<PagedList<TradeSessionBasicResponse>>> Handle(GetAdminTradeSessionsQuery request, CancellationToken cancellationToken)
     {
-        Guid? householdId = userContext.HouseholdId;
-        if (householdId == null)
-        {
-            return Result.Failure<PagedList<TradeSessionBasicResponse>>(HouseholdErrors.NotInAnyHouseHold);
-        }
         using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
         var parameters = new DynamicParameters();
         var filters = new List<string>();
-        parameters.Add("@HouseholdId", householdId.Value);
-        filters.Add("(ts.offer_household_id = @HouseholdId OR ts.request_household_id = @HouseholdId)");
         if (request.OfferId.HasValue)
         {
             parameters.Add("@OfferId", request.OfferId.Value);
@@ -91,7 +82,7 @@ internal sealed class GetTradeSessionsQueryHandler(
         foreach (TradeSessionRow item in items)
         {
             var userAvatars = (await userRepository
-                .FindAsync(u => u.AvatarUrl != null && u.Id != userContext.UserId && (u.HouseholdId == item.OfferHouseholdId || u.HouseholdId == item.RequestHouseholdId), cancellationToken))
+                .FindAsync(u => u.AvatarUrl != null && (u.HouseholdId == item.OfferHouseholdId || u.HouseholdId == item.RequestHouseholdId), cancellationToken))
                 .Select(u => u.AvatarUrl!)
                 .ToList();
             List<Uri> avatarUrls = userAvatars.Count > 0 ? userAvatars! : new();

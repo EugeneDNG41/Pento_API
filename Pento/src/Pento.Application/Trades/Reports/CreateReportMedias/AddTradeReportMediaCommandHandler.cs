@@ -3,12 +3,11 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
-using Pento.Application.Trades.Reports.CreateReportMedias;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Trades;
 using Pento.Domain.Trades.Reports;
 
-namespace Pento.Application.Trades.Reports.Media.Create;
+namespace Pento.Application.Trades.Reports.CreateReportMedias;
 
 internal sealed class AddTradeReportMediaCommandHandler(
     IUserContext userContext,
