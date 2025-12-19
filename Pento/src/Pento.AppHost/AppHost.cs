@@ -128,6 +128,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithReference(cache)
     .WaitFor(cache)
     .WithReference(blobs)
+    .WaitFor(blobs)
     .WithHttpHealthCheck("/health/ready");
 if (builder.ExecutionContext.IsRunMode)
 {
