@@ -2,25 +2,28 @@
 
 namespace Pento.Domain.RecipeWishLists;
 
-public sealed class RecipeWishList : Entity
+public sealed class RecipeWishList : BaseEntity
 {
-    public Guid HouseholdId { get; private set; }
+    public Guid Id { get; private set; }
+    public Guid UserId { get; private set; }
     public Guid RecipeId { get; private set; }
 
     public DateTime AddedOnUtc { get; private set; }
+    public Guid? HouseholdId { get; private set; }
 
     private RecipeWishList() { }
 
-    private RecipeWishList(Guid householdId, Guid recipeId)
+    private RecipeWishList(Guid userId, Guid recipeId, Guid? householdId)
     {
         Id = Guid.CreateVersion7();
-        HouseholdId = householdId;
+        UserId = userId;
         RecipeId = recipeId;
         AddedOnUtc = DateTime.UtcNow;
+        HouseholdId = householdId;
     }
 
-    public static RecipeWishList Create(Guid householdId, Guid recipeId)
-        => new(householdId, recipeId);
+    public static RecipeWishList Create(Guid userId, Guid recipeId, Guid? householdId)
+        => new(userId, recipeId, householdId);
 
 
 }

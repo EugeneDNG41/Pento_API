@@ -26,8 +26,7 @@ internal sealed class RemoveRecipeFromWishListCommandHandler(
 
         IEnumerable<RecipeWishList> items = await repository.FindAsync(
             x => x.HouseholdId == householdId.Value &&
-                 x.RecipeId == command.RecipeId &&
-                 !x.IsDeleted,
+                 x.RecipeId == command.RecipeId,
             cancellationToken);
 
         RecipeWishList? wishlist = items.FirstOrDefault();

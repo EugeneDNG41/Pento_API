@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Pento.Domain.Households;
 using Pento.Domain.Recipes;
 using Pento.Domain.RecipeWishLists;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Configurations;
 
@@ -25,7 +26,6 @@ internal sealed class RecipeWishListConfiguration : IEntityTypeConfiguration<Rec
 
         builder.HasIndex(x => new { x.HouseholdId, x.RecipeId })
             .IsUnique();
-        builder.HasQueryFilter(x => !x.IsDeleted);
         builder.HasOne<Household>()
             .WithMany()
             .HasForeignKey(x => x.HouseholdId)
@@ -34,5 +34,9 @@ internal sealed class RecipeWishListConfiguration : IEntityTypeConfiguration<Rec
             .WithMany()
             .HasForeignKey(x => x.RecipeId)
             .OnDelete(DeleteBehavior.Cascade);
+        builder.HasOne<User>()
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -31,7 +31,7 @@ internal sealed class AddRecipeToWishListCommandHandler(
             return Result.Failure<Guid>(RecipeWishListErrors.AlreadyExists);
         }
 
-        var wishlist = RecipeWishList.Create(householdId.Value, command.RecipeId);
+        var wishlist = RecipeWishList.Create(userContext.UserId, command.RecipeId,householdId.Value );
 
         repository.Add(wishlist);
         await unitOfWork.SaveChangesAsync(cancellationToken);
