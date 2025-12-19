@@ -49,8 +49,9 @@ public abstract class FoodItemReservation : Entity
         UnitId = unitId;
         Status = ReservationStatus.Fulfilled;
         Raise(new FoodItemConsumedDomainEvent(FoodItemId, quantity, unitId, userId));
+        Raise(new ReservationFulfilledDomainEvent(Id, userId));
     }
-    public void MarkAsCancelled()
+    public void MarkAsCancelled(Guid userId)
     {
         if (Status != ReservationStatus.Pending)
         {
@@ -58,6 +59,8 @@ public abstract class FoodItemReservation : Entity
         }
 
         Status = ReservationStatus.Cancelled;
+        Raise(new ReservationCancelledDomainEvent(Id, userId));
+
     }
     public void Increase(decimal additionalQuantity)
     {

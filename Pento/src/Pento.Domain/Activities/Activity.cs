@@ -126,6 +126,4 @@ public enum ActivityCode
     TRADE_OFFER_CREATE,
     TRADE_REQUEST_CREATE,
     TRADE_COMPLETE
-
-
 }
