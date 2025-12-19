@@ -34,7 +34,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
-await app.ApplyMigrations();
+app.ApplyMigrations();
 
 
 app.UseExceptionHandler();

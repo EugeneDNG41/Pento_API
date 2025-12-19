@@ -11,16 +11,12 @@ namespace Pento.API.Extensions;
 
 internal static class MigrationExtensions
 {
-    public async static Task ApplyMigrations(this IApplicationBuilder app, CancellationToken cancellationToken = default)
+    public static void ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
-        DataSeeder dataSeeder =
-            scope.ServiceProvider.GetRequiredService<DataSeeder>();
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync(cancellationToken);
-
-        await dataSeeder.SeedAdminAsync(cancellationToken);
+        dbContext.Database.Migrate();
     }
 
 
