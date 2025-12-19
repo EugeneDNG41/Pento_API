@@ -13,7 +13,6 @@ public sealed class TradeReport : Entity
 
     public Guid TradeSessionId { get; private set; }
     public Guid ReporterUserId { get; private set; }
-    public Guid ReportedUserId { get; private set; }
 
     public TradeReportReason Reason { get; private set; }
     public FoodSafetyIssueLevel Severity { get; private set; }
@@ -30,7 +29,6 @@ public sealed class TradeReport : Entity
         Guid id,
         Guid tradeSessionId,
         Guid reporterUserId,
-        Guid reportedUserId,
         TradeReportReason reason,
         FoodSafetyIssueLevel severity,
         string? description,
@@ -39,7 +37,6 @@ public sealed class TradeReport : Entity
     {
         TradeSessionId = tradeSessionId;
         ReporterUserId = reporterUserId;
-        ReportedUserId = reportedUserId;
         Reason = reason;
         Severity = severity;
         Description = description;
@@ -51,7 +48,6 @@ public sealed class TradeReport : Entity
     public static TradeReport Create(
         Guid tradeSessionId,
         Guid reporterUserId,
-        Guid reportedUserId,
         TradeReportReason reason,
         FoodSafetyIssueLevel severity,
         string? description,
@@ -62,7 +58,6 @@ public sealed class TradeReport : Entity
             id: Guid.CreateVersion7(),
             tradeSessionId: tradeSessionId,
             reporterUserId: reporterUserId,
-            reportedUserId: reportedUserId,
             reason: reason,
             severity: severity,
             description: description,

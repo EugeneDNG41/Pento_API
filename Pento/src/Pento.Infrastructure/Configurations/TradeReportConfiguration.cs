@@ -20,8 +20,7 @@ internal sealed class TradeReportConfiguration : IEntityTypeConfiguration<TradeR
         builder.Property(x => x.ReporterUserId)
                .IsRequired();
 
-        builder.Property(x => x.ReportedUserId)
-               .IsRequired();
+
 
         builder.Property(x => x.Reason)
                .HasConversion<string>()
@@ -51,10 +50,7 @@ internal sealed class TradeReportConfiguration : IEntityTypeConfiguration<TradeR
                .HasForeignKey(x => x.ReporterUserId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne<User>()
-               .WithMany()
-               .HasForeignKey(x => x.ReportedUserId)
-               .OnDelete(DeleteBehavior.Restrict);
+
 
         builder.HasQueryFilter(x => !x.IsDeleted);
     }
