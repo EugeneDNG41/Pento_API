@@ -330,7 +330,11 @@ public static class DependencyInjection
 
             FactorySoftTimeout = TimeSpan.FromMilliseconds(100),
             FactoryHardTimeout = TimeSpan.FromMilliseconds(1500)
-        }).WithRegisteredDistributedCache().WithRegisteredSerializer().WithRegisteredBackplane().AsHybridCache();
+        })
+        .WithRegisteredDistributedCache()
+        .WithRegisteredSerializer()
+        .WithRegisteredBackplane()
+        .AsHybridCache();
         return services;
     }
    

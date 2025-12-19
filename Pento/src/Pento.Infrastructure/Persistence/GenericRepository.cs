@@ -22,14 +22,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         Table = _context.Set<T>();
         _cache = cache;
     }
-    public async Task<IEnumerable<T>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await Table.ToListAsync(cancellationToken);
-    }
-    public IQueryable<T> AsQueryable()
-    {
-        return Table.AsQueryable();
-    }
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _cache.GetOrCreateAsync(
