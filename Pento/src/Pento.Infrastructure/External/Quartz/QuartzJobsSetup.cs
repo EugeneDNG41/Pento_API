@@ -12,8 +12,10 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
         const string entitlementReset = nameof(ProcessEntitlementResetJob);
         const string outbox = nameof(ProcessOutboxMessagesJob);
         const string paymentStatusTracker = nameof(ProcessPaymentStatusTrackingJob);
+        const string mealPlanTracker = nameof(ProcessMealPlanTrackingJob);
         const string subscriptionTracker = nameof(ProcessSubscriptionTrackingJob);
         const string outboxCleanup = nameof(ProcessOutboxMessagesCleanupJob);
+        
 
 
         options
@@ -39,6 +41,14 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(6, 0)) // Every day at 4AM
                     .Build());
         options
+            .AddJob<ProcessMealPlanTrackingJob>(configure => configure.WithIdentity(mealPlanTracker))
+            .AddTrigger(configure =>
+                configure
+                    .ForJob(nameof(ProcessMealPlanTrackingJob))
+                    .WithSimpleSchedule(schedule =>
+                        schedule.WithIntervalInMinutes(10).RepeatForever())
+            .Build());
+        options
             .AddJob<ProcessOutboxMessagesJob>(configure => configure.WithIdentity(outbox))
             .AddTrigger(configure =>
                 configure
@@ -57,5 +67,6 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
                     .ForJob(outboxCleanup)
                     .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(3, 0)) // Every day at 3AM
                     .Build());
+
     }
 }
