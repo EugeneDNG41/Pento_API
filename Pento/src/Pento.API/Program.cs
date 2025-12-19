@@ -33,9 +33,9 @@ WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    
 }
 
+await app.ApplyMigrations();
 
 app.UseExceptionHandler();
 
@@ -60,7 +60,7 @@ app.MapHub<MessageHub>("message-hub");
 app.MapEndpoints();
 
 await app.RunAsync();
-app.ApplyMigrations();
+
 #pragma warning disable CA1515 // Consider making public types internal
 public partial class Program { }
 
