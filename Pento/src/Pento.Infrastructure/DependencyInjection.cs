@@ -65,7 +65,7 @@ public static class DependencyInjection
             .AddCore()
             .AddSerialization()
             .AddPersistence(dbConnectionString)
-            .AddCaching(redisConnectionString)
+            //.AddCaching(redisConnectionString)
             .AddAuthenticationAndAuthorization(configuration, isDevelopment)
             .AddExternalApis(configuration)
             .AddApplicationServices()
@@ -196,8 +196,6 @@ public static class DependencyInjection
             .ValidateOnStart();
 
         services.AddScoped<IPayOSService, PayOSService>();
-
-
 
         services.AddSingleton<IUserIdProvider, HubUserIdProvider>();
 
