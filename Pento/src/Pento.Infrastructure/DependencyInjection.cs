@@ -65,7 +65,6 @@ public static class DependencyInjection
             .AddCore()
             .AddSerialization()
             .AddPersistence(dbConnectionString)
-            //.AddCaching(redisConnectionString)
             .AddAuthenticationAndAuthorization(configuration, isDevelopment)
             .AddExternalApis(configuration)
             .AddApplicationServices()
