@@ -44,10 +44,10 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
             .AddJob<ProcessMealPlanTrackingJob>(configure => configure.WithIdentity(mealPlanTracker))
             .AddTrigger(configure =>
                 configure
-                    .ForJob(nameof(ProcessMealPlanTrackingJob))
+                    .ForJob(mealPlanTracker)
                     .WithSimpleSchedule(schedule =>
-                        schedule.WithIntervalInMinutes(10).RepeatForever())
-            .Build());
+                        schedule.WithIntervalInMinutes(30).RepeatForever())
+                    .Build());
         options
             .AddJob<ProcessOutboxMessagesJob>(configure => configure.WithIdentity(outbox))
             .AddTrigger(configure =>
