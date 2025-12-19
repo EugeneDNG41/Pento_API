@@ -22,6 +22,10 @@ internal sealed class DeleteUserCommandHandler(
         {
             return Result.Failure(UserErrors.CannotDeleteSelf);
         }
+        if (user.IsDeleted)
+        {
+            return Result.Failure(UserErrors.AlreadyDeleted);
+        }
         await userRepository.RemoveAsync(user, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
