@@ -24,7 +24,7 @@ internal sealed class QuartzJobsSetup(IOptions<OutboxOptions> outboxOptions) : I
                 configure
                     .ForJob(expirationTracker)
                     .WithSimpleSchedule(schedule =>
-                        schedule.WithIntervalInMinutes(30).RepeatForever())
+                        schedule.WithIntervalInMinutes(20).RepeatForever())
                     .Build());
         options
             .AddJob<ProcessEntitlementResetJob>(configure => configure.WithIdentity(entitlementReset))
