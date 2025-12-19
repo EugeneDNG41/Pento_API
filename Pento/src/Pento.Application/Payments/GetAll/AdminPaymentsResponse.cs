@@ -20,7 +20,7 @@ public sealed record AdminPaymentSummary
 public sealed record AdminPaymentPreview
 {
     public Guid PaymentId { get; init; }
-    public Guid UserId { get; init; }
+    public string Email { get; init; }
     public long OrderCode { get; init; }
     public string Description { get; init; }
     public string AmountDue { get; init; }

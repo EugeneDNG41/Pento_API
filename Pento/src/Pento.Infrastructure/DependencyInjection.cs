@@ -310,7 +310,7 @@ public static class DependencyInjection
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = redisConnectionString;
-        });
+        }); //registered distributed cache
         services.AddFusionCacheNewtonsoftJsonSerializer();
 
         services.AddFusionCacheStackExchangeRedisBackplane(options =>
@@ -336,6 +336,5 @@ public static class DependencyInjection
         .WithRegisteredBackplane()
         .AsHybridCache();
         return services;
-    }
-   
+    } 
 }

@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using Pento.Application.Abstractions.Persistence;
 using ZiggyCreatures.Caching.Fusion;
@@ -14,30 +15,19 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
     protected ApplicationDbContext _context;
     protected DbSet<T> Table { get; set; }
-    private readonly HybridCache _cache;
 
-    public GenericRepository(ApplicationDbContext context, HybridCache cache)
+    public GenericRepository(ApplicationDbContext context)
     {
         _context = context;
         Table = _context.Set<T>();
-        _cache = cache;
     }
     public async Task<T?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _cache.GetOrCreateAsync(
-
-            key: $"{id}",
-            async entry => await Table.FindAsync([id], cancellationToken),
-            cancellationToken: cancellationToken
-            );
+        return await Table.FindAsync([id], cancellationToken);
     }
     public async Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default)
     {
-        return await _cache.GetOrCreateAsync(
-            key: $"{id}",
-            async entry => await Table.FindAsync([id], cancellationToken),
-            cancellationToken: cancellationToken
-            );
+        return await Table.FindAsync([id], cancellationToken);
     }
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
     {
@@ -68,7 +58,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         {
             return await query.Distinct().CountAsync(cancellationToken);
         }
-
     }
     public virtual void Add(T entity)
     {
@@ -83,7 +72,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         EntityEntry<T> tracker = _context.Attach(entity);
         tracker.State = EntityState.Modified;
-        await InvalidateCacheAsync(entity, cancellationToken);
     }
 
     public async virtual Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
@@ -106,7 +94,6 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         {
             _context.Remove(entity);
         }
-        await InvalidateCacheAsync(entity, cancellationToken);
     }
 
     public async virtual Task RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
@@ -131,17 +118,17 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
 
         return await Table.AnyAsync(predicate, cancellationToken);
     }
-    private async Task InvalidateCacheAsync(T entity, CancellationToken cancellationToken)
-    {
-        object? id = entity.GetType().GetProperty("Id")?.GetValue(entity);
-        if (id == null)
-        {
-            id = entity.GetType().GetProperty("Code")?.GetValue(entity);
-            if (id == null)
-            {
-                return;
-            }
-        }
-        await _cache.RemoveAsync($"{id}", cancellationToken: cancellationToken);
-    }
+#pragma warning disable S125
+    //private async Task InvalidateCacheAsync(T entity, CancellationToken cancellationToken)
+    //{
+    //    object? id = entity.GetType().GetProperty("Id")?.GetValue(entity);
+    //    if (id == null)
+    //    {
+    //        id = entity.GetType().GetProperty("Code")?.GetValue(entity);
+    //        if (id == null)
+    //        {
+    //            return;
+    //        }
+    //    }
+    //}
 }

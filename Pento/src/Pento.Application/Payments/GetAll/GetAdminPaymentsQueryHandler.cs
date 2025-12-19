@@ -18,25 +18,25 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
             GetAdminPaymentsSortBy.Description => "description",
             GetAdminPaymentsSortBy.AmountDue => "amount_due",
             GetAdminPaymentsSortBy.AmountPaid => "amount_paid",
-            GetAdminPaymentsSortBy.CreatedAt => "created_at",
-            _ => "id"
+            GetAdminPaymentsSortBy.CreatedAt => "p.created_at",
+            _ => "p.id"
         };
         string orderClause = $"ORDER BY {orderBy} {query.SortOrder}";
         var filters = new List<string>();
         var parameters = new DynamicParameters();
         if (query.UserId.HasValue)
         {
-            filters.Add("user_id = @UserId");
+            filters.Add("p.user_id = @UserId");
             parameters.Add("UserId", query.UserId);
         }
         if (query.IsDeleted.HasValue)
         {
-            filters.Add("is_deleted = @IsDeleted");
+            filters.Add("p.is_deleted = @IsDeleted");
             parameters.Add("IsDeleted", query.IsDeleted.Value);
         }
         if (!string.IsNullOrWhiteSpace(query.SearchText))
         {
-            filters.Add("description ILIKE @SearchText");
+            filters.Add("p.description ILIKE @SearchText");
             parameters.Add("SearchText", $"%{query.SearchText}%");
         }
         if (query.FromAmount.HasValue)
@@ -51,17 +51,17 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
         }
         if (query.FromDate.HasValue)
         {
-            filters.Add("created_at >= @FromDate");
+            filters.Add("p.created_at >= @FromDate");
             parameters.Add("FromDate", query.FromDate.Value);
         }
         if (query.ToDate.HasValue)
         {
-            filters.Add("created_at <= @ToDate");
+            filters.Add("p.created_at <= @ToDate");
             parameters.Add("ToDate", query.ToDate.Value);
         }
         if (query.Status.HasValue)
         {
-            filters.Add("status = @Status");
+            filters.Add("p.status = @Status");
             parameters.Add("Status", query.Status.Value.ToString());
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
@@ -71,25 +71,27 @@ internal sealed class GetAdminPaymentsQueryHandler(ISqlConnectionFactory sqlConn
             SELECT
             CONCAT(COALESCE(SUM(amount_due), 0)::text, ' ', currency) AS TotalDue,
             CONCAT(COALESCE(SUM(amount_paid), 0)::text, ' ', currency) AS TotalPaid,
-            COUNT(CASE WHEN status = 'Pending' THEN 1 END) AS Pending,
-            COUNT(CASE WHEN status = 'Paid' THEN 1 END) AS Paid,
-            COUNT(CASE WHEN status = 'Failed' THEN 1 END) AS Failed,
-            COUNT(CASE WHEN status = 'Cancelled' THEN 1 END) AS Cancelled,
-            COUNT(CASE WHEN status = 'Expired' THEN 1 END) AS Expired
-            FROM payments
+            COUNT(CASE WHEN p.status = 'Pending' THEN 1 END) AS Pending,
+            COUNT(CASE WHEN p.status = 'Paid' THEN 1 END) AS Paid,
+            COUNT(CASE WHEN p.status = 'Failed' THEN 1 END) AS Failed,
+            COUNT(CASE WHEN p.status = 'Cancelled' THEN 1 END) AS Cancelled,
+            COUNT(CASE WHEN p.status = 'Expired' THEN 1 END) AS Expired
+            FROM payments p
             {whereClause}
             GROUP BY currency;
-            SELECT COUNT(*) FROM payments {whereClause};
+            SELECT COUNT(*) FROM payments p {whereClause};
             SELECT 
-                id AS PaymentId,
+                p.id AS PaymentId,
+                u.email AS Email,
                 order_code AS OrderCode,
                 description AS Description,
                 CONCAT(amount_due::text, ' ', currency) AS AmountDue,
                 CONCAT(amount_paid::text, ' ', currency) AS AmountPaid,
-                status AS Status,
-                created_at AS CreatedAt,
-                is_deleted AS IsDeleted
-            FROM payments
+                p.status AS Status,
+                p.created_at AS CreatedAt,
+                p.is_deleted AS IsDeleted
+            FROM payments p
+            JOIN users u ON p.user_id = u.id
             {whereClause}
             {orderClause}
             OFFSET @Offset ROWS 
