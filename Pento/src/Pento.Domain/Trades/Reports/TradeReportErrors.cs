@@ -11,8 +11,8 @@ public static class TradeReportErrors
     public static readonly Error TradeSessionNotFound =
         Error.NotFound("TradeReport.TradeSessionNotFound", "Trade session was not found.");
 
-    public static readonly Error TradeNotCompleted =
-        Error.Conflict("TradeReport.TradeNotCompleted", "Trade session must be completed.");
+    public static readonly Error TradeNotCompletedOrCancel =
+        Error.Conflict("TradeReport.TradeNotCompletedOrCancel", "Trade session must be completed or cancelled.");
 
     public static readonly Error CannotReportYourself =
         Error.Conflict("TradeReport.CannotReportYourself", "User cannot report themselves.");
