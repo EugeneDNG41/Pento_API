@@ -47,7 +47,7 @@ internal sealed class CreateTradeReportCommandHandler(
             return Result.Failure<Guid>(TradeReportErrors.TradeSessionNotFound);
         }
 
-        if (session.Status != TradeSessionStatus.Completed || session.Status != TradeSessionStatus.Cancelled )
+        if (session.Status != TradeSessionStatus.Completed && session.Status != TradeSessionStatus.Cancelled )
         {
             return Result.Failure<Guid>(TradeReportErrors.TradeNotCompletedOrCancel);
         }
