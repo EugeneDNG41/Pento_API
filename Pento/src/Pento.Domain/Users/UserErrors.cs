@@ -8,4 +8,9 @@ public static class UserErrors
         Error.NotFound("Users.NotFound", $"User not found");
     public static Error IdentityNotFound(string identityId) =>
         Error.NotFound("Users.IdentityNotFound", $"The user with the IDP identifier {identityId} not found");
+    public static readonly Error ForbiddenAccess =
+        Error.Forbidden("Users.ForbiddenAccess", "You do not have permission to access this user");
+    public static readonly Error CannotDeleteSelf =
+        Error.Problem("Users.CannotDeleteSelf", "You cannot delete your own user account");
+
 }
