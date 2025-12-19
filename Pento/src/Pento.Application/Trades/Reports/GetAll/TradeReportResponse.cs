@@ -13,10 +13,6 @@ public sealed record TradeReportResponse(
     string ReporterName,
     Uri? ReporterAvatarUrl,
 
-    Guid ReportedUserId,
-    string ReportedName,
-    Uri? ReportedAvatarUrl,
-
     Guid? FoodItemId,
     string? FoodName,
     Uri? FoodImageUri,
