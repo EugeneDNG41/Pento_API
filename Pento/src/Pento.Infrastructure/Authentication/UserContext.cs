@@ -23,4 +23,10 @@ internal sealed class UserContext(IHttpContextAccessor httpContextAccessor) : IU
             .User
             .GetIdentityId() ??
         throw new ApplicationException("User context is unavailable");
+    public bool IsDeleted =>
+        httpContextAccessor
+            .HttpContext?
+            .User
+            .IsDeleted() ??
+        throw new ApplicationException("User context is unavailable");
 }

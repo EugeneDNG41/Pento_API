@@ -23,6 +23,10 @@ internal sealed class WebSignInUserCommandHandler(IGenericRepository<User> userR
         {
             return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidCredentials);
         }
+        if (user.IsDeleted)
+        {
+            return Result.Failure<AuthToken>(UserErrors.AccountDeleted);
+        }
         Result<AuthToken> result = await jwtService.GetAuthTokenAsync(
             request.Email,
             request.Password,

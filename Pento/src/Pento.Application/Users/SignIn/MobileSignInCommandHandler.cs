@@ -21,6 +21,10 @@ internal sealed class MobileSignInCommandHandler(IGenericRepository<User> userRe
         {
             return Result.Failure<AuthToken>(IdentityProviderErrors.InvalidCredentials);
         }
+        if (user.IsDeleted)
+        {
+            return Result.Failure<AuthToken>(UserErrors.AccountDeleted);
+        }
         Result<AuthToken> result = await jwtService.GetAuthTokenAsync(
             request.Email,
             request.Password,

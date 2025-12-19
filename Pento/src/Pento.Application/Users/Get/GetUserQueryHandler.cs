@@ -16,6 +16,10 @@ internal sealed class GetUserQueryHandler(
 {
     public async Task<Result<UserResponse>> Handle(GetUserQuery query, CancellationToken cancellationToken)
     {
+        if (userContext.IsDeleted)
+        {
+            return Result.Failure<UserResponse>(UserErrors.AccountDeleted);
+        }
         await using DbConnection connection = await dbConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string sql =

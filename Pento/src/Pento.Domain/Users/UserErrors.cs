@@ -12,5 +12,7 @@ public static class UserErrors
         Error.Forbidden("Users.ForbiddenAccess", "You do not have permission to access this user");
     public static readonly Error CannotDeleteSelf =
         Error.Problem("Users.CannotDeleteSelf", "You cannot delete your own user account");
+    public static readonly Error AccountDeleted =
+        Error.Conflict("Users.AccountDeleted", "Your account has been deleted.");
 
 }

@@ -7,4 +7,5 @@ public static class CustomClaims
     public const string Household = "household";
     public const string Permission = "permission";
     public const string Subscription = "subscription";
+    public const string IsDeleted = "is_deleted";
 }

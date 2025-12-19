@@ -45,4 +45,11 @@ public static class ClaimsPrincipalExtensions
 
         return permissionClaims.Select(c => c.Value).ToHashSet();
     }
+    public static bool IsDeleted(this ClaimsPrincipal? principal)
+    {
+        string? isDeleted = principal?.FindFirst(CustomClaims.IsDeleted)?.Value;
+        return bool.TryParse(isDeleted, out bool parsedIsDeleted) ?
+            parsedIsDeleted :
+            throw new PentoException("User deletion status is unavailable");
+    }
 }

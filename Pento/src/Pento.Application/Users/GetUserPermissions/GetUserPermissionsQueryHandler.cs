@@ -22,7 +22,8 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
              SELECT DISTINCT
                  u.id AS {nameof(UserPermission.UserId)},
                  u.household_id AS {nameof(UserPermission.HouseholdId)},
-                 rp.permission_code AS {nameof(UserPermission.Permission)}
+                 rp.permission_code AS {nameof(UserPermission.Permission)},
+                 u.is_deleted AS IsDeleted
              FROM users u
              LEFT JOIN user_roles ur ON ur.user_id = u.id
              LEFT JOIN role_permissions rp ON rp.role_name = ur.role_name
@@ -35,7 +36,7 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
         {
             return Result.Failure<UserPermissionsResponse>(UserErrors.NotFound);
         }
-        return new UserPermissionsResponse(permissions[0].UserId, permissions[0].HouseholdId, permissions.Select(p => p.Permission).ToHashSet());
+        return new UserPermissionsResponse(permissions[0].UserId, permissions[0].HouseholdId, permissions.Select(p => p.Permission).ToHashSet(), permissions[0].IsDeleted);
     }
 
     internal sealed class UserPermission
@@ -43,5 +44,6 @@ internal sealed class GetUserPermissionsQueryHandler(ISqlConnectionFactory dbCon
         internal Guid UserId { get; init; }
         internal Guid? HouseholdId { get; init; }
         internal string Permission { get; init; }
+        internal bool IsDeleted { get; init; }
     }
 }
