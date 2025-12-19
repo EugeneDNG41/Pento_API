@@ -11,7 +11,7 @@ IResourceBuilder<SeqResource> seq = builder.AddSeq("seq")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEnvironment("ACCEPT_EULA", "Y");
 
-IResourceBuilder<RedisResource> cache = builder.AddRedis("redis");
+IResourceBuilder<RedisResource> cache = builder.AddRedis("redis").WithRedisInsight();
 
 IResourceBuilder<AzureStorageResource> storage = builder.AddAzureStorage("storage");
 IResourceBuilder<AzureBlobStorageResource> blobs = storage.AddBlobs("blobs");
@@ -121,6 +121,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Google__AuthProviderX509CertUrl", googleAuthProviderCertUrl)
     .WithEnvironment("Google__ClientX509CertUrl", googleClientCertUrl)
     .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)
+    .WithHttpHealthCheck("/health/ready")
     .WithReference(pentoDb)
     .WaitFor(pentoDb)
     .WithReference(keycloak)
@@ -128,7 +129,7 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithReference(cache)
     .WaitFor(cache)
     .WithReference(blobs)
-    .WithHttpHealthCheck("/health/ready");
+    ;
 if (builder.ExecutionContext.IsRunMode)
 {
     project.WithReference(seq);

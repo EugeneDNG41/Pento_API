@@ -14,12 +14,11 @@ builder.AddServiceDefaults();
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
 builder.Services.AddHealthChecks();
-builder.Services
-    .AddApplication()
-    .AddInfrastructure(builder.Configuration)
+builder
+    .AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment())
+    .AddApplication()   
     .AddPresentation()
     .AddEndpoints(Assembly.GetExecutingAssembly());
-builder.AddAuthenticationAndAuthorization().AddAspireHostedServices();
 
 builder.Services.AddHttpLogging(options =>
 {
@@ -34,9 +33,9 @@ WebApplication app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-
+    await app.ApplyMigrations();
 }
-await app.ApplyMigrations();
+
 
 app.UseExceptionHandler();
 
