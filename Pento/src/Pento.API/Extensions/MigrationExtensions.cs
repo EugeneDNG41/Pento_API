@@ -11,58 +11,12 @@ namespace Pento.API.Extensions;
 
 internal static class MigrationExtensions
 {
-    public async static Task ApplyMigrations(this IApplicationBuilder app, CancellationToken cancellationToken = default)
+    public static void ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
-        DataSeeder dataSeeder =
-            scope.ServiceProvider.GetRequiredService<DataSeeder>();
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync(default);
-        if (!await dbContext.Set<Unit>().AnyAsync(default))
-        {
-            dbContext.Set<Unit>().AddRange(UnitData.Gram,
-            UnitData.Kilogram,
-            UnitData.Ounce,
-            UnitData.Pound,
-
-            UnitData.Millilitre,
-            UnitData.Litre,
-            UnitData.TeaspoonUS,
-            UnitData.TablespoonUS,
-            UnitData.USFluidOunce,
-            UnitData.USCup,
-            UnitData.USPint,
-            UnitData.USQuart,
-            UnitData.USGallon,
-
-            UnitData.Serving,
-            UnitData.Piece,
-            UnitData.Pair,
-            UnitData.Dozen);
-            await dbContext.SaveChangesAsync(default);
-
-
-        }
-        if (!await dbContext.Set<DietaryTag>().AnyAsync(default))
-        {
-            dbContext.Set<DietaryTag>().AddRange(
-                DietaryTagData.ContainsAddedSugar,
-                DietaryTagData.ContainsGluten,
-                DietaryTagData.ContainsEgg,
-                DietaryTagData.ContainsPeanuts,
-                DietaryTagData.ContainsTreeNuts,
-                DietaryTagData.ContainsSoy,
-                DietaryTagData.ContainsAlcohol,
-                DietaryTagData.ContainsCaffeine,
-
-                DietaryTagData.HighlyProcessed
-            );
-
-
-            await dbContext.SaveChangesAsync(default);
-        }
-        await dataSeeder.SeedAdminAsync(cancellationToken);
+        dbContext.Database.Migrate();
     }
 
 

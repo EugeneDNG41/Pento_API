@@ -29,7 +29,7 @@ internal sealed class CreateMultipleTradeItemOffer : IEndpoint
             Result<Guid> result = await handler.Handle(command, cancellationToken);
 
             return result.Match(
-                id => Results.Created($"/trades/offers/{id}", id),
+                id => Results.Created($"/trades/offers/{id}", new { id }),
                 CustomResults.Problem
             );
         })

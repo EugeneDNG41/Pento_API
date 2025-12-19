@@ -80,7 +80,7 @@ internal sealed class GetAdminTradeOfferByIdQueryHandler(
             JOIN food_items fi ON fi.id = ti.food_item_id
             JOIN food_references fr ON fr.id = fi.food_reference_id
             JOIN units u ON u.id = ti.unit_id
-            WHERE ti.request_id = @TradeRequestId;
+            WHERE ti.offer_id = @TradeOfferId;
             """;
         var itemsCommand = new CommandDefinition(itemsSql, parameters, cancellationToken: cancellationToken);
         IEnumerable<TradeItemResponse> items = await connection.QueryAsync<TradeItemResponse>(itemsCommand);
