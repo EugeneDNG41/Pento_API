@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using System;
+using Microsoft.AspNetCore.SignalR;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Converter;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
@@ -11,7 +13,7 @@ namespace Pento.Application.Trades.Requests.RemoveItems;
 
 internal sealed class RemoveTradeRequestItemsCommandHandler(
     IUserContext userContext,
-    IConverterService converterService,
+    ITradeService tradeService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeItemRequest> tradeItemRepository,
@@ -50,18 +52,16 @@ internal sealed class RemoveTradeRequestItemsCommandHandler(
             {
                 return Result.Failure(FoodItemErrors.ForbiddenAccess);
             }
-            Result<decimal> restoredResult = await converterService
-                .ConvertAsync(
-                    item.Quantity,
-                    item.UnitId,
-                    foodItem.UnitId,
-                    cancellationToken);
-            if (restoredResult.IsFailure)
+            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedOutsideSessionAsync(
+                request.TradeOfferId,
+                request.Id,
+                item,
+                foodItem,
+                cancellationToken);
+            if (reconciliationResult.IsFailure)
             {
-                return Result.Failure(restoredResult.Error);
+                return reconciliationResult;
             }
-            foodItem.AdjustReservedQuantity(restoredResult.Value);
-            await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             await tradeItemRepository.RemoveAsync(item, cancellationToken);
             restoredItems.Add(foodItem.Id, foodItem.Quantity);
         }

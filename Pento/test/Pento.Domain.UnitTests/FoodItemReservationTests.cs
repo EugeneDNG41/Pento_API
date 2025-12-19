@@ -134,7 +134,7 @@ internal sealed class FoodItemReservationTests
             Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow,
             2m, Guid.NewGuid(), Guid.NewGuid());
 
-        res.MarkAsCancelled(); // status = Cancelled
+        res.MarkAsCancelled(Guid.NewGuid()); // status = Cancelled
 
         Assert.Throws<Exception>(() =>
             res.MarkAsFulfilled(1m, Guid.NewGuid(), Guid.NewGuid()));
@@ -150,7 +150,7 @@ internal sealed class FoodItemReservationTests
             Guid.NewGuid(), Guid.NewGuid(), DateTime.UtcNow,
             3m, Guid.NewGuid(), Guid.NewGuid());
 
-        res.MarkAsCancelled();
+        res.MarkAsCancelled(Guid.NewGuid());
 
         Assert.That(res.Status, Is.EqualTo(ReservationStatus.Cancelled));
     }
@@ -169,7 +169,7 @@ internal sealed class FoodItemReservationTests
            ReservationFor.Trade,
            Guid.NewGuid());
 
-        Assert.Throws<Exception>(() => res.MarkAsCancelled());
+        Assert.Throws<Exception>(() => res.MarkAsCancelled(Guid.NewGuid()));
     }
 
 

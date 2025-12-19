@@ -103,7 +103,7 @@ internal sealed class CancelMealPlanRecipeCommandHandler(
             }
             foodItem.AdjustReservedQuantity(qtyInItemUnit.Value);
             await foodItemRepo.UpdateAsync(foodItem, cancellationToken);
-            r.MarkAsCancelled();
+            r.MarkAsCancelled(userContext.UserId);
         }
         await reservationRepo.UpdateRangeAsync(reservations, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);

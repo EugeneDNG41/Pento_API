@@ -17,6 +17,60 @@ public sealed class TradeService(
     IGenericRepository<TradeItemRequest> tradeItemRequestRepository,
     IGenericRepository<FoodItem> foodItemRepository) : ITradeService
 {
+    public async Task<Result> ReconcileTradeItemsRemovedOutsideSessionAsync(
+        Guid offerId,
+        Guid? requestId,
+        TradeItem tradeItem,
+        FoodItem foodItem,
+        CancellationToken cancellationToken)
+    {
+        Result<decimal> qtyInItemUnit = await converter.ConvertAsync(
+                    tradeItem.Quantity, tradeItem.UnitId, foodItem.UnitId, cancellationToken);
+
+        if (qtyInItemUnit.IsFailure)
+        {
+            return Result.Failure<Guid>(qtyInItemUnit.Error);
+        }
+        if (qtyInItemUnit.Value > foodItem.Quantity)
+        {
+            return Result.Failure<Guid>(FoodItemErrors.InsufficientQuantity);
+        }
+        decimal reservedQty = qtyInItemUnit.Value;
+        IEnumerable<TradeSession> ongoingSessions = await tradeSessionRepository.FindAsync(
+            ts => ts.TradeOfferId == offerId
+                  && (requestId == null || ts.TradeRequestId == requestId)
+                  && ts.Status == TradeSessionStatus.Ongoing,
+            cancellationToken);
+        foreach (TradeSession ongoingSession in ongoingSessions)
+        {
+            TradeSessionItem? similarItem = (await tradeSessionItemRepository.FindAsync(
+                tsi => tsi.SessionId == ongoingSession.Id
+                       && tsi.FoodItemId == tradeItem.FoodItemId
+                       && tsi.From == TradeItemFrom.Request,
+                cancellationToken)).SingleOrDefault();
+            if (similarItem != null)
+            {
+                Result<decimal> sessionQtyInItemUnit = await converter.ConvertAsync(
+                    similarItem.Quantity, similarItem.UnitId, foodItem.UnitId, cancellationToken);
+                if (sessionQtyInItemUnit.IsFailure)
+                {
+                    return Result.Failure<Guid>(sessionQtyInItemUnit.Error);
+                }
+                if (sessionQtyInItemUnit.Value <= qtyInItemUnit.Value)
+                {
+                    reservedQty -= sessionQtyInItemUnit.Value;
+                }
+                else
+                {
+                    reservedQty = 0;
+                    break;
+                }
+            }
+        }
+        foodItem.AdjustReservedQuantity(reservedQty);
+        await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
+        return Result.Success();
+    }
     public async Task<Result> ReconcileTradeItemsAddedOrUpdatedOutsideSessionAsync(
         Guid offerId,
         Guid? requestId,
@@ -72,7 +126,7 @@ public sealed class TradeService(
         await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();
     }
-    public async Task<Result> ReconcileUpdatedTradeItemsDuringSessionAsync(
+    public async Task<Result> ReconcileUpdatedTradeItemsDuringSessionAsync( //update up still possible?????
         TradeSession session,
         TradeSessionItem sessionItem,
         FoodItem foodItem,
@@ -123,10 +177,7 @@ public sealed class TradeService(
             {
                 return Result.Failure(FoodItemErrors.InsufficientQuantity);
             }
-            if (originalOffer == null ||  qtyDifference > 0)
-            {
-                foodItem.AdjustReservedQuantity(qtyDifference);
-            }
+            foodItem.AdjustReservedQuantity(qtyDifference);
 
         }
         else
@@ -152,10 +203,7 @@ public sealed class TradeService(
             {
                 return Result.Failure(FoodItemErrors.InsufficientQuantity);
             }
-            if (originalRequest == null || qtyDifference > 0)
-            {
-                foodItem.AdjustReservedQuantity(qtyDifference);
-            }
+            foodItem.AdjustReservedQuantity(qtyDifference);
         }
         await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
         return Result.Success();

@@ -64,7 +64,7 @@ internal sealed class CancelRecipeReservationCommandHandler(
         }
         foodItem.CancelReservation(qtyInItemUnit, reservation.Id);
 
-        reservation.MarkAsCancelled();
+        reservation.MarkAsCancelled(userContext.UserId);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

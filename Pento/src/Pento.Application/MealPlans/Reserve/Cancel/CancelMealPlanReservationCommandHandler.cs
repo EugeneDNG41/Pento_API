@@ -68,7 +68,7 @@ internal sealed class CancelMealPlanReservationCommandHandler(
         );
         await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
 
-        reservation.MarkAsCancelled();
+        reservation.MarkAsCancelled(userContext.UserId);
 
         await reservationRepository.UpdateAsync(reservation, cancellationToken);
 
