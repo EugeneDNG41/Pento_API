@@ -96,10 +96,11 @@ internal sealed class AddTradeSessionItemsCommandHandler(
                 return Result.Failure<IReadOnlyList<TradeItemResponse>>(FoodItemErrors.ForbiddenAccess);
             }
 
-            Result reconciliationResult = await tradeService.ReconcileTradeItemsRemovedFromSessionAsync(
+            Result reconciliationResult = await tradeService.ReconcileAddedTradeItemsDuringSessionAsync(
                 session,
                 sessionItem,
                 foodItem,
+                userContext.UserId,
                 cancellationToken);
             if (reconciliationResult.IsFailure)
             {

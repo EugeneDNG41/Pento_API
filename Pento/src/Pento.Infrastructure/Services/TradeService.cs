@@ -116,21 +116,14 @@ public sealed class TradeService(
             {
                 return Result.Failure<IReadOnlyList<TradeItemResponse>>(originalQtyInItemUnit.Error);
             }
-            if (originalOffer == null)
-            {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
-                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
-            }
-            else
-            {
-                decimal qtyDifference = originalQtyInItemUnit != null && originalQtyInItemUnit.Value >= newQtyInItemUnit.Value ?
+            decimal qtyDifference = originalQtyInItemUnit != null && originalQtyInItemUnit.Value >= newQtyInItemUnit.Value ?
                     currentQtyInItemUnit.Value - originalQtyInItemUnit.Value :
                     currentQtyInItemUnit.Value - newQtyInItemUnit.Value;
-                if (qtyDifference > 0) // More was reserved in session than originally offered, so only adjust the difference then
-                {
-                    foodItem.AdjustReservedQuantity(qtyDifference);
-                }
+            if (originalOffer == null ||  qtyDifference > 0)
+            {
+                foodItem.AdjustReservedQuantity(qtyDifference);
             }
+
         }
         else
         {
@@ -138,38 +131,22 @@ public sealed class TradeService(
                 tio => tio.FoodItemId == sessionItem.FoodItemId
                     && tio.RequestId == session.TradeRequestId,
                 cancellationToken)).SingleOrDefault();
-            if (originalRequest == null)
-            {
-                foodItem.AdjustReservedQuantity(currentQtyInItemUnit.Value);
-                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
-            }
-            else
-            {
-                Result<decimal> qtySessionInItemUnit = await converter.ConvertAsync(
-                    sessionItem.Quantity,
-                    sessionItem.UnitId,
-                    foodItem.UnitId,
-                    cancellationToken
-                );
-                if (currentQtyInItemUnit.IsFailure)
-                {
-                    return Result.Failure<IReadOnlyList<TradeItemResponse>>(currentQtyInItemUnit.Error);
-                }
-                Result<decimal> qtyRequestInItemUnit = await converter.ConvertAsync(
+            Result<decimal>? originalQtyInItemUnit = originalRequest != null ? await converter.ConvertAsync(
                     originalRequest.Quantity,
                     originalRequest.UnitId,
                     foodItem.UnitId,
                     cancellationToken
-                );
-                if (qtyRequestInItemUnit.IsFailure)
-                {
-                    return Result.Failure<IReadOnlyList<TradeItemResponse>>(qtyRequestInItemUnit.Error);
-                }
-                decimal qtyDifference = qtySessionInItemUnit.Value - qtyRequestInItemUnit.Value;
-                if (qtyDifference > 0) // More was reserved in session than originally requested, so only adjust the difference then
-                {
-                    foodItem.AdjustReservedQuantity(qtyDifference);
-                }
+                ) : null;
+            if (originalQtyInItemUnit != null && originalQtyInItemUnit.IsFailure)
+            {
+                return Result.Failure<IReadOnlyList<TradeItemResponse>>(originalQtyInItemUnit.Error);
+            }
+            decimal qtyDifference = originalQtyInItemUnit != null && originalQtyInItemUnit.Value >= newQtyInItemUnit.Value ?
+                    currentQtyInItemUnit.Value - originalQtyInItemUnit.Value :
+                    currentQtyInItemUnit.Value - newQtyInItemUnit.Value;
+            if (originalRequest == null || qtyDifference > 0)
+            {
+                foodItem.AdjustReservedQuantity(qtyDifference);
             }
         }
         await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
