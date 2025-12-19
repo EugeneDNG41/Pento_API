@@ -13,6 +13,6 @@ public static class UserErrors
     public static readonly Error CannotDeleteSelf =
         Error.Problem("Users.CannotDeleteSelf", "You cannot delete your own user account");
     public static readonly Error AccountDeleted =
-        Error.Conflict("Users.AccountDeleted", "Your account has been deleted.");
+        Error.Conflict("User.AccountDeleted", "Your account has been deleted.");
 
 }

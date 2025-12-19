@@ -17,4 +17,5 @@ public interface IGenericRepository<T> where T : class
     Task RemoveRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default);
     Task<int> CountDistinctAsync(Expression<Func<T, object>>? keySelector, Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
     Task<T?> GetByIdAsync(string id, CancellationToken cancellationToken = default);
+    Task<IEnumerable<T>> FindIgnoreFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 }

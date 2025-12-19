@@ -1,6 +1,13 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Security.Claims;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Pento.API.Extensions;
 using Pento.API.Middleware;
+using Pento.Domain.Abstractions;
+using Pento.Domain.Users;
+using Pento.Infrastructure.Authentication;
 
 namespace Pento.API;
 
@@ -16,10 +23,12 @@ internal static class DependencyInjection
         });
         services.AddEndpointsApiExplorer();
         services.AddSwaggerDocumentation();
-
+        services.AddSingleton<IAuthorizationMiddlewareResultHandler,
+ActiveAccountAuthorizationMiddlewareResultHandler>();
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddProblemDetails();
 
         return services;
     }
 }
+

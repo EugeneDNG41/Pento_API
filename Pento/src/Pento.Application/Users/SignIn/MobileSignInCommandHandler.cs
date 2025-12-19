@@ -14,7 +14,7 @@ internal sealed class MobileSignInCommandHandler(IGenericRepository<User> userRe
         MobileSignInCommand request,
         CancellationToken cancellationToken)
     {
-        User? user = (await userRepository.FindAsync(
+        User? user = (await userRepository.FindIgnoreFilterAsync(
             u => u.Email == request.Email,
             cancellationToken)).SingleOrDefault();
         if (user == null)

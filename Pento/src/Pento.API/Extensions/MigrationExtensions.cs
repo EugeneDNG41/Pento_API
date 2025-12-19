@@ -1,11 +1,7 @@
 ﻿using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Pento.Domain.DietaryTags;
-using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.Units;
 using Pento.Infrastructure.Persistence;
-using Pento.Infrastructure.Persistence.Seed;
 
 namespace Pento.API.Extensions;
 
