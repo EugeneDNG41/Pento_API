@@ -1,22 +1,18 @@
 ﻿using CsvHelper.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Pento.Domain.DietaryTags;
-using Pento.Domain.FoodDietaryTags;
 using Pento.Domain.FoodReferences;
-using Pento.Domain.Units;
 using Pento.Infrastructure.Persistence;
-using Pento.Infrastructure.Persistence.Seed;
 
 namespace Pento.API.Extensions;
 
 internal static class MigrationExtensions
 {
-    public async static Task ApplyMigrations(this IApplicationBuilder app)
+    public static void ApplyMigrations(this IApplicationBuilder app)
     {
         using IServiceScope scope = app.ApplicationServices.CreateScope();
         using ApplicationDbContext dbContext =
             scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await dbContext.Database.MigrateAsync(default);
+        dbContext.Database.Migrate();
     }
 
 

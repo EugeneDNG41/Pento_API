@@ -60,7 +60,7 @@ public static class DependencyInjection
         bool isDevelopment)
     {
         string dbConnectionString = configuration.GetConnectionStringOrThrow("pento-db");
-        string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
+
         builder.Services
             .AddCore()
             .AddSerialization()
@@ -70,7 +70,7 @@ public static class DependencyInjection
             .AddApplicationServices()
             .AddBackgroundJobs(configuration);
         builder.AddAspireHostedServices();
-        builder.Services.AddSignalR().AddStackExchangeRedis(redisConnectionString);
+        builder.Services.AddSignalR();
 
         return builder.Services;
     }

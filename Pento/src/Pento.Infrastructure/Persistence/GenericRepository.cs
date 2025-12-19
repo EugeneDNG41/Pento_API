@@ -29,7 +29,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         return await Table.Where(predicate).ToListAsync(cancellationToken);
     }
-
+    public async Task<IEnumerable<T>> FindIgnoreFilterAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default)
+    {
+        return await Table.IgnoreQueryFilters().Where(predicate).ToListAsync(cancellationToken);
+    }
     public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
     {
         if (predicate == null)
