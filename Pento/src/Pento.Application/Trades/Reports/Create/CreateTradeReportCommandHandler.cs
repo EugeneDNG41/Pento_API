@@ -37,10 +37,7 @@ internal sealed class CreateTradeReportCommandHandler(
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        if (reporterUserId == command.ReportedUserId)
-        {
-            return Result.Failure<Guid>(TradeReportErrors.CannotReportYourself);
-        }
+
 
         TradeSession? session =
             await sessionRepo.GetByIdAsync(command.TradeSessionId, cancellationToken);
@@ -73,8 +70,7 @@ internal sealed class CreateTradeReportCommandHandler(
 
         Guid[] validUserIds = { offer.UserId, request.UserId };
 
-        if (!validUserIds.Contains(reporterUserId) ||
-            !validUserIds.Contains(command.ReportedUserId))
+        if (!validUserIds.Contains(reporterUserId) )
         {
             return Result.Failure<Guid>(TradeReportErrors.InvalidParticipants);
         }
@@ -92,7 +88,6 @@ internal sealed class CreateTradeReportCommandHandler(
         var report = TradeReport.Create(
             tradeSessionId: command.TradeSessionId,
             reporterUserId: reporterUserId,
-            reportedUserId: command.ReportedUserId,
             reason: command.Reason,
             severity: command.Severity,
             description: command.Description,

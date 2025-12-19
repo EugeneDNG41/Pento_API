@@ -5,7 +5,6 @@ namespace Pento.Application.Trades.Reports.Create;
 
 public sealed record CreateTradeReportCommand(
     Guid TradeSessionId,
-    Guid ReportedUserId,
     TradeReportReason Reason,
     FoodSafetyIssueLevel Severity,
     string? Description

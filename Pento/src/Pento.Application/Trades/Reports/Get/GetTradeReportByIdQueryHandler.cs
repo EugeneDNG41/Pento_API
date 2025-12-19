@@ -32,9 +32,6 @@ internal sealed class GetTradeReportByIdQueryHandler(
                 ru.first_name            AS ReporterName,
                 ru.avatar_url            AS ReporterAvatarUrl,
 
-                pu.id                    AS ReportedUserId,
-                pu.first_name            AS ReportedName,
-                pu.avatar_url            AS ReportedAvatarUrl,
 
                 fri.id                   AS FoodItemId,
                 fr.name                  AS FoodName,
@@ -51,7 +48,6 @@ internal sealed class GetTradeReportByIdQueryHandler(
             JOIN trade_requests r           ON r.id = ts.trade_request_id
 
             JOIN users ru                   ON ru.id = tr.reporter_user_id
-            JOIN users pu                   ON pu.id = tr.reported_user_id
 
             LEFT JOIN trade_items ti        ON ti.offer_id = o.id
             LEFT JOIN food_items fri        ON fri.id = ti.food_item_id

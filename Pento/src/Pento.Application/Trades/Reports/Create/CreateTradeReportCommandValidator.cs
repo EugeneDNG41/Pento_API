@@ -11,13 +11,6 @@ internal sealed class CreateTradeReportCommandValidator
         RuleFor(x => x.TradeSessionId)
             .NotEmpty();
 
-        RuleFor(x => x.ReportedUserId)
-            .NotEmpty();
-
-        RuleFor(x => x)
-            .Must(x => x.ReportedUserId != Guid.Empty)
-            .WithMessage("Reported user is required.");
-
         RuleFor(x => x.Description)
             .MaximumLength(1000);
     }
