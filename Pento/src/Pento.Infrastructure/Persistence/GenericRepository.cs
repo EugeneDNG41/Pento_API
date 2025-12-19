@@ -72,6 +72,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         EntityEntry<T> tracker = _context.Attach(entity);
         tracker.State = EntityState.Modified;
+        await Task.CompletedTask;
     }
 
     public async virtual Task UpdateRangeAsync(IEnumerable<T> entities, CancellationToken cancellationToken = default)
