@@ -123,8 +123,11 @@ IResourceBuilder<ProjectResource> project = builder.AddProject<Projects.Pento_AP
     .WithEnvironment("Google__UniverseDomain", googleUniverseDomain)
     .WithHttpHealthCheck("/health/ready")
     .WithReference(pentoDb)
+    .WaitFor(pentoDb)
     .WithReference(keycloak)
+    .WaitFor(keycloak)
     .WithReference(cache)
+    .WaitFor(cache)
     .WithReference(blobs)
     ;
 if (builder.ExecutionContext.IsRunMode)
