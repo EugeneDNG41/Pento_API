@@ -131,9 +131,6 @@ public static class DependencyInjection
         return services;
     }
 
-    // =========================
-    // APPLICATION SERVICES
-    // =========================
     private static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IBarcodeService, BarcodeService>();
@@ -150,9 +147,6 @@ public static class DependencyInjection
         return services;
     }
 
-    // =========================
-    // EXTERNAL APIS & SDKs
-    // =========================
     private static IServiceCollection AddExternalApis(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -201,9 +195,6 @@ public static class DependencyInjection
         return services;
     }
 
-    // =========================
-    // BACKGROUND JOBS
-    // =========================
     private static IServiceCollection AddBackgroundJobs(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -223,9 +214,6 @@ public static class DependencyInjection
         return services;
     }
 
-    // =========================
-    // ASPIRE
-    // =========================
     public static WebApplicationBuilder AddAspireHostedServices(
         this WebApplicationBuilder builder)
     {
@@ -233,9 +221,6 @@ public static class DependencyInjection
         return builder;
     }
 
-    // =========================
-    // AUTH & AUTHZ
-    // =========================
     public static IServiceCollection AddAuthenticationAndAuthorization(
         this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
     {
