@@ -17,7 +17,6 @@ internal sealed class CreateTradeReport : IEndpoint
         {
             var command = new CreateTradeReportCommand(
                 request.TradeSessionId,
-                request.ReportedUserId,
                 request.Reason,
                 request.Severity,
                 request.Description
@@ -37,7 +36,6 @@ internal sealed class CreateTradeReport : IEndpoint
     internal sealed class Request
     {
         public Guid TradeSessionId { get; init; }
-        public Guid ReportedUserId { get; init; }
         public TradeReportReason Reason { get; init; }
         public FoodSafetyIssueLevel Severity { get; init; }
         public string? Description { get; init; }
