@@ -11,7 +11,7 @@ IResourceBuilder<SeqResource> seq = builder.AddSeq("seq")
     .WithLifetime(ContainerLifetime.Persistent)
     .WithEnvironment("ACCEPT_EULA", "Y");
 
-IResourceBuilder<RedisResource> cache = builder.AddRedis("redis").WithRedisInsight();
+IResourceBuilder<RedisResource> cache = builder.AddRedis("redis");
 
 IResourceBuilder<AzureStorageResource> storage = builder.AddAzureStorage("storage");
 IResourceBuilder<AzureBlobStorageResource> blobs = storage.AddBlobs("blobs");
