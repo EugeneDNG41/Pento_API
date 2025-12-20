@@ -42,7 +42,6 @@ internal sealed class GetRecipeWishListQueryHandler(
             FROM recipe_wishlists w
             INNER JOIN recipes r ON r.id = w.recipe_id
             WHERE w.household_id = @HouseholdId
-              AND w.is_deleted = false
               AND (
                     @IsMine IS NULL
                     OR (@IsMine = TRUE  AND w.user_id = @UserId)
