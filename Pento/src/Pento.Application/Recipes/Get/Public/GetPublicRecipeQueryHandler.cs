@@ -1,58 +1,42 @@
 ﻿using System.Data.Common;
 using Dapper;
-using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 
-namespace Pento.Application.Recipes.Get;
+namespace Pento.Application.Recipes.Get.Public;
 
-internal sealed class GetRecipeQueryHandler(
-    ISqlConnectionFactory sqlConnectionFactory,
-        IUserContext userContext
-) : IQueryHandler<GetRecipeQuery, RecipeDetailResponse>
+internal sealed class GetPublicRecipeQueryHandler(
+    ISqlConnectionFactory sqlConnectionFactory
+) : IQueryHandler<GetPublicRecipeQuery, RecipeDetailResponse>
 {
-    public async Task<Result<RecipeDetailResponse>> Handle(GetRecipeQuery query, CancellationToken cancellationToken)
+    public async Task<Result<RecipeDetailResponse>> Handle(GetPublicRecipeQuery query, CancellationToken cancellationToken)
     {
         await using DbConnection connection = await sqlConnectionFactory.OpenConnectionAsync(cancellationToken);
 
         const string recipeSql = """
-            SELECT 
-                r.id AS RecipeId, 
-                r.title AS RecipeTitle, 
-                r.description AS Description,
-                r.prep_time_minutes AS PrepTimeMinutes,
-                r.cook_time_minutes AS CookTimeMinutes,
-                (r.prep_time_minutes + r.cook_time_minutes) AS TotalTimes,
-                r.notes AS Notes,
-                r.servings AS Servings,
-                r.difficulty_level AS DifficultyLevel,
-                r.image_url AS ImageUrl,
-                r.created_by AS CreatedBy,
-                r.is_public AS IsPublic,
-                r.created_on_utc AS CreatedOnUtc,
-                r.updated_on_utc AS UpdatedOnUtc,
-                EXISTS (
-                    SELECT 1
-                    FROM recipe_wishlists w
-                    WHERE w.recipe_id = r.id
-                      AND w.user_id = @UserId
-                ) AS AddedToWishlist
-            FROM recipes r
-            WHERE r.id = @RecipeId
-            
+            SELECT id AS RecipeId, 
+                title AS RecipeTitle, 
+                description AS Description,
+                prep_time_minutes AS PrepTimeMinutes,
+                cook_time_minutes AS CookTimeMinutes,
+                (prep_time_minutes + cook_time_minutes) AS TotalTimes,
+                notes AS Notes,
+                servings AS Servings,
+                difficulty_level AS DifficultyLevel,
+                image_url AS ImageUrl,
+                created_by AS CreatedBy,
+                is_public AS IsPublic,
+                created_on_utc AS CreatedOnUtc,
+                updated_on_utc AS UpdatedOnUtc,
+                FALSE AS AddedToWishlist
+            FROM recipes
+            WHERE id = @RecipeId
             """;
 
-        RecipeDetailResponse? recipe =
-          await connection.QuerySingleOrDefaultAsync<RecipeDetailResponse>(
-              recipeSql,
-              new
-              {
-                  query.RecipeId,
-                  userContext.UserId
-              });
-
+        RecipeDetailResponse? recipe = await connection.QuerySingleOrDefaultAsync<RecipeDetailResponse>(
+            recipeSql, new { query.RecipeId });
 
         if (recipe is null)
         {
