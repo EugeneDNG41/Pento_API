@@ -1,4 +1,6 @@
-﻿namespace Pento.Application.Trades.Reports.GetAll;
+﻿using Pento.Application.Abstractions.Utility.Pagination;
+
+namespace Pento.Application.Trades.Reports.GetAll;
 
 public sealed record TradeReportResponse(
     Guid ReportId,
@@ -22,4 +24,14 @@ public sealed record TradeReportResponse(
     Guid? MediaId,
     string? MediaType,
     Uri? MediaUri
+);
+public sealed record TradeReportSummaryResponse(
+    long TotalReports,
+    long PendingReports,
+    long UrgentReports,
+    long ResolvedReports
+);
+public sealed record TradeReportPagedResponse(
+    PagedList<TradeReportResponse> Reports,
+    TradeReportSummaryResponse Summary
 );
