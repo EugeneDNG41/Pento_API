@@ -28,23 +28,42 @@ internal sealed class GetRecipeWishListQueryHandler(
 
         const string sql = @"
             SELECT
-                w.id                 AS WishListId,
-                w.recipe_id           AS RecipeId,
-                r.title              AS Title,
-                r.image_url           AS ImageUrl,
-                r.difficulty_level    AS DifficultyLevel,
-                r.prep_time_minutes    AS PrepTimeMinutes,
-                w.added_on_utc         AS AddedOnUtc
+                w.id                   AS WishListId,
+                w.recipe_id            AS RecipeId,
+                r.title                AS Title,
+                r.image_url             AS ImageUrl,
+                r.difficulty_level     AS DifficultyLevel,
+                r.prep_time_minutes     AS PrepTimeMinutes,
+                w.added_on_utc          AS AddedOnUtc,
+                CASE 
+                    WHEN w.user_id = @UserId THEN TRUE
+                    ELSE FALSE
+                END                     AS IsAddedByMe
             FROM recipe_wishlists w
             INNER JOIN recipes r ON r.id = w.recipe_id
-            WHERE w.household_id = @HouseholdId and w.is_deleted = false
+            WHERE w.household_id = @HouseholdId
+              AND w.is_deleted = false
+              AND (
+                    @IsMine IS NULL
+                    OR (@IsMine = TRUE  AND w.user_id = @UserId)
+                    OR (@IsMine = FALSE AND w.user_id <> @UserId)
+                  )
             ORDER BY w.added_on_utc DESC;
+
+
         ";
 
         var items = (await connection.QueryAsync<RecipeWishListResponse>(
             sql,
-            new { HouseholdId = householdId.Value }
+            new
+            {
+                HouseholdId = householdId.Value,
+                userContext.UserId,
+                query.IsMine
+            }
         )).ToList();
+
+
 
         return items;
     }

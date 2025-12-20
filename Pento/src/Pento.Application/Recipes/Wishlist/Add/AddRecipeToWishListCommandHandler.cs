@@ -21,21 +21,26 @@ internal sealed class AddRecipeToWishListCommandHandler(
             return Result.Failure<Guid>(HouseholdErrors.NotInAnyHouseHold);
         }
 
-        bool exists = await repository.AnyAsync(
+        IEnumerable<RecipeWishList> exists = await repository.FindAsync(
             x => x.HouseholdId == householdId.Value &&
                  x.RecipeId == command.RecipeId,
             cancellationToken);
 
-        if (exists)
+        if(exists.Any())
         {
-            return Result.Failure<Guid>(RecipeWishListErrors.AlreadyExists);
+            await repository.RemoveAsync(exists.First(), cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return exists.First().Id;
+        }
+        else
+        {
+            var wishlist = RecipeWishList.Create(userContext.UserId, command.RecipeId, householdId.Value);
+
+            repository.Add(wishlist);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+            return wishlist.Id;
+
         }
 
-        var wishlist = RecipeWishList.Create(userContext.UserId, command.RecipeId,householdId.Value );
-
-        repository.Add(wishlist);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return wishlist.Id;
     }
 }

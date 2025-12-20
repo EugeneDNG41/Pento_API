@@ -2,45 +2,43 @@
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Application.Recipes.Get;
+using Pento.Application.Recipes.Get.Public;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Recipes;
 
 namespace Pento.API.Endpoints.Recipes.Get;
 
-internal sealed class GetAllRecipes : IEndpoint
+internal sealed class GetPublicRecipes : IEndpoint
 {
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
-        app.MapGet("recipes", async (
-            int pageNumber,
-            int pageSize,
-            DifficultyLevel? difficulty,
+        app.MapGet("public/recipes", async (
+            
+            DifficultyLevel? difficultyLevel,
             string? search,
             string? sort,
-            IQueryHandler<GetAllRecipesQuery, PagedList<RecipeResponse>> handler,
-            CancellationToken cancellationToken
+            IQueryHandler<GetPublicRecipesQuery, PagedList<RecipeResponse>> handler,
+            CancellationToken cancellationToken,
+            int pageNumber = 1,
+            int pageSize = 10
         ) =>
         {
-            var query = new GetAllRecipesQuery(
+            var query = new GetPublicRecipesQuery(
                 PageNumber: pageNumber,
                 PageSize: pageSize,
-                DifficultyLevel: difficulty,
+                DifficultyLevel: difficultyLevel,
                 Search: search,
                 Sort: sort
             );
 
-            Result<PagedList<RecipeResponse>> result = await handler.Handle(query, cancellationToken);
+            Result<PagedList<RecipeResponse>> result =
+                await handler.Handle(query, cancellationToken);
 
             return result.Match(
                 Results.Ok,
                 CustomResults.Problem
             );
-
         })
-            .WithTags(Tags.Recipes)
-            .RequireAuthorization()
-            .WithDescription(" newest | oldest | title | title_desc");
-
-
+        .WithTags(Tags.Recipes);
     }
 }

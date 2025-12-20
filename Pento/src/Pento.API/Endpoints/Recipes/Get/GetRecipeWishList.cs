@@ -10,11 +10,10 @@ internal sealed class GetRecipeWishList : IEndpoint
     public void MapEndpoint(IEndpointRouteBuilder app)
     {
         app.MapGet("recipes/wishlist", async (
-            IQueryHandler<GetRecipeWishListQuery, List<RecipeWishListResponse>> handler,
-            CancellationToken cancellationToken) =>
+     [AsParameters] GetRecipeWishListQuery query,
+     IQueryHandler<GetRecipeWishListQuery, List<RecipeWishListResponse>> handler,
+     CancellationToken cancellationToken) =>
         {
-            var query = new GetRecipeWishListQuery();
-
             Result<List<RecipeWishListResponse>> result =
                 await handler.Handle(query, cancellationToken);
 
@@ -23,7 +22,8 @@ internal sealed class GetRecipeWishList : IEndpoint
                 CustomResults.Problem
             );
         })
-        .WithTags(Tags.Recipes)
-        .RequireAuthorization();
+         .WithTags(Tags.Recipes)
+         .RequireAuthorization();
+
     }
 }

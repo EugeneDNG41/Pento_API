@@ -1,5 +1,6 @@
 ﻿using System.Data.Common;
 using Dapper;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
@@ -7,7 +8,9 @@ using Pento.Domain.Abstractions;
 
 namespace Pento.Application.Recipes.Get;
 
-internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
+internal sealed class GetAllRecipesQueryHandler(
+    IUserContext userContext,
+    ISqlConnectionFactory factory)
     : IQueryHandler<GetAllRecipesQuery, PagedList<RecipeResponse>>
 {
     public async Task<Result<PagedList<RecipeResponse>>> Handle(GetAllRecipesQuery request, CancellationToken cancellationToken)
@@ -21,6 +24,7 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
         {
             filters.Add("difficulty_level = @DifficultyLevel");
             parameters.Add("DifficultyLevel", request.DifficultyLevel.ToString());
+
         }
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -44,33 +48,51 @@ internal sealed class GetAllRecipesQueryHandler(ISqlConnectionFactory factory)
         };
 
         string sql = $@"
-            SELECT COUNT(*) 
-            FROM recipes
+          SELECT COUNT(*) 
+            FROM recipes r
             {whereClause};
 
             SELECT 
-                id AS Id,
-                title AS Title,
-                description AS Description,
-                prep_time_minutes AS PrepTimeMinutes,
-                cook_time_minutes AS CookTimeMinutes,
-                (prep_time_minutes + cook_time_minutes) AS TotalTimes,
-                notes AS Notes,
-                servings AS Servings,
-                difficulty_level AS DifficultyLevel,
-                image_url AS ImageUrl,
-                created_by AS CreatedBy,
-                is_public AS IsPublic,
-                created_on_utc AS CreatedOnUtc,
-                updated_on_utc AS UpdatedOnUtc
-            FROM recipes
+                r.id AS Id,
+                r.title AS Title,
+                r.description AS Description,
+                r.prep_time_minutes AS PrepTimeMinutes,
+                r.cook_time_minutes AS CookTimeMinutes,
+                (r.prep_time_minutes + r.cook_time_minutes) AS TotalTimes,
+                r.notes AS Notes,
+                r.servings AS Servings,
+                r.difficulty_level AS DifficultyLevel,
+                r.image_url AS ImageUrl,
+                r.created_by AS CreatedBy,
+                r.is_public AS IsPublic,
+                r.created_on_utc AS CreatedOnUtc,
+                r.updated_on_utc AS UpdatedOnUtc,
+                CASE
+                    WHEN @IsAuthenticated = FALSE THEN FALSE
+                    ELSE EXISTS (
+                        SELECT 1
+                        FROM recipe_wishlists w
+                        WHERE w.recipe_id = r.id
+                          AND w.user_id = @UserId
+                    )
+                END AS AddedToWishlist
+            FROM recipes r
             {whereClause}
             {orderBy}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
-        ";
 
+
+        ";
+        bool isAuthenticated = false;
+        if (userContext.UserId != Guid.Empty)
+        {
+             isAuthenticated = true;
+        }
+        parameters.Add("IsAuthenticated", isAuthenticated);
+        parameters.Add("UserId", userContext.UserId);
         parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
         parameters.Add("PageSize", request.PageSize);
+
 
         SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
 
