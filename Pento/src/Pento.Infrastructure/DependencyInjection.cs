@@ -1,5 +1,7 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 using Dapper;
+using EFCoreSecondLevelCacheInterceptor;
 using FirebaseAdmin;
 using GenerativeAI;
 using Google.Apis.Auth.OAuth2;
@@ -60,10 +62,11 @@ public static class DependencyInjection
         bool isDevelopment)
     {
         string dbConnectionString = configuration.GetConnectionStringOrThrow("pento-db");
-
+        string redisConnectionString = configuration.GetConnectionStringOrThrow("redis");
         builder.Services
             .AddCore()
             .AddSerialization()
+            .AddCaching(redisConnectionString)
             .AddPersistence(dbConnectionString)
             .AddAuthenticationAndAuthorization(configuration, isDevelopment)
             .AddExternalApis(configuration)
@@ -102,10 +105,13 @@ public static class DependencyInjection
         this IServiceCollection services,
         string connectionString)
     {
-
-        services.AddDbContext<ApplicationDbContext>(options =>
+        
+        services.AddDbContextPool<ApplicationDbContext>((service, options) =>
+        {
             options.UseNpgsql(connectionString)
-                   .UseSnakeCaseNamingConvention());
+                   .UseSnakeCaseNamingConvention();
+            options.AddInterceptors(service.GetRequiredService<SecondLevelCacheInterceptor>());
+    });
 
         services.AddScoped<IUnitOfWork>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
@@ -292,7 +298,7 @@ public static class DependencyInjection
         services.AddStackExchangeRedisCache(options =>
         {
             options.Configuration = redisConnectionString;
-        }); //registered distributed cache
+        });
         services.AddFusionCacheNewtonsoftJsonSerializer();
 
         services.AddFusionCacheStackExchangeRedisBackplane(options =>
@@ -302,7 +308,7 @@ public static class DependencyInjection
         services.AddFusionCache()
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
-            Duration = TimeSpan.FromHours(1),
+            Duration = TimeSpan.FromMinutes(30),
 
             IsFailSafeEnabled = true,
             FailSafeMaxDuration = TimeSpan.FromHours(2),
@@ -317,6 +323,12 @@ public static class DependencyInjection
         .WithRegisteredSerializer()
         .WithRegisteredBackplane()
         .AsHybridCache();
+        services.AddEFSecondLevelCache(options =>
+        {
+            options.UseHybridCacheProvider().ConfigureLogging(true).UseCacheKeyPrefix("EF_")
+                   .UseDbCallsIfCachingProviderIsDown(TimeSpan.FromMinutes(1));
+            options.CacheAllQueries(CacheExpirationMode.Absolute, TimeSpan.FromMinutes(30));
+        });
         return services;
     } 
 }

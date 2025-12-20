@@ -1,12 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Domain.Abstractions;
-using Pento.Domain.DietaryTags;
-using Pento.Domain.FoodDietaryTags;
-using Pento.Domain.FoodReferences;
-using Pento.Domain.Units;
 using Pento.Infrastructure.Utility.Outbox;
 
 namespace Pento.Infrastructure.Persistence;
@@ -41,7 +38,7 @@ public sealed class ApplicationDbContext(DbContextOptions options) : DbContext(o
             throw new ConcurrencyException("Concurrency exception occurred.", ex);
         }
     }
-
+    
     private void AddDomainEventsAsOutboxMessages()
     {
         var domainEvents = ChangeTracker
