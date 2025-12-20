@@ -53,9 +53,6 @@ namespace Pento.Infrastructure;
 
 public static class DependencyInjection
 {
-    // =========================
-    // ENTRY POINT
-    // =========================
     public static IServiceCollection AddInfrastructure(
         this WebApplicationBuilder builder,
         IConfiguration configuration,
@@ -78,9 +75,6 @@ public static class DependencyInjection
         return builder.Services;
     }
 
-    // =========================
-    // CORE / CROSS-CUTTING
-    // =========================
     private static IServiceCollection AddCore(this IServiceCollection services)
     {
         services.AddTransient<IDateTimeProvider, DateTimeProvider>();
@@ -98,9 +92,6 @@ public static class DependencyInjection
         return services;
     }
 
-    // =========================
-    // PERSISTENCE
-    // =========================
     private static IServiceCollection AddPersistence(
         this IServiceCollection services,
         string connectionString)
@@ -325,7 +316,7 @@ public static class DependencyInjection
         .AsHybridCache();
         services.AddEFSecondLevelCache(options =>
         {
-            options.UseHybridCacheProvider().ConfigureLogging(true).UseCacheKeyPrefix("EF_")
+            options.UseHybridCacheProvider().ConfigureLogging(false).UseCacheKeyPrefix("EF_")
                    .UseDbCallsIfCachingProviderIsDown(TimeSpan.FromMinutes(1));
             options.CacheAllQueries(CacheExpirationMode.Absolute, TimeSpan.FromMinutes(30));
         });
