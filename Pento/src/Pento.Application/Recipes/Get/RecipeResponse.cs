@@ -14,5 +14,7 @@ public sealed record RecipeResponse(
     Guid CreatedBy,
     bool IsPublic,
     DateTime CreatedOnUtc,
-    DateTime UpdatedOnUtc
+    DateTime UpdatedOnUtc,
+    bool AddedToWishlist
+
 );

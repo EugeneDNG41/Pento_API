@@ -16,7 +16,7 @@ public sealed class RecipeDetailResponse
     public bool IsPublic { get; init; }
     public DateTime CreatedOnUtc { get; init; }
     public DateTime UpdatedOnUtc { get; init; }
-
+    public bool AddedToWishlist { get; init; }
     public List<RecipeIngredientItem> Ingredients { get; init; } = [];
     public List<RecipeDirectionItem> Directions { get; init; } = [];
 }

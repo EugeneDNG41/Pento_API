@@ -9,5 +9,7 @@ public sealed record RecipeWishListResponse(
     Uri? ImageUrl,
     DifficultyLevel? DifficultyLevel,
     int PrepTimeMinutes,
-    DateTime AddedOnUtc
+    DateTime AddedOnUtc,
+    bool IsAddedByMe
+
 );
