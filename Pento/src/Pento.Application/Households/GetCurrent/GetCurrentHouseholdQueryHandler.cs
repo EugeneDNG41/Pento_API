@@ -38,7 +38,7 @@ internal sealed class GetCurrentHouseholdQueryHandler(
                 FROM households h
                 LEFT JOIN users u ON u.household_id = h.id
                 LEFT JOIN user_roles ur ON ur.user_id = u.id 
-                WHERE h.id = @HouseholdId
+                WHERE h.id = @HouseholdId and u.is_deleted = FALSE and h.is_deleted = FALSE
                 GROUP BY u.id, h.id;
             """;
 

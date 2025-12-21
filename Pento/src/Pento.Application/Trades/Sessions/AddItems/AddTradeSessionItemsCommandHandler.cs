@@ -45,6 +45,11 @@ internal sealed class AddTradeSessionItemsCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
+        if (session.OfferHouseholdId == householdId && session.ConfirmedByOfferUserId != null ||
+            session.RequestHouseholdId == householdId && session.ConfirmedByRequestUserId != null)
+        {
+            return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.AlreadyConfirmed);
+        }
         TradeItemFrom from = session.OfferHouseholdId == householdId
                 ? TradeItemFrom.Offer
                 : TradeItemFrom.Request;

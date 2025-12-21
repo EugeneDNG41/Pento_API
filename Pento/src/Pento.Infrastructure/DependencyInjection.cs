@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using Dapper;
 using EFCoreSecondLevelCacheInterceptor;
 using FirebaseAdmin;
@@ -102,7 +101,7 @@ public static class DependencyInjection
             options.UseNpgsql(connectionString)
                    .UseSnakeCaseNamingConvention();
             options.AddInterceptors(service.GetRequiredService<SecondLevelCacheInterceptor>());
-    });
+        });
 
         services.AddScoped<IUnitOfWork>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
@@ -300,9 +299,9 @@ public static class DependencyInjection
         .WithDefaultEntryOptions(new FusionCacheEntryOptions
         {
             Duration = TimeSpan.FromMinutes(30),
-
+            DistributedCacheDuration = TimeSpan.FromMinutes(30),
             IsFailSafeEnabled = true,
-            FailSafeMaxDuration = TimeSpan.FromHours(2),
+            FailSafeMaxDuration = TimeSpan.FromDays(1),
             FailSafeThrottleDuration = TimeSpan.FromSeconds(30),
 
             EagerRefreshThreshold = 0.9f,

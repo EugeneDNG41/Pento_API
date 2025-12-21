@@ -25,5 +25,8 @@ public sealed class RecipeWishList : BaseEntity
     public static RecipeWishList Create(Guid userId, Guid recipeId, Guid? householdId)
         => new(userId, recipeId, householdId);
 
-
+    public void SetHouseholdId(Guid householdId)
+    {
+        HouseholdId = householdId;
+    }
 }

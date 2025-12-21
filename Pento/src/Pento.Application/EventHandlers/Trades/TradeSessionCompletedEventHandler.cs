@@ -125,8 +125,8 @@ internal sealed class TradeSessionCompletedEventHandler(
                 await tradeItemRequestRepository.RemoveAsync(requestedItem, cancellationToken);
             }
         }
-
-        foreach (TradeSessionItem sessionItem in sessionOfferItems) //overwrite offered/requested quantities with actual traded quantities
+        //overwrite offered/requested quantities with actual traded quantities
+        foreach (TradeSessionItem sessionItem in sessionOfferItems) 
         {
             TradeItemOffer? offeredItem = offeredItems.SingleOrDefault(oi => oi.FoodItemId == sessionItem.FoodItemId);
             if (offeredItem != null)
@@ -155,7 +155,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 tradeItemOfferRepository.Add(offeredItem); //no need to reserve since already did when first added
             }
         }
-        foreach (TradeSessionItem sessionItem in sessionRequestItems) //overwrite offered/requested quantities with actual traded quantities
+        foreach (TradeSessionItem sessionItem in sessionRequestItems) 
         {
             TradeItemRequest? requestedItem = requestedItems.FirstOrDefault(ri => ri.FoodItemId == sessionItem.FoodItemId);
             if (requestedItem != null)
@@ -181,7 +181,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                     sessionItem.Quantity,
                     sessionItem.UnitId,
                     request.Id);
-                tradeItemRequestRepository.Add(requestedItem); //no need to reserve since already did when first added
+                tradeItemRequestRepository.Add(requestedItem);
             }
         }
        var foodItemsFromRequestToOffer = (await foodItemRepository.FindAsync(

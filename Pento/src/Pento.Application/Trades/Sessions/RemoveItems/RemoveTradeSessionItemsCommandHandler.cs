@@ -1,17 +1,12 @@
-﻿using System;
-using System.Threading;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
-using Pento.Application.Trades.Sessions.GetById;
 using Pento.Domain.Abstractions;
 using Pento.Domain.FoodItems;
 using Pento.Domain.Households;
 using Pento.Domain.Trades;
-using Pento.Domain.Units;
-using Pento.Domain.Users;
 
 namespace Pento.Application.Trades.Sessions.RemoveItems;
 
@@ -44,6 +39,11 @@ internal sealed class RemoveTradeSessionItemsCommandHandler(
         if (session.Status != TradeSessionStatus.Ongoing)
         {
             return Result.Failure(TradeErrors.InvalidSessionState);
+        }
+        if (session.OfferHouseholdId == householdId && session.ConfirmedByOfferUserId != null ||
+            session.RequestHouseholdId == householdId && session.ConfirmedByRequestUserId != null)
+        {
+            return Result.Failure(TradeErrors.AlreadyConfirmed);
         }
         IEnumerable<TradeSessionItem> items = await tradeItemSessionRepository.FindAsync(
             item => item.SessionId == command.TradeSessionId

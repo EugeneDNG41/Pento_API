@@ -23,4 +23,5 @@ public sealed class TradeErrors
     public static readonly Error ExceedsMaxTradeItems = Error.Conflict("Trade.ExceedsMaxItems", "Trade exceeds maximum allowed items."); 
     public static readonly Error AlreadyOngoingSession = Error.Conflict("Trade.AlreadyOngoingSession", "An ongoing trade session already exists between the involved offer and request.");
     public static readonly Error NoTradeItemsInSession = Error.Conflict("Trade.NoItemsInSession", "No trade items exist in the trade session.");
+    public static readonly Error AlreadyConfirmed = Error.Conflict("Trade.AlreadyConfirmed", "Cannot make changes after your household has confirmed.");
 }

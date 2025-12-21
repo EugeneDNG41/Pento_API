@@ -6,6 +6,7 @@ using Pento.Application.EventHandlers.Groceries;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Activities;
 using Pento.Domain.Households;
+using Pento.Domain.RecipeWishLists;
 using Pento.Domain.UserActivities;
 
 namespace Pento.Application.EventHandlers.Households;
@@ -13,6 +14,7 @@ namespace Pento.Application.EventHandlers.Households;
 internal sealed class HouseholdCreatedEventHandler(
     IActivityService activityService,
     IMilestoneService milestoneService,
+    IGenericRepository<RecipeWishList> recipeWishListRepository,
     IGenericRepository<Household> householdRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<HouseholdCreatedDomainEvent>
 {
@@ -23,6 +25,14 @@ internal sealed class HouseholdCreatedEventHandler(
         {
             throw new PentoException(nameof(HouseholdCreatedEventHandler), HouseholdErrors.NotFound);
         }
+        IEnumerable<RecipeWishList> wishList = await recipeWishListRepository.FindAsync(rw => rw.UserId == domainEvent.UserId,
+            cancellationToken: cancellationToken);
+        foreach (RecipeWishList wish in wishList)
+        {
+            wish.SetHouseholdId(domainEvent.HouseholdId);
+        }
+        await recipeWishListRepository.UpdateRangeAsync(wishList, cancellationToken);
+
         Result<UserActivity> createResult = await activityService.RecordActivityAsync(
             domainEvent.UserId,
             domainEvent.HouseholdId,

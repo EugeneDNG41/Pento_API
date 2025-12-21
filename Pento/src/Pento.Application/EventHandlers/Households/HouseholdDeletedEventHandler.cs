@@ -4,12 +4,14 @@ using Pento.Domain.FoodItemReservations;
 using Pento.Domain.GroceryLists;
 using Pento.Domain.Households;
 using Pento.Domain.MealPlans;
+using Pento.Domain.RecipeWishLists;
 using Pento.Domain.Storages;
 using Pento.Domain.Trades;
 
 namespace Pento.Application.EventHandlers.Households;
 
 internal sealed class HouseholdDeletedEventHandler(
+    IGenericRepository<RecipeWishList> recipeWishListRepository,
     IGenericRepository<FoodItemReservation> foodItemReservationRepository,
     IGenericRepository<Storage> storageRepository,
     IGenericRepository<MealPlan> mealPlanRepository,
@@ -21,6 +23,9 @@ internal sealed class HouseholdDeletedEventHandler(
 {
     public async override Task Handle(HouseholdDeletedDomainEvent domainEvent, CancellationToken cancellationToken = default)
     {
+        IEnumerable<RecipeWishList> wishLists = await recipeWishListRepository.FindAsync(rwl => rwl.HouseholdId == domainEvent.HouseholdId, cancellationToken);
+        await recipeWishListRepository.RemoveRangeAsync(wishLists, cancellationToken);
+
         IEnumerable<Storage> storages = await storageRepository.FindAsync(s => s.HouseholdId == domainEvent.HouseholdId, cancellationToken);
         await storageRepository.RemoveRangeAsync(storages, cancellationToken);
 

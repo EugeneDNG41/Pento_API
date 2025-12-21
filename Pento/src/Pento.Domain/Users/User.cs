@@ -1,4 +1,5 @@
 ﻿using Pento.Domain.Abstractions;
+using Pento.Domain.Households;
 using Pento.Domain.Roles;
 using Pento.Domain.Users.Events;
 
@@ -77,5 +78,13 @@ public sealed class User : Entity
         {
             _roles.Remove(role);
         }
+    }
+    public new void Delete()
+    {
+        if (HouseholdId.HasValue)
+        {
+            Raise(new UserLeftHouseholdDomainEvent(Id, HouseholdId.Value));
+        }
+        base.Delete();
     }
 }
