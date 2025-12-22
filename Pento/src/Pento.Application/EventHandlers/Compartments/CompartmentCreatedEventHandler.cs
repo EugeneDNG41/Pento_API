@@ -11,7 +11,6 @@ namespace Pento.Application.EventHandlers.Compartments;
 
 internal sealed class CompartmentCreatedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<Compartment> compartmentRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<CompartmentCreatedDomainEvent>
 {
@@ -31,11 +30,6 @@ internal sealed class CompartmentCreatedEventHandler(
         if (createResult.IsFailure)
         {
             throw new PentoException(nameof(CompartmentCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(CompartmentCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

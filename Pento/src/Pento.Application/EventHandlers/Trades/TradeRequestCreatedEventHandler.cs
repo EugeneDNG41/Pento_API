@@ -17,7 +17,6 @@ namespace Pento.Application.EventHandlers.Trades;
 internal sealed class TradeRequestCreatedEventHandler(
     INotificationService notificationService,
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
@@ -45,11 +44,7 @@ internal sealed class TradeRequestCreatedEventHandler(
         {
             throw new PentoException(nameof(TradeRequestCreatedEventHandler), createResult.Error);
         }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeRequestCreatedEventHandler), milestoneCheckResult.Error);
-        }
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
         TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
         if (offer == null)

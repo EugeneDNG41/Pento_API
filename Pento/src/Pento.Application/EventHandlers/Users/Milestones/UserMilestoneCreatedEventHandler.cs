@@ -6,7 +6,7 @@ using Pento.Domain.Abstractions;
 using Pento.Domain.Milestones;
 using Pento.Domain.UserMilestones;
 
-namespace Pento.Application.EventHandlers.Users;
+namespace Pento.Application.EventHandlers.Users.Milestones;
 
 internal sealed class UserMilestoneCreatedEventHandler(
     INotificationService notificationService,

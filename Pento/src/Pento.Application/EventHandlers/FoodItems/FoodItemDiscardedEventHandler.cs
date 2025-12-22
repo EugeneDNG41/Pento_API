@@ -15,7 +15,6 @@ namespace Pento.Application.EventHandlers.FoodItems;
 
 internal sealed class FoodItemDiscardedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<FoodItem> foodItemRepository,
     IGenericRepository<Unit> unitRepository,
     IGenericRepository<FoodItemLog> logRepository,
@@ -54,11 +53,6 @@ internal sealed class FoodItemDiscardedEventHandler(
         if (discardResult.IsFailure)
         {
             throw new PentoException(nameof(GroceryListCreatedEventHandler), discardResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(discardResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(GroceryListCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

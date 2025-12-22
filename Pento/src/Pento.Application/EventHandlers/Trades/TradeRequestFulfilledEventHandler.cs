@@ -3,20 +3,25 @@ using Pento.Application.Abstractions.Exceptions;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
+using Pento.Application.Abstractions.Services;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Activities;
 using Pento.Domain.Households;
 using Pento.Domain.Notifications;
 using Pento.Domain.Trades;
+using Pento.Domain.UserActivities;
 using Pento.Domain.Users;
 
 namespace Pento.Application.EventHandlers.Trades;
 
 internal sealed class TradeRequestFulfilledEventHandler(
     INotificationService notificationService,
+    IActivityService activityService,
     IHubContext<MessageHub, IMessageClient> hubContext,
     IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,
-    IGenericRepository<Household> householdRepository)
+    IGenericRepository<Household> householdRepository,
+    IUnitOfWork unitOfWork)
     : DomainEventHandler<TradeRequestFulfilledDomainEvent>
 {
     public override async Task Handle(
@@ -38,6 +43,17 @@ internal sealed class TradeRequestFulfilledEventHandler(
         {
             throw new PentoException(nameof(TradeRequestFulfilledEventHandler), HouseholdErrors.NotFound);
         }
+        Result createResult = await activityService.RecordHouseholdActivityAsync(
+            request.HouseholdId,
+            ActivityCode.TRADE_COMPLETE.ToString(),
+            offer.Id,
+            cancellationToken);
+        if (createResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
+        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
         string title = "Trade Fulfilled";
         string body = $"Your trade with household {offerHousehold.Name} has been fulfilled.";
         var payload = new Dictionary<string, string>

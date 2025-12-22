@@ -12,7 +12,6 @@ namespace Pento.Application.EventHandlers.MealPlans;
 
 internal sealed class MealPlanCreatedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<MealPlan> mealPlanRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<MealPlanCreatedDomainEvent>
 {
@@ -32,11 +31,6 @@ internal sealed class MealPlanCreatedEventHandler(
         if (createResult.IsFailure)
         {
             throw new PentoException(nameof(MealPlanCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(MealPlanCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

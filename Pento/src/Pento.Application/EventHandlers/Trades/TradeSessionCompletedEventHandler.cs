@@ -16,9 +16,7 @@ namespace Pento.Application.EventHandlers.Trades;
 
 internal sealed class TradeSessionCompletedEventHandler(
     IConverterService converterService,
-    INotificationService notificationService,
-    IActivityService activityService,
-    IMilestoneService milestoneService,
+    INotificationService notificationService, 
     IGenericRepository<TradeSession> tradeSessionRepository,
     IGenericRepository<TradeOffer> tradeOfferRepository,  
     IGenericRepository<TradeRequest> tradeRequestRepository,
@@ -50,21 +48,7 @@ internal sealed class TradeSessionCompletedEventHandler(
         {
             throw new PentoException(nameof(TradeSessionCompletedEventHandler), TradeErrors.RequestNotFound);
         }
-        Result<UserActivity> createResult = await activityService.RecordActivityAsync(
-            offer.UserId,
-            null,
-            ActivityCode.TRADE_OFFER_CREATE.ToString(),
-            offer.Id,
-            cancellationToken);
-        if (createResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeOfferCreatedEventHandler), milestoneCheckResult.Error);
-        }
+        
         
         offer.Fulfill(session.TradeRequestId);
         request.Fulfill(session.TradeOfferId);

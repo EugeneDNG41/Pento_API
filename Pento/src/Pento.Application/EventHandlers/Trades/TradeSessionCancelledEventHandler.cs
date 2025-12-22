@@ -11,6 +11,7 @@ namespace Pento.Application.EventHandlers.Trades;
 internal sealed class TradeSessionCancelledEventHandler(
     ITradeService tradeService,
     IGenericRepository<TradeSession> tradeSessionRepository,
+    IGenericRepository<TradeRequest> tradeRequestRepository,
     IGenericRepository<TradeSessionItem> tradeItemSessionRepository,
     IGenericRepository<FoodItem> foodItemRepository,
     IUnitOfWork unitOfWork
@@ -26,6 +27,12 @@ internal sealed class TradeSessionCancelledEventHandler(
         {
             throw new PentoException(nameof(TradeSessionCancelledEventHandler), TradeErrors.SessionNotFound);
         }
+        TradeRequest? request = await tradeRequestRepository.GetByIdAsync(session.TradeRequestId, cancellationToken);
+        if (request == null) 
+        {
+            throw new PentoException(nameof(TradeSessionCancelledEventHandler), TradeErrors.RequestNotFound);
+        }
+        request.Cancel();
         IEnumerable<TradeSessionItem> sessionItems = await tradeItemSessionRepository.FindAsync(
             tis => tis.SessionId == session.Id,
             cancellationToken);

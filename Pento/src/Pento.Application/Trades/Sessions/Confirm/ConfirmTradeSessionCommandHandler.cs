@@ -37,9 +37,11 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
+        bool confirmdeByOfferer = session.ConfirmedByOfferUserId != null;
+        bool confirmedByRequester = session.ConfirmedByRequestUserId != null;
         if (session.OfferHouseholdId == userContext.HouseholdId)
         {
-            if (session.ConfirmedByOfferUserId == null)
+            if (!confirmdeByOfferer)
             {
                 bool existingTradeItems = await tradeSessionItemRepository
                     .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
@@ -56,7 +58,7 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         }
         else if (session.RequestHouseholdId == userContext.HouseholdId)
         {
-            if (session.ConfirmedByRequestUserId == null)
+            if (!confirmedByRequester)
             {
                 bool existingTradeItems = await tradeSessionItemRepository
                     .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
@@ -71,9 +73,24 @@ internal sealed class ConfirmTradeSessionCommandHandler(
                 session.ConfirmByRequestUser(null);
             }
         }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
-        bool confirmdeByOfferer = session.ConfirmedByOfferUserId != null;
-        bool confirmedByRequester = session.ConfirmedByRequestUserId != null;
+        if (confirmdeByOfferer && confirmedByRequester)
+        {
+            IEnumerable<TradeSession> otherSessions = await tradeSessionRepository.FindAsync(
+                x => x.TradeOfferId == session.TradeOfferId
+                    && x.Status == TradeSessionStatus.Ongoing
+                    && x.Id != session.Id,
+                cancellationToken);
+            foreach (TradeSession otherSession in otherSessions)
+            {
+                otherSession.Cancel();
+            }
+            if (otherSessions.Any())
+            {
+                await tradeSessionRepository.UpdateRangeAsync(otherSessions, cancellationToken);
+            }
+        }
+        await tradeSessionRepository.UpdateAsync(session, cancellationToken);
+        await unitOfWork.SaveChangesAsync(cancellationToken); 
         await hubContext.Clients.Group(session.Id.ToString())
             .TradeSessionConfirm(confirmdeByOfferer, confirmedByRequester);
         return Result.Success();

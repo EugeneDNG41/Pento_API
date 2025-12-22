@@ -13,7 +13,6 @@ namespace Pento.Application.EventHandlers.Households;
 
 internal sealed class HouseholdCreatedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<RecipeWishList> recipeWishListRepository,
     IGenericRepository<Household> householdRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<HouseholdCreatedDomainEvent>
@@ -42,11 +41,6 @@ internal sealed class HouseholdCreatedEventHandler(
         if (createResult.IsFailure)
         {
             throw new PentoException(nameof(HouseholdCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(GroceryListCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

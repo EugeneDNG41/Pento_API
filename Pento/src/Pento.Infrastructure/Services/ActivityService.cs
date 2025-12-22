@@ -5,11 +5,13 @@ using Pento.Application.Abstractions.Utility.Clock;
 using Pento.Domain.Abstractions;
 using Pento.Domain.Activities;
 using Pento.Domain.UserActivities;
+using Pento.Domain.Users;
 
 namespace Pento.Infrastructure.Services;
 
 internal sealed class ActivityService(
     IDateTimeProvider dateTimeProvider,
+    IGenericRepository<User> userRepository,
     IGenericRepository<Activity> activityRepostiory,
     IGenericRepository<UserActivity> userActivityRepository) : IActivityService
 {
@@ -23,6 +25,21 @@ internal sealed class ActivityService(
         var userActivity = UserActivity.Create(userId, householdId, activity.Code, dateTimeProvider.UtcNow, entityId);
         userActivityRepository.Add(userActivity);
         return userActivity;
+    }
+    public async Task<Result> RecordHouseholdActivityAsync(Guid householdId, string activityCode, Guid? entityId, CancellationToken cancellationToken)
+    {
+        Activity? activity = (await activityRepostiory.FindAsync(a => a.Code == activityCode, cancellationToken)).SingleOrDefault();
+        if (activity is null)
+        {
+            return Result.Failure<UserActivity>(ActivityErrors.NotFound);
+        }
+        IEnumerable<User> usersInHousehold = await userRepository.FindAsync(u => u.HouseholdId == householdId, cancellationToken);
+        foreach (User user in usersInHousehold) 
+        {
+            var userActivity = UserActivity.Create(user.Id, householdId, activity.Code, dateTimeProvider.UtcNow, entityId);
+            userActivityRepository.Add(userActivity);
+        }
+        return Result.Success();
     }
     public async Task<Result<int>> CountActivityAsync(Guid userId, string activityCode, CancellationToken cancellationToken)
     {

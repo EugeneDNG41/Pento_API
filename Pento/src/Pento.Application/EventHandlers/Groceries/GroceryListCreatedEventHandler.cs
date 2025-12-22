@@ -11,7 +11,6 @@ namespace Pento.Application.EventHandlers.Groceries;
 
 internal sealed class GroceryListCreatedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<GroceryList> groceryListRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<GroceryListCreatedDomainEvent>
 {
@@ -31,11 +30,6 @@ internal sealed class GroceryListCreatedEventHandler(
         if (createResult.IsFailure)
         {
             throw new PentoException(nameof(GroceryListCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(GroceryListCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

@@ -10,7 +10,6 @@ using Pento.Domain.UserActivities;
 namespace Pento.Application.EventHandlers.Storages;
 
 internal sealed class StorageCreatedEventHandler(
-    IMilestoneService milestoneService,
     IActivityService activityService,
     IGenericRepository<Storage> storageRepository,
     IUnitOfWork unitOfWork) : DomainEventHandler<StorageCreatedDomainEvent>
@@ -31,11 +30,6 @@ internal sealed class StorageCreatedEventHandler(
         if (createResult.IsFailure)
         {
             throw new PentoException(nameof(StorageCreatedEventHandler), createResult.Error);
-        }
-        Result milestoneCheckResult = await milestoneService.CheckMilestoneAfterActivityAsync(createResult.Value, cancellationToken);
-        if (milestoneCheckResult.IsFailure)
-        {
-            throw new PentoException(nameof(StorageCreatedEventHandler), milestoneCheckResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
     }

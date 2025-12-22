@@ -14,7 +14,6 @@ namespace Pento.Application.EventHandlers.Households;
 
 internal sealed class HouseholdJoinedEventHandler(
     IActivityService activityService,
-    IMilestoneService milestoneService,
     IGenericRepository<RecipeWishList> recipeWishListRepository,
     IGenericRepository<Household> householdRepository,
     IGenericRepository<User> userRepository,
@@ -50,11 +49,6 @@ internal sealed class HouseholdJoinedEventHandler(
         {
             throw new PentoException(nameof(HouseholdJoinedEventHandler), joinResult.Error);
         }
-        Result milestoneCheckJoinResult = await milestoneService.CheckMilestoneAfterActivityAsync(joinResult.Value, cancellationToken);
-        if (milestoneCheckJoinResult.IsFailure)
-        {
-            throw new PentoException(nameof(HouseholdJoinedEventHandler), milestoneCheckJoinResult.Error);
-        }
         IEnumerable<User> otherMembers = await userRepository.FindAsync(u => u.HouseholdId == domainEvent.HouseholdId && u.Id != domainEvent.UserId,
             cancellationToken: cancellationToken);
         foreach (User member in otherMembers)
@@ -68,11 +62,6 @@ internal sealed class HouseholdJoinedEventHandler(
             if (joinedResult.IsFailure)
             {
                 throw new PentoException(nameof(HouseholdJoinedEventHandler), joinedResult.Error);
-            }
-            Result milestoneCheckJoinedResult = await milestoneService.CheckMilestoneAfterActivityAsync(joinedResult.Value, cancellationToken);
-            if (milestoneCheckJoinedResult.IsFailure)
-            {
-                throw new PentoException(nameof(HouseholdJoinedEventHandler), milestoneCheckJoinedResult.Error);
             }
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
