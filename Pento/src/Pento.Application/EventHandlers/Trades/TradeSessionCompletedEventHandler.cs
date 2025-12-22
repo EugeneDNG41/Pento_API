@@ -90,7 +90,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 await tradeItemOfferRepository.RemoveAsync(offeredItem, cancellationToken);
             }
         }
-        foreach (TradeItemRequest requestedItem in requestedItems) //remove any not in session item
+        foreach (TradeItemRequest requestedItem in requestedItems) 
         {
             FoodItem foodItem = allInvolvedFoodItems.Single(fi => fi.Id == requestedItem.FoodItemId);
             Result<decimal> conversionResult = await converterService.ConvertAsync(
@@ -102,7 +102,7 @@ internal sealed class TradeSessionCompletedEventHandler(
             {
                 throw new PentoException(nameof(TradeSessionCompletedEventHandler), conversionResult.Error);
             }
-            foodItem.AdjustReservedQuantity(conversionResult.Value); //restore reserved quantity
+            foodItem.AdjustReservedQuantity(conversionResult.Value); 
             bool inSession = sessionRequestItems.Any(si => si.From == TradeItemFrom.Request && si.FoodItemId == requestedItem.FoodItemId);
             if (!inSession)
             {
@@ -168,7 +168,7 @@ internal sealed class TradeSessionCompletedEventHandler(
                 tradeItemRequestRepository.Add(requestedItem);
             }
         }
-       var foodItemsFromRequestToOffer = (await foodItemRepository.FindAsync(
+        var foodItemsFromRequestToOffer = (await foodItemRepository.FindAsync(
             fi => sessionRequestItems.Select(ri => ri.FoodItemId).Contains(fi.Id),
             cancellationToken)).ToList();
         var foodItemsFromOfferToRequest = (await foodItemRepository.FindAsync(
@@ -180,22 +180,23 @@ internal sealed class TradeSessionCompletedEventHandler(
         Compartment requestCompartment = (await compartmentRepository.FindAsync(
             c => c.HouseholdId == request.HouseholdId,
             cancellationToken)).First();
-        foreach (TradeSessionItem sessionItem in sessionOfferItems)
-        {
-            FoodItem? foodItem = foodItemsFromOfferToRequest.FirstOrDefault(fi => fi.Id == sessionItem.FoodItemId);
-            if (foodItem != null)
-            {
-                FoodItem tradedItem = foodItem.Trade(request.HouseholdId, request.UserId, requestCompartment.Id, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
-                foodItemRepository.Add(tradedItem);
-                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
-            }
-        }
+        
         foreach (TradeSessionItem sessionItem in sessionRequestItems)
         { 
             FoodItem? foodItem = foodItemsFromRequestToOffer.FirstOrDefault(fi => fi.Id == sessionItem.FoodItemId);
             if (foodItem != null)
             {
                 FoodItem tradedItem = foodItem.Trade(offer.HouseholdId, offer.UserId, offerCompartment.Id, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
+                foodItemRepository.Add(tradedItem);
+                await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
+            }
+        }
+        foreach (TradeSessionItem sessionItem in sessionOfferItems)
+        {
+            FoodItem? foodItem = foodItemsFromOfferToRequest.FirstOrDefault(fi => fi.Id == sessionItem.FoodItemId);
+            if (foodItem != null)
+            {
+                FoodItem tradedItem = foodItem.Trade(request.HouseholdId, request.UserId, requestCompartment.Id, sessionItem.Quantity, sessionItem.UnitId, offer.UserId);
                 foodItemRepository.Add(tradedItem);
                 await foodItemRepository.UpdateAsync(foodItem, cancellationToken);
             }

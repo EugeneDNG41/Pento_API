@@ -149,7 +149,6 @@ public sealed class FoodItem : Entity
             ExpirationDate,
             Notes,
             tradeUserId);
-        foodItem.Raise(new FoodItemTradedInDomainEvent(foodItem.Id, quantity, unitId, tradeUserId));
         return foodItem;
     }
 }
