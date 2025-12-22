@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Primitives;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Authorization;
@@ -276,6 +278,7 @@ public static class DependencyInjection
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(opt =>
+#pragma warning disable S125 // in case signal authentication breaks again
             {
                 opt.RequireHttpsMetadata = !isDevelopment;
                 opt.MapInboundClaims = false;
@@ -285,7 +288,26 @@ public static class DependencyInjection
                     $"{authority}/realms/pento";
                 opt.MetadataAddress =
                     $"{authority}/realms/pento/.well-known/openid-configuration";
-            });
+                //opt.Events = new JwtBearerEvents
+                //{
+                //    OnMessageReceived = context =>
+                //    {
+                //        StringValues accessToken = context.Request.Query["access_token"];
+
+                //        // If the request is for our hub...
+                //        PathString path = context.HttpContext.Request.Path;
+                //        if (!string.IsNullOrEmpty(accessToken) &&
+                //            path.StartsWithSegments("/message-hub"))
+                //        {
+                //            // Read the token out of the query string
+                //            context.Token = accessToken;
+                //        }
+                //        return Task.CompletedTask;
+                //    }
+                //};
+            }
+#pragma warning restore S125 // Sections of code should not be commented out
+);
 
         return services;
     }

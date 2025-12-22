@@ -37,11 +37,10 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         {
             return Result.Failure<IReadOnlyList<TradeItemResponse>>(TradeErrors.InvalidSessionState);
         }
-        bool confirmdeByOfferer = session.ConfirmedByOfferUserId != null;
-        bool confirmedByRequester = session.ConfirmedByRequestUserId != null;
+        
         if (session.OfferHouseholdId == userContext.HouseholdId)
         {
-            if (!confirmdeByOfferer)
+            if (session.ConfirmedByOfferUserId == null)
             {
                 bool existingTradeItems = await tradeSessionItemRepository
                     .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
@@ -58,7 +57,7 @@ internal sealed class ConfirmTradeSessionCommandHandler(
         }
         else if (session.RequestHouseholdId == userContext.HouseholdId)
         {
-            if (!confirmedByRequester)
+            if (session.ConfirmedByRequestUserId == null)
             {
                 bool existingTradeItems = await tradeSessionItemRepository
                     .AnyAsync(x => x.SessionId == session.Id, cancellationToken);
@@ -73,6 +72,8 @@ internal sealed class ConfirmTradeSessionCommandHandler(
                 session.ConfirmByRequestUser(null);
             }
         }
+        bool confirmdeByOfferer = session.ConfirmedByOfferUserId != null;
+        bool confirmedByRequester = session.ConfirmedByRequestUserId != null;
         if (confirmdeByOfferer && confirmedByRequester)
         {
             IEnumerable<TradeSession> otherSessions = await tradeSessionRepository.FindAsync(
@@ -89,6 +90,7 @@ internal sealed class ConfirmTradeSessionCommandHandler(
                 await tradeSessionRepository.UpdateRangeAsync(otherSessions, cancellationToken);
             }
         }
+
         await tradeSessionRepository.UpdateAsync(session, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken); 
         await hubContext.Clients.Group(session.Id.ToString())
