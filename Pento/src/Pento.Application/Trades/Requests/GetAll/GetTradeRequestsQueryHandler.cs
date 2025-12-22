@@ -88,6 +88,14 @@ internal sealed class GetTradeRequestsQueryHandler(
             JOIN food_items fi ON ti.food_item_id = fi.id
             JOIN food_references fr ON fi.food_reference_id = fr.id
             {whereClause}
+            GROUP BY
+                tr.id,
+                tr.trade_offer_id,
+                h1.name,
+                h2.name,
+                tr.status,
+                tr.created_on,
+                tr.updated_on
             {orderClause}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
             SELECT COUNT(*) FROM trade_requests tr
@@ -97,7 +105,15 @@ internal sealed class GetTradeRequestsQueryHandler(
             JOIN trade_items ti ON ti.request_id = tr.id
             JOIN food_items fi ON ti.food_item_id = fi.id
             JOIN food_references fr ON fi.food_reference_id = fr.id
-            {whereClause};
+            {whereClause}
+            GROUP BY
+                tr.id,
+                tr.trade_offer_id,
+                h1.name,
+                h2.name,
+                tr.status,
+                tr.created_on,
+                tr.updated_on;
         ";
         var command = new CommandDefinition(sql, parameters, cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);

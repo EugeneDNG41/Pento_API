@@ -51,10 +51,10 @@ internal sealed class CreateTradeItemRequestCommandHandler(
             return Result.Failure<Guid>(TradeErrors.InvalidOfferState);
         }
         TradeRequest? request = (await requestRepo.FindAsync(
-            r => r.TradeOfferId == command.TradeOfferId && r.HouseholdId == householdId.Value,
+            r => r.TradeOfferId == command.TradeOfferId && r.HouseholdId == householdId.Value && r.Status == TradeRequestStatus.Pending,
             cancellationToken)).FirstOrDefault();
 
-        if (request is not null && request.Status == TradeRequestStatus.Pending)
+        if (request is not null)
         {
             return Result.Failure<Guid>(TradeErrors.DuplicateRequest);
         }
