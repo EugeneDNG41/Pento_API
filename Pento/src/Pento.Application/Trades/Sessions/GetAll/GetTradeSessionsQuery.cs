@@ -6,7 +6,8 @@ namespace Pento.Application.Trades.Sessions.GetAll;
 
 public sealed record GetTradeSessionsQuery(
     Guid? OfferId, 
-    Guid? RequestId, 
+    Guid? RequestId,
+    string? Search,
     TradeSessionStatus? Status,
     SortOrder? SortOrder,
     int PageNumber,

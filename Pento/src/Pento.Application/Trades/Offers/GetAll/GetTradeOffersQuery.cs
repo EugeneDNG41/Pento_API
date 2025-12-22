@@ -8,6 +8,7 @@ public sealed record GetTradeOffersQuery(
     bool? IsMine,
     bool? IsMyHousehold,
     TradeOfferStatus? Status,
+    PickupOption? Pickup,
     int PageNumber = 1,
     int PageSize = 10,
     string? Search = null,

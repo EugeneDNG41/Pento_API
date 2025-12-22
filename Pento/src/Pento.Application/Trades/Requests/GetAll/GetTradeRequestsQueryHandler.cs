@@ -40,6 +40,11 @@ internal sealed class GetTradeRequestsQueryHandler(
             parameters.Add("@OfferId", query.OfferId.Value);
             filters.Add("tr.trade_offer_id = @OfferId");
         }
+        if (!string.IsNullOrWhiteSpace(query.Search))
+        {
+            parameters.Add("@Search", $"%{query.Search.Trim()}%");
+            filters.Add("(fi.name ILIKE @Search OR fr.name ILIKE @Search OR h1.name ILIKE @Search OR h2.name ILIKE @Search)");
+        }
         if (query.Status.HasValue)
         {
             parameters.Add("@Status", query.Status.Value.ToString());
@@ -79,6 +84,9 @@ internal sealed class GetTradeRequestsQueryHandler(
             JOIN trade_offers tof ON tr.trade_offer_id = tof.id
             JOIN households h1 ON tof.household_id = h1.id
             JOIN households h2 ON tr.household_id = h2.id
+            JOIN trade_items ti ON ti.request_id = tr.id
+            JOIN food_items fi ON ti.food_item_id = fi.id
+            JOIN food_references fr ON fi.food_reference_id = fr.id
             {whereClause}
             {orderClause}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
@@ -86,6 +94,9 @@ internal sealed class GetTradeRequestsQueryHandler(
             JOIN trade_offers tof ON tr.trade_offer_id = tof.id
             JOIN households h1 ON tof.household_id = h1.id
             JOIN households h2 ON tr.household_id = h2.id
+            JOIN trade_items ti ON ti.request_id = tr.id
+            JOIN food_items fi ON ti.food_item_id = fi.id
+            JOIN food_references fr ON fi.food_reference_id = fr.id
             {whereClause};
         ";
         var command = new CommandDefinition(sql, parameters, cancellationToken: cancellationToken);

@@ -29,8 +29,13 @@ internal sealed class GetTradeOffersQueryHandler(
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
-            filters.Add("fr.name ILIKE @Search");
+            filters.Add("(fr.name ILIKE @Search OR fi.name ILIKE @Search OR us.first_name ILIKE @Search)");
             parameters.Add("Search", $"%{query.Search}%");
+        }
+        if (query.Pickup.HasValue)
+        {
+            parameters.Add("@PickupOption", query.Pickup.Value.ToString());
+            filters.Add("o.pickup_option = @PickupOption");
         }
         if (query.IsMyHousehold.HasValue)
         {

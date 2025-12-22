@@ -13,6 +13,7 @@ internal sealed class GetTradeRequests : IEndpoint
     {
         app.MapGet("trades/requests", async (
             Guid? offerId,
+            string? search,
             TradeRequestStatus? status,
             bool? isMine,
             GetTradeRequestsSortBy? sortBy,
@@ -23,7 +24,7 @@ internal sealed class GetTradeRequests : IEndpoint
             int pageSize = 10
         ) =>
         {
-            var query = new GetTradeRequestsQuery(offerId, status, isMine, sortBy, sortOrder, pageNumber, pageSize);
+            var query = new GetTradeRequestsQuery(offerId, search, status, isMine, sortBy, sortOrder, pageNumber, pageSize);
             Result<PagedList<TradeRequestResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(
                 Results.Ok,

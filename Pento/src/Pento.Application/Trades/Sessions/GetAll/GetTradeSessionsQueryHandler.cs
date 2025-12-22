@@ -38,6 +38,11 @@ internal sealed class GetTradeSessionsQueryHandler(
             parameters.Add("@RequestId", request.RequestId.Value);
             filters.Add("ts.trade_request_id = @RequestId");
         }
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            parameters.Add("@Search", $"%{request.Search.Trim()}%");
+            filters.Add("(h.name ILIKE @Search OR h2.name ILIKE @Search OR fi.name ILIKE @Search OR fr.name ILIKE @Search)");
+        }
         if (request.Status.HasValue)
         {
             parameters.Add("@Status", request.Status.Value.ToString());
@@ -52,6 +57,11 @@ internal sealed class GetTradeSessionsQueryHandler(
             SELECT
               COUNT(*)
               FROM trade_sessions ts
+              LEFT JOIN trade_session_items tsi ON tsi.id = ts.id
+            JOIN households h ON h.id = ts.offer_household_id
+            JOIN households h2 ON h2.id = ts.request_household_id
+            LEFT JOIN food_items fi ON fi.id = tsi.food_item_id
+            LEFT JOIN food_references fr ON fr.id = fi.food_reference_id
                 {whereClause};
             SELECT
               ts.id                                   AS TradeSessionId,
@@ -78,6 +88,8 @@ internal sealed class GetTradeSessionsQueryHandler(
             LEFT JOIN trade_session_items tsi ON tsi.id = ts.id
             JOIN households h ON h.id = ts.offer_household_id
             JOIN households h2 ON h2.id = ts.request_household_id
+            LEFT JOIN food_items fi ON fi.id = tsi.food_item_id
+            LEFT JOIN food_references fr ON fr.id = fi.food_reference_id
             {whereClause}
             {orderByClause}
             LIMIT @PageSize OFFSET @Offset;           

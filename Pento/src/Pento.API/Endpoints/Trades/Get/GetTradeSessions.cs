@@ -14,6 +14,7 @@ internal sealed class GetTradeSessions : IEndpoint
         app.MapGet("trades/sessions", async (
             Guid? offerId,
             Guid? requestId,
+            string? search,
             TradeSessionStatus? status,
             SortOrder? sortOrder,
             IQueryHandler<GetTradeSessionsQuery, PagedList<TradeSessionBasicResponse>> handler,
@@ -22,7 +23,7 @@ internal sealed class GetTradeSessions : IEndpoint
             int pageSize = 10
         ) =>
         {
-            var query = new GetTradeSessionsQuery(offerId, requestId, status, sortOrder, pageNumber, pageSize);
+            var query = new GetTradeSessionsQuery(offerId, requestId, search, status, sortOrder, pageNumber, pageSize);
             Result<PagedList<TradeSessionBasicResponse>> result = await handler.Handle(query, cancellationToken);
             return result.Match(
                 Results.Ok,

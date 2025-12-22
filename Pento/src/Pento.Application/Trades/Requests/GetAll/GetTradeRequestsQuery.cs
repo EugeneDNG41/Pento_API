@@ -6,6 +6,7 @@ namespace Pento.Application.Trades.Requests.GetAll;
 
 public sealed record GetTradeRequestsQuery(
     Guid? OfferId,
+    string? Search,
     TradeRequestStatus? Status, 
     bool? IsMine,
     GetTradeRequestsSortBy? SortBy,

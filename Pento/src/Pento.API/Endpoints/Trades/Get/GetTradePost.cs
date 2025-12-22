@@ -14,7 +14,8 @@ internal sealed class GetTradePost : IEndpoint
         app.MapGet("trades/offers", async (
             bool? isMine,
             bool? isMyHousehold,
-            TradeOfferStatus? status,          
+            TradeOfferStatus? status,
+            PickupOption? pickup,
             string? search,
             string? sort,
             IQueryHandler<GetTradeOffersQuery, PagedList<TradeOfferGroupedResponse>> handler,
@@ -24,7 +25,7 @@ internal sealed class GetTradePost : IEndpoint
         ) =>
         {
             var query = new GetTradeOffersQuery(
-                isMine, isMyHousehold, status,
+                isMine, isMyHousehold, status, pickup,
                 PageNumber: pageNumber,
                 PageSize: pageSize,
                 Search: search,
