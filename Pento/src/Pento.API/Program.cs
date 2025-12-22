@@ -42,6 +42,8 @@ app.UseRouting();
 
 app.UseCors();
 
+app.MapHub<MessageHub>("message-hub");
+
 app.MapDefaultEndpoints();
 
 app.UseSwaggerRoute();
@@ -54,7 +56,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapHub<MessageHub>("message-hub");
 
 app.MapEndpoints();
 
