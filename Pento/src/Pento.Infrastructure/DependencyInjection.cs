@@ -76,6 +76,7 @@ public static class DependencyInjection
             {
                 options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
                 options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+                options.HandshakeTimeout = TimeSpan.FromSeconds(30);
             });
         return builder.Services;
     }
