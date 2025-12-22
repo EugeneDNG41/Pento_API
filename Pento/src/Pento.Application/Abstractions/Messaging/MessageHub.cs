@@ -32,7 +32,7 @@ public sealed class MessageHub(IUserContext userContext, IGenericRepository<Trad
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, householdId.Value.ToString());
             IEnumerable<TradeSession> sessions = await tradeSessionRepository
-                .FindAsync(ts => ts.OfferHouseholdId == householdId && ts.RequestHouseholdId == householdId);
+                .FindAsync(ts => ts.OfferHouseholdId == householdId || ts.RequestHouseholdId == householdId);
             foreach (TradeSession session in sessions)
             {
                 await Groups.AddToGroupAsync(Context.ConnectionId, session.Id.ToString());
