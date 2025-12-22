@@ -23,6 +23,7 @@ using Pento.Application.Abstractions.External.File;
 using Pento.Application.Abstractions.External.Firebase;
 using Pento.Application.Abstractions.External.Identity;
 using Pento.Application.Abstractions.External.PayOS;
+using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Services;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -69,8 +70,13 @@ public static class DependencyInjection
             .AddApplicationServices()
             .AddBackgroundJobs(configuration);
         builder.AddAspireHostedServices();
-        builder.Services.AddSignalR();
-
+        builder.Services
+            .AddSignalR()
+            .AddHubOptions<MessageHub>(options =>
+            {
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+            });
         return builder.Services;
     }
 
