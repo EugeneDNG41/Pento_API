@@ -4,7 +4,6 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
-using Pento.Domain.Trades;
 using Pento.Domain.Trades.Reports;
 
 namespace Pento.Application.Trades.Reports.GetAll;
@@ -20,6 +19,9 @@ internal sealed class GetAllTradeReportsQueryHandler(
         await using DbConnection connection =
             await factory.OpenConnectionAsync(cancellationToken);
 
+        // ===============================
+        // Filters
+        // ===============================
         var filters = new List<string>
         {
             "tr.is_deleted = FALSE"
@@ -53,6 +55,9 @@ internal sealed class GetAllTradeReportsQueryHandler(
             _ => "ORDER BY tr.created_on DESC"
         };
 
+        // ===============================
+        // SQL
+        // ===============================
         string sql = $"""
             -- 1️⃣ Summary
             SELECT
@@ -70,78 +75,48 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
             -- 3️⃣ Paged data
             SELECT
-                tr.id                        AS ReportId,
-                tr.trade_session_id          AS TradeSessionId,
-                tr.reason                    AS Reason,
-                tr.severity                  AS Severity,
-                tr.status                    AS Status,
-                tr.description               AS Description,
-                tr.created_on                AS CreatedOnUtc,
+                tr.id                    AS ReportId,
+                tr.trade_session_id      AS TradeSessionId,
+                tr.reason                AS Reason,
+                tr.severity              AS Severity,
+                tr.status                AS Status,
+                tr.description           AS Description,
+                tr.created_on            AS CreatedOnUtc,
 
-                ru.id                        AS ReporterUserId,
-                ru.first_name                AS ReporterFirstName,
-                ru.last_name                 AS ReporterLastName,
-                ru.avatar_url                AS ReporterAvatarUrl,
+                ru.id                    AS ReporterUserId,
+                ru.first_name            AS ReporterName,
+                ru.avatar_url            AS ReporterAvatarUrl,
 
-                fri.id                       AS FoodItemId,
-                fr.name                      AS FoodName,
-                fr.image_url                 AS FoodImageUri,
-                ti.quantity                  AS Quantity,
-                un.abbreviation              AS UnitAbbreviation,
+                fri.id                   AS FoodItemId,
+                fr.name                  AS FoodName,
+                fr.image_url             AS FoodImageUri,
+                ti.quantity              AS Quantity,
+                un.abbreviation          AS UnitAbbreviation,
 
-                m.id                         AS MediaId,
-                m.media_type                 AS MediaType,
-                m.media_uri                  AS MediaUri,
+                m.id                     AS MediaId,
+                m.media_type             AS MediaType,
+                m.media_uri              AS MediaUri,
 
-                ts.id                        AS TsId,
-                ts.trade_offer_id            AS TradeOfferId,
-                ts.trade_request_id          AS TradeRequestId,
-                ts.status                    AS TradeSessionStatus,
-                ts.started_on                AS StartedOn,
-
-                ho.id                        AS OfferHouseholdId,
-                ho.name                      AS OfferHouseholdName,
-                hr.id                        AS RequestHouseholdId,
-                hr.name                      AS RequestHouseholdName,
-
-                uo.id                        AS OfferConfirmUserId,
-                uo.first_name                AS OfferConfirmFirstName,
-                uo.last_name                 AS OfferConfirmLastName,
-                uo.avatar_url                AS OfferConfirmAvatarUrl,
-
-                ur.id                        AS RequestConfirmUserId,
-                ur.first_name                AS RequestConfirmFirstName,
-                ur.last_name                 AS RequestConfirmLastName,
-                ur.avatar_url                AS RequestConfirmAvatarUrl,
-
-                (
-                    SELECT COUNT(*)
-                    FROM trade_items tio
-                    WHERE tio.offer_id = ts.trade_offer_id
-                )                             AS TotalOfferedItems,
-
-                (
-                    SELECT COUNT(*)
-                    FROM trade_items tir
-                    WHERE tir.request_id = ts.trade_request_id
-                )                             AS TotalRequestedItems
+                -- 🔥 Trade session info
+                ts.status                AS TradeSessionStatus,
+                ts.started_on            AS TradeSessionStartedOn,
+                ho.name                  AS OfferHouseholdName,
+                hr.name                  AS RequestHouseholdName
 
             FROM trade_reports tr
-            JOIN users ru                       ON ru.id = tr.reporter_user_id
-            JOIN trade_sessions ts              ON ts.id = tr.trade_session_id
-            JOIN trade_offers o                 ON o.id = ts.trade_offer_id
-            JOIN trade_requests r               ON r.id = ts.trade_request_id
-            JOIN households ho                  ON ho.id = o.household_id
-            JOIN households hr                  ON hr.id = r.household_id
+            JOIN users ru                   ON ru.id = tr.reporter_user_id
 
-            LEFT JOIN trade_items ti             ON ti.offer_id = o.id
-            LEFT JOIN food_items fri             ON fri.id = ti.food_item_id
-            LEFT JOIN food_references fr         ON fr.id = fri.food_reference_id
-            LEFT JOIN units un                   ON un.id = ti.unit_id
-            LEFT JOIN trade_report_medias m      ON m.trade_report_id = tr.id
+            LEFT JOIN trade_sessions ts     ON ts.id = tr.trade_session_id
+            LEFT JOIN trade_offers o        ON o.id = ts.trade_offer_id
+            LEFT JOIN trade_requests rq     ON rq.id = ts.trade_request_id
+            LEFT JOIN households ho         ON ho.id = o.household_id
+            LEFT JOIN households hr         ON hr.id = rq.household_id
 
-            LEFT JOIN users uo                   ON uo.id = ts.confirmed_by_offer_user_id
-            LEFT JOIN users ur                   ON ur.id = ts.confirmed_by_request_user_id
+            LEFT JOIN trade_items ti        ON ti.offer_id = o.id
+            LEFT JOIN food_items fri        ON fri.id = ti.food_item_id
+            LEFT JOIN food_references fr    ON fr.id = fri.food_reference_id
+            LEFT JOIN units un              ON un.id = ti.unit_id
+            LEFT JOIN trade_report_medias m ON m.trade_report_id = tr.id
 
             {whereClause}
             {orderBy}
@@ -160,110 +135,11 @@ internal sealed class GetAllTradeReportsQueryHandler(
         int totalCount =
             await multi.ReadFirstAsync<int>();
 
-        var rows = (await multi.ReadAsync()).ToList();
-
-        var reports = rows.Select(r =>
-        {
-            // Reporter name (an toàn null)
-            string reporterName = string.Join(
-                " ",
-                new[] { r.ReporterFirstName, r.ReporterLastName }
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-            );
-
-            Uri? reporterAvatar = string.IsNullOrWhiteSpace(r.ReporterAvatarUrl)
-                ? null
-                : new Uri(r.ReporterAvatarUrl);
-
-            Uri? foodImage = string.IsNullOrWhiteSpace(r.FoodImageUri)
-                ? null
-                : new Uri(r.FoodImageUri);
-
-            Uri? mediaUri = string.IsNullOrWhiteSpace(r.MediaUri)
-                ? null
-                : new Uri(r.MediaUri);
-
-            Uri? offerConfirmAvatar = string.IsNullOrWhiteSpace(r.OfferConfirmAvatarUrl)
-                ? null
-                : new Uri(r.OfferConfirmAvatarUrl);
-
-            TradeSessionUserResponse? confirmedByOfferUser =
-                r.OfferConfirmUserId is null
-                    ? null
-                    : new TradeSessionUserResponse(
-                         Guid.Empty,
-                        r.OfferConfirmFirstName ?? string.Empty,
-                        r.OfferConfirmLastName ?? string.Empty,
-                        offerConfirmAvatar
-                    );
-
-            Uri? requestConfirmAvatar = string.IsNullOrWhiteSpace(r.RequestConfirmAvatarUrl)
-                ? null
-                : new Uri(r.RequestConfirmAvatarUrl);
-
-            TradeSessionUserResponse? confirmedByRequestUser =
-             r.RequestConfirmUserId is null
-                 ? null
-                 : new TradeSessionUserResponse(
-                     Guid.Empty, 
-                     r.RequestConfirmFirstName ?? string.Empty,
-                     r.RequestConfirmLastName ?? string.Empty,
-                     requestConfirmAvatar
-                 );
-
-
-            return new TradeReportResponse(
-                ReportId: r.ReportId,
-                TradeSessionId: r.TradeSessionId,
-
-                Reason: r.Reason,
-                Severity: r.Severity,
-                Status: r.Status,
-                Description: r.Description,
-                CreatedOnUtc: r.CreatedOnUtc,
-
-                ReporterUserId: r.ReporterUserId,
-                ReporterName: reporterName,
-                ReporterAvatarUrl: reporterAvatar,
-
-                FoodItemId: r.FoodItemId,
-                FoodName: r.FoodName,
-                FoodImageUri: foodImage,
-                Quantity: r.Quantity,
-                UnitAbbreviation: r.UnitAbbreviation,
-
-                MediaId: r.MediaId,
-                MediaType: r.MediaType,
-                MediaUri: mediaUri,
-
-            TradeSession: new TradeSessionSummaryResponse(
-                TradeSessionId: (Guid)r.TsId,
-                TradeOfferId: (Guid)r.TradeOfferId,
-                TradeRequestId: (Guid)r.TradeRequestId,
-
-                OfferHouseholdId: (Guid)r.OfferHouseholdId,
-                OfferHouseholdName: (string)r.OfferHouseholdName,
-
-                RequestHouseholdId: (Guid)r.RequestHouseholdId,
-                RequestHouseholdName: (string)r.RequestHouseholdName,
-
-                Status: r.TradeSessionStatus?.ToString() ?? string.Empty,
-                StartedOn: r.StartedOn is DateTime dt ? dt : DateTime.MinValue,
-
-                TotalOfferedItems: Convert.ToInt32(r.TotalOfferedItems),
-                TotalRequestedItems: Convert.ToInt32(r.TotalRequestedItems),
-
-                ConfirmedByOfferUser: confirmedByOfferUser,
-                ConfirmedByRequestUser: confirmedByRequestUser
-            )
-
-            );
-        }).ToList();
-
-
+        var items =
+            (await multi.ReadAsync<TradeReportResponse>()).ToList();
 
         var pagedReports = PagedList<TradeReportResponse>.Create(
-            reports,
+            items,
             totalCount,
             request.PageNumber,
             request.PageSize

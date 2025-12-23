@@ -3,6 +3,7 @@
 namespace Pento.Application.Trades.Reports.GetAll;
 
 public sealed record TradeReportResponse(
+    // ===== Trade Report =====
     Guid ReportId,
     Guid TradeSessionId,
     string Reason,
@@ -11,21 +12,28 @@ public sealed record TradeReportResponse(
     string? Description,
     DateTime CreatedOnUtc,
 
+    // ===== Reporter =====
     Guid ReporterUserId,
     string ReporterName,
     Uri? ReporterAvatarUrl,
 
+    // ===== Food =====
     Guid? FoodItemId,
     string? FoodName,
     Uri? FoodImageUri,
     decimal? Quantity,
     string? UnitAbbreviation,
 
+    // ===== Media =====
     Guid? MediaId,
     string? MediaType,
     Uri? MediaUri,
-    TradeSessionSummaryResponse TradeSession
 
+    // ===== Trade Session (NEW) =====
+    string? TradeSessionStatus,
+    DateTime? TradeSessionStartedOn,
+    string? OfferHouseholdName,
+    string? RequestHouseholdName
 );
 public sealed record TradeReportSummaryResponse(
     long TotalReports,
@@ -37,30 +45,3 @@ public sealed record TradeReportPagedResponse(
     PagedList<TradeReportResponse> Reports,
     TradeReportSummaryResponse Summary
 );
-public sealed record TradeSessionUserResponse(
-    Guid UserId,
-    string FirstName,
-    string LastName,
-    Uri? AvatarUrl
-);
-public sealed record TradeSessionSummaryResponse(
-    Guid TradeSessionId,
-    Guid TradeOfferId,
-    Guid TradeRequestId,
-
-    Guid OfferHouseholdId,
-    string OfferHouseholdName,
-
-    Guid RequestHouseholdId,
-    string RequestHouseholdName,
-
-    string Status,  
-    DateTime StartedOn,
-
-    int TotalOfferedItems,
-    int TotalRequestedItems,
-
-    TradeSessionUserResponse? ConfirmedByOfferUser,
-    TradeSessionUserResponse? ConfirmedByRequestUser
-);
-
