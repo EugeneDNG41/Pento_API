@@ -44,7 +44,6 @@ internal sealed class GetAllTradeReportsQueryHandler(
             parameters.Add("Reason", request.Reason.ToString());
         }
 
-
         string whereClause = "WHERE " + string.Join(" AND ", filters);
 
         string orderBy = request.Sort switch
@@ -70,36 +69,79 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
             -- 3️⃣ Paged data
             SELECT
-                tr.id                    AS ReportId,
-                tr.trade_session_id      AS TradeSessionId,
-                tr.reason                AS Reason,
-                tr.severity              AS Severity,
-                tr.status                AS Status,
-                tr.description           AS Description,
-                tr.created_on            AS CreatedOnUtc,
+                tr.id                        AS ReportId,
+                tr.trade_session_id          AS TradeSessionId,
+                tr.reason                    AS Reason,
+                tr.severity                  AS Severity,
+                tr.status                    AS Status,
+                tr.description               AS Description,
+                tr.created_on                AS CreatedOnUtc,
 
-                ru.id                    AS ReporterUserId,
-                ru.first_name            AS ReporterName,
-                ru.avatar_url            AS ReporterAvatarUrl,
+                ru.id                        AS ReporterUserId,
+                ru.first_name                AS ReporterFirstName,
+                ru.last_name                 AS ReporterLastName,
+                ru.avatar_url                AS ReporterAvatarUrl,
 
-                fri.id                   AS FoodItemId,
-                fr.name                  AS FoodName,
-                fr.image_url             AS FoodImageUri,
-                ti.quantity              AS Quantity,
-                un.abbreviation          AS UnitAbbreviation,
+                fri.id                       AS FoodItemId,
+                fr.name                      AS FoodName,
+                fr.image_url                 AS FoodImageUri,
+                ti.quantity                  AS Quantity,
+                un.abbreviation              AS UnitAbbreviation,
 
-                m.id                     AS MediaId,
-                m.media_type             AS MediaType,
-                m.media_uri              AS MediaUri
+                m.id                         AS MediaId,
+                m.media_type                 AS MediaType,
+                m.media_uri                  AS MediaUri,
+
+                ts.id                        AS TsId,
+                ts.trade_offer_id            AS TradeOfferId,
+                ts.trade_request_id          AS TradeRequestId,
+                ts.status                    AS TradeSessionStatus,
+                ts.started_on                AS StartedOn,
+
+                ho.id                        AS OfferHouseholdId,
+                ho.name                      AS OfferHouseholdName,
+                hr.id                        AS RequestHouseholdId,
+                hr.name                      AS RequestHouseholdName,
+
+                uo.id                        AS OfferConfirmUserId,
+                uo.first_name                AS OfferConfirmFirstName,
+                uo.last_name                 AS OfferConfirmLastName,
+                uo.avatar_url                AS OfferConfirmAvatarUrl,
+
+                ur.id                        AS RequestConfirmUserId,
+                ur.first_name                AS RequestConfirmFirstName,
+                ur.last_name                 AS RequestConfirmLastName,
+                ur.avatar_url                AS RequestConfirmAvatarUrl,
+
+                (
+                    SELECT COUNT(*)
+                    FROM trade_items tio
+                    WHERE tio.offer_id = ts.trade_offer_id
+                )                             AS TotalOfferedItems,
+
+                (
+                    SELECT COUNT(*)
+                    FROM trade_items tir
+                    WHERE tir.request_id = ts.trade_request_id
+                )                             AS TotalRequestedItems
+
             FROM trade_reports tr
-            JOIN users ru                   ON ru.id = tr.reporter_user_id
-            LEFT JOIN trade_sessions ts     ON ts.id = tr.trade_session_id
-            LEFT JOIN trade_offers o        ON o.id = ts.trade_offer_id
-            LEFT JOIN trade_items ti        ON ti.offer_id = o.id
-            LEFT JOIN food_items fri        ON fri.id = ti.food_item_id
-            LEFT JOIN food_references fr    ON fr.id = fri.food_reference_id
-            LEFT JOIN units un              ON un.id = ti.unit_id
-            LEFT JOIN trade_report_medias m ON m.trade_report_id = tr.id
+            JOIN users ru                       ON ru.id = tr.reporter_user_id
+            JOIN trade_sessions ts              ON ts.id = tr.trade_session_id
+            JOIN trade_offers o                 ON o.id = ts.trade_offer_id
+            JOIN trade_requests r               ON r.id = ts.trade_request_id
+            JOIN households ho                  ON ho.id = o.household_id
+            JOIN households hr                  ON hr.id = r.household_id
+
+            LEFT JOIN trade_items ti             ON ti.offer_id = o.id
+            LEFT JOIN food_items fri             ON fri.id = ti.food_item_id
+            LEFT JOIN food_references fr         ON fr.id = fri.food_reference_id
+            LEFT JOIN units un                   ON un.id = ti.unit_id
+            LEFT JOIN trade_report_medias m      ON m.trade_report_id = tr.id
+
+            LEFT JOIN users uo                   ON uo.id = ts.confirmed_by_offer_user_id
+            LEFT JOIN users ur                   ON ur.id = ts.confirmed_by_request_user_id
+
             {whereClause}
             {orderBy}
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
@@ -108,7 +150,8 @@ internal sealed class GetAllTradeReportsQueryHandler(
         parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
         parameters.Add("PageSize", request.PageSize);
 
-        using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(sql, parameters);
+        using SqlMapper.GridReader multi =
+            await connection.QueryMultipleAsync(sql, parameters);
 
         TradeReportSummaryResponse summary =
             await multi.ReadFirstAsync<TradeReportSummaryResponse>();
@@ -116,11 +159,71 @@ internal sealed class GetAllTradeReportsQueryHandler(
         int totalCount =
             await multi.ReadFirstAsync<int>();
 
-        var items =
-            (await multi.ReadAsync<TradeReportResponse>()).ToList();
+        var rows = (await multi.ReadAsync()).ToList();
+
+        var reports = rows.Select(r => new TradeReportResponse(
+            ReportId: r.ReportId,
+            TradeSessionId: r.TradeSessionId,
+
+            Reason: r.Reason,
+            Severity: r.Severity,
+            Status: r.Status,
+            Description: r.Description,
+            CreatedOnUtc: r.CreatedOnUtc,
+
+            ReporterUserId: r.ReporterUserId,
+            ReporterName: $"{r.ReporterFirstName} {r.ReporterLastName}",
+            ReporterAvatarUrl: r.ReporterAvatarUrl,
+
+            FoodItemId: r.FoodItemId,
+            FoodName: r.FoodName,
+            FoodImageUri: r.FoodImageUri,
+            Quantity: r.Quantity,
+            UnitAbbreviation: r.UnitAbbreviation,
+
+            MediaId: r.MediaId,
+            MediaType: r.MediaType,
+            MediaUri: r.MediaUri,
+
+            TradeSession: new TradeSessionSummaryResponse(
+                TradeSessionId: r.TsId,
+                TradeOfferId: r.TradeOfferId,
+                TradeRequestId: r.TradeRequestId,
+
+                OfferHouseholdId: r.OfferHouseholdId,
+                OfferHouseholdName: r.OfferHouseholdName,
+
+                RequestHouseholdId: r.RequestHouseholdId,
+                RequestHouseholdName: r.RequestHouseholdName,
+
+                Status: r.TradeSessionStatus,
+                StartedOn: r.StartedOn,
+
+                TotalOfferedItems: r.TotalOfferedItems,
+                TotalRequestedItems: r.TotalRequestedItems,
+
+                ConfirmedByOfferUser: r.OfferConfirmUserId is null
+                    ? null
+                    : new TradeSessionUserResponse(
+                        r.OfferConfirmUserId,
+                        r.OfferConfirmFirstName,
+                        r.OfferConfirmLastName,
+                        r.OfferConfirmAvatarUrl
+                    ),
+
+                ConfirmedByRequestUser: r.RequestConfirmUserId is null
+                    ? null
+                    : new TradeSessionUserResponse(
+                        r.RequestConfirmUserId,
+                        r.RequestConfirmFirstName,
+                        r.RequestConfirmLastName,
+                        r.RequestConfirmAvatarUrl
+                    )
+            )
+        )).ToList();
 
         var pagedReports = PagedList<TradeReportResponse>.Create(
-            items,
+            reports,
             totalCount,
             request.PageNumber,
             request.PageSize
