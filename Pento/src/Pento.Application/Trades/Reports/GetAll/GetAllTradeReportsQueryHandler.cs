@@ -236,26 +236,27 @@ internal sealed class GetAllTradeReportsQueryHandler(
                 MediaType: r.MediaType,
                 MediaUri: mediaUri,
 
-                TradeSession: new TradeSessionSummaryResponse(
-                    TradeSessionId: r.TsId,
-                    TradeOfferId: r.TradeOfferId,
-                    TradeRequestId: r.TradeRequestId,
+            TradeSession: new TradeSessionSummaryResponse(
+                TradeSessionId: (Guid)r.TsId,
+                TradeOfferId: (Guid)r.TradeOfferId,
+                TradeRequestId: (Guid)r.TradeRequestId,
 
-                    OfferHouseholdId: r.OfferHouseholdId,
-                    OfferHouseholdName: r.OfferHouseholdName,
+                OfferHouseholdId: (Guid)r.OfferHouseholdId,
+                OfferHouseholdName: (string)r.OfferHouseholdName,
 
-                    RequestHouseholdId: r.RequestHouseholdId,
-                    RequestHouseholdName: r.RequestHouseholdName,
+                RequestHouseholdId: (Guid)r.RequestHouseholdId,
+                RequestHouseholdName: (string)r.RequestHouseholdName,
 
-                    Status: r.TradeSessionStatus?.ToString() ?? string.Empty,
-                    StartedOn: r.StartedOn is DateTime dt ? dt : DateTime.MinValue,
+                Status: r.TradeSessionStatus?.ToString() ?? string.Empty,
+                StartedOn: r.StartedOn is DateTime dt ? dt : DateTime.MinValue,
 
-                    TotalOfferedItems: Convert.ToInt32(r.TotalOfferedItems),
-                    TotalRequestedItems: Convert.ToInt32(r.TotalRequestedItems),
+                TotalOfferedItems: Convert.ToInt32(r.TotalOfferedItems),
+                TotalRequestedItems: Convert.ToInt32(r.TotalRequestedItems),
 
-                    ConfirmedByOfferUser: confirmedByOfferUser,
-                    ConfirmedByRequestUser: confirmedByRequestUser
-                )
+                ConfirmedByOfferUser: confirmedByOfferUser,
+                ConfirmedByRequestUser: confirmedByRequestUser
+            )
+
             );
         }).ToList();
 
