@@ -57,8 +57,8 @@ public sealed record TradeSessionSummaryResponse(
     string Status,
     DateTime StartedOn,
 
-    int TotalOfferedItems,
-    int TotalRequestedItems,
+    long TotalOfferedItems,
+    long TotalRequestedItems,
 
     TradeSessionUserResponse? ConfirmedByOfferUser,
     TradeSessionUserResponse? ConfirmedByRequestUser
