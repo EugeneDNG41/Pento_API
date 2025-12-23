@@ -77,6 +77,7 @@ public static class DependencyInjection
             .AddSignalR()
             .AddHubOptions<MessageHub>(options =>
             {
+                options.EnableDetailedErrors = true;
                 options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
                 options.KeepAliveInterval = TimeSpan.FromSeconds(30);
                 options.HandshakeTimeout = TimeSpan.FromSeconds(30);

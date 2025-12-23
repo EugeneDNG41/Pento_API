@@ -45,7 +45,7 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapHub<MessageHub>("message-hub");
+app.MapHub<MessageHub>("/message-hub");
 
 app.MapDefaultEndpoints();
 
