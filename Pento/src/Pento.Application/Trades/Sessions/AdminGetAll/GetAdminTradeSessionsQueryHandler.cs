@@ -35,7 +35,7 @@ internal sealed class GetAdminTradeSessionsQueryHandler(
             filters.Add("ts.status = @Status");
         }
         string whereClause = filters.Count > 0 ? "WHERE " + string.Join(" AND ", filters) : string.Empty;
-        string orderByClause = request.SortOrder == SortOrder.DESC ? "ORDER BY ts.started_on DESC" : "ORDER BY ts.started_on ASC";
+        string orderByClause = request.SortOrder == SortOrder.ASC ? "ORDER BY ts.started_on ASC" : "ORDER BY ts.started_on DESC";
         int offset = (request.PageNumber - 1) * request.PageSize;
         parameters.Add("@PageSize", request.PageSize);
         parameters.Add("@Offset", offset);

@@ -30,7 +30,7 @@ internal sealed class GetTradeRequestsQueryHandler(
             GetTradeRequestsSortBy.TotalItems => "8",
             _ => "tr.id"
         };
-        string orderClause = $"ORDER BY {orderBy} {(query.SortOrder != null ? query.SortOrder.ToString() : "ASC")}";
+        string orderClause = $"ORDER BY {orderBy} {(query.SortOrder != null ? query.SortOrder.ToString() : "DESC")}";
         var parameters = new DynamicParameters();
         var filters = new List<string>();
         parameters.Add("@HouseholdId", householdId.Value);
