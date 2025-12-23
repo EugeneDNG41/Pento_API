@@ -32,16 +32,6 @@ internal sealed class TradeOfferFulfilledEventHandler(
         {
             throw new PentoException(nameof(TradeOfferFulfilledEventHandler), TradeErrors.OfferNotFound);
         }
-        TradeRequest? request = await tradeRequestRepository.GetByIdAsync(domainEvent.TradeRequestId, cancellationToken);
-        if (request == null) 
-        {
-            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), TradeErrors.RequestNotFound);
-        }
-        Household? requestHousehold = await householdRepository.GetByIdAsync(offer.HouseholdId, cancellationToken);
-        if (requestHousehold == null)
-        {
-            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), HouseholdErrors.NotFound);
-        }
         Result createResult = await activityService.RecordHouseholdActivityAsync(
             offer.HouseholdId,
             ActivityCode.TRADE_COMPLETE.ToString(),
@@ -52,6 +42,18 @@ internal sealed class TradeOfferFulfilledEventHandler(
             throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
         }
         await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        TradeRequest? request = await tradeRequestRepository.GetByIdAsync(domainEvent.TradeRequestId, cancellationToken);
+        if (request == null) 
+        {
+            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), TradeErrors.RequestNotFound);
+        }
+        Household? requestHousehold = await householdRepository.GetByIdAsync(request.HouseholdId, cancellationToken);
+        if (requestHousehold == null)
+        {
+            throw new PentoException(nameof(TradeOfferFulfilledEventHandler), HouseholdErrors.NotFound);
+        }
+        
         string title = "Trade Fulfilled";
         string body = $"Your trade with household {requestHousehold.Name} has been fulfilled.";
         var payload = new Dictionary<string, string>

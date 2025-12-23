@@ -16,6 +16,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using Npgsql;
 using Pento.Application.Abstractions.Authentication;
@@ -76,9 +77,10 @@ public static class DependencyInjection
             .AddSignalR()
             .AddHubOptions<MessageHub>(options =>
             {
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
-                options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-                options.HandshakeTimeout = TimeSpan.FromSeconds(30);
+                options.EnableDetailedErrors = true;
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(180);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(120);
+                options.HandshakeTimeout = TimeSpan.FromSeconds(120);
             });
         return builder.Services;
     }
@@ -288,27 +290,26 @@ public static class DependencyInjection
                     $"{authority}/realms/pento";
                 opt.MetadataAddress =
                     $"{authority}/realms/pento/.well-known/openid-configuration";
-                //opt.Events = new JwtBearerEvents
-                //{
-                //    OnMessageReceived = context =>
-                //    {
-                //        StringValues accessToken = context.Request.Query["access_token"];
-
-                //        // If the request is for our hub...
-                //        PathString path = context.HttpContext.Request.Path;
-                //        if (!string.IsNullOrEmpty(accessToken) &&
-                //            path.StartsWithSegments("/message-hub"))
-                //        {
-                //            // Read the token out of the query string
-                //            context.Token = accessToken;
-                //        }
-                //        return Task.CompletedTask;
-                //    }
-                //};
+                opt.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        StringValues accessToken = context.Request.Query["access_token"];
+                        // If the request is for our hub...
+                        PathString path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            path.StartsWithSegments("/message-hub"))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             }
-#pragma warning restore S125 // Sections of code should not be commented out
-);
-
+        );
+        services.TryAddEnumerable(
+  ServiceDescriptor.Singleton<IPostConfigureOptions<JwtBearerOptions>, ConfigureJwtBearerOptions>());
         return services;
     }
 

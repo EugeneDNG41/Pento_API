@@ -13,6 +13,14 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 builder.Host.UseSerilog((context, loggerConfig) => loggerConfig.ReadFrom.Configuration(context.Configuration));
 
+builder.Logging.AddFilter(
+    "Microsoft.AspNetCore.SignalR",
+    LogLevel.Debug);
+
+builder.Logging.AddFilter(
+    "Microsoft.AspNetCore.Http.Connections",
+    LogLevel.Debug);
+
 builder.Services.AddHealthChecks();
 builder
     .AddInfrastructure(builder.Configuration, builder.Environment.IsDevelopment())
@@ -45,8 +53,6 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapHub<MessageHub>("message-hub");
-
 app.MapDefaultEndpoints();
 
 app.UseSwaggerRoute();
@@ -55,10 +61,9 @@ app.UseLogContext();
 
 app.UseSerilogRequestLogging();
 
-
-
-
 app.MapEndpoints();
+
+app.MapHub<MessageHub>("/message-hub");
 
 await app.RunAsync();
 
