@@ -191,7 +191,7 @@ internal sealed class GetAllTradeReportsQueryHandler(
                 r.OfferConfirmUserId is null
                     ? null
                     : new TradeSessionUserResponse(
-                        Guid.Empty,
+                         Guid.Empty,
                         r.OfferConfirmFirstName ?? string.Empty,
                         r.OfferConfirmLastName ?? string.Empty,
                         offerConfirmAvatar
@@ -247,11 +247,11 @@ internal sealed class GetAllTradeReportsQueryHandler(
                     RequestHouseholdId: r.RequestHouseholdId,
                     RequestHouseholdName: r.RequestHouseholdName,
 
-                    Status: r.TradeSessionStatus,
-                    StartedOn: r.StartedOn,
+                    Status: r.TradeSessionStatus?.ToString() ?? string.Empty,
+                    StartedOn: r.StartedOn is DateTime dt ? dt : DateTime.MinValue,
 
-                    TotalOfferedItems: r.TotalOfferedItems,
-                    TotalRequestedItems: r.TotalRequestedItems,
+                    TotalOfferedItems: Convert.ToInt32(r.TotalOfferedItems),
+                    TotalRequestedItems: Convert.ToInt32(r.TotalRequestedItems),
 
                     ConfirmedByOfferUser: confirmedByOfferUser,
                     ConfirmedByRequestUser: confirmedByRequestUser
