@@ -4,6 +4,7 @@ using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Pagination;
 using Pento.Domain.Abstractions;
+using Pento.Domain.Trades;
 using Pento.Domain.Trades.Reports;
 
 namespace Pento.Application.Trades.Reports.GetAll;
@@ -196,8 +197,9 @@ internal sealed class GetAllTradeReportsQueryHandler(
                 RequestHouseholdId: r.RequestHouseholdId,
                 RequestHouseholdName: r.RequestHouseholdName,
 
-                Status: r.TradeSessionStatus,
-                StartedOn: r.StartedOn,
+                Status: Enum.Parse<TradeSessionStatus>(r.TradeSessionStatus),
+
+                StartedOn: (DateTime)r.StartedOn,
 
                 TotalOfferedItems: r.TotalOfferedItems,
                 TotalRequestedItems: r.TotalRequestedItems,
