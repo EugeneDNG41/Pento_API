@@ -1,4 +1,5 @@
-﻿using Pento.Domain.Abstractions;
+﻿using NetTopologySuite.Geometries;
+using Pento.Domain.Abstractions;
 
 namespace Pento.Domain.Trades;
 
@@ -10,15 +11,17 @@ public sealed class TradeRequest : Entity
     public Guid HouseholdId { get; private set; }
     public Guid TradeOfferId { get; private set; }
     public TradeRequestStatus Status { get; private set; }
+    public Point Location { get; private set; }
     public DateTime CreatedOn { get; private set; }
     public DateTime? UpdatedOn { get; private set; }
 
-    private TradeRequest(
+    public TradeRequest(
         Guid id,
         Guid userId,
         Guid householdId,
         Guid tradeOfferId,
         TradeRequestStatus status,
+        Point location,
         DateTime createdOn
     ) : base(id)
     {
@@ -26,10 +29,11 @@ public sealed class TradeRequest : Entity
         HouseholdId = householdId;
         TradeOfferId = tradeOfferId;
         Status = status;
+        Location = location;
         CreatedOn = createdOn;
     }
 
-    public static TradeRequest Create(Guid userId, Guid householdId, Guid tradeOfferId, DateTime createdOn)
+    public static TradeRequest Create(Guid userId, Guid householdId, Guid tradeOfferId, Point location, DateTime createdOn)
     {
         var request = new TradeRequest(
             id: Guid.CreateVersion7(),
@@ -37,6 +41,7 @@ public sealed class TradeRequest : Entity
             householdId: householdId,
             tradeOfferId: tradeOfferId,
             status: TradeRequestStatus.Pending,
+            location: location,
             createdOn: createdOn
         );
         request.Raise(new TradeRequestCreatedDomainEvent(request.Id));

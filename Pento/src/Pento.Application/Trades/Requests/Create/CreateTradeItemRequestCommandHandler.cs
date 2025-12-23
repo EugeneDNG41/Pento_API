@@ -60,7 +60,7 @@ internal sealed class CreateTradeItemRequestCommandHandler(
         }
         else
         {
-            request = TradeRequest.Create(userId, householdId.Value, command.TradeOfferId, dateTimeProvider.UtcNow);
+            request = TradeRequest.Create(userId, householdId.Value, command.TradeOfferId, command.Location, dateTimeProvider.UtcNow);
             requestRepo.Add(request);
         }
 

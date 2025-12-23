@@ -1,4 +1,5 @@
-﻿using Pento.Application.Abstractions.Authentication;
+﻿using NetTopologySuite.Geometries;
+using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Abstractions.Persistence;
 using Pento.Application.Abstractions.Utility.Clock;
@@ -36,6 +37,7 @@ internal sealed class CreateTradeItemOfferCommandHandler(
             startDate: command.StartDate,
             endDate: command.EndDate,
             pickupOption: command.PickupOption,
+            new Point(0, 0),
             createdOn: clock.UtcNow
         );
 

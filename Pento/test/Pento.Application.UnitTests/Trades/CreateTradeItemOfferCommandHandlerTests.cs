@@ -1,4 +1,5 @@
-﻿using NSubstitute;
+﻿using NetTopologySuite.Geometries;
+using NSubstitute;
 using NUnit.Framework;
 using Pento.Application.Abstractions.Authentication;
 using Pento.Application.Abstractions.Persistence;
@@ -52,6 +53,7 @@ internal sealed class CreateTradeItemOfferCommandHandlerTests
             StartDate: DateTime.UtcNow,
             EndDate: DateTime.UtcNow.AddDays(3),
             PickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             Items: new List<AddTradeItemDto>
             {
                 new(

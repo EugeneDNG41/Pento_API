@@ -107,7 +107,10 @@ public static class DependencyInjection
         
         services.AddDbContextPool<ApplicationDbContext>((service, options) =>
         {
-            options.UseNpgsql(connectionString)
+            options.UseNpgsql(connectionString, o =>
+            {
+                o.UseNetTopologySuite();
+            })
                    .UseSnakeCaseNamingConvention();
             options.AddInterceptors(service.GetRequiredService<SecondLevelCacheInterceptor>());
         });
@@ -115,7 +118,7 @@ public static class DependencyInjection
         services.AddScoped<IUnitOfWork>(sp =>
             sp.GetRequiredService<ApplicationDbContext>());
 
-        NpgsqlDataSource dataSource = new NpgsqlDataSourceBuilder(connectionString).Build();
+        NpgsqlDataSource dataSource = new NpgsqlDataSourceBuilder(connectionString).UseNetTopologySuite().Build();
         services.TryAddSingleton(dataSource);
         services.TryAddScoped<ISqlConnectionFactory, SqlConnectionFactory>();
 

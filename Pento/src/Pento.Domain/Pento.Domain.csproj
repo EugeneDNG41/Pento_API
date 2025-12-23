@@ -10,4 +10,8 @@
     <None Remove="MilestoneRequirements\wu4zj4f4.ydh~" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="NetTopologySuite" Version="2.6.0" />
+  </ItemGroup>
+
 </Project>

@@ -41,6 +41,7 @@ internal sealed class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             Activity.TradeInFoodItem,
             Activity.TradeAwayFoodItem,
             Activity.CreateTradeOffer,
-            Activity.CreateTradeRequest);
+            Activity.CreateTradeRequest,
+            Activity.CompleteTrade);
     }
 }

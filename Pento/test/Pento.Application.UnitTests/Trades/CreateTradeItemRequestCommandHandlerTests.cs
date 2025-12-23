@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using NetTopologySuite.Geometries;
 using NSubstitute;
 using NUnit.Framework;
 using Pento.Application.Abstractions.Authentication;
@@ -54,6 +55,7 @@ internal sealed class CreateTradeItemRequestCommandHandlerTests
     private static CreateTradeItemRequestCommand CreateCommand(Guid offerId, Guid foodItemId)
         => new(
             TradeOfferId: offerId,
+            new Point(0, 0),
             Items: new List<AddTradeItemDto>
             {
                 new(
@@ -126,6 +128,7 @@ internal sealed class CreateTradeItemRequestCommandHandlerTests
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow.AddDays(1),
             pickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         _offerRepo.GetByIdAsync(offer.Id, Arg.Any<CancellationToken>())
@@ -154,6 +157,7 @@ internal sealed class CreateTradeItemRequestCommandHandlerTests
             DateTime.UtcNow,
             DateTime.UtcNow.AddDays(1),
             PickupOption.InPerson,
+            new Point(0, 0),
             DateTime.UtcNow);
 
 
@@ -184,6 +188,7 @@ internal sealed class CreateTradeItemRequestCommandHandlerTests
             DateTime.UtcNow,
             DateTime.UtcNow.AddDays(1),
             PickupOption.InPerson,
+            new Point(0, 0),
             DateTime.UtcNow);
 
         _offerRepo.GetByIdAsync(offerId, Arg.Any<CancellationToken>())
@@ -223,6 +228,7 @@ internal sealed class CreateTradeItemRequestCommandHandlerTests
             DateTime.UtcNow,
             DateTime.UtcNow.AddDays(1),
             PickupOption.InPerson,
+            new Point(0, 0),
             DateTime.UtcNow);
 
         _offerRepo.GetByIdAsync(offer.Id, Arg.Any<CancellationToken>())

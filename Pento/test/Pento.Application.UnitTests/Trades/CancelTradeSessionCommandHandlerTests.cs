@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using NetTopologySuite.Geometries;
 using NSubstitute;
 using NUnit.Framework;
 using Pento.Application.Abstractions.Authentication;
@@ -167,11 +168,12 @@ internal sealed class CancelTradeSessionCommandHandlerTests
     public async Task Handle_OfferHousehold_CancelsRequest()
     {
         var householdId = Guid.NewGuid();
-
+        var location = new Point(10, 20);
         var request = TradeRequest.Create(
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
+            location,
             DateTime.UtcNow);
 
         var session = TradeSession.Create(
@@ -208,11 +210,12 @@ internal sealed class CancelTradeSessionCommandHandlerTests
     public async Task Handle_RequestHousehold_RejectsRequest()
     {
         var householdId = Guid.NewGuid();
-
+        var location = new Point(10, 20);
         var request = TradeRequest.Create(
             Guid.NewGuid(),
             householdId,
             Guid.NewGuid(),
+            location,
             DateTime.UtcNow);
 
         var session = TradeSession.Create(

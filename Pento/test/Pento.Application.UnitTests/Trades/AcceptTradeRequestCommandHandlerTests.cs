@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.AspNetCore.SignalR;
+using NetTopologySuite.Geometries;
 using NSubstitute;
 using NUnit.Framework;
 using Pento.Application.Abstractions.Authentication;
@@ -105,12 +106,14 @@ internal sealed class AcceptTradeRequestCommandHandlerTests
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow.AddDays(1),
             pickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         var request = TradeRequest.Create(
             userId: requesterId,
             householdId: requestHouseholdId,
             tradeOfferId: offer.Id,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         _offerRepo.GetByIdAsync(offer.Id, Arg.Any<CancellationToken>())

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using NetTopologySuite.Geometries;
 using NSubstitute;
 using NUnit.Framework;
 using Pento.Application.Abstractions.Authentication;
@@ -62,6 +63,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
+            new Point(0, 0),
             DateTime.UtcNow);
 
         _requestRepo.GetByIdAsync(request.Id, Arg.Any<CancellationToken>())
@@ -89,6 +91,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
+            new Point(0, 0),
             DateTime.UtcNow);
 
         var offer = TradeOffer.Create(
@@ -97,6 +100,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow.AddDays(1),
             pickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         _userContext.HouseholdId.Returns(householdId);
@@ -125,6 +129,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
+            new Point(0, 0),
             DateTime.UtcNow);
 
         request.Reject(); // make it non-pending
@@ -135,6 +140,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow.AddDays(1),
             pickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         _userContext.HouseholdId.Returns(householdId);
@@ -163,6 +169,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             Guid.NewGuid(),
             Guid.NewGuid(),
             Guid.NewGuid(),
+            new Point(0, 0),
             DateTime.UtcNow);
 
         var offer = TradeOffer.Create(
@@ -171,6 +178,7 @@ internal sealed class RejectTradeRequestCommandHandlerTests
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow.AddDays(1),
             pickupOption: PickupOption.InPerson,
+            new Point(0, 0),
             createdOn: DateTime.UtcNow);
 
         var session1 = TradeSession.Create(

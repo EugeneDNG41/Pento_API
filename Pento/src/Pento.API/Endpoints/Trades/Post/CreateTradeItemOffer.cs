@@ -1,4 +1,5 @@
-﻿using Pento.API.Extensions;
+﻿using NetTopologySuite.Geometries;
+using Pento.API.Extensions;
 using Pento.Application.Abstractions.Messaging;
 using Pento.Application.Trades;
 using Pento.Application.Trades.Offers.Create;
@@ -21,6 +22,7 @@ internal sealed class CreateMultipleTradeItemOffer : IEndpoint
                 request.StartDate,
                 request.EndDate,
                 request.PickupOption,
+                request.Location,
                 [.. request.Items.Select(i =>
                     new AddTradeItemDto(i.FoodItemId, i.Quantity, i.UnitId)
                 )]
@@ -43,6 +45,7 @@ internal sealed class CreateMultipleTradeItemOffer : IEndpoint
         public DateTime StartDate { get; init; }
         public DateTime EndDate { get; init; }
         public PickupOption PickupOption { get; init; }
+        public Point Location { get; init; }
         public List<ItemRequest> Items { get; init; } = new();
     }
 
