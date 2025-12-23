@@ -41,6 +41,9 @@ app.UseExceptionHandler();
 app.UseRouting();
 
 app.UseCors();
+app.UseAuthentication();
+
+app.UseAuthorization();
 
 app.MapHub<MessageHub>("message-hub");
 
@@ -52,9 +55,7 @@ app.UseLogContext();
 
 app.UseSerilogRequestLogging();
 
-app.UseAuthentication();
 
-app.UseAuthorization();
 
 
 app.MapEndpoints();
