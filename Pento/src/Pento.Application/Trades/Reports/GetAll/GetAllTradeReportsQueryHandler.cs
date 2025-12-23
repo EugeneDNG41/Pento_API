@@ -223,7 +223,9 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
                 ReporterUserId: r.ReporterUserId,
                 ReporterName: reporterName,
-                ReporterAvatarUrl: reporterAvatar,
+                ReporterAvatarUrl: r.ReporterAvatarUrl is null
+    ? null
+    : new Uri((string)r.ReporterAvatarUrl),
 
                 FoodItemId: r.FoodItemId,
                 FoodName: r.FoodName,
