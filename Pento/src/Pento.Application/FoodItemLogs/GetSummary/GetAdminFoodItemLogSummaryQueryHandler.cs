@@ -57,7 +57,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @IntakeAction 
                     THEN l.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS IntakeByWeight,
+            ), 0)::numeric(18,3) AS IntakeByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -65,7 +65,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @IntakeAction 
                     THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS IntakeByVolume,
+            ), 0)::numeric(18,3) AS IntakeByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -73,7 +73,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @ConsumptionAction 
                     THEN l.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS ConsumptionByWeight,
+            ), 0)::numeric(18,3) AS ConsumptionByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -81,7 +81,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @ConsumptionAction 
                     THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS ConsumptionByVolume,
+            ), 0)::numeric(18,3) AS ConsumptionByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -89,7 +89,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS DiscardByWeight,
+            ), 0)::numeric(18,3) AS DiscardByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -97,7 +97,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @DiscardAction 
                     THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS DiscardByVolume,
+            ), 0)::numeric(18,3) AS DiscardByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -105,7 +105,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @TradeAction 
                     THEN l.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS TradeByWeight,
+            ), 0)::numeric(18,3) AS TradeByWeight,
         
             COALESCE(SUM(
                 CASE 
@@ -113,7 +113,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND l.action = @TradeAction 
                     THEN l.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS TradeByVolume
+            ), 0)::numeric(18,3) AS TradeByVolume
         FROM food_item_logs l
         JOIN units u ON u.id = l.unit_id
         WHERE (@IsDeleted is null OR l.is_deleted = @IsDeleted )
@@ -125,14 +125,18 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
             COUNT (*) AS TotalFoodItems,
             COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) > 3) AS FreshCount,
             COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) BETWEEN 0 AND 3) AS ExpiringCount,
-            COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) < 0) AS ExpiredCount,
+            COUNT(*) FILTER (WHERE (f.expiration_date::date - current_date) < 0) AS ExpiredCount
+            FROM food_items f
+            WHERE (@IsDeleted is null OR f.is_deleted = @IsDeleted )
+            AND (@HouseholdId is null OR f.household_id = @HouseholdId);
+        SELECT
         	COALESCE(SUM(
                 CASE 
                     WHEN u.type = @WeightType
                         AND (f.expiration_date::date - current_date) > 3
                     THEN f.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS FreshByWeight,
+            ), 0)::numeric(18,3) AS FreshByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -140,7 +144,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                         AND (f.expiration_date::date - current_date) > 3
                     THEN f.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS FreshByVolume,
+            ), 0)::numeric(18,3) AS FreshByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -149,7 +153,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
         				 AND (f.expiration_date::date - current_date) <= 3
                     THEN f.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS ExpiringByWeight,
+            ), 0)::numeric(18,3) AS ExpiringByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -158,7 +162,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
         				 AND (f.expiration_date::date - current_date) <= 3 
                     THEN f.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS ExpiringByVolume,
+            ), 0)::numeric(18,3) AS ExpiringByVolume,
 
             COALESCE(SUM(
                 CASE 
@@ -166,7 +170,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND (f.expiration_date::date - current_date) < 0 
                     THEN f.quantity * u.to_base_factor/ @WeightToBaseFactor
                 END
-            ), 0) AS ExpiredByWeight,
+            ), 0)::numeric(18,3) AS ExpiredByWeight,
 
             COALESCE(SUM(
                 CASE 
@@ -174,7 +178,7 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
                          AND (f.expiration_date::date - current_date) < 0
                     THEN f.quantity * u.to_base_factor/ @VolumeToBaseFactor
                 END
-            ), 0) AS ExpiredByVolume
+            ), 0)::numeric(18,3) AS ExpiredByVolume
 
         FROM food_items f
         JOIN units u ON u.id = f.unit_id
@@ -183,8 +187,6 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
             AND (@HouseholdId is null OR f.household_id = @HouseholdId)
             AND fil.timestamp >= COALESCE(@FromUtc, fil.timestamp)
             AND fil.timestamp <= COALESCE(@ToUtc, fil.timestamp);
-
-        
         """;
 
         var command = new CommandDefinition(
@@ -194,11 +196,13 @@ internal sealed class GetAdminFoodItemLogSummaryQueryHandler(
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         FoodItemLogSummary logSummary = await multi.ReadFirstAsync<FoodItemLogSummary>();
         FoodItemSummary itemSummary = await multi.ReadFirstAsync<FoodItemSummary>();
+        FoodItemDetailedSummary detailedSummary = await multi.ReadFirstAsync<FoodItemDetailedSummary>();
         var foodSummary = new FoodSummary(
             WeightUnit: weightUnit.Name,
             VolumeUnit: volumeUnit.Name,
             LogSummary: logSummary,
-            FoodItemSummary: itemSummary
+            FoodItemSummary: itemSummary,
+            FoodItemDetailedSummary: detailedSummary
             );
         return foodSummary;
     }
