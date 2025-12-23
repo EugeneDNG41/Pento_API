@@ -33,6 +33,17 @@ internal sealed class TradeRequestFulfilledEventHandler(
         {
             throw new PentoException(nameof(TradeRequestFulfilledEventHandler), TradeErrors.RequestNotFound);
         }
+        Result createResult = await activityService.RecordHouseholdActivityAsync(
+            request.HouseholdId,
+            ActivityCode.TRADE_COMPLETE.ToString(),
+            request.Id,
+            cancellationToken);
+        if (createResult.IsFailure)
+        {
+            throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
+        }
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
         TradeOffer? offer = await tradeOfferRepository.GetByIdAsync(request.TradeOfferId, cancellationToken);
         if (offer == null) 
         {
@@ -43,16 +54,7 @@ internal sealed class TradeRequestFulfilledEventHandler(
         {
             throw new PentoException(nameof(TradeRequestFulfilledEventHandler), HouseholdErrors.NotFound);
         }
-        Result createResult = await activityService.RecordHouseholdActivityAsync(
-            request.HouseholdId,
-            ActivityCode.TRADE_COMPLETE.ToString(),
-            offer.Id,
-            cancellationToken);
-        if (createResult.IsFailure)
-        {
-            throw new PentoException(nameof(TradeOfferCreatedEventHandler), createResult.Error);
-        }
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        
 
         string title = "Trade Fulfilled";
         string body = $"Your trade with household {offerHousehold.Name} has been fulfilled.";
