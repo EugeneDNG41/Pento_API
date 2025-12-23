@@ -220,23 +220,32 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
     private static TradeSessionSummaryResponse MapTradeSession(dynamic r)
     {
+        string status =
+            r.TradeSessionStatus is null
+                ? string.Empty
+                : r.TradeSessionStatus.ToString();
+
+        DateTime startedOn =
+            r.StartedOn is null
+                ? DateTime.MinValue
+                : (DateTime)r.StartedOn;
+
         return new TradeSessionSummaryResponse(
-            r.TsId,
-            r.TradeOfferId,
-            r.TradeRequestId,
+            (Guid)r.TsId,
+            (Guid)r.TradeOfferId,
+            (Guid)r.TradeRequestId,
 
-            r.OfferHouseholdId,
-            r.OfferHouseholdName,
+            (Guid)r.OfferHouseholdId,
+            (string)r.OfferHouseholdName,
 
-            r.RequestHouseholdId,
-            r.RequestHouseholdName,
+            (Guid)r.RequestHouseholdId,
+            (string)r.RequestHouseholdName,
 
-            r.TradeSessionStatus.ToString(),
-            (DateTime)r.StartedOn,
+            status,
+            startedOn,
 
             Convert.ToInt32(r.TotalOfferedItems),
             Convert.ToInt32(r.TotalRequestedItems),
-
 
             MapTradeSessionUser(
                 r.OfferConfirmUserId,
@@ -253,6 +262,7 @@ internal sealed class GetAllTradeReportsQueryHandler(
             )
         );
     }
+
 
     private static TradeSessionUserResponse? MapTradeSessionUser(
         Guid? userId,
