@@ -4,8 +4,7 @@ public sealed record FoodSummary(
     string WeightUnit,
     string VolumeUnit,
     FoodItemLogSummary LogSummary,
-    FoodItemSummary FoodItemSummary,
-    FoodItemDetailedSummary FoodItemDetailedSummary);
+    FoodItemSummary FoodItemSummary);
 public sealed record FoodItemLogSummary
 {
     public decimal IntakeByWeight { get; init; }
@@ -18,6 +17,19 @@ public sealed record FoodItemLogSummary
     public decimal TradeByVolume { get; init; }
 }
 public sealed record FoodItemSummary
+(
+    int TotalFoodItems,
+    int FreshCount,
+    int ExpiringCount,
+    int ExpiredCount,
+    decimal FreshByWeight,
+    decimal FreshByVolume,
+    decimal ExpiringByWeight,
+    decimal ExpiringByVolume,
+    decimal ExpiredByWeight,
+    decimal ExpiredByVolume
+);
+public sealed record FoodItemBriefSummary
 {
     public int TotalFoodItems { get; init; }
     public int FreshCount { get; init; }

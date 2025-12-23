@@ -184,14 +184,26 @@ internal sealed class GetFoodItemLogSummaryQueryHandler(
             cancellationToken: cancellationToken);
         using SqlMapper.GridReader multi = await connection.QueryMultipleAsync(command);
         FoodItemLogSummary logSummary = await multi.ReadFirstAsync<FoodItemLogSummary>();
-        FoodItemSummary itemSummary = await multi.ReadFirstAsync<FoodItemSummary>();
+        FoodItemBriefSummary briefSummary = await multi.ReadFirstAsync<FoodItemBriefSummary>();
         FoodItemDetailedSummary detailedSummary = await multi.ReadFirstAsync<FoodItemDetailedSummary>();
+        var itemSummary = new FoodItemSummary
+        (
+            TotalFoodItems: briefSummary.TotalFoodItems,
+            FreshCount: briefSummary.FreshCount,
+            ExpiringCount: briefSummary.ExpiringCount,
+            ExpiredCount: briefSummary.ExpiredCount,
+            FreshByWeight: detailedSummary.FreshByWeight,
+            FreshByVolume: detailedSummary.FreshByVolume,
+            ExpiringByWeight: detailedSummary.ExpiringByWeight,
+            ExpiringByVolume: detailedSummary.ExpiringByVolume,
+            ExpiredByWeight: detailedSummary.ExpiredByWeight,
+            ExpiredByVolume: detailedSummary.ExpiredByVolume
+        );
         var foodSummary = new FoodSummary(
             WeightUnit: weightUnit.Name,
             VolumeUnit: volumeUnit.Name,
             LogSummary: logSummary,
-            FoodItemSummary: itemSummary,
-            FoodItemDetailedSummary: detailedSummary
+            FoodItemSummary: itemSummary
             );
         return foodSummary;
     }
