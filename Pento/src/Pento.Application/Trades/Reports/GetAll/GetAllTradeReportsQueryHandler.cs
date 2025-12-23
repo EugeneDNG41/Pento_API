@@ -20,6 +20,8 @@ internal sealed class GetAllTradeReportsQueryHandler(
         await using DbConnection connection =
             await factory.OpenConnectionAsync(cancellationToken);
 
+        #region Filters
+
         var filters = new List<string>
         {
             "tr.is_deleted = FALSE"
@@ -52,6 +54,10 @@ internal sealed class GetAllTradeReportsQueryHandler(
             TradeReportSort.Oldest => "ORDER BY tr.created_on ASC",
             _ => "ORDER BY tr.created_on DESC"
         };
+
+        #endregion
+
+        #region SQL
 
         string sql = $"""
             -- 1️⃣ Summary
@@ -118,13 +124,13 @@ internal sealed class GetAllTradeReportsQueryHandler(
                     SELECT COUNT(*)
                     FROM trade_items tio
                     WHERE tio.offer_id = ts.trade_offer_id
-                )                             AS TotalOfferedItems,
+                ) AS TotalOfferedItems,
 
                 (
                     SELECT COUNT(*)
                     FROM trade_items tir
                     WHERE tir.request_id = ts.trade_request_id
-                )                             AS TotalRequestedItems
+                ) AS TotalRequestedItems
 
             FROM trade_reports tr
             JOIN users ru                       ON ru.id = tr.reporter_user_id
@@ -148,6 +154,8 @@ internal sealed class GetAllTradeReportsQueryHandler(
             OFFSET @Offset ROWS FETCH NEXT @PageSize ROWS ONLY;
         """;
 
+        #endregion
+
         parameters.Add("Offset", (request.PageNumber - 1) * request.PageSize);
         parameters.Add("PageSize", request.PageSize);
 
@@ -162,103 +170,9 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
         var rows = (await multi.ReadAsync()).ToList();
 
-        var reports = rows.Select(r =>
-        {
-            // Reporter name (an toàn null)
-            string reporterName = string.Join(
-                " ",
-                new[] { r.ReporterFirstName, r.ReporterLastName }
-                    .Where(x => !string.IsNullOrWhiteSpace(x))
-            );
-
-            Uri? reporterAvatar = string.IsNullOrWhiteSpace(r.ReporterAvatarUrl)
-                ? null
-                : new Uri(r.ReporterAvatarUrl);
-
-            Uri? foodImage = string.IsNullOrWhiteSpace(r.FoodImageUri)
-                ? null
-                : new Uri(r.FoodImageUri);
-
-            Uri? mediaUri = string.IsNullOrWhiteSpace(r.MediaUri)
-                ? null
-                : new Uri(r.MediaUri);
-
-            Uri? offerConfirmAvatar = string.IsNullOrWhiteSpace(r.OfferConfirmAvatarUrl)
-                ? null
-                : new Uri(r.OfferConfirmAvatarUrl);
-
-            TradeSessionUserResponse? confirmedByOfferUser =
-                r.OfferConfirmUserId is null
-                    ? null
-                    : new TradeSessionUserResponse(
-                        r.OfferConfirmUserId,
-                        r.OfferConfirmFirstName ?? string.Empty,
-                        r.OfferConfirmLastName ?? string.Empty,
-                        offerConfirmAvatar
-                    );
-
-            Uri? requestConfirmAvatar = string.IsNullOrWhiteSpace(r.RequestConfirmAvatarUrl)
-                ? null
-                : new Uri(r.RequestConfirmAvatarUrl);
-
-            TradeSessionUserResponse? confirmedByRequestUser =
-                r.RequestConfirmUserId is null
-                    ? null
-                    : new TradeSessionUserResponse(
-                        r.RequestConfirmUserId,
-                        r.RequestConfirmFirstName ?? string.Empty,
-                        r.RequestConfirmLastName ?? string.Empty,
-                        requestConfirmAvatar
-                    );
-
-            return new TradeReportResponse(
-                ReportId: r.ReportId,
-                TradeSessionId: r.TradeSessionId,
-
-                Reason: r.Reason,
-                Severity: r.Severity,
-                Status: r.Status,
-                Description: r.Description,
-                CreatedOnUtc: r.CreatedOnUtc,
-
-                ReporterUserId: r.ReporterUserId,
-                ReporterName: reporterName,
-                ReporterAvatarUrl: reporterAvatar,
-
-                FoodItemId: r.FoodItemId,
-                FoodName: r.FoodName,
-                FoodImageUri: foodImage,
-                Quantity: r.Quantity,
-                UnitAbbreviation: r.UnitAbbreviation,
-
-                MediaId: r.MediaId,
-                MediaType: r.MediaType,
-                MediaUri: mediaUri,
-
-                TradeSession: new TradeSessionSummaryResponse(
-                    TradeSessionId: r.TsId,
-                    TradeOfferId: r.TradeOfferId,
-                    TradeRequestId: r.TradeRequestId,
-
-                    OfferHouseholdId: r.OfferHouseholdId,
-                    OfferHouseholdName: r.OfferHouseholdName,
-
-                    RequestHouseholdId: r.RequestHouseholdId,
-                    RequestHouseholdName: r.RequestHouseholdName,
-
-                    Status: r.TradeSessionStatus,
-                    StartedOn: r.StartedOn,
-
-                    TotalOfferedItems: r.TotalOfferedItems,
-                    TotalRequestedItems: r.TotalRequestedItems,
-
-                    ConfirmedByOfferUser: confirmedByOfferUser,
-                    ConfirmedByRequestUser: confirmedByRequestUser
-                )
-            );
-        }).ToList();
-
-
+        var reports = rows
+            .Select(MapTradeReport)
+            .ToList();
 
         var pagedReports = PagedList<TradeReportResponse>.Create(
             reports,
@@ -271,4 +185,102 @@ internal sealed class GetAllTradeReportsQueryHandler(
             new TradeReportPagedResponse(pagedReports, summary)
         );
     }
+
+    #region Mapping Helpers
+
+    private static TradeReportResponse MapTradeReport(dynamic r)
+    {
+        return new TradeReportResponse(
+            r.ReportId,
+            r.TradeSessionId,
+
+            r.Reason,
+            r.Severity,
+            r.Status,
+            r.Description,
+            r.CreatedOnUtc,
+
+            r.ReporterUserId,
+            BuildFullName(r.ReporterFirstName, r.ReporterLastName),
+            ToUri(r.ReporterAvatarUrl),
+
+            r.FoodItemId,
+            r.FoodName,
+            ToUri(r.FoodImageUri),
+            r.Quantity,
+            r.UnitAbbreviation,
+
+            r.MediaId,
+            r.MediaType,
+            ToUri(r.MediaUri),
+
+            MapTradeSession(r)
+        );
+    }
+
+    private static TradeSessionSummaryResponse MapTradeSession(dynamic r)
+    {
+        return new TradeSessionSummaryResponse(
+            r.TsId,
+            r.TradeOfferId,
+            r.TradeRequestId,
+
+            r.OfferHouseholdId,
+            r.OfferHouseholdName,
+
+            r.RequestHouseholdId,
+            r.RequestHouseholdName,
+
+            r.TradeSessionStatus,
+            r.StartedOn,
+
+            r.TotalOfferedItems,
+            r.TotalRequestedItems,
+
+            MapTradeSessionUser(
+                r.OfferConfirmUserId,
+                r.OfferConfirmFirstName,
+                r.OfferConfirmLastName,
+                r.OfferConfirmAvatarUrl
+            ),
+
+            MapTradeSessionUser(
+                r.RequestConfirmUserId,
+                r.RequestConfirmFirstName,
+                r.RequestConfirmLastName,
+                r.RequestConfirmAvatarUrl
+            )
+        );
+    }
+
+    private static TradeSessionUserResponse? MapTradeSessionUser(
+        Guid? userId,
+        string? firstName,
+        string? lastName,
+        string? avatarUrl)
+    {
+        if (userId is null)
+        {
+            return null;
+        }
+
+        return new TradeSessionUserResponse(
+            userId.Value,
+            firstName ?? string.Empty,
+            lastName ?? string.Empty,
+            ToUri(avatarUrl)
+        );
+    }
+
+    private static Uri? ToUri(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : new Uri(value);
+
+    private static string BuildFullName(string? firstName, string? lastName)
+        => string.Join(
+            " ",
+            new[] { firstName, lastName }
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+        );
+
+    #endregion
 }
