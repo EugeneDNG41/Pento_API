@@ -7,7 +7,7 @@ using Pento.Domain.Trades;
 
 namespace Pento.Application.Abstractions.Messaging;
 
-public sealed class MessageHub(IUserContext userContext, IGenericRepository<TradeSession> tradeSessionRepository)  : Hub<IMessageClient>
+public sealed class MessageHub()  : Hub<IMessageClient>
 {
     public async Task AddToHousehold(Guid householdId)
     {
@@ -25,20 +25,21 @@ public sealed class MessageHub(IUserContext userContext, IGenericRepository<Trad
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId.ToString());
     }
-    public override async Task OnConnectedAsync()
-    {
-        Guid? householdId = userContext.HouseholdId;
-        if (householdId != null)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, householdId.Value.ToString());
-            IEnumerable<TradeSession> sessions = await tradeSessionRepository
-                .FindAsync(ts => ts.OfferHouseholdId == householdId || ts.RequestHouseholdId == householdId);
-            foreach (TradeSession session in sessions)
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, session.Id.ToString());
-            }
-        }
+#pragma warning disable S125 // client already call above
+    //public override async Task OnConnectedAsync()
+    //{
+    //    Guid? householdId = userContext.HouseholdId;
+    //    if (householdId != null)
+    //    {
+    //        await Groups.AddToGroupAsync(Context.ConnectionId, householdId.Value.ToString());
+    //        IEnumerable<TradeSession> sessions = await tradeSessionRepository
+    //            .FindAsync(ts => ts.OfferHouseholdId == householdId || ts.RequestHouseholdId == householdId);
+    //        foreach (TradeSession session in sessions)
+    //        {
+    //            await Groups.AddToGroupAsync(Context.ConnectionId, session.Id.ToString());
+    //        }
+    //    }
 
-        await base.OnConnectedAsync();
-    }
+    //    await base.OnConnectedAsync();
+    //}
 }
