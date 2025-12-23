@@ -162,67 +162,103 @@ internal sealed class GetAllTradeReportsQueryHandler(
 
         var rows = (await multi.ReadAsync()).ToList();
 
-        var reports = rows.Select(r => new TradeReportResponse(
-            ReportId: r.ReportId,
-            TradeSessionId: r.TradeSessionId,
+        var reports = rows.Select(r =>
+        {
+            // Reporter name (an toàn null)
+            string reporterName = string.Join(
+                " ",
+                new[] { r.ReporterFirstName, r.ReporterLastName }
+                    .Where(x => !string.IsNullOrWhiteSpace(x))
+            );
 
-            Reason: r.Reason,
-            Severity: r.Severity,
-            Status: r.Status,
-            Description: r.Description,
-            CreatedOnUtc: r.CreatedOnUtc,
+            Uri? reporterAvatar = string.IsNullOrWhiteSpace(r.ReporterAvatarUrl)
+                ? null
+                : new Uri(r.ReporterAvatarUrl);
 
-            ReporterUserId: r.ReporterUserId,
-            ReporterName: $"{r.ReporterFirstName} {r.ReporterLastName}",
-            ReporterAvatarUrl: r.ReporterAvatarUrl,
+            Uri? foodImage = string.IsNullOrWhiteSpace(r.FoodImageUri)
+                ? null
+                : new Uri(r.FoodImageUri);
 
-            FoodItemId: r.FoodItemId,
-            FoodName: r.FoodName,
-            FoodImageUri: r.FoodImageUri,
-            Quantity: r.Quantity,
-            UnitAbbreviation: r.UnitAbbreviation,
+            Uri? mediaUri = string.IsNullOrWhiteSpace(r.MediaUri)
+                ? null
+                : new Uri(r.MediaUri);
 
-            MediaId: r.MediaId,
-            MediaType: r.MediaType,
-            MediaUri: r.MediaUri,
+            Uri? offerConfirmAvatar = string.IsNullOrWhiteSpace(r.OfferConfirmAvatarUrl)
+                ? null
+                : new Uri(r.OfferConfirmAvatarUrl);
 
-            TradeSession: new TradeSessionSummaryResponse(
-                TradeSessionId: r.TsId,
-                TradeOfferId: r.TradeOfferId,
-                TradeRequestId: r.TradeRequestId,
-
-                OfferHouseholdId: r.OfferHouseholdId,
-                OfferHouseholdName: r.OfferHouseholdName,
-
-                RequestHouseholdId: r.RequestHouseholdId,
-                RequestHouseholdName: r.RequestHouseholdName,
-
-                Status: Enum.Parse<TradeSessionStatus>(r.TradeSessionStatus),
-
-                StartedOn: (DateTime)r.StartedOn,
-
-                TotalOfferedItems: r.TotalOfferedItems,
-                TotalRequestedItems: r.TotalRequestedItems,
-
-                ConfirmedByOfferUser: r.OfferConfirmUserId is null
+            TradeSessionUserResponse? confirmedByOfferUser =
+                r.OfferConfirmUserId is null
                     ? null
                     : new TradeSessionUserResponse(
                         r.OfferConfirmUserId,
-                        r.OfferConfirmFirstName,
-                        r.OfferConfirmLastName,
-                        r.OfferConfirmAvatarUrl
-                    ),
+                        r.OfferConfirmFirstName ?? string.Empty,
+                        r.OfferConfirmLastName ?? string.Empty,
+                        offerConfirmAvatar
+                    );
 
-                ConfirmedByRequestUser: r.RequestConfirmUserId is null
+            Uri? requestConfirmAvatar = string.IsNullOrWhiteSpace(r.RequestConfirmAvatarUrl)
+                ? null
+                : new Uri(r.RequestConfirmAvatarUrl);
+
+            TradeSessionUserResponse? confirmedByRequestUser =
+                r.RequestConfirmUserId is null
                     ? null
                     : new TradeSessionUserResponse(
                         r.RequestConfirmUserId,
-                        r.RequestConfirmFirstName,
-                        r.RequestConfirmLastName,
-                        r.RequestConfirmAvatarUrl
-                    )
-            )
-        )).ToList();
+                        r.RequestConfirmFirstName ?? string.Empty,
+                        r.RequestConfirmLastName ?? string.Empty,
+                        requestConfirmAvatar
+                    );
+
+            return new TradeReportResponse(
+                ReportId: r.ReportId,
+                TradeSessionId: r.TradeSessionId,
+
+                Reason: r.Reason,
+                Severity: r.Severity,
+                Status: r.Status,
+                Description: r.Description,
+                CreatedOnUtc: r.CreatedOnUtc,
+
+                ReporterUserId: r.ReporterUserId,
+                ReporterName: reporterName,
+                ReporterAvatarUrl: reporterAvatar,
+
+                FoodItemId: r.FoodItemId,
+                FoodName: r.FoodName,
+                FoodImageUri: foodImage,
+                Quantity: r.Quantity,
+                UnitAbbreviation: r.UnitAbbreviation,
+
+                MediaId: r.MediaId,
+                MediaType: r.MediaType,
+                MediaUri: mediaUri,
+
+                TradeSession: new TradeSessionSummaryResponse(
+                    TradeSessionId: r.TsId,
+                    TradeOfferId: r.TradeOfferId,
+                    TradeRequestId: r.TradeRequestId,
+
+                    OfferHouseholdId: r.OfferHouseholdId,
+                    OfferHouseholdName: r.OfferHouseholdName,
+
+                    RequestHouseholdId: r.RequestHouseholdId,
+                    RequestHouseholdName: r.RequestHouseholdName,
+
+                    Status: r.TradeSessionStatus,
+                    StartedOn: r.StartedOn,
+
+                    TotalOfferedItems: r.TotalOfferedItems,
+                    TotalRequestedItems: r.TotalRequestedItems,
+
+                    ConfirmedByOfferUser: confirmedByOfferUser,
+                    ConfirmedByRequestUser: confirmedByRequestUser
+                )
+            );
+        }).ToList();
+
+
 
         var pagedReports = PagedList<TradeReportResponse>.Create(
             reports,
