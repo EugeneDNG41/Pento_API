@@ -78,9 +78,9 @@ public static class DependencyInjection
             .AddHubOptions<MessageHub>(options =>
             {
                 options.EnableDetailedErrors = true;
-                options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
-                options.KeepAliveInterval = TimeSpan.FromSeconds(30);
-                options.HandshakeTimeout = TimeSpan.FromSeconds(30);
+                options.ClientTimeoutInterval = TimeSpan.FromSeconds(180);
+                options.KeepAliveInterval = TimeSpan.FromSeconds(120);
+                options.HandshakeTimeout = TimeSpan.FromSeconds(120);
             });
         return builder.Services;
     }
