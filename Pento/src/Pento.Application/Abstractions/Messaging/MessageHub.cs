@@ -7,7 +7,6 @@ using Pento.Domain.Trades;
 
 namespace Pento.Application.Abstractions.Messaging;
 
-[Authorize]
 public sealed class MessageHub(IUserContext userContext, IGenericRepository<TradeSession> tradeSessionRepository)  : Hub<IMessageClient>
 {
     public async Task AddToHousehold(Guid householdId)
