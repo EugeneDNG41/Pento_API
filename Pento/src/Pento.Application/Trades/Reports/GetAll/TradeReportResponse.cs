@@ -54,11 +54,11 @@ public sealed record TradeSessionSummaryResponse(
     Guid RequestHouseholdId,
     string RequestHouseholdName,
 
-    string Status,
+    string Status,  
     DateTime StartedOn,
 
-    long TotalOfferedItems,
-    long TotalRequestedItems,
+    int TotalOfferedItems,
+    int TotalRequestedItems,
 
     TradeSessionUserResponse? ConfirmedByOfferUser,
     TradeSessionUserResponse? ConfirmedByRequestUser

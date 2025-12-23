@@ -231,11 +231,12 @@ internal sealed class GetAllTradeReportsQueryHandler(
             r.RequestHouseholdId,
             r.RequestHouseholdName,
 
-            r.TradeSessionStatus,
-            r.StartedOn,
+            r.TradeSessionStatus.ToString(),
+            (DateTime)r.StartedOn,
 
-            r.TotalOfferedItems,
-            r.TotalRequestedItems,
+            Convert.ToInt32(r.TotalOfferedItems),
+            Convert.ToInt32(r.TotalRequestedItems),
+
 
             MapTradeSessionUser(
                 r.OfferConfirmUserId,
