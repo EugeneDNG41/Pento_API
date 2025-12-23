@@ -17,11 +17,27 @@ public sealed record FoodItemLogSummary
     public decimal TradeByVolume { get; init; }
 }
 public sealed record FoodItemSummary
+(
+    int TotalFoodItems,
+    int FreshCount,
+    int ExpiringCount,
+    int ExpiredCount,
+    decimal FreshByWeight,
+    decimal FreshByVolume,
+    decimal ExpiringByWeight,
+    decimal ExpiringByVolume,
+    decimal ExpiredByWeight,
+    decimal ExpiredByVolume
+);
+public sealed record FoodItemBriefSummary
 {
     public int TotalFoodItems { get; init; }
     public int FreshCount { get; init; }
     public int ExpiringCount { get; init; }
     public int ExpiredCount { get; init; }
+}
+public sealed record FoodItemDetailedSummary
+{
     public decimal FreshByWeight { get; init; }
     public decimal FreshByVolume { get; init; }
     public decimal ExpiringByWeight { get; init; }
